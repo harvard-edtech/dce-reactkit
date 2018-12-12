@@ -63,8 +63,8 @@ class UserProfile extends Component {
             status: STATUS.DISPLAYING,
           });
         })
-        .catch(() => {
-          console.log('Error');
+        .catch((err) => {
+          console.log('Error', err);
           this.setState({
             status: STATUS.ERROR,
           });
