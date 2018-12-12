@@ -4,7 +4,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "build": "rimraf dist && NODE_ENV=production babel src/lib --out-dir . --copy-files --ignore __tests__,spec.js,test.js,__snapshots__"
+    "build": "NODE_ENV=production babel src/lib --out-dir . --copy-files --ignore __tests__,spec.js,test.js,__snapshots__"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
