@@ -1,144 +1,118 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import initCACCL from 'caccl/client/cached';
-import CACCLInstance from 'caccl/APIInstanceClass';
 
+// Import custom styles
 import './style.css';
 
-// Import bootstrap components
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  CardText,
-  CardImg,
-} from 'reactstrap';
 // Import bootstrap stylesheet
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Import other components
-import LoadSplash from '../Splash/Load';
+import Alert from '../Alert';
 
-const STATUS = {
-  LOADING: 'loading',
-  ERROR: 'error',
-  DISPLAYING: 'displaying',
-};
+// Import glyphs
+import Envelope from '../../glyphs/Envelope';
+import IdCard from '../../glyphs/IdCard';
 
 class UserProfile extends Component {
-  constructor(props) {
-    super(props);
-
+  render() {
     // Deconstruct props
     const {
       user,
-      courseId,
-      userId,
-      api,
+      size,
+      color,
     } = this.props;
 
-    // Check if we need to load the user profile
-    if (user) {
-      // Already have user. No need to load
-      this.state = {
-        user,
-        status: STATUS.DISPLAYING,
-      };
-    } else if (userId) {
-      // Need to load the user's profile
-      this.state = {
-        status: STATUS.LOADING,
-      };
-
-      // Load via api
-      api.course.getUser({
-        courseId,
-        userId,
-        includeAvatar: true,
-      })
-        .then((fetchedUser) => {
-          this.setState({
-            user: fetchedUser,
-            status: STATUS.DISPLAYING,
-          });
-        })
-        .catch((err) => {
-          console.log('Error', err);
-          this.setState({
-            status: STATUS.ERROR,
-          });
-        });
-    } else {
-      // No user information
-      this.state = {
-        status: STATUS.ERROR,
-      };
-    }
-  }
-
-  render() {
-    // Deconstruct state
+    // Deconstruct user information
     const {
-      loadMessage,
-      user,
-      status,
-    } = this.state;
+      name,
+      email,
+    } = user;
+    const sisUserId = user.sis_user_id;
+    const avatarURL = user.avatar_url;
 
-    // Render error
-    if (status === STATUS.ERROR) {
-      return (
-        <Card>
-          <CardBody>
-            <CardTitle>
-              Oops!
-            </CardTitle>
-            <CardText>
-              We couldn&apos;t load this user&apos;s profile.
-            </CardText>
-          </CardBody>
-        </Card>
-      );
+    // Dynamically size everything
+    let wellWidth = '250px';
+    let imageHeight = '150px';
+    if (size === 'lg') {
+      wellWidth = '500px';
+      imageHeight = '300px';
+    } else if (size === 'sm') {
+      wellWidth = '200px';
+      imageHeight = '100px';
     }
 
-    // Render loading
-    if (status === STATUS.LOADING) {
-      return (
-        <Card>
-          <CardBody>
-            <CardText>
-              <LoadSplash
-                message={loadMessage}
-              />
-            </CardText>
-          </CardBody>
-        </Card>
-      );
-    }
+    // Set text color to black if color is light
+    const textColor = (
+      color === 'light'
+        ? 'black'
+        : undefined
+    );
 
-    // Render user
-    if (status === STATUS.DISPLAYING) {
-      console.log(user);
-      return (
+    return (
+      <Alert
+        className="profile-well"
+        style={{
+          width: wellWidth,
+          color: textColor,
+        }}
+        color={color}
+      >
+        <img
+          className="img-fluid profile-image"
+          src={avatarURL}
+          alt={`${name}'s profile`}
+          style={{
+            height: imageHeight,
+          }}
+        />
         <div>
-        WHOA THERE
-          {user.name}asdf
-          {user.avatar_url}
+          <div>
+            <strong>{name}</strong>
+          </div>
+          <div className="data-container">
+            <div
+              className="datum-container"
+              title={email}
+            >
+              <div className="icon-container">
+                <Envelope />
+              </div>
+              {email}
+            </div>
+            <div
+              className="datum-container"
+              title={sisUserId}
+            >
+              <div className="icon-container">
+                <IdCard />
+              </div>
+              {sisUserId}
+            </div>
+          </div>
         </div>
-      );
-    }
+      </Alert>
+    );
   }
 }
 
 UserProfile.propTypes = {
-  user: PropTypes.object,
-  userId: PropTypes.number,
-  api: PropTypes.instanceOf(CACCLInstance),
+  /* Canvas user object */
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    sis_user_id: PropTypes.string.isRequired,
+    avatar_url: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+  }).isRequired,
+  /* Size of the profile */
+  size: PropTypes.string,
+  /* Bootstrap color of the background of the profile */
+  color: PropTypes.string,
 };
 
 UserProfile.defaultProps = {
-  user: null,
-  userId: null,
-  api: initCACCL(),
+  size: 'md',
+  color: 'secondary',
 };
 
 export default UserProfile;
