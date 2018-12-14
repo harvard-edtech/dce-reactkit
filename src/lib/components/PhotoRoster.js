@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import initCACCL from 'caccl/client/cached';
+import CACCLInstance from 'caccl/APIInstanceClass';
 
 // Import other components
 import LoadSplash from './Splash/Load';
@@ -110,5 +112,28 @@ class Roster extends Component {
     );
   }
 }
+
+Roster.propTypes = {
+  /* Array of Canvas users */
+  users: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    avatar_url: PropTypes.string.isRequired,
+    sis_user_id: PropTypes.string.isRequired,
+  }),
+  /* The course to pull users from (only valid when users is not included) */
+  courseId: PropTypes.number,
+  /* Filter function to apply to users (when pulled from course) */
+  filter: PropTypes.func,
+  /* CACCL instance to use to get the list of assignment */
+  api: PropTypes.instanceOf(CACCLInstance),
+};
+
+Roster.defaultProps = {
+  users: null,
+  courseId: null,
+  filter: null,
+  api: initCACCL(),
+};
 
 export default Roster;
