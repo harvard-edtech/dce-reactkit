@@ -36,7 +36,6 @@ class UserProfile extends Component {
       userId,
       api,
     } = this.props;
-    console.log('USER PROFILE!');
 
     // Check if we need to load the user profile
     if (user) {
@@ -77,23 +76,13 @@ class UserProfile extends Component {
     }
   }
 
-  loadUser() {
-    // Deconstruct props
-    const { userId } = this.props;
-
-    this.state = {}
-  }
-
   render() {
     // Deconstruct state
     const {
       loadMessage,
       user,
-      err,
       status,
     } = this.state;
-
-    let body;
 
     // Render error
     if (status === STATUS.ERROR) {
