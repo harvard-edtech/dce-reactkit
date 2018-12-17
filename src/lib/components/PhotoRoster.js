@@ -37,8 +37,10 @@ class Roster extends Component {
       this.state = {
         status: STATUS.LOADING,
       };
-      api.course.listEnrollments({
+      api.course.listStudents({
         courseId,
+        includeAvatar: true,
+        includeEmail: true,
       })
         .then((enrollments) => {
           let loadedUsers = enrollments;
@@ -102,11 +104,16 @@ class Roster extends Component {
           user={user}
           color={color}
           size={size}
+          marginRight="5px"
+          marginLeft="5px"
+          marginBottom="5px"
         />
       );
     });
     return (
-      <div>
+      <div
+        className="text-center"
+      >
         {profiles}
       </div>
     );

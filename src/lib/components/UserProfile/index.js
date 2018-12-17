@@ -21,6 +21,10 @@ class UserProfile extends Component {
       user,
       size,
       color,
+      marginLeft,
+      marginRight,
+      marginTop,
+      marginBottom,
     } = this.props;
 
     // Deconstruct user information
@@ -53,6 +57,10 @@ class UserProfile extends Component {
       <Alert
         className="profile-well"
         style={{
+          marginRight,
+          marginLeft,
+          marginTop,
+          marginBottom,
           width: wellWidth,
           color: textColor,
         }}
@@ -71,24 +79,28 @@ class UserProfile extends Component {
             <strong>{name}</strong>
           </div>
           <div className="data-container">
-            <div
-              className="datum-container"
-              title={email}
-            >
-              <div className="icon-container">
-                <Envelope />
+            {email && (
+              <div
+                className="datum-container"
+                title={email}
+              >
+                <div className="icon-container">
+                  <Envelope />
+                </div>
+                {email}
               </div>
-              {email}
-            </div>
-            <div
-              className="datum-container"
-              title={sisUserId}
-            >
-              <div className="icon-container">
-                <IdCard />
+            )}
+            {sisUserId && (
+              <div
+                className="datum-container"
+                title={sisUserId}
+              >
+                <div className="icon-container">
+                  <IdCard />
+                </div>
+                {sisUserId}
               </div>
-              {sisUserId}
-            </div>
+            )}
           </div>
         </div>
       </Alert>
