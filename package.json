@@ -47,6 +47,7 @@
       "from": "react-datepicker@2.0.0",
       "version": "2.0.0"
     },
+    "react-download-link": "^2.2.0",
     "reactstrap": "^6.5.0",
     "uuid": "^3.3.2",
     "validator": "^10.9.0"

@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import genUUID from 'uuid/v1';
+
+// Import file download button
+import DownloadLink from 'react-download-link';
 
 // Import bootstrap componenets
 import { Table } from 'reactstrap';
@@ -9,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // Import other components
 import Alert from '../Alert';
 import LeftAddon from '../Layout/LeftAddon';
+import RightAddon from '../Layout/RightAddon';
 import Button from '../Button';
 import Dropdown from '../Dropdown';
 
@@ -18,10 +23,13 @@ import Times from '../../glyphs/Times';
 import Chevron from '../../glyphs/Chevron';
 import Checkbox from '../../glyphs/Checkbox';
 import Check from '../../glyphs/Check';
+import Download from '../../glyphs/Download';
 
 // Import helper functions
 import autoMatch from './autoMatch';
 import getNumCols from './getNumCols';
+// Import script for stringifying csv for download
+import csvToString from './csvToString';
 
 class CSV extends Component {
   constructor(props) {
@@ -32,17 +40,6 @@ class CSV extends Component {
       headersToMatch,
       csv,
     } = this.props;
-    /* {
-         key, // A json object key so we can create json objects out of each row
-         title, // A human-readable title of what the column must contain
-         description, // A human-readable description of what the column must contain
-         required, // If true, this header must be matched to continue
-         requiredGroup, // Key of the group of required fields: at least one header from this group must be matched
-         validator, // A function that returns true if a cell in the column is valid, or a string matching our built-in validators (see top of compomnent)
-         titleGuesses, // A list of guesses for the csv column header. If one of these matches (and the column is valid), this will be automatically matched
-         allowEmpty, // If true, cells in this column may be empty
-       }
-    */
 
     // Skip processing if we have no work to do
     const noCSV = (
@@ -167,7 +164,6 @@ class CSV extends Component {
     const { noCSV } = this.state;
     if (noCSV) {
       // No data
-      console.log(this.props, this.state);
       return (
         <Alert
           color="warning"
@@ -185,6 +181,7 @@ class CSV extends Component {
       numRowsToPreview,
       onReupload,
       headersToMatch,
+      downloadFilename,
     } = this.props;
 
     // Get current header mapping
@@ -508,6 +505,7 @@ class CSV extends Component {
         && !changesMade
         && this.autoMatchingOccurred
       ) {
+        const dropdownMessage = 'We auto-detected the columns of your CSV file. Verify that each dropdown matches the type of info in the column below it.';
         matchMessage = (
           <Alert
             color="warning"
@@ -517,7 +515,7 @@ class CSV extends Component {
               Verify Our Matchings
             </h4>
             <div>
-              We auto-detected the columns of your CSV file. Verify that each blue dropdown matches the type of info in the column below it.
+              {dropdownMessage}
             </div>
             {backButton}
             <Button
@@ -611,25 +609,148 @@ class CSV extends Component {
       }
     }
 
+    // Create the csv preview
+    const csvPreview = (
+      <div
+        style={{
+          overflowX: 'scroll',
+          backgroundColor: 'white',
+        }}
+      >
+        <Table
+          striped
+          bordered
+          className="mb-0"
+        >
+          {tableHeaderContent}
+          {tableRowContent}
+        </Table>
+      </div>
+    );
+
+    // Download button
+    let downloadButton;
+    if (downloadFilename) {
+      const filename = (
+        downloadFilename.endsWith('.csv')
+          ? downloadFilename
+          : `${downloadFilename}.csv`
+      );
+      const fileContents = csvToString(csv);
+      const downloadMessage = (
+        <RightAddon centerVertically>
+          <h3 className="mb-0">{filename}</h3>
+          <DownloadLink
+            filename={filename}
+            exportFile={() => { return fileContents; }}
+            label={(
+              <span>
+                <Download className="mr-2" />
+                Download
+              </span>
+            )}
+            tagName="div"
+            className="btn btn-lg btn-dark text-white"
+            style={{
+              textDecoration: 'none !important',
+            }}
+          />
+        </RightAddon>
+      );
+      if (matchMessage) {
+        // Performing matching. Add an unobtrusive download button
+        downloadButton = (
+          <Alert
+            color="dark"
+            className="mb-0"
+          >
+            {downloadMessage}
+          </Alert>
+        );
+      } else {
+        // Not performing matching. Show the preview inside the download alert
+        return (
+          <Alert
+            color="dark"
+            className="mb-0"
+          >
+            {downloadMessage}
+            <div className="mt-2">
+              {csvPreview}
+            </div>
+          </Alert>
+        );
+      }
+    }
+
     return (
       <div>
+        {downloadButton}
         {matchMessage}
-        <div
-          style={{
-            overflowX: 'scroll',
-          }}
-        >
-          <Table
-            striped
-            bordered
-          >
-            {tableHeaderContent}
-            {tableRowContent}
-          </Table>
-        </div>
+        {csvPreview}
       </div>
     );
   }
 }
+
+CSV.propTypes = {
+  /* The CSV to show. Note: csv.headers and csv.data have different forms,
+   * depending upon the value of noHeader */
+  csv: PropTypes.shape({
+    headers: PropTypes.arrayOf(PropTypes.string),
+    data: PropTypes.arrayOf(PropTypes.object),
+  }).isRequired,
+  /* Headers to match (matching is performed if headers are included) */
+  headersToMatch: PropTypes.arrayOf(
+    PropTypes.shape({
+      /* A json object key so we can create json objects out of each row */
+      key: PropTypes.string,
+      /* A human-readable title of what the column must contain */
+      title: PropTypes.string,
+      /* A human-readable description of what the column must contain */
+      description: PropTypes.string,
+      /* If true, this header must be matched to continue */
+      required: PropTypes.bool,
+      /* A function that returns true if a cell in the column is valid, or a
+       * string matching our built-in validators (see top of compomnent) */
+      validator: PropTypes.func,
+      /* A list of guesses for the csv column header. If one of these matches
+       * (and the column is valid), this will be automatically matched */
+      titleGuesses: PropTypes.arrayOf(PropTypes.string),
+      /* If true, cells in this column may be empty */
+      allowEmpty: PropTypes.bool,
+    })
+  ),
+  /* If true, the csv is not expected to have any header (and csv.data is
+   * expected to be an array of row arrays)
+   * example:
+   * - csv.headers: null
+   * - csv.data: [['Gabe', 'gabe@example.com'], ...]
+   * otherwise, csv.headers is read as the list of keys to use in extracting
+   * cell data from csv.data
+   * example:
+   * - csv.headers = ['Full Name', 'email']
+   * - csv.data = [{'Full Name': 'Gabe', email: 'gabe@example.com'}, ...])
+   */
+  noHeader: PropTypes.bool,
+  /* The number of rows to show in the csv preview (null to show all) */
+  numRowsToPreview: PropTypes.number,
+  /* A handler to call when the "choose new file" button is clicked */
+  onReupload: PropTypes.func,
+  /* A handler to call when matching is finished */
+  onFinished: PropTypes.func,
+  /* If defined, a download button is shown and the downloaded file has this
+   * name */
+  downloadFilename: PropTypes.string,
+};
+
+CSV.defaultProps = {
+  headersToMatch: null,
+  noHeader: false,
+  numRowsToPreview: null,
+  onReupload: null,
+  onFinished: null,
+  downloadFilename: null,
+};
 
 export default CSV;

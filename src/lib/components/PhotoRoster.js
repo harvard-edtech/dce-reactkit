@@ -101,6 +101,7 @@ class Roster extends Component {
     const profiles = users.map((user) => {
       return (
         <UserProfile
+          key={user.id}
           user={user}
           color={color}
           size={size}
