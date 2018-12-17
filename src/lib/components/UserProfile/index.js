@@ -120,11 +120,32 @@ UserProfile.propTypes = {
   size: PropTypes.string,
   /* Bootstrap color of the background of the profile */
   color: PropTypes.string,
+  /* Margins */
+  marginLeft: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  marginRight: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  marginTop: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  marginBottom: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
 };
 
 UserProfile.defaultProps = {
   size: 'md',
   color: 'secondary',
+  marginLeft: null,
+  marginRight: null,
+  marginTop: null,
+  marginBottom: null,
 };
 
 export default UserProfile;

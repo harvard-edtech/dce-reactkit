@@ -129,7 +129,10 @@ Roster.propTypes = {
     sis_user_id: PropTypes.string.isRequired,
   }),
   /* The course to pull users from (only valid when users is not included) */
-  courseId: PropTypes.number,
+  courseId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   /* Filter function to apply to users (when pulled from course) */
   filter: PropTypes.func,
   /* CACCL instance to use to get the list of assignment */
