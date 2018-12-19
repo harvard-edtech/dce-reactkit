@@ -1,0 +1,35 @@
+.outer-container {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.y-label-container {
+  display: inline-block;
+  width: 1.5em;
+  float: left;
+}
+
+.y-label-text {
+  display: inline-block;
+  height: 1.5em;
+  float: left;
+  transform: rotate(90deg);
+  transform-origin: 0.75em;
+  text-align: center;
+}
+
+.x-label-text {
+  height: 1.5em;
+  text-align: center;
+}
+
+.label-text {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.unit {
+  margin-left: 5px;
+  font-style: italic;
+  font-weight: normal;
+}

@@ -130,7 +130,10 @@ Modal.propTypes = {
     PropTypes.node,
   ]),
   /* A message to show on the left side of the footer */
-  footerMessage: PropTypes.string,
+  footerMessage: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node,
+  ]),
   /* Buttons to show in the modal */
   buttons: PropTypes.arrayOf(
     PropTypes.shape({
