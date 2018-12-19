@@ -6,6 +6,13 @@
   "scripts": {
     "build": "rimraf common && rimraf components && rimraf glyphs && NODE_ENV=production babel src/lib --out-dir . --copy-files --ignore __tests__,spec.js,test.js,__snapshots__"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harvard-edtech/dce-reactkit"
+  },
+  "author": "Gabriel Abrams <gabeabrams@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/harvard-edtech/dce-reactkit#readme",
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "babel-cli": "^6.26.0",
@@ -37,18 +44,10 @@
     "papaparse": "^4.6.2",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
-    "react-datepicker": {
-      "dependencies": {
-        "date-fns": {
-          "from": "date-fns@1.30.1",
-          "version": "1.30.1"
-        }
-      },
-      "from": "react-datepicker@2.0.0",
-      "version": "2.0.0"
-    },
+    "react-datepicker": "^2.0.0",
     "react-download-link": "^2.2.0",
     "reactstrap": "^6.5.0",
+    "recharts": "^1.4.1",
     "uuid": "^3.3.2",
     "validator": "^10.9.0"
   }

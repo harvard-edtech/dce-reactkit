@@ -30,30 +30,35 @@ class Button extends Component {
     // Extract properties
     const {
       text,
-      marginLeft,
-      marginRight,
-      marginTop,
-      marginBottom,
       children,
       ...props
     } = this.props;
 
     // Set up button style
-
     return (
-      <BootstrapButton
-        {...props}
-        style={{
-          marginRight,
-          marginLeft,
-          marginTop,
-          marginBottom,
-        }}
-      >
+      <BootstrapButton {...props}>
         {text || children || 'Choose'}
       </BootstrapButton>
     );
   }
 }
+
+Button.propTypes = {
+  /* Label text of the button */
+  text: PropTypes.string,
+  /* Body of the button (only valid if text is not included) */
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]),
+  /* Also, all Bootstrap button props may be included:
+   * https://reactstrap.github.io/components/buttons/
+   */
+};
+
+Button.defaultProps = {
+  text: null,
+  children: null,
+};
 
 export default Button;

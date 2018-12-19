@@ -7,20 +7,22 @@ import Alert from './Alert';
 class Well extends Component {
   render() {
     // Deconstruct properties
-    const {
-      children,
-      ...props
-    } = this.props;
+    const { children } = this.props;
 
     return (
-      <Alert
-        color="secondary"
-        {...props}
-      >
+      <Alert color="secondary">
         {children}
       </Alert>
     );
   }
 }
+
+Well.propTypes = {
+  /* Children (body) of the well */
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
+};
 
 export default Well;

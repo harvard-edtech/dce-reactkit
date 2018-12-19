@@ -17,8 +17,9 @@ class Radio extends Component {
     // state.selected:
     // - null (none selected)
     // - number (index of selected radio)
+    const { initialSelectedIndex } = this.props;
     this.state = {
-      selected: null,
+      selected: initialSelectedIndex,
     };
 
     // Bind functions
@@ -32,37 +33,33 @@ class Radio extends Component {
     // Deconstruct properties
     const {
       onChange,
-      options,
+      items,
     } = this.props;
 
     if (onChange) {
-      onChange(selected, options[selected]);
+      onChange(items[selected], selected);
     }
   }
 
   render() {
     // Deconstruct properties
     const {
-      options,
-      marginRight,
-      marginLeft,
-      marginTop,
-      marginBottom,
-      ...props
+      items,
+      color,
     } = this.props;
 
     // Deconstruct state
     const { selected } = this.state;
 
-    const buttons = options.map((text, index) => {
+    const buttons = items.map((text, index) => {
       return (
         <Button
-          key={`${text}`}
-          {...props}
+          key={text}
           onClick={() => {
             return this.onRadioBtnClick(index);
           }}
           active={selected === index}
+          color={color}
         >
           {text}
         </Button>
@@ -70,18 +67,28 @@ class Radio extends Component {
     });
 
     return (
-      <ButtonGroup
-        style={{
-          marginRight,
-          marginLeft,
-          marginTop,
-          marginBottom,
-        }}
-      >
+      <ButtonGroup>
         {buttons}
       </ButtonGroup>
     );
   }
 }
+
+Radio.propTypes = {
+  /* Array of item labels to choose from */
+  items: PropTypes.arrayOf(PropTypes.string).isRequired,
+  /* Handler to call when radio is changed. Called with option, index. */
+  onChange: PropTypes.func,
+  /* The initial item index to select */
+  initialSelectedIndex: PropTypes.number,
+  /* Bootstrap color of the buttons */
+  color: PropTypes.string,
+};
+
+Radio.defaultProps = {
+  onChange: null,
+  initialSelectedIndex: 0,
+  color: 'secondary',
+};
 
 export default Radio;

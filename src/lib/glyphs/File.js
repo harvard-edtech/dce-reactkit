@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFile,
@@ -25,5 +27,14 @@ class File extends Component {
     );
   }
 }
+
+File.propTypes = {
+  // Supported file types: 'csv'
+  type: PropTypes.string,
+};
+
+File.defaultProps = {
+  type: null,
+};
 
 export default File;

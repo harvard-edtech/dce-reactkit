@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronUp,
@@ -15,7 +17,7 @@ import {
  * add circled prop to put the chevron in a circle bubble
  */
 
-class Move extends Component {
+class Chevron extends Component {
   render() {
     // Extract props
     const {
@@ -66,4 +68,21 @@ class Move extends Component {
   }
 }
 
-export default Move;
+Chevron.propTypes = {
+  // If true, the chevron is shown in a circle
+  circled: PropTypes.bool,
+  // The direction of the chevron
+  direction: PropTypes.oneOf([
+    'up',
+    'down',
+    'left',
+    'right',
+  ]),
+};
+
+Chevron.defaultProps = {
+  circled: false,
+  direction: 'right',
+};
+
+export default Chevron;

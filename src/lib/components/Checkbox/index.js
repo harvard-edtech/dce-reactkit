@@ -85,7 +85,7 @@ class Checkbox extends Component {
 }
 
 Checkbox.propTypes = {
-  /* If true, the checkbox starts checked (when initialized) */
+  // If true, the checkbox starts checked (when initialized)
   startChecked: PropTypes.bool,
   /**
    * If included, this function is called when the checkbox is toggled with a
@@ -93,7 +93,7 @@ Checkbox.propTypes = {
    * @param {boolean} isChecked true if the checkbox was just checked
    */
   onChange: PropTypes.func,
-  /* If true, the light theme is applied to the checkbox */
+  // If true, the light theme is applied to the checkbox
   light: PropTypes.bool,
 };
 

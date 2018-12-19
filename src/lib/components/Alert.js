@@ -33,12 +33,8 @@ class Alert extends Component {
     const {
       dismissible,
       onDismiss,
-      children,
       centered,
-      marginLeft,
-      marginRight,
-      marginTop,
-      marginBottom,
+      children,
       ...props
     } = this.props;
 
@@ -46,15 +42,10 @@ class Alert extends Component {
     const { visible } = this.state;
 
     return (
-
       <BootstrapAlert
         isOpen={visible}
         toggle={dismissible ? this.closeClicked : undefined}
         style={{
-          marginLeft,
-          marginRight,
-          marginTop,
-          marginBottom,
           textAlign: (centered ? 'center' : 'left'),
         }}
         {...props}
@@ -64,5 +55,25 @@ class Alert extends Component {
     );
   }
 }
+
+Alert.propTypes = {
+  /* If true, the alert is dismissible */
+  dismissible: PropTypes.bool,
+  /* Handler to call when the alert is dismissed (only valid if dismissible) */
+  onDismiss: PropTypes.func,
+  /* If true, text is centered in the alert */
+  centered: PropTypes.bool,
+  /* Children (body) of the alert */
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
+};
+
+Alert.defaultProps = {
+  dismissible: false,
+  onDismiss: null,
+  centered: false,
+};
 
 export default Alert;

@@ -700,24 +700,24 @@ CSV.propTypes = {
     headers: PropTypes.arrayOf(PropTypes.string),
     data: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
-  /* Headers to match (matching is performed if headers are included) */
+  // Headers to match (matching is performed if headers are included)
   headersToMatch: PropTypes.arrayOf(
     PropTypes.shape({
-      /* A json object key so we can create json objects out of each row */
+      // A json object key so we can create json objects out of each row
       key: PropTypes.string,
-      /* A human-readable title of what the column must contain */
+      // A human-readable title of what the column must contain
       title: PropTypes.string,
-      /* A human-readable description of what the column must contain */
+      // A human-readable description of what the column must contain
       description: PropTypes.string,
-      /* If true, this header must be matched to continue */
+      // If true, this header must be matched to continue
       required: PropTypes.bool,
       /* A function that returns true if a cell in the column is valid, or a
-       * string matching our built-in validators (see top of compomnent) */
+       * string matching our built-in validators (see top of component) */
       validator: PropTypes.func,
       /* A list of guesses for the csv column header. If one of these matches
        * (and the column is valid), this will be automatically matched */
       titleGuesses: PropTypes.arrayOf(PropTypes.string),
-      /* If true, cells in this column may be empty */
+      // If true, cells in this column may be empty
       allowEmpty: PropTypes.bool,
     })
   ),
@@ -733,11 +733,11 @@ CSV.propTypes = {
    * - csv.data = [{'Full Name': 'Gabe', email: 'gabe@example.com'}, ...])
    */
   noHeader: PropTypes.bool,
-  /* The number of rows to show in the csv preview (null to show all) */
+  // The number of rows to show in the csv preview (null to show all)
   numRowsToPreview: PropTypes.number,
-  /* A handler to call when the "choose new file" button is clicked */
+  // A handler to call when the "choose new file" button is clicked
   onReupload: PropTypes.func,
-  /* A handler to call when matching is finished */
+  // A handler to call when matching is finished
   onFinished: PropTypes.func,
   /* If defined, a download button is shown and the downloaded file has this
    * name */

@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 // Import bootstrap stylesheet
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+/*
+Looks like:
+................................................................................
+| ............................................................ ............... |
+| |    Left area fills the rest of the space (first child)   | | Right Addon | |
+| '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' ''''''''''''''' |
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+*/
 
 class RightAddon extends Component {
   render() {
@@ -36,5 +46,19 @@ class RightAddon extends Component {
     );
   }
 }
+
+RightAddon.propTypes = {
+  /* Must have two children: first child is the item on the left that fills up
+   * the ret of the space, the second child is the item that's added on the
+   * right
+   */
+  children: PropTypes.arrayOf(PropTypes.node).isRequired,
+  // If true, the items are vertically centered
+  centerVertically: PropTypes.bool,
+};
+
+RightAddon.defaultProps = {
+  centerVertically: false,
+};
 
 export default RightAddon;

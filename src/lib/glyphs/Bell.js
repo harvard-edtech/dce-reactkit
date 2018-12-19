@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faBellSlash } from '@fortawesome/free-solid-svg-icons';
 
@@ -20,5 +21,14 @@ class Bell extends Component {
     );
   }
 }
+
+Bell.propTypes = {
+  // If true, a slash is shown cutting through the bell
+  slashed: PropTypes.bool,
+};
+
+Bell.defaultProps = {
+  slashed: false,
+};
 
 export default Bell;

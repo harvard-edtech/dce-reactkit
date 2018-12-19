@@ -18,25 +18,12 @@ class Card extends Component {
     const {
       title,
       subtitle,
-      body,
       children,
-      marginLeft,
-      marginRight,
-      marginTop,
-      marginBottom,
       ...props
     } = this.props;
 
     return (
-      <BootstrapCard
-        style={{
-          marginLeft,
-          marginRight,
-          marginTop,
-          marginBottom,
-        }}
-        {...props}
-      >
+      <BootstrapCard {...props}>
         {title && (
           <CardHeader>
             <CardTitle className="mb-0">
@@ -56,5 +43,22 @@ class Card extends Component {
     );
   }
 }
+
+Card.propTypes = {
+  /* The title of the card */
+  title: PropTypes.string,
+  /* The subtitle of the card */
+  subtitle: PropTypes.string,
+  /* Children/body of the card */
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
+};
+
+Card.defaultProps = {
+  title: null,
+  subtitle: null,
+};
 
 export default Card;

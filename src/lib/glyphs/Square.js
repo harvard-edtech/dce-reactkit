@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquare as faSquareFilled } from '@fortawesome/free-solid-svg-icons';
 import { faSquare } from '@fortawesome/free-regular-svg-icons';
@@ -30,5 +32,17 @@ class Square extends Component {
     );
   }
 }
+
+Square.propTypes = {
+  // If true, the square is filled
+  filled: PropTypes.bool,
+  // Factor by which to grow the check mark
+  grow: PropTypes.number,
+};
+
+Square.defaultProps = {
+  filled: false,
+  grow: null,
+};
 
 export default Square;

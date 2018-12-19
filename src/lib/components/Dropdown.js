@@ -40,7 +40,7 @@ class Dropdown extends Component {
       color,
       rightAligned,
       inline,
-      items, // { text, divider, header, disabled, onClick }
+      items,
       ...props
     } = this.props;
 
@@ -83,5 +83,38 @@ class Dropdown extends Component {
     );
   }
 }
+
+Dropdown.propTypes = {
+  /* Title/label of the dropdown */
+  title: PropTypes.string.isRequired,
+  /* The bootstrap color of the dropdown button */
+  color: PropTypes.string,
+  /* If true, the dropdown menu is right-aligned (left-aligned otherwise) */
+  rightAligned: PropTypes.bool,
+  /* If true, the dropdown menu is inserted in-line (instead of block) */
+  inline: PropTypes.bool,
+  /* The dropdown items */
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      /* The title of the item */
+      text: PropTypes.string,
+      /* If true, this item is a divider (text is ignored) */
+      divider: PropTypes.bool,
+      /* If true, this item is a header item (not clickable) */
+      header: PropTypes.bool,
+      /* If true, this item is disabled (not clickable) */
+      disabled: PropTypes.bool,
+      /* Handler to call when item is clicked */
+      onClick: PropTypes.func,
+    })
+  ),
+};
+
+Dropdown.defaultProps = {
+  color: 'secondary',
+  rightAligned: false,
+  inline: false,
+  items: [],
+};
 
 export default Dropdown;
