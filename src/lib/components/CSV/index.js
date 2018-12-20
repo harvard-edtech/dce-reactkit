@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import genUUID from 'uuid/v1';
 
-// Import file download button
-import DownloadLink from 'react-download-link';
-
 // Import bootstrap componenets
 import { Table } from 'reactstrap';
 // Import bootstrap stylesheet
@@ -16,6 +13,7 @@ import LeftAddon from '../Layout/LeftAddon';
 import RightAddon from '../Layout/RightAddon';
 import Button from '../Button';
 import Dropdown from '../Dropdown';
+import DownloadButton from '../DownloadButton';
 
 // Import glyphs
 import Ellipsis from '../../glyphs/Ellipsis';
@@ -23,13 +21,12 @@ import Times from '../../glyphs/Times';
 import Chevron from '../../glyphs/Chevron';
 import Checkbox from '../../glyphs/Checkbox';
 import Check from '../../glyphs/Check';
-import Download from '../../glyphs/Download';
 
 // Import helper functions
 import autoMatch from './autoMatch';
 import getNumCols from './getNumCols';
 // Import script for stringifying csv for download
-import csvToString from './csvToString';
+import csvToString from '../../common/csvToString';
 
 class CSV extends Component {
   constructor(props) {
@@ -640,20 +637,10 @@ class CSV extends Component {
       const downloadMessage = (
         <RightAddon centerVertically>
           <h3 className="mb-0">{filename}</h3>
-          <DownloadLink
+          <DownloadButton
             filename={filename}
-            exportFile={() => { return fileContents; }}
-            label={(
-              <span>
-                <Download className="mr-2" />
-                Download
-              </span>
-            )}
-            tagName="div"
-            className="btn btn-lg btn-dark text-white"
-            style={{
-              textDecoration: 'none !important',
-            }}
+            contents={fileContents}
+            large
           />
         </RightAddon>
       );

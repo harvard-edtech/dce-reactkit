@@ -1,5 +1,5 @@
 export default {
-  defaultBlue: '#005392',
+  defaultBlue: '#419bf7',
   assortment: [
     '#ec4f6a',
     '#f19542',

@@ -13,8 +13,13 @@ import {
   Legend,
 } from 'recharts';
 
+// Import helpers
+import csvToString from '../../common/csvToString';
+
+// Import other components
 import Holder from './Holder';
 
+// Import default colors
 import colors from './colors';
 
 class ScatterChart extends Component {
@@ -31,9 +36,24 @@ class ScatterChart extends Component {
       yUnit,
       data,
       noTooltipOnHover,
+      noDownload,
       showLegend,
       seriesName,
     } = this.props;
+
+    // Create download content
+    let csvContents;
+    if (!noDownload) {
+      const xField = `${xLabel}${xUnit ? ' (' + xUnit + ')' : ''}`;
+      const yField = `${yLabel}${yUnit ? ' (' + yUnit + ')' : ''}`;
+      const csv = {
+        fields: [xField, yField],
+        data: data.map((datum) => {
+          return [datum.x, datum.y];
+        }),
+      };
+      csvContents = csvToString(csv);
+    }
 
     return (
       <Holder
@@ -44,6 +64,7 @@ class ScatterChart extends Component {
         yUnit={yUnit}
         width={width}
         height={height}
+        csvContents={csvContents}
       >
         <ResponsiveContainer
           width="100%"
@@ -115,6 +136,8 @@ ScatterChart.propTypes = {
   ).isRequired,
   // If true, no tooltip is shown when hovering over a point
   noTooltipOnHover: PropTypes.bool,
+  // If true, no download button is shown
+  noDownload: PropTypes.bool,
   // Name of the series (included and required for legend)
   seriesName: PropTypes.string,
   // If true, legend is included
@@ -132,6 +155,7 @@ ScatterChart.defaultProps = {
   yUnit: null,
   seriesName: 'Chart',
   noTooltipOnHover: false,
+  noDownload: false,
   showLegend: false,
 };
 

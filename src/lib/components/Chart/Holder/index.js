@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+// Import other components
+import DownloadButton from '../../DownloadButton';
+
 // Import custom styles
 import './style.css';
 
@@ -15,6 +18,7 @@ class Holder extends Component {
       yUnit,
       width,
       height,
+      csvContents,
       children,
     } = this.props;
 
@@ -34,6 +38,14 @@ class Holder extends Component {
           >
             <h4 className="text-center">
               {title}
+              {csvContents && (
+                <DownloadButton
+                  text="CSV"
+                  filename={`${title}.csv`}
+                  contents={csvContents}
+                  marginLeft="5px"
+                />
+              )}
             </h4>
           </div>
         )
@@ -96,7 +108,7 @@ class Holder extends Component {
     );
 
     return (
-      <div className="mb-2">
+      <div className="mb-4">
         <div
           className="outer-container"
           style={{
@@ -136,6 +148,8 @@ Holder.propTypes = {
   ]),
   // The chart object (should be set to fill 100% width an height)
   children: PropTypes.node.isRequired,
+  // File contents to download
+  csvContents: PropTypes.string,
 };
 
 Holder.defaultProps = {
@@ -146,6 +160,7 @@ Holder.defaultProps = {
   yUnit: null,
   width: '100%',
   height: '500px',
+  csvContents: null,
 };
 
 export default Holder;

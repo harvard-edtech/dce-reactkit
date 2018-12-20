@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import genUUID from 'uuid/v1';
 
 // Import rechart components
 import {
@@ -17,6 +18,9 @@ import Holder from './Holder';
 // Import default colors
 import colors from './colors';
 
+// Import helpers
+import csvToString from '../../common/csvToString';
+
 class DonutChart extends Component {
   render() {
     // Deconstruct props
@@ -27,14 +31,27 @@ class DonutChart extends Component {
       height,
       data,
       noTooltipOnHover,
+      noDownload,
       showLegend,
     } = this.props;
+
+    let csvContents;
+    if (!noDownload) {
+      const csv = {
+        fields: ['Name', 'Value'],
+        data: data.map((datum) => {
+          return [datum.name, datum.value];
+        }),
+      };
+      csvContents = csvToString(csv);
+    }
 
     return (
       <Holder
         title={title}
         width={width}
         height={height}
+        csvContents={csvContents}
       >
         <ResponsiveContainer
           width="100%"
@@ -46,6 +63,7 @@ class DonutChart extends Component {
             )}
             <Pie
               data={data}
+              dataKey="value"
               innerRadius="60%"
               outerRadius="100%"
               fill={color}
@@ -74,6 +92,7 @@ class DonutChart extends Component {
                   }
                   return (
                     <Cell
+                      key={genUUID()}
                       fill={itemColor}
                     />
                   );
@@ -94,7 +113,7 @@ DonutChart.propTypes = {
   // Title of the chart
   title: PropTypes.string,
   // Default CSS color (#123456 or 'white') for slices (can be overridden)
-  // OR 'rainbow' for random colors
+  // OR 'assortment' for random colors
   color: PropTypes.string,
   // Width ('100%' or 50)
   width: PropTypes.oneOfType([
@@ -110,7 +129,10 @@ DonutChart.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
       // Name of the slice
-      name: PropTypes.string.isRequired,
+      name: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+      ]).isRequired,
       // Value of the slice (size)
       value: PropTypes.number.isRequired,
       // Color of the slice (overrides props.color)
@@ -121,15 +143,18 @@ DonutChart.propTypes = {
   noTooltipOnHover: PropTypes.bool,
   // If true, legend is included
   showLegend: PropTypes.bool,
+  // If true, no download button is shown
+  noDownload: PropTypes.bool,
 };
 
 DonutChart.defaultProps = {
   title: null,
-  color: 'rainbow',
+  color: 'assortment',
   width: '100%',
   height: '500px',
   noTooltipOnHover: false,
   showLegend: false,
+  noDownload: false,
 };
 
 export default DonutChart;
