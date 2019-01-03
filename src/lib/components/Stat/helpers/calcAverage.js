@@ -2,7 +2,7 @@
 import math from '../../../common/math';
 
 // Import other helpers
-import sum from './sum';
+import calcSum from './calcSum';
 
 export default (data) => {
   // No data
@@ -16,5 +16,5 @@ export default (data) => {
   if (data.length === 1) {
     return data[0];
   }
-  return math.div(sum, data.length);
+  return math.div(calcSum(data), data.length);
 };
