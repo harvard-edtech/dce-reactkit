@@ -23,10 +23,10 @@ export default (data) => {
 
   return (
     evenNumElems
-      ? sortedData[middleIndex]
-      : math.div(
+      ? math.div(
         math.add(sortedData[middleIndex], sortedData[middleIndex - 1]),
         2
       )
+      : sortedData[middleIndex]
   );
 };
