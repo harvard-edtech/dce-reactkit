@@ -102,7 +102,7 @@ class General extends Component {
     let toggle;
     if (showToggle) {
       toggle = (
-        <div>
+        <div className="text-center mb-1">
           <Radio
             items={[
               'Include Zeros',
@@ -220,7 +220,7 @@ class General extends Component {
               >
                 <div>
                   <strong>
-                    Number of Items:
+                    Num Items:
                   </strong>
                 </div>
                 <div>
