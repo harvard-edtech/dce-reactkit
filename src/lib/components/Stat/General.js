@@ -56,6 +56,7 @@ class General extends Component {
         average,
         stdDev,
         median,
+        numItems: currentData.length,
       };
     });
 
@@ -126,6 +127,7 @@ class General extends Component {
       average,
       median,
       stdDev,
+      numItems,
     } = (
       displayingStatsWithZeros
         ? statsWithZeros
@@ -140,75 +142,94 @@ class General extends Component {
           </h3>
         )}
         {toggle}
-        <ListGroup>
-          <ListGroupItem>
-            <TwoCol
-              col1Align="right"
-              col2Align="left"
-            >
-              <div>
-                <strong>Average:</strong>
-              </div>
-              <div>
-                {average.toFixed(numDecimals)}
-              </div>
-            </TwoCol>
-          </ListGroupItem>
-          <ListGroupItem>
-            <TwoCol
-              col1Align="right"
-              col2Align="left"
-            >
-              <div>
-                <strong>Median:</strong>
-              </div>
-              <div>
-                {median.toFixed(numDecimals)}
-              </div>
-            </TwoCol>
-          </ListGroupItem>
-          <ListGroupItem>
-            <TwoCol
-              col1Align="right"
-              col2Align="left"
-            >
-              <div>
-                <strong>Standard Dev:</strong>
-              </div>
-              <div>
-                {stdDev.toFixed(numDecimals)}
-              </div>
-            </TwoCol>
-          </ListGroupItem>
-          <ListGroupItem>
-            <TwoCol
-              col1Align="right"
-              col2Align="left"
-            >
-              <div>
-                <strong>High:</strong>
-              </div>
-              <div>
-                {high.toFixed(numDecimals)}
-              </div>
-            </TwoCol>
-          </ListGroupItem>
-          <ListGroupItem>
-            <TwoCol
-              col1Align="right"
-              col2Align="left"
-            >
-              <div>
-                <strong>
-                  Low:
-                </strong>
-              </div>
-              <div>
-                {low.toFixed(numDecimals)}
-              </div>
-            </TwoCol>
-          </ListGroupItem>
-        </ListGroup>
+        <TwoCol>
+          <ListGroup>
+            <ListGroupItem>
+              <TwoCol
+                col1Align="right"
+                col2Align="left"
+              >
+                <div>
+                  <strong>Average:</strong>
+                </div>
+                <div>
+                  {average.toFixed(numDecimals)}
+                </div>
+              </TwoCol>
+            </ListGroupItem>
+            <ListGroupItem>
+              <TwoCol
+                col1Align="right"
+                col2Align="left"
+              >
+                <div>
+                  <strong>Median:</strong>
+                </div>
+                <div>
+                  {median.toFixed(numDecimals)}
+                </div>
+              </TwoCol>
+            </ListGroupItem>
+            <ListGroupItem>
+              <TwoCol
+                col1Align="right"
+                col2Align="left"
+              >
+                <div>
+                  <strong>Standard Dev:</strong>
+                </div>
+                <div>
+                  {stdDev.toFixed(numDecimals)}
+                </div>
+              </TwoCol>
+            </ListGroupItem>
+          </ListGroup>
+          <ListGroup>
+            <ListGroupItem>
+              <TwoCol
+                col1Align="right"
+                col2Align="left"
+              >
+                <div>
+                  <strong>High:</strong>
+                </div>
+                <div>
+                  {high.toFixed(numDecimals)}
+                </div>
+              </TwoCol>
+            </ListGroupItem>
+            <ListGroupItem>
+              <TwoCol
+                col1Align="right"
+                col2Align="left"
+              >
+                <div>
+                  <strong>
+                    Low:
+                  </strong>
+                </div>
+                <div>
+                  {low.toFixed(numDecimals)}
+                </div>
+              </TwoCol>
+            </ListGroupItem>
+            <ListGroupItem>
+              <TwoCol
+                col1Align="right"
+                col2Align="left"
+              >
+                <div>
+                  <strong>
+                    Number of Items:
+                  </strong>
+                </div>
+                <div>
+                  {numItems}
+                </div>
+              </TwoCol>
+            </ListGroupItem>
+          </ListGroup>
+        </TwoCol>
       </Well>
     );
   }
