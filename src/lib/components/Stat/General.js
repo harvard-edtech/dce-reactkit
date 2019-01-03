@@ -69,7 +69,10 @@ class General extends Component {
 
   render() {
     // Deconstruct props
-    const { title } = this.props;
+    const {
+      title,
+      numDecimals,
+    } = this.props;
 
     // Deconstruct state
     const {
@@ -132,7 +135,9 @@ class General extends Component {
     return (
       <Well>
         {title && (
-          <h3>{title}</h3>
+          <h3 className="text-center">
+            {title}
+          </h3>
         )}
         {toggle}
         <ListGroup>
@@ -145,7 +150,7 @@ class General extends Component {
                 <strong>Average:</strong>
               </div>
               <div>
-                {average}
+                {average.toFixed(numDecimals)}
               </div>
             </TwoCol>
           </ListGroupItem>
@@ -158,7 +163,7 @@ class General extends Component {
                 <strong>Median:</strong>
               </div>
               <div>
-                {median}
+                {median.toFixed(numDecimals)}
               </div>
             </TwoCol>
           </ListGroupItem>
@@ -171,13 +176,10 @@ class General extends Component {
                 <strong>Standard Dev:</strong>
               </div>
               <div>
-                {stdDev}
+                {stdDev.toFixed(numDecimals)}
               </div>
             </TwoCol>
           </ListGroupItem>
-        </ListGroup>
-
-        <ListGroup>
           <ListGroupItem>
             <TwoCol
               col1Align="right"
@@ -187,7 +189,7 @@ class General extends Component {
                 <strong>High:</strong>
               </div>
               <div>
-                {high}
+                {high.toFixed(numDecimals)}
               </div>
             </TwoCol>
           </ListGroupItem>
@@ -202,7 +204,7 @@ class General extends Component {
                 </strong>
               </div>
               <div>
-                {low}
+                {low.toFixed(numDecimals)}
               </div>
             </TwoCol>
           </ListGroupItem>
@@ -215,12 +217,15 @@ class General extends Component {
 General.propTypes = {
   // Title of the chart
   title: PropTypes.string,
-  // The data/bars
+  // The data
   data: PropTypes.arrayOf(PropTypes.number).isRequired,
+  // The number of decimals
+  numDecimals: PropTypes.number,
 };
 
 General.defaultProps = {
   title: null,
+  numDecimals: 2,
 };
 
 export default General;
