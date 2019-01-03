@@ -14,15 +14,18 @@ export default (data) => {
     return data[0];
   }
 
+  const sortedData = data;
+  sortedData.sort();
+
   // Find middle index
   const middleIndex = Math.floor(math.div(data.length, 2));
   const evenNumElems = (data.length % 2 === 0);
 
   return (
     evenNumElems
-      ? data[middleIndex]
+      ? sortedData[middleIndex]
       : math.div(
-        math.add(data[middleIndex], data[middleIndex - 1]),
+        math.add(sortedData[middleIndex], sortedData[middleIndex - 1]),
         2
       )
   );
