@@ -140,11 +140,13 @@ Roster.propTypes = {
   api: PropTypes.instanceOf(CACCLInstance),
 };
 
+const { api } = initCACCL();
+
 Roster.defaultProps = {
+  api,
   users: null,
   courseId: null,
   filter: null,
-  api: initCACCL(),
 };
 
 export default Roster;

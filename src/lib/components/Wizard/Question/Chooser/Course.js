@@ -196,7 +196,10 @@ CourseChooser.propTypes = {
   api: PropTypes.instanceOf(CACCLInstance),
 };
 
+const { api } = initCACCL();
+
 CourseChooser.defaultProps = {
+  api,
   title: 'Choose a Course:',
   subtitle: null,
   filter: null,
@@ -206,7 +209,6 @@ CourseChooser.defaultProps = {
   dropdownTitle: null,
   dropdownColor: null,
   dropdownItems: null,
-  api: initCACCL(),
 };
 
 export default CourseChooser;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import initCACCL from 'caccl/client/cached';
+import CACCLInstance from 'caccl/APIInstanceClass';
 
 // Import other components
 import Chooser from '.';
@@ -86,9 +87,13 @@ AssignmentChooser.propTypes = {
    *   clicked. */
   dropdownItems: PropTypes.arrayOf(PropTypes.object),
   /* CACCL instance to use to get the list of assignment */
+  api: PropTypes.instanceOf(CACCLInstance),
 };
 
+const { api } = initCACCL();
+
 AssignmentChooser.defaultProps = {
+  api,
   title: 'Choose an Assignment:',
   subtitle: null,
   filter: null,
@@ -98,7 +103,6 @@ AssignmentChooser.defaultProps = {
   dropdownTitle: null,
   dropdownColor: null,
   dropdownItems: null,
-  api: initCACCL(),
 };
 
 export default AssignmentChooser;
