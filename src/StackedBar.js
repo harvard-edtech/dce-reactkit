@@ -84,10 +84,16 @@ class StackedBar extends Component {
 
     // Pre-process the data
     const newData = []; // Array of { name, valueName: value, ...}
+    let longestName = '';
     data.forEach((datum) => {
       const newDatum = {
         name: datum.name,
       };
+
+      // Keep track of the longest name
+      if (longestName.length < datum.name.length) {
+        longestName = datum.name;
+      }
 
       // Add all values, set the number to zero if it wasn't defined
       valueNames.forEach((valueName) => {
@@ -97,6 +103,15 @@ class StackedBar extends Component {
       // Save to newData
       newData.push(newDatum);
     });
+
+    // Design ticks that will fit
+    let tickSpace = 120;
+    const minCharSize = 15;
+    if (tickSpace / longestName.length < minCharSize) {
+      // Tick space needs to be larger
+      tickSpace = longestName.length * minCharSize;
+    }
+    const fontPixelSize = tickSpace / longestName.length;
 
     // Generate csv contents if they weren't included
     let { csvContents } = this.props;
@@ -169,6 +184,18 @@ class StackedBar extends Component {
             <YAxis
               type={horizontal ? 'category' : 'number'}
               dataKey={horizontal ? 'name' : null}
+              tick={{
+                fontSize: (
+                  horizontal
+                    ? (fontPixelSize) + 'px'
+                    : null
+                ),
+              }}
+              width={
+                horizontal
+                  ? tickSpace / 2
+                  : null
+              }
             />
             {/* add tooltip component if its not excluded */}
             {!noTooltipOnHover && (
