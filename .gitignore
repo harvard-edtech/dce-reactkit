@@ -1,29 +1,17 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+*
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Keep gitignore
+!.gitignore
 
-# testing
-/coverage
+# Keep src
+!src/
 
-# production
-/build
+# Keep project docs
+!README.md
 
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Ignore dist version
-/common
-/components
-/glyphs
-/index.js
+# Keep project info
+!package-lock.json
+!package.json
+!.npmignore
+!.babelrc
+!.eslintrc.json

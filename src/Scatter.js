@@ -97,6 +97,10 @@ class Scatter extends Component {
                 cursor={{
                   strokeDasharray: '3 3',
                 }}
+                labelStyle={{
+                  color: 'black',
+                  fontWeight: 'bold',
+                }}
               />
             )}
             {/* add the legend component if it's included */}

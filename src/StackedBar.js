@@ -91,7 +91,7 @@ class StackedBar extends Component {
 
       // Add all values, set the number to zero if it wasn't defined
       valueNames.forEach((valueName) => {
-        newDatum[valueName] = datum.value[valueName] || 0;
+        newDatum[valueName] = datum.values[valueName] || 0;
       });
 
       // Save to newData
@@ -172,7 +172,12 @@ class StackedBar extends Component {
             />
             {/* add tooltip component if its not excluded */}
             {!noTooltipOnHover && (
-              <Tooltip />
+              <Tooltip
+                labelStyle={{
+                  color: 'black',
+                  fontWeight: 'bold',
+                }}
+              />
             )}
             {/* add legend component if it's included */}
             {showLegend && (

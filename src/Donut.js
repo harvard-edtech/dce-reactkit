@@ -116,7 +116,12 @@ class DonutChart extends Component {
             </Pie>
             {/* add the tooltip component if it is included */}
             {!noTooltipOnHover && (
-              <Tooltip />
+              <Tooltip
+                labelStyle={{
+                  color: 'black',
+                  fontWeight: 'bold',
+                }}
+              />
             )}
           </PieChart>
         </ResponsiveContainer>

@@ -86,6 +86,10 @@ class Scatter extends Component {
           !noTooltipOnHover && React.createElement(Tooltip, {
             cursor: {
               strokeDasharray: '3 3'
+            },
+            labelStyle: {
+              color: 'black',
+              fontWeight: 'bold'
             }
           }),
           showLegend && React.createElement(Legend, null),

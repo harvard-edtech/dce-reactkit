@@ -90,7 +90,12 @@ class BarChart extends Component {
             type: horizontal ? 'category' : 'number',
             dataKey: horizontal ? 'name' : null
           }),
-          !noTooltipOnHover && React.createElement(Tooltip, null),
+          !noTooltipOnHover && React.createElement(Tooltip, {
+            labelStyle: {
+              color: 'black',
+              fontWeight: 'bold'
+            }
+          }),
           showLegend && React.createElement(Legend, null),
           React.createElement(Bar, { dataKey: valueLabel, fill: color })
         )

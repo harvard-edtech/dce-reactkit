@@ -80,7 +80,7 @@ class StackedBar extends Component {
 
       // Add all values, set the number to zero if it wasn't defined
       valueNames.forEach(valueName => {
-        newDatum[valueName] = datum.value[valueName] || 0;
+        newDatum[valueName] = datum.values[valueName] || 0;
       });
 
       // Save to newData
@@ -158,7 +158,12 @@ class StackedBar extends Component {
             type: horizontal ? 'category' : 'number',
             dataKey: horizontal ? 'name' : null
           }),
-          !noTooltipOnHover && React.createElement(Tooltip, null),
+          !noTooltipOnHover && React.createElement(Tooltip, {
+            labelStyle: {
+              color: 'black',
+              fontWeight: 'bold'
+            }
+          }),
           showLegend && React.createElement(Legend, null),
           bars
         )

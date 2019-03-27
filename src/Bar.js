@@ -100,7 +100,12 @@ class BarChart extends Component {
             />
             {/* add tooltip component if its not excluded */}
             {!noTooltipOnHover && (
-              <Tooltip />
+              <Tooltip
+                labelStyle={{
+                  color: 'black',
+                  fontWeight: 'bold',
+                }}
+              />
             )}
             {/* add legend component if it's included */}
             {showLegend && (

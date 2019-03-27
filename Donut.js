@@ -91,7 +91,12 @@ class DonutChart extends Component {
               });
             })
           ),
-          !noTooltipOnHover && React.createElement(Tooltip, null)
+          !noTooltipOnHover && React.createElement(Tooltip, {
+            labelStyle: {
+              color: 'black',
+              fontWeight: 'bold'
+            }
+          })
         )
       )
     );
