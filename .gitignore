@@ -16,3 +16,6 @@
 !.npmignore
 !.babelrc
 !.eslintrc.json
+
+# Keep build scripts
+!build.js
