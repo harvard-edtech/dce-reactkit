@@ -2,7 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 // Import rechart components
-import { ResponsiveContainer, BarChart as BarChartRechart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import {
+  ResponsiveContainer,
+  BarChart as BarChartRechart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from 'recharts';
 
 // Import other components
 import Holder from './common/chart/Holder';
@@ -30,7 +39,7 @@ class BarChart extends Component {
       horizontal,
       noTooltipOnHover,
       noDownload,
-      showLegend
+      showLegend,
     } = this.props;
 
     // Generate csv contents if they weren't included
@@ -43,58 +52,65 @@ class BarChart extends Component {
       // Build the csv data object
       const csv = {
         fields: [nameField, valueField],
-        data: data.map(datum => {
+        data: data.map((datum) => {
           return [datum.name, datum.value];
-        })
+        }),
       };
       // Turn the csv object into a string
       csvContents = csvToString(csv);
     }
 
     // Render the component
-    return React.createElement(
-      Holder,
-      {
-        title: title,
-        width: width,
-        height: height,
-        xLabel: horizontal ? valueLabel : nameLabel,
-        xUnit: horizontal ? valueUnit : nameUnit,
-        yLabel: horizontal ? nameLabel : valueLabel,
-        yUnit: horizontal ? nameUnit : valueUnit,
-        csvContents: csvContents
-      },
-      React.createElement(
-        ResponsiveContainer,
-        {
-          width: '100%',
-          height: '100%'
-        },
-        React.createElement(
-          BarChartRechart,
-          {
-            data: data.map(datum => {
+    return (
+      <Holder
+        title={title}
+        width={width}
+        height={height}
+        xLabel={horizontal ? valueLabel : nameLabel}
+        xUnit={horizontal ? valueUnit : nameUnit}
+        yLabel={horizontal ? nameLabel : valueLabel}
+        yUnit={horizontal ? nameUnit : valueUnit}
+        csvContents={csvContents}
+      >
+        {/* a responsive container that expands to the holder size */}
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+        >
+          {/* display the rechart bar chart */}
+          <BarChartRechart
+            data={data.map((datum) => {
               return {
                 name: datum.name,
-                [valueLabel]: datum.value
+                [valueLabel]: datum.value,
               };
-            }),
-            layout: horizontal ? 'vertical' : 'horizontal'
-          },
-          React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
-          React.createElement(XAxis, {
-            type: horizontal ? 'number' : 'category',
-            dataKey: horizontal ? null : 'name'
-          }),
-          React.createElement(YAxis, {
-            type: horizontal ? 'category' : 'number',
-            dataKey: horizontal ? 'name' : null
-          }),
-          !noTooltipOnHover && React.createElement(Tooltip, null),
-          showLegend && React.createElement(Legend, null),
-          React.createElement(Bar, { dataKey: valueLabel, fill: color })
-        )
-      )
+            })}
+            layout={horizontal ? 'vertical' : 'horizontal'}
+          >
+            {/* Add cartesian grid */}
+            <CartesianGrid strokeDasharray="3 3" />
+            {/* add axes and their types/keys based on if chart is horiz */}
+            <XAxis
+              type={horizontal ? 'number' : 'category'}
+              dataKey={horizontal ? null : 'name'}
+            />
+            <YAxis
+              type={horizontal ? 'category' : 'number'}
+              dataKey={horizontal ? 'name' : null}
+            />
+            {/* add tooltip component if its not excluded */}
+            {!noTooltipOnHover && (
+              <Tooltip />
+            )}
+            {/* add legend component if it's included */}
+            {showLegend && (
+              <Legend />
+            )}
+            {/* add the actual bars */}
+            <Bar dataKey={valueLabel} fill={color} />
+          </BarChartRechart>
+        </ResponsiveContainer>
+      </Holder>
     );
   }
 }
@@ -105,9 +121,15 @@ BarChart.propTypes = {
   // Default CSS color (#123456 or 'white') for bars (can be overridden)
   color: PropTypes.string,
   // Width ('100%' or 50)
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  width: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   // Height ('100%' or 50)
-  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  height: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   // Label for the name axis
   nameLabel: PropTypes.string,
   // Unit for the name axis
@@ -117,14 +139,19 @@ BarChart.propTypes = {
   // Unit for the value axis
   valueUnit: PropTypes.string,
   // The data/bars
-  data: PropTypes.arrayOf(PropTypes.shape({
-    // Name of the bar
-    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    // Value of the slice (size)
-    value: PropTypes.number.isRequired,
-    // Color of the slice (overrides props.color)
-    color: PropTypes.string
-  })).isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      // Name of the bar
+      name: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+      ]).isRequired,
+      // Value of the bar
+      value: PropTypes.number.isRequired,
+      // Color of the bar (overrides props.color)
+      color: PropTypes.string,
+    })
+  ).isRequired,
   // If true, bar chart is a horizontal bar chart
   horizontal: PropTypes.bool,
   // If true, no tooltip is shown on hover
@@ -134,7 +161,7 @@ BarChart.propTypes = {
   // If true, no download button is shown
   noDownload: PropTypes.bool,
   // The contents of the csv file to download (auto-generated if not included)
-  csvContents: PropTypes.string
+  csvContents: PropTypes.string,
 };
 
 BarChart.defaultProps = {
@@ -163,7 +190,7 @@ BarChart.defaultProps = {
   // A download button is added by default
   noDownload: false,
   // We auto-generate the csv contents by default
-  csvContents: null
+  csvContents: null,
 };
 
 export default BarChart;
