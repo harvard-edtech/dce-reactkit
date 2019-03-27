@@ -1,17 +1,4 @@
-*
+node_modules/
 
 # Keep gitignore
 !.gitignore
-
-# Keep src
-!src/
-
-# Keep project docs
-!README.md
-
-# Keep project info
-!package-lock.json
-!package.json
-!.npmignore
-!.babelrc
-!.eslintrc.json
