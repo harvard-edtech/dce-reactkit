@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 // Import other components
-import DownloadButton from '../../DownloadButton';
+import DownloadButton from '../../../DownloadButton';
 
 // Import custom styles
 import './style.css';
 
+/* Holder Component */
 class Holder extends Component {
   render() {
-    // Deconstruct props
+    // Deconstruct props (see propTypes below for detailed information)
     const {
       title,
       xLabel,
@@ -22,12 +23,32 @@ class Holder extends Component {
       children,
     } = this.props;
 
-    // Calculate dimensions
+    // Calculate dimensions of the holder
+    // > Chart height depends on if the title is included
     const chartHeight = (
       `calc(${height}${title ? ' - 2.5em' : ''}${xLabel ? ' - 1.5em' : ''})`
     );
+    // > Chart width depends on if there is a y axis label
     const chartWidth = `calc(${width}${yLabel ? ' - 1.5em' : ''})`;
 
+    // The many parts of this component look like this:
+    // |""""""""""""""""""""""""""""""""""""""""""|
+    // |           Chart title [Download]         | <- title content
+    // """"""""""""""""""""""""""""""""""""""""""""
+    // |"""""|""""""""""""""""""""""""""""""""""""|
+    // |  Y  |                                    |
+    // |  L  |                                    |
+    // |  A  |                                    |
+    // |  B  |             Chart Here             | <- top content
+    // |  E  |                                    |
+    // |  L  |                                    |
+    // |     |                                    |
+    // """"""""""""""""""""""""""""""""""""""""""""
+    // |""""""""""""""""""""""""""""""""""""""""""|
+    // |                  X LABEL                 | <- bottom content
+    // """"""""""""""""""""""""""""""""""""""""""""
+
+    // Create the title content (if there's a tite)
     const titleContent = (
       title
         ? (
@@ -36,6 +57,7 @@ class Holder extends Component {
               height: '2.5em',
             }}
           >
+            {/* Add the title and the download button */}
             <h4 className="text-center">
               {title}
               {csvContents && (
@@ -52,6 +74,8 @@ class Holder extends Component {
         : null
     );
 
+    // Create the top content
+    // (includes the y-axis label and the chart, side by side)
     const topContent = (
       <div>
         {yLabel && (
@@ -90,6 +114,8 @@ class Holder extends Component {
       </div>
     );
 
+    // Create the bottom if there's an x label
+    // (includes the x label below the chart)
     const bottomContent = (
       xLabel
         ? (
@@ -107,6 +133,7 @@ class Holder extends Component {
         : null
     );
 
+    // Put all the pieces together into one component
     return (
       <div className="mb-4">
         <div
