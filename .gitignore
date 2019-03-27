@@ -1,4 +1,18 @@
-node_modules/
+# Ignore everything then add things back
+*
 
 # Keep gitignore
 !.gitignore
+
+# Keep src
+!src/
+
+# Keep project docs
+!README.md
+
+# Keep project info
+!package-lock.json
+!package.json
+!.npmignore
+!.babelrc
+!.eslintrc.json
