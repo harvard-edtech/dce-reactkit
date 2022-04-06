@@ -1,6 +1,0 @@
-.babelrc
-.eslintrc.json
-.gitignore
-package*
-README.md
-src/
