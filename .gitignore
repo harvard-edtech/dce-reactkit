@@ -1,21 +1,5 @@
-# Ignore everything then add things back
-*
+# Ignore node modules
+node_modules/
 
-# Keep gitignore
-!.gitignore
-
-# Keep src
-!src/
-
-# Keep project docs
-!README.md
-
-# Keep project info
-!package-lock.json
-!package.json
-!.npmignore
-!.babelrc
-!.eslintrc.json
-
-# Keep build scripts
-!build.js
+# Ignore DS
+**/.DS_Store

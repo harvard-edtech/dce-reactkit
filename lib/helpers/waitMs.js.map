@@ -1,0 +1,1 @@
+{"version":3,"file":"waitMs.js","sourceRoot":"","sources":["../../src/helpers/waitMs.tsx"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;;GAIG;AACH,IAAM,MAAM,GAAG,UAAO,EAAM;IAAN,mBAAA,EAAA,MAAM;;;YAC1B,sBAAO,IAAI,OAAO,CAAC,UAAC,OAAO;oBACzB,UAAU,CAAC,OAAO,EAAE,EAAE,CAAC,CAAC;gBAC1B,CAAC,CAAC,EAAC;;;CACJ,CAAC;AAEF,kBAAe,MAAM,CAAC"}
