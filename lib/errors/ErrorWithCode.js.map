@@ -1,0 +1,1 @@
+{"version":3,"file":"ErrorWithCode.js","sourceRoot":"","sources":["../../src/errors/ErrorWithCode.tsx"],"names":[],"mappings":";;;;;;;;;;;;;;;;;AAAA;;;GAGG;AACH;IAA4B,iCAAK;IAG/B,uBAAY,OAAe,EAAE,IAAY;QAAzC,YACE,kBAAM,OAAO,CAAC,SAGf;QAFC,KAAI,CAAC,IAAI,GAAG,eAAe,CAAC;QAC5B,KAAI,CAAC,IAAI,GAAG,IAAI,CAAC;;IACnB,CAAC;IACH,oBAAC;AAAD,CAAC,AARD,CAA4B,KAAK,GAQhC;AAED,kBAAe,aAAa,CAAC"}
