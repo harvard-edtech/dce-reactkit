@@ -1,0 +1,1 @@
+{"version":3,"file":"handleSuccess.js","sourceRoot":"","sources":["../../src/helpers/handleSuccess.ts"],"names":[],"mappings":";;AAAA;;;;;GAKG;AACH,IAAM,aAAa,GAAG,UAAC,GAAQ,EAAE,IAAS;IACxC,gCAAgC;IAChC,GAAG,CAAC,IAAI,CAAC;QACP,kCAAkC;QAClC,IAAI,MAAA;QACJ,gEAAgE;QAChE,OAAO,EAAE,IAAI;KACd,CAAC,CAAC;IACH,OAAO,SAAS,CAAC;AACnB,CAAC,CAAC;AAEF,kBAAe,aAAa,CAAC"}

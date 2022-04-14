@@ -10,7 +10,7 @@
     "target": "es5",
     "jsx": "react-jsx",
     "lib": [
-      "es2015",
+      "es2017",
       "dom"
     ],
     "outDir": "./lib"

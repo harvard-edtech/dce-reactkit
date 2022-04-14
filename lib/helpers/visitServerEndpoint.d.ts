@@ -1,5 +1,11 @@
 /**
- * Visit an endpoint on the server
+ * Set the session expiry handler
+ * @author Gabe Abrams
+ * @param handler new handler to use when session expires
+ */
+export declare const setSessionExpiryHandler: (handler: () => void) => void;
+/**
+ * Visit an endpoint on the server [for client only]
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.path - the path of the server endpoint

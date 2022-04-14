@@ -20,6 +20,8 @@ import ReactKitErrorCode from '../types/ReactKitErrorCode';
 type Props = {
   // Error to display
   error: any,
+  // Customized title of error box
+  title?: string,
   // Handler for close,
   onClose?: () => void,
 };
@@ -37,6 +39,7 @@ const ErrorBox: React.FC<Props> = (props) => {
 
   const {
     error,
+    title = 'An Error Occurred',
     onClose,
   } = props;
 
@@ -91,7 +94,7 @@ const ErrorBox: React.FC<Props> = (props) => {
           icon={faExclamationTriangle}
           className="me-2"
         />
-        An Error Occurred
+        {title}
       </h4>
       <div>
         {errorText}

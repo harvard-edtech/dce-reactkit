@@ -5,8 +5,31 @@ import { sendRequest } from 'caccl/client';
 import ErrorWithCode from '../errors/ErrorWithCode';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
+/*------------------------------------------------------------------------*/
+/*                                Listener                                */
+/*------------------------------------------------------------------------*/
+
+// Handler for session expiry
+let sessionExpiryHandler: () => void;
+
+// Keep track of whether or not session expiry has already been handled
+let sessionAlreadyExpired = false;
+
 /**
- * Visit an endpoint on the server
+ * Set the session expiry handler
+ * @author Gabe Abrams
+ * @param handler new handler to use when session expires
+ */
+export const setSessionExpiryHandler = (handler: () => void) => {
+  sessionExpiryHandler = handler;
+};
+
+/*------------------------------------------------------------------------*/
+/*                                  Main                                  */
+/*------------------------------------------------------------------------*/
+
+/**
+ * Visit an endpoint on the server [for client only]
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.path - the path of the server endpoint
@@ -36,6 +59,34 @@ const visitServerEndpoint = async (
     );
   }
   if (!response.body.success) {
+    // Session expired
+    if (response.body.code === ReactKitErrorCode.SessionExpired) {
+      // Skip notice if session was already expired
+      if (sessionAlreadyExpired) {
+        // Never return (browser is already reloading)
+        await new Promise<{ [key in string]: any }>(() => {
+          // Promise that never returns
+        });
+      }
+      sessionAlreadyExpired = true;
+
+      // Show session expiration message
+      if (sessionExpiryHandler) {
+        // Use handler
+        sessionExpiryHandler();
+      } else {
+        // Fallback to alert
+
+        // eslint-disable-next-line no-alert
+        alert('Your session has expired. Please start over.');
+      }
+
+      // Never return (don't continue execution)
+      await new Promise<{ [key in string]: any }>(() => {
+        // Promise that never returns
+      });
+    }
+
     // Other errors
     throw new ErrorWithCode(
       (

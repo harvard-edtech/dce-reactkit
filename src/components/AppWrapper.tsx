@@ -5,10 +5,13 @@
  */
 
 // Import React
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Import shared components
 import ErrorBox from './ErrorBox';
+
+// Import helpers
+import { setSessionExpiryHandler } from '../helpers/visitServerEndpoint';
 
 // Import shared types
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
@@ -25,6 +28,8 @@ type Props = {
   children: React.ReactNode,
   // True if this app is a dark-themed app
   dark?: boolean,
+  // Custom session expired message
+  sessionExpiredMessage?: string,
 };
 
 /*------------------------------------------------------------------------*/
@@ -77,6 +82,7 @@ const AppWrapper = (props: Props) => {
   const {
     children,
     dark,
+    sessionExpiredMessage = 'Your session has expired. Please go back to Canvas and start over.',
   } = props;
 
   /* -------------- State ------------- */
@@ -87,18 +93,52 @@ const AppWrapper = (props: Props) => {
   const [fatalErrorCode, setFatalErrorCodeInner] = useState(null);
   setFatalErrorCode = setFatalErrorCodeInner;
 
+  // Session expired
+  const [sessionHasExpired, setSessionHasExpired] = useState(false);
+
+  /*------------------------------------------------------------------------*/
+  /*                           Lifecycle Functions                          */
+  /*------------------------------------------------------------------------*/
+
+  /**
+   * Mount
+   * @author Gabe Abrams
+   */
+  useEffect(
+    () => {
+      // Add session expired handler
+      setSessionExpiryHandler(() => {
+        // Session expired!
+        setSessionHasExpired(true);
+      });
+    },
+    [],
+  );
+
+  /*------------------------------------------------------------------------*/
+  /*                                 Render                                 */
+  /*------------------------------------------------------------------------*/
+
   /*----------------------------------------*/
   /*                 Main UI                */
   /*----------------------------------------*/
 
   // Show error
-  if (fatalErrorMessage || fatalErrorCode) {
+  if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
     // Re-encapsulate in an error
-    const error = new ErrorWithCode(
-      fatalErrorMessage,
-      fatalErrorCode,
+    const error = (
+      sessionHasExpired
+        ? new ErrorWithCode(
+          fatalErrorMessage,
+          fatalErrorCode,
+        )
+        : new ErrorWithCode(
+          sessionExpiredMessage,
+          ReactKitErrorCode.SessionExpired,
+        )
     );
 
+    // Build error screen
     return (
       <div
         style={{
@@ -106,9 +146,19 @@ const AppWrapper = (props: Props) => {
           width: '100vw',
           minHeight: '100vh',
           paddingTop: '10rem',
+          backgroundColor: (
+            dark
+              ? '#222'
+              : '#fff'
+          ),
         }}
       >
         <ErrorBox
+          title={(
+            sessionHasExpired
+              ? 'Session Expired'
+              : undefined
+          )}
           error={error}
         />
       </div>
