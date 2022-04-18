@@ -15,5 +15,5 @@ declare type Props = {
  * @param error the error to show
  */
 export declare const showFatalError: (error: any) => void;
-declare const AppWrapper: (props: Props) => React.ReactNode;
+declare const AppWrapper: (props: Props) => React.ReactElement;
 export default AppWrapper;

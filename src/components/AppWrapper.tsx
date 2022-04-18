@@ -72,7 +72,7 @@ export const showFatalError = (error: any) => {
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
 
-const AppWrapper = (props: Props) => {
+const AppWrapper = (props: Props): React.ReactElement => {
   /*------------------------------------------------------------------------*/
   /*                                  Setup                                 */
   /*------------------------------------------------------------------------*/
@@ -166,7 +166,11 @@ const AppWrapper = (props: Props) => {
   }
 
   // Show the app itself
-  return children;
+  return (
+    <>
+      {children}
+    </>
+  );
 };
 
 /*------------------------------------------------------------------------*/
