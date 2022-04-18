@@ -99,7 +99,7 @@ const AppWrapper = (props: Props): React.ReactElement => {
   const [fatalErrorCode, setFatalErrorCodeInner] = useState(null);
   setFatalErrorCode = setFatalErrorCodeInner;
   const [fatalErrorTitle, setFatalErrorTitleInner] = useState(null);
-  setFatalErrorTitle = setFatalErrorCodeInner;
+  setFatalErrorTitle = setFatalErrorTitleInner;
 
   // Session expired
   const [sessionHasExpired, setSessionHasExpired] = useState(false);
