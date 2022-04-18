@@ -16,6 +16,9 @@ import { setSessionExpiryHandler } from '../helpers/visitServerEndpoint';
 // Import shared types
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
+// Import shared components
+import Modal from './Modal';
+
 // Import custom errors
 import ErrorWithCode from '../errors/ErrorWithCode';
 
@@ -35,6 +38,84 @@ type Props = {
 /*------------------------------------------------------------------------*/
 /*                             Static Helpers                             */
 /*------------------------------------------------------------------------*/
+
+/*----------------------------------------*/
+/*                  Alert                 */
+/*----------------------------------------*/
+
+// Stored copies of setters
+let setAlertInfo: (info: { title: string, text: string }) => void;
+let onAlertClosed: () => void;
+
+/**
+ * Show an alert modal with an "Okay" button
+ * @author Gabe Abrams
+ * @param title the title text to display at the top of the alert
+ * @param text the text to display in the alert
+ */
+export const alert = async (title: string, text: string) => {
+  // Fallback if alert not available
+  if (!setAlertInfo) {
+    return window.alert(`${title}\n\n${text}`);
+  }
+
+  // Return promise that resolves when alert is closed
+  return new Promise((resolve) => {
+    // Setup handler
+    onAlertClosed = () => {
+      resolve(null);
+    };
+
+    // Show the alert
+    setAlertInfo({
+      title,
+      text,
+    });
+  });
+};
+
+/*----------------------------------------*/
+/*                 Confirm                */
+/*----------------------------------------*/
+
+// Stored copies of setters
+let setConfirmInfo: (info: { title: string, text: string }) => void;
+let onConfirmClosed: (confirmed: boolean) => void;
+
+/**
+ * Show a confirmation modal with an "Okay" and a "Cancel" button
+ * @author Gabe Abrams
+ * @param title the title text to display at the top of the alert
+ * @param text the text to display in the alert
+ * @returns true if the user confirmed
+ */
+export const confirm = async (
+  title: string,
+  text: string,
+): Promise<boolean> => {
+  // Fallback if confirm is not available
+  if (!setConfirmInfo) {
+    return window.confirm(`${title}\n\n${text}`);
+  }
+
+  // Return promise that resolves with result of confirmation
+  return new Promise((resolve) => {
+    // Setup handler
+    onConfirmClosed = (confirmed: boolean) => {
+      resolve(confirmed)
+    };
+
+    // Show the confirm
+    setConfirmInfo({
+      title,
+      text,
+    });
+  });
+};
+
+/*----------------------------------------*/
+/*               Fatal Error              */
+/*----------------------------------------*/
 
 // Stored copies of setters
 let setFatalErrorMessage: (message: string) => void;
@@ -65,7 +146,10 @@ export const showFatalError = (
 
   // Handle case where app hasn't loaded
   if (!setFatalErrorMessage || !setFatalErrorCode) {
-    return alert(`An error has occurred: ${message} (code: ${code}). Please contact support.`);
+    return alert(
+      errorTitle,
+      `${message} (code: ${code}). Please contact support.`,
+    );
   }
 
   // Use setters
@@ -94,15 +178,47 @@ const AppWrapper = (props: Props): React.ReactElement => {
   /* -------------- State ------------- */
 
   // Fatal error
-  const [fatalErrorMessage, setFatalErrorMessageInner] = useState(null);
+  const [
+    fatalErrorMessage,
+    setFatalErrorMessageInner,
+  ] = useState<string | undefined>();
   setFatalErrorMessage = setFatalErrorMessageInner;
-  const [fatalErrorCode, setFatalErrorCodeInner] = useState(null);
+  const [
+    fatalErrorCode,
+    setFatalErrorCodeInner,
+  ] = useState<string | undefined>();
   setFatalErrorCode = setFatalErrorCodeInner;
-  const [fatalErrorTitle, setFatalErrorTitleInner] = useState(null);
+  const [
+    fatalErrorTitle,
+    setFatalErrorTitleInner,
+  ] = useState<string | undefined>();
   setFatalErrorTitle = setFatalErrorTitleInner;
 
+  // Alert
+  const [
+    alertInfo,
+    setAlertInfoInner,
+  ] = useState<{
+    title: string,
+    text: string
+  }>();
+  setAlertInfo = setAlertInfoInner;
+
+  // Confirm
+  const [
+    confirmInfo,
+    setConfirmInfoInner,
+  ] = useState<{
+    title: string,
+    text: string
+  }>();
+  setConfirmInfo = setConfirmInfoInner;
+
   // Session expired
-  const [sessionHasExpired, setSessionHasExpired] = useState(false);
+  const [
+    sessionHasExpired,
+    setSessionHasExpired,
+  ] = useState<boolean>(false);
 
   /*------------------------------------------------------------------------*/
   /*                           Lifecycle Functions                          */
@@ -128,10 +244,60 @@ const AppWrapper = (props: Props): React.ReactElement => {
   /*------------------------------------------------------------------------*/
 
   /*----------------------------------------*/
-  /*                 Main UI                */
+  /*                  Modal                 */
   /*----------------------------------------*/
 
-  // Show error
+  // Modal that may be defined
+  let modal: React.ReactNode;
+
+  /* -------------- Alert ------------- */
+
+  if (alertInfo) {
+    modal = (
+      <Modal
+        title={alertInfo.title}
+        type={Modal.ModalType.Okay}
+        onClose={() => {
+          // Alert closed
+          if (onAlertClosed) {
+            onAlertClosed();
+          }
+        }}
+        onTopOfOtherModals
+      >
+        {alertInfo.text}
+      </Modal>
+    );
+  }
+
+  /* ------------- Confirm ------------ */
+
+  if (confirmInfo) {
+    modal = (
+      <Modal
+        title={confirmInfo.title}
+        type={Modal.ModalType.OkayCancel}
+        onClose={(buttonType) => {
+          if (onConfirmClosed) {
+            onConfirmClosed(buttonType === Modal.ButtonType.Okay);
+          }
+        }}
+        dontAllowBackdropExit
+      >
+
+      </Modal>
+    );
+  }
+
+  /*----------------------------------------*/
+  /*                  Views                 */
+  /*----------------------------------------*/
+
+  // Body that will be filled with the current view
+  let body: React.ReactNode;
+
+  /* ----------- Fatal Error ---------- */
+
   if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
     // Re-encapsulate in an error
     const error = (
@@ -147,7 +313,7 @@ const AppWrapper = (props: Props): React.ReactElement => {
     );
 
     // Build error screen
-    return (
+    body = (
       <div
         style={{
           display: 'block',
@@ -173,10 +339,24 @@ const AppWrapper = (props: Props): React.ReactElement => {
     );
   }
 
-  // Show the app itself
+  /* --------------- App -------------- */
+
+  if (!body) {
+    body = (
+      <>
+        {children}
+      </>
+    );
+  }
+
+  /*----------------------------------------*/
+  /*                 Main UI                */
+  /*----------------------------------------*/
+
   return (
     <>
-      {children}
+      {modal}
+      {body}
     </>
   );
 };

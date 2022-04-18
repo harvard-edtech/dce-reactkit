@@ -39,6 +39,7 @@ declare type Props = {
     title?: React.ReactNode;
     children?: React.ReactNode;
     onClose?: (type: ButtonType) => void;
+    dontAllowBackdropExit?: boolean;
     okayLabel?: string;
     okayVariant?: Variant;
     cancelLabel?: string;
@@ -59,6 +60,7 @@ declare type Props = {
     deleteVariant?: Variant;
     confirmLabel?: string;
     confirmVariant?: Variant;
+    onTopOfOtherModals?: boolean;
 };
 declare const Modal: (React.FC<Props> & {
     ModalType: typeof ModalType;

@@ -209,6 +209,8 @@ type Props = {
   children?: React.ReactNode,
   // Handler to call when modal is closed (if excluded, not closable)
   onClose?: (type: ButtonType) => void,
+  // If true, don't allow the user to click the backdrop to exit
+  dontAllowBackdropExit?: boolean,
   // Custom label for "okay" button
   okayLabel?: string,
   // Custom variant for "okay" button
@@ -249,6 +251,8 @@ type Props = {
   confirmLabel?: string,
   // Custom variant for "confirm" button
   confirmVariant?: Variant,
+  // True if modal should be on top of other modals
+  onTopOfOtherModals?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -276,6 +280,8 @@ const Modal: (
     title,
     children,
     onClose,
+    dontAllowBackdropExit,
+    onTopOfOtherModals,
   } = props;
 
   /* -------------- State ------------- */
@@ -404,9 +410,17 @@ const Modal: (
       show={visible}
       size={size !== ModalSize.Medium ? size : undefined}
       onHide={() => {
-        handleClose(ButtonType.Cancel);
+        if (!dontAllowBackdropExit) {
+          handleClose(ButtonType.Cancel);
+        }
       }}
-      style={{ zIndex: 5000000000 }}
+      style={{
+        zIndex: (
+          onTopOfOtherModals
+            ? 6000000000
+            : 5000000000
+        ),
+      }}
       backdropClassName="Modal-backdrop"
       centered
     >
