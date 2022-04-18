@@ -15,7 +15,7 @@ declare type Props = {
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-export declare const alert: (title: string, text: string) => Promise<unknown>;
+export declare const _alert: (title: string, text: string) => Promise<unknown>;
 /**
  * Show a confirmation modal with an "Okay" and a "Cancel" button
  * @author Gabe Abrams
@@ -23,13 +23,13 @@ export declare const alert: (title: string, text: string) => Promise<unknown>;
  * @param text the text to display in the alert
  * @returns true if the user confirmed
  */
-export declare const confirm: (title: string, text: string) => Promise<boolean>;
+export declare const _confirm: (title: string, text: string) => Promise<boolean>;
 /**
  * Show a fatal error message
  * @author Gabe Abrams
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-export declare const showFatalError: (error: any, errorTitle?: string) => Promise<unknown>;
+export declare const _showFatalError: (error: any, errorTitle?: string) => Promise<unknown>;
 declare const AppWrapper: (props: Props) => React.ReactElement;
 export default AppWrapper;

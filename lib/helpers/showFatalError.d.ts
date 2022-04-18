@@ -1,2 +1,2 @@
-import { showFatalError } from '../components/AppWrapper';
+declare const showFatalError: (error: any, errorTitle?: string) => Promise<unknown>;
 export default showFatalError;

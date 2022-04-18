@@ -53,7 +53,7 @@ let onAlertClosed: () => void;
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-export const alert = async (title: string, text: string) => {
+export const _alert = async (title: string, text: string) => {
   // Fallback if alert not available
   if (!setAlertInfo) {
     return window.alert(`${title}\n\n${text}`);
@@ -89,7 +89,7 @@ let onConfirmClosed: (confirmed: boolean) => void;
  * @param text the text to display in the alert
  * @returns true if the user confirmed
  */
-export const confirm = async (
+export const _confirm = async (
   title: string,
   text: string,
 ): Promise<boolean> => {
@@ -128,7 +128,7 @@ let setFatalErrorTitle: (title: string) => void;
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-export const showFatalError = (
+export const _showFatalError = (
   error: any,
   errorTitle: string = 'An Error Occurred',
 ) => {
@@ -146,7 +146,7 @@ export const showFatalError = (
 
   // Handle case where app hasn't loaded
   if (!setFatalErrorMessage || !setFatalErrorCode) {
-    return alert(
+    return _alert(
       errorTitle,
       `${message} (code: ${code}). Please contact support.`,
     );
