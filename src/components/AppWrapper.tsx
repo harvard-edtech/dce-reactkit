@@ -52,17 +52,18 @@ let onAlertClosed: () => void;
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-export const alert = async (title: string, text: string) => {
+export const alert = async (title: string, text: string): Promise<undefined> => {
   // Fallback if alert not available
   if (!setAlertInfo) {
-    return window.alert(`${title}\n\n${text}`);
+    window.alert(`${title}\n\n${text}`);
+    return undefined;
   }
 
   // Return promise that resolves when alert is closed
   return new Promise((resolve) => {
     // Setup handler
     onAlertClosed = () => {
-      resolve(null);
+      resolve(undefined);
     };
 
     // Show the alert
@@ -130,7 +131,7 @@ let setFatalErrorTitle: (title: string) => void;
 export const showFatalError = (
   error: any,
   errorTitle: string = 'An Error Occurred',
-) => {
+): undefined => {
   // Determine message and code
   const message: string = (
     typeof error === 'string'
@@ -145,16 +146,19 @@ export const showFatalError = (
 
   // Handle case where app hasn't loaded
   if (!setFatalErrorMessage || !setFatalErrorCode) {
-    return alert(
+    alert(
       errorTitle,
       `${message} (code: ${code}). Please contact support.`,
     );
+    return undefined;
   }
 
   // Use setters
   setFatalErrorMessage(message);
   setFatalErrorCode(code);
   setFatalErrorTitle(errorTitle);
+
+  return undefined;
 };
 
 /*----------------------------------------*/
@@ -168,8 +172,9 @@ let setSessionHasExpired: (isExpired: boolean) => void;
  * Show the "session expired" message
  * @author Gabe Abrams
  */
-export const showSessionExpiredMessage = () => {
+export const showSessionExpiredMessage = (): undefined => {
   setSessionHasExpired(true);
+  return undefined;
 };
 
 /*------------------------------------------------------------------------*/

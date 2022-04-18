@@ -15,7 +15,7 @@ declare type Props = {
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-export declare const alert: (title: string, text: string) => Promise<unknown>;
+export declare const alert: (title: string, text: string) => Promise<undefined>;
 /**
  * Show a confirmation modal with an "Okay" and a "Cancel" button
  * @author Gabe Abrams
@@ -30,11 +30,11 @@ export declare const confirm: (title: string, text: string) => Promise<boolean>;
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-export declare const showFatalError: (error: any, errorTitle?: string) => Promise<unknown> | undefined;
+export declare const showFatalError: (error: any, errorTitle?: string) => undefined;
 /**
  * Show the "session expired" message
  * @author Gabe Abrams
  */
-export declare const showSessionExpiredMessage: () => void;
+export declare const showSessionExpiredMessage: () => undefined;
 declare const AppWrapper: React.FC<Props>;
 export default AppWrapper;

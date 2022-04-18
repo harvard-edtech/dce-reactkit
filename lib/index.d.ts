@@ -18,7 +18,7 @@ declare type Props$3 = {
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-declare const alert: (title: string, text: string) => Promise<unknown>;
+declare const alert: (title: string, text: string) => Promise<undefined>;
 /**
  * Show a confirmation modal with an "Okay" and a "Cancel" button
  * @author Gabe Abrams
@@ -33,7 +33,7 @@ declare const confirm: (title: string, text: string) => Promise<boolean>;
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-declare const showFatalError: (error: any, errorTitle?: string) => Promise<unknown> | undefined;
+declare const showFatalError: (error: any, errorTitle?: string) => undefined;
 declare const AppWrapper: React.FC<Props$3>;
 
 /**
