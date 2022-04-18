@@ -1,1 +1,0 @@
-{"version":3,"file":"ceilToNumDecimals.js","sourceRoot":"","sources":["../../src/helpers/ceilToNumDecimals.tsx"],"names":[],"mappings":";;AAAA;;;;;;GAMG;AACH,IAAM,iBAAiB,GAAG,UAAC,GAAW,EAAE,WAAmB;IACzD,IAAM,OAAO,GAAG,SAAA,EAAE,EAAI,WAAW,CAAA,CAAC;IAClC,OAAO,CAAC,IAAI,CAAC,IAAI,CAAC,GAAG,GAAG,OAAO,CAAC,GAAG,OAAO,CAAC,CAAC;AAC9C,CAAC,CAAC;AAEF,kBAAe,iBAAiB,CAAC"}

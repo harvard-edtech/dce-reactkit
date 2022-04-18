@@ -1,1 +1,0 @@
-{"version":3,"file":"forceNumIntoBounds.js","sourceRoot":"","sources":["../../src/helpers/forceNumIntoBounds.tsx"],"names":[],"mappings":";;AAAA;;;;;;;GAOG;AACH,IAAM,kBAAkB,GAAG,UAAC,GAAW,EAAE,GAAW,EAAE,GAAW;IAC/D,OAAO,IAAI,CAAC,GAAG,CACb,GAAG,EACH,IAAI,CAAC,GAAG,CACN,GAAG,EACH,GAAG,CACJ,CACF,CAAC;AACJ,CAAC,CAAC;AAEF,kBAAe,kBAAkB,CAAC"}

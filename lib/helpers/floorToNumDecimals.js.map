@@ -1,1 +1,0 @@
-{"version":3,"file":"floorToNumDecimals.js","sourceRoot":"","sources":["../../src/helpers/floorToNumDecimals.tsx"],"names":[],"mappings":";;AAAA;;;;;;GAMG;AACH,IAAM,kBAAkB,GAAG,UAAC,GAAW,EAAE,WAAmB;IAC1D,IAAM,OAAO,GAAG,SAAA,EAAE,EAAI,WAAW,CAAA,CAAC;IAClC,OAAO,CAAC,IAAI,CAAC,KAAK,CAAC,GAAG,GAAG,OAAO,CAAC,GAAG,OAAO,CAAC,CAAC;AAC/C,CAAC,CAAC;AAEF,kBAAe,kBAAkB,CAAC"}

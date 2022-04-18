@@ -3,6 +3,9 @@
  * @author Gabe Abrams
  */
 
+// Import react
+import React from 'react';
+
 // Import FontAwesome Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';

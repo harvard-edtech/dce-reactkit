@@ -9,7 +9,7 @@
 const padDecimalZeros = (num: number, numDigits: number): string => {
   // Skip if nothing to do
   if (numDigits < 1) {
-    return;
+    return String(num);
   }
 
   // Convert to string

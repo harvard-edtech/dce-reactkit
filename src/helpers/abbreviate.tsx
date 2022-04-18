@@ -21,3 +21,5 @@ const abbreviate = (text: string, maxChars: number): string => {
   );
   return `${shortenedText}...`;
 };
+
+export default abbreviate;

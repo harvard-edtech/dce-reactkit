@@ -5,16 +5,15 @@
  */
 
 // Import React
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 // Import shared components
 import ErrorBox from './ErrorBox';
 
-// Import helpers
-import { setSessionExpiryHandler } from '../helpers/visitServerEndpoint';
-
 // Import shared types
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
+import ModalButtonType from '../types/ModalButtonType';
+import ModalType from '../types/ModalType';
 
 // Import shared components
 import Modal from './Modal';
@@ -53,7 +52,7 @@ let onAlertClosed: () => void;
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-export const _alert = async (title: string, text: string) => {
+export const alert = async (title: string, text: string) => {
   // Fallback if alert not available
   if (!setAlertInfo) {
     return window.alert(`${title}\n\n${text}`);
@@ -89,7 +88,7 @@ let onConfirmClosed: (confirmed: boolean) => void;
  * @param text the text to display in the alert
  * @returns true if the user confirmed
  */
-export const _confirm = async (
+export const confirm = async (
   title: string,
   text: string,
 ): Promise<boolean> => {
@@ -128,7 +127,7 @@ let setFatalErrorTitle: (title: string) => void;
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-export const _showFatalError = (
+export const showFatalError = (
   error: any,
   errorTitle: string = 'An Error Occurred',
 ) => {
@@ -146,7 +145,7 @@ export const _showFatalError = (
 
   // Handle case where app hasn't loaded
   if (!setFatalErrorMessage || !setFatalErrorCode) {
-    return _alert(
+    return alert(
       errorTitle,
       `${message} (code: ${code}). Please contact support.`,
     );
@@ -158,11 +157,26 @@ export const _showFatalError = (
   setFatalErrorTitle(errorTitle);
 };
 
+/*----------------------------------------*/
+/*             Session Expired            */
+/*----------------------------------------*/
+
+// Stored copies of setters
+let setSessionHasExpired: (isExpired: boolean) => void;
+
+/**
+ * Show the "session expired" message
+ * @author Gabe Abrams
+ */
+export const showSessionExpiredMessage = () => {
+  setSessionHasExpired(true);
+};
+
 /*------------------------------------------------------------------------*/
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
 
-const AppWrapper = (props: Props): React.ReactElement => {
+const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   /*------------------------------------------------------------------------*/
   /*                                  Setup                                 */
   /*------------------------------------------------------------------------*/
@@ -217,27 +231,9 @@ const AppWrapper = (props: Props): React.ReactElement => {
   // Session expired
   const [
     sessionHasExpired,
-    setSessionHasExpired,
+    setSessionHasExpiredInner,
   ] = useState<boolean>(false);
-
-  /*------------------------------------------------------------------------*/
-  /*                           Lifecycle Functions                          */
-  /*------------------------------------------------------------------------*/
-
-  /**
-   * Mount
-   * @author Gabe Abrams
-   */
-  useEffect(
-    () => {
-      // Add session expired handler
-      setSessionExpiryHandler(() => {
-        // Session expired!
-        setSessionHasExpired(true);
-      });
-    },
-    [],
-  );
+  setSessionHasExpired = setSessionHasExpiredInner;
 
   /*------------------------------------------------------------------------*/
   /*                                 Render                                 */
@@ -256,7 +252,7 @@ const AppWrapper = (props: Props): React.ReactElement => {
     modal = (
       <Modal
         title={alertInfo.title}
-        type={Modal.ModalType.Okay}
+        type={ModalType.Okay}
         onClose={() => {
           // Alert closed
           if (onAlertClosed) {
@@ -276,10 +272,10 @@ const AppWrapper = (props: Props): React.ReactElement => {
     modal = (
       <Modal
         title={confirmInfo.title}
-        type={Modal.ModalType.OkayCancel}
+        type={ModalType.OkayCancel}
         onClose={(buttonType) => {
           if (onConfirmClosed) {
-            onConfirmClosed(buttonType === Modal.ButtonType.Okay);
+            onConfirmClosed(buttonType === ModalButtonType.Okay);
           }
         }}
         dontAllowBackdropExit
@@ -303,8 +299,8 @@ const AppWrapper = (props: Props): React.ReactElement => {
     const error = (
       sessionHasExpired
         ? new ErrorWithCode(
-          fatalErrorMessage,
-          fatalErrorCode,
+          (fatalErrorMessage ?? 'An unknown error has occurred. Please contact support.'),
+          (fatalErrorCode ?? ReactKitErrorCode.NoCode),
         )
         : new ErrorWithCode(
           sessionExpiredMessage,
@@ -319,7 +315,7 @@ const AppWrapper = (props: Props): React.ReactElement => {
           display: 'block',
           width: '100vw',
           minHeight: '100vh',
-          paddingTop: '10rem',
+          paddingTop: '2rem',
           backgroundColor: (
             dark
               ? '#222'

@@ -12,6 +12,9 @@ import waitMs from '../helpers/waitMs';
 
 // Import types
 import Variant from '../types/Variant';
+import ModalButtonType from '../types/ModalButtonType';
+import ModalSize from '../types/ModalSize';
+import ModalType from '../types/ModalType';
 
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
@@ -77,118 +80,83 @@ const MS_TO_ANIMATE = 400; // Time to animate in/out (defined by bootstrap)
 const MS_ANIMATE_IN_DELAY = 10;
 // Time to wait before animating in (must be >0 or animation won't trigger)
 
-// Modal types
-enum ModalType {
-  Okay = 'okay', // [Okay]
-  OkayCancel = 'okay-cancel', // [Okay] [Cancel]
-  YesNo = 'yes-no', // [Yes] [No]
-  YesNoCancel = 'yes-no-cancel', // [Yes] [No] [Cancel]
-  AbandonGoBack = 'abandon-goBack', // [Abandon Changes] [Go Back]
-  ImSureCancel = 'imSure-cancel', // [I am sure] [Cancel]
-  DeleteCancel = 'delete-cancel', // [Yes, Delete] [Cancel]
-  ConfirmCancel = 'confirm-cancel', // [Confirm] [Cancel]
-  NoButtons = '-', // No buttons
-}
-
-// Modal sizes
-enum ModalSize {
-  Small = 'sm',
-  Medium = 'md',
-  Large = 'lg',
-  ExtraLarge = 'xl',
-}
-
-// Button types
-enum ButtonType {
-  Okay = 'okay',
-  Cancel = 'cancel',
-  Yes = 'yes',
-  No = 'no',
-  Abandon = 'abandon',
-  GoBack = 'goBack',
-  Continue = 'continue',
-  ImSure = 'imSure',
-  Delete = 'delete',
-  Confirm = 'confirm',
-}
-
 // Modal type to list of buttons
-const modalTypeToButtonTypes: {
-  [k: string]: ButtonType[]
+const modalTypeToModalButtonTypes: {
+  [k: string]: ModalButtonType[]
 } = {
   [ModalType.Okay]: [
-    ButtonType.Okay,
+    ModalButtonType.Okay,
   ],
   [ModalType.OkayCancel]: [
-    ButtonType.Okay,
-    ButtonType.Cancel,
+    ModalButtonType.Okay,
+    ModalButtonType.Cancel,
   ],
   [ModalType.YesNo]: [
-    ButtonType.Yes,
-    ButtonType.No,
+    ModalButtonType.Yes,
+    ModalButtonType.No,
   ],
   [ModalType.YesNoCancel]: [
-    ButtonType.Yes,
-    ButtonType.No,
-    ButtonType.Cancel,
+    ModalButtonType.Yes,
+    ModalButtonType.No,
+    ModalButtonType.Cancel,
   ],
   [ModalType.AbandonGoBack]: [
-    ButtonType.Abandon,
-    ButtonType.GoBack,
+    ModalButtonType.Abandon,
+    ModalButtonType.GoBack,
   ],
   [ModalType.ImSureCancel]: [
-    ButtonType.ImSure,
-    ButtonType.Cancel,
+    ModalButtonType.ImSure,
+    ModalButtonType.Cancel,
   ],
   [ModalType.DeleteCancel]: [
-    ButtonType.Delete,
-    ButtonType.Cancel,
+    ModalButtonType.Delete,
+    ModalButtonType.Cancel,
   ],
   [ModalType.ConfirmCancel]: [
-    ButtonType.Confirm,
-    ButtonType.Cancel,
+    ModalButtonType.Confirm,
+    ModalButtonType.Cancel,
   ],
 };
 
 // Button type styling and labels
-const buttonTypeToLabelAndVariant = {
-  [ButtonType.Okay]: {
+const ModalButtonTypeToLabelAndVariant = {
+  [ModalButtonType.Okay]: {
     label: 'Okay',
     variant: Variant.Dark,
   },
-  [ButtonType.Cancel]: {
+  [ModalButtonType.Cancel]: {
     label: 'Cancel',
     variant: Variant.Secondary,
   },
-  [ButtonType.Yes]: {
+  [ModalButtonType.Yes]: {
     label: 'Yes',
     variant: Variant.Dark,
   },
-  [ButtonType.No]: {
+  [ModalButtonType.No]: {
     label: 'No',
     variant: Variant.Secondary,
   },
-  [ButtonType.Abandon]: {
+  [ModalButtonType.Abandon]: {
     label: 'Abandon Changes',
     variant: Variant.Warning,
   },
-  [ButtonType.GoBack]: {
+  [ModalButtonType.GoBack]: {
     label: 'Go Back',
     variant: Variant.Secondary,
   },
-  [ButtonType.Continue]: {
+  [ModalButtonType.Continue]: {
     label: 'Continue',
     variant: Variant.Dark,
   },
-  [ButtonType.ImSure]: {
+  [ModalButtonType.ImSure]: {
     label: 'I am sure',
     variant: Variant.Warning,
   },
-  [ButtonType.Delete]: {
+  [ModalButtonType.Delete]: {
     label: 'Yes, Delete',
     variant: Variant.Danger,
   },
-  [ButtonType.Confirm]: {
+  [ModalButtonType.Confirm]: {
     label: 'Confirm',
     variant: Variant.Dark,
   },
@@ -208,7 +176,7 @@ type Props = {
   // The body of the modal
   children?: React.ReactNode,
   // Handler to call when modal is closed (if excluded, not closable)
-  onClose?: (type: ButtonType) => void,
+  onClose?: (type: ModalButtonType) => void,
   // If true, don't allow the user to click the backdrop to exit
   dontAllowBackdropExit?: boolean,
   // Custom label for "okay" button
@@ -259,15 +227,7 @@ type Props = {
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
 
-const Modal: (
-  React.FC<Props>
-  & {
-    ModalType: typeof ModalType,
-    ModalSize: typeof ModalSize,
-    ButtonType: typeof ButtonType,
-    Variant: typeof Variant,
-  }
-) = (props) => {
+const Modal: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
   /*                                  Setup                                 */
   /*------------------------------------------------------------------------*/
@@ -322,10 +282,10 @@ const Modal: (
   /**
    * Handles the closing of the modal
    * @author Gabe Abrams
-   * @param buttonType the button that was clicked when closing the
+   * @param ModalButtonType the button that was clicked when closing the
    *   modal
    */
-  const handleClose = async (buttonType: ButtonType) => {
+  const handleClose = async (ModalButtonType: ModalButtonType) => {
     // Don't close if no handler
     if (!onClose) {
       return;
@@ -346,7 +306,7 @@ const Modal: (
 
     // Call the handler after the modal has animated out
     await waitMs(MS_TO_ANIMATE);
-    onClose(buttonType);
+    onClose(ModalButtonType);
   };
 
   /*------------------------------------------------------------------------*/
@@ -358,34 +318,36 @@ const Modal: (
   /*----------------------------------------*/
 
   // Get list of buttons for this modal type
-  const buttonTypes: ButtonType[] = modalTypeToButtonTypes[type] ?? [];
+  const ModalButtonTypes: ModalButtonType[] = modalTypeToModalButtonTypes[type] ?? [];
 
   // Create buttons
-  const buttons = buttonTypes.map((buttonType: ButtonType, i) => {
+  const buttons = ModalButtonTypes.map((ModalButtonType: ModalButtonType, i) => {
     // Get default style
     let {
       label,
       variant,
-    } = buttonTypeToLabelAndVariant[buttonType];
+    } = ModalButtonTypeToLabelAndVariant[ModalButtonType];
 
     // Override with customizations
-    if (props[`${buttonType}Label`]) {
-      label = props[`${buttonType}Label`];
+    const newLabel = props[`${ModalButtonType}Label`];
+    if (newLabel) {
+      label = newLabel;
     }
-    if (props[`${buttonType}Variant`]) {
-      variant = props[`${buttonType}Variant`];
+    const newVariant = props[`${ModalButtonType}Variant`];
+    if (newVariant) {
+      variant = newVariant;
     }
 
     // Check if this button is last
-    const last = (i === buttonTypes.length - 1);
+    const last = (i === ModalButtonTypes.length - 1);
 
     // Create the button
     return (
       <button
         type="button"
-        className={`Modal-${buttonType}-button btn btn-${variant} ${last ? '' : 'mr-1'}`}
+        className={`Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'mr-1'}`}
         onClick={() => {
-          handleClose(buttonType);
+          handleClose(ModalButtonType);
         }}
       >
         {label}
@@ -411,7 +373,7 @@ const Modal: (
       size={size !== ModalSize.Medium ? size : undefined}
       onHide={() => {
         if (!dontAllowBackdropExit) {
-          handleClose(ButtonType.Cancel);
+          handleClose(ModalButtonType.Cancel);
         }
       }}
       style={{
@@ -451,11 +413,5 @@ const Modal: (
 /*------------------------------------------------------------------------*/
 /*                                 Wrap Up                                */
 /*------------------------------------------------------------------------*/
-
-// Add enums
-Modal.ModalType = ModalType;
-Modal.ModalSize = ModalSize;
-Modal.ButtonType = ButtonType;
-Modal.Variant = Variant;
 
 export default Modal;
