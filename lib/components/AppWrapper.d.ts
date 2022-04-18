@@ -13,7 +13,8 @@ declare type Props = {
  * Show a fatal error message
  * @author Gabe Abrams
  * @param error the error to show
+ * @param [errorTitle] title of the error box
  */
-export declare const showFatalError: (error: any) => void;
+export declare const showFatalError: (error: any, errorTitle?: string) => void;
 declare const AppWrapper: (props: Props) => React.ReactElement;
 export default AppWrapper;

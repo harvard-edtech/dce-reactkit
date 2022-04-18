@@ -39,13 +39,18 @@ type Props = {
 // Stored copies of setters
 let setFatalErrorMessage: (message: string) => void;
 let setFatalErrorCode: (code: string) => void;
+let setFatalErrorTitle: (title: string) => void;
 
 /**
  * Show a fatal error message
  * @author Gabe Abrams
  * @param error the error to show
+ * @param [errorTitle] title of the error box
  */
-export const showFatalError = (error: any) => {
+export const showFatalError = (
+  error: any,
+  errorTitle: string = 'An Error Occurred',
+) => {
   // Determine message and code
   const message: string = (
     typeof error === 'string'
@@ -66,6 +71,7 @@ export const showFatalError = (error: any) => {
   // Use setters
   setFatalErrorMessage(message);
   setFatalErrorCode(code);
+  setFatalErrorTitle(errorTitle);
 };
 
 /*------------------------------------------------------------------------*/
@@ -92,6 +98,8 @@ const AppWrapper = (props: Props): React.ReactElement => {
   setFatalErrorMessage = setFatalErrorMessageInner;
   const [fatalErrorCode, setFatalErrorCodeInner] = useState(null);
   setFatalErrorCode = setFatalErrorCodeInner;
+  const [fatalErrorTitle, setFatalErrorTitleInner] = useState(null);
+  setFatalErrorTitle = setFatalErrorCodeInner;
 
   // Session expired
   const [sessionHasExpired, setSessionHasExpired] = useState(false);
@@ -157,7 +165,7 @@ const AppWrapper = (props: Props): React.ReactElement => {
           title={(
             sessionHasExpired
               ? 'Session Expired'
-              : undefined
+              : fatalErrorTitle
           )}
           error={error}
         />
