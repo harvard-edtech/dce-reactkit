@@ -189,6 +189,20 @@ var ModalSize$1 = ModalSize;
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
+/*                                  Style                                 */
+/*------------------------------------------------------------------------*/
+const style$2 = `
+.Modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vw;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 4000000000;
+}
+`;
+/*------------------------------------------------------------------------*/
 /*                                Constants                               */
 /*------------------------------------------------------------------------*/
 // Constants
@@ -372,7 +386,11 @@ const Modal = (props) => {
                 : 5000000000),
             display: 'block',
             margin: 'auto',
+            left: 0,
+            right: 0,
         } },
+        React__default["default"].createElement("style", null, style$2),
+        React__default["default"].createElement("div", { className: "Modal-backdrop" }),
         React__default["default"].createElement("div", { className: "modal-dialog" },
             React__default["default"].createElement("div", { className: "modal-content" },
                 React__default["default"].createElement("div", { className: "modal-header" },
