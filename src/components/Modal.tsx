@@ -20,6 +20,15 @@ import ModalType from '../types/ModalType';
 /*------------------------------------------------------------------------*/
 
 const style = `
+.Modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vw;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 4000000000;
+}
 `;
 
 /*------------------------------------------------------------------------*/
@@ -330,8 +339,12 @@ const Modal: React.FC<Props> = (props) => {
         ),
         display: 'block',
         margin: 'auto',
+        left: 0,
+        right: 0,
       }}
     >
+      <style>{style}</style>
+      <div className="Modal-backdrop" />
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
