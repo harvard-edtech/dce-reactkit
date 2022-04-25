@@ -328,6 +328,7 @@ const Modal: React.FC<Props> = (props) => {
             ? 6000000000
             : 5000000000
         ),
+        display: 'block',
       }}
     >
       <div className="modal-dialog">

@@ -362,6 +362,7 @@ const Modal = (props) => {
             zIndex: (onTopOfOtherModals
                 ? 6000000000
                 : 5000000000),
+            display: 'block',
         } },
         React.createElement("div", { className: "modal-dialog" },
             React.createElement("div", { className: "modal-content" },
