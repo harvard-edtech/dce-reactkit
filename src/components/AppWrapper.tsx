@@ -1,6 +1,6 @@
 /**
  * A wrapper for the entire React app that adds global functionality like
- *   handling for fatal error messages
+ *   handling for fatal error messages, adds bootstrap support
  * @author Gabe Abrams
  */
 

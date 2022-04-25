@@ -7,7 +7,6 @@
 import React, { useState, useEffect } from 'react';
 
 // Import other components
-import BootstrapModal from 'react-bootstrap/Modal';
 import waitMs from '../helpers/waitMs';
 
 // Import types
@@ -368,14 +367,9 @@ const Modal: React.FC<Props> = (props) => {
 
   // Render the modal
   return (
-    <BootstrapModal
-      show={visible}
-      size={size !== ModalSize.Medium ? size : undefined}
-      onHide={() => {
-        if (!dontAllowBackdropExit) {
-          handleClose(ModalButtonType.Cancel);
-        }
-      }}
+    <div
+      className={`modal fade modal-${size}`}
+      tabIndex={-1}
       style={{
         zIndex: (
           onTopOfOtherModals
@@ -383,30 +377,39 @@ const Modal: React.FC<Props> = (props) => {
             : 5000000000
         ),
       }}
-      backdropClassName="Modal-backdrop"
-      centered
     >
-      <style>{style}</style>
-      {title && (
-        <BootstrapModal.Header
-          closeButton={!!onClose}
-        >
-          <BootstrapModal.Title>
-            {title}
-          </BootstrapModal.Title>
-        </BootstrapModal.Header>
-      )}
-      {children && (
-        <BootstrapModal.Body>
-          {children}
-        </BootstrapModal.Body>
-      )}
-      {footer && (
-        <BootstrapModal.Footer>
-          {footer}
-        </BootstrapModal.Footer>
-      )}
-    </BootstrapModal>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">
+              {title}
+            </h5>
+
+            {onClose && (
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onClick={() => {
+                  handleClose(ModalButtonType.Cancel);
+                }}
+              />
+            )}
+          </div>
+          {children && (
+            <div className="modal-body">
+              {children}
+            </div>
+          )}
+          {footer && (
+            <div className="modal-footer">
+              {footer}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
