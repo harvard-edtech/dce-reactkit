@@ -191,7 +191,6 @@ const style$2 = `
   width: 100vw;
   height: 100vw;
   background-color: rgba(0, 0, 0, 0.7);
-  z-index: 4000000000;
 }
 `;
 /*------------------------------------------------------------------------*/
@@ -374,7 +373,7 @@ const Modal = (props) => {
     // Render the modal
     return (React.createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered modal-${size}`, tabIndex: -1, style: {
             zIndex: (onTopOfOtherModals
-                ? 6000000000
+                ? 5000000001
                 : 5000000000),
             display: 'block',
             margin: 'auto',
@@ -382,8 +381,12 @@ const Modal = (props) => {
             right: 0,
         } },
         React.createElement("style", null, style$2),
-        React.createElement("div", { className: "Modal-backdrop" }),
-        React.createElement("div", { className: "modal-dialog" },
+        React.createElement("div", { className: "Modal-backdrop", style: {
+                zIndex: 5000000003,
+            } }),
+        React.createElement("div", { className: "modal-dialog", style: {
+                zIndex: 5000000002,
+            } },
             React.createElement("div", { className: "modal-content" },
                 React.createElement("div", { className: "modal-header" },
                     React.createElement("h5", { className: "modal-title" }, title),
