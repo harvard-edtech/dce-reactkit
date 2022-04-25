@@ -320,7 +320,7 @@ const Modal: React.FC<Props> = (props) => {
   // Render the modal
   return (
     <div
-      className={`modal fade modal-${size}`}
+      className={`modal fade show modal-dialog-scrollable modal-${size}`}
       tabIndex={-1}
       style={{
         zIndex: (
