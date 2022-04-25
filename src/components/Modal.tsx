@@ -27,7 +27,6 @@ const style = `
   width: 100vw;
   height: 100vw;
   background-color: rgba(0, 0, 0, 0.7);
-  z-index: 4000000000;
 }
 `;
 
@@ -334,7 +333,7 @@ const Modal: React.FC<Props> = (props) => {
       style={{
         zIndex: (
           onTopOfOtherModals
-            ? 6000000000
+            ? 5000000001
             : 5000000000
         ),
         display: 'block',
@@ -344,8 +343,18 @@ const Modal: React.FC<Props> = (props) => {
       }}
     >
       <style>{style}</style>
-      <div className="Modal-backdrop" />
-      <div className="modal-dialog">
+      <div
+        className="Modal-backdrop"
+        style={{
+          zIndex: 5000000003,
+        }}
+      />
+      <div
+        className="modal-dialog"
+        style={{
+          zIndex: 5000000002,
+        }}
+      >
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">
