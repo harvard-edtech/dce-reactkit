@@ -366,11 +366,12 @@ const Modal = (props) => {
         ? (React__default["default"].createElement("div", null, buttons))
         : undefined);
     // Render the modal
-    return (React__default["default"].createElement("div", { className: `modal fade show modal-dialog-scrollable modal-${size}`, tabIndex: -1, style: {
+    return (React__default["default"].createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered modal-${size}`, tabIndex: -1, style: {
             zIndex: (onTopOfOtherModals
                 ? 6000000000
                 : 5000000000),
             display: 'block',
+            margin: 'auto',
         } },
         React__default["default"].createElement("div", { className: "modal-dialog" },
             React__default["default"].createElement("div", { className: "modal-content" },
