@@ -1,0 +1,5 @@
+# Ignore pack
+webpack.config.js
+.eslintrc
+.gitignore
+.babelrc

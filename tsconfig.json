@@ -1,21 +1,23 @@
 {
   "compilerOptions": {
+    "target": "es2016",
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
+
     "jsx": "react",
     "module": "ESNext",
     "declaration": true,
     "declarationDir": "types",
     "sourceMap": true,
-    "outDir": "./lib",
+    "outDir": "dist",
     "moduleResolution": "node",
-    "emitDeclarationOnly": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
+    "emitDeclarationOnly": true
   },
-  "exclude": [
-    "lib",
-    "node_modules"
+
+  "include": [
+    "./src/**/*"
   ]
 }
