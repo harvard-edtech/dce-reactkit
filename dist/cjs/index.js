@@ -193,7 +193,6 @@ var ModalSize$1 = ModalSize;
 /*------------------------------------------------------------------------*/
 // Constants
 const MS_TO_ANIMATE = 400; // Animation duration
-// Time to wait before animating in (must be >0 or animation won't trigger)
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes = {
     [ModalType$1.Okay]: [
@@ -283,6 +282,12 @@ const style$2 = `
     width: 100vw;
     height: 100vw;
     background-color: rgba(0, 0, 0, 0.7);
+
+    animation-name: Modal-animating-in;
+    animation-duration: ${Math.floor(MS_TO_ANIMATE / 2)}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
   }
 
   .Modal-animating-in {
@@ -375,6 +380,7 @@ const Modal = (props) => {
             // Wait and then set visible to true
             yield waitMs(MS_TO_ANIMATE);
             setVisible(true);
+            setAnimatingIn(false);
         }))();
     }, []);
     /*------------------------------------------------------------------------*/
@@ -401,6 +407,7 @@ const Modal = (props) => {
         }
         // Update the state
         setVisible(false);
+        setAnimatingOut(true);
         // Call the handler after the modal has animated out
         yield waitMs(MS_TO_ANIMATE);
         onClose(ModalButtonType);
@@ -449,7 +456,7 @@ const Modal = (props) => {
         animationClass = 'Modal-animating-pop';
     }
     // Render the modal
-    return (React__default["default"].createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered modal-${size} ${animationClass}`, tabIndex: -1, style: {
+    return (React__default["default"].createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered modal-${size}`, tabIndex: -1, style: {
             zIndex: (onTopOfOtherModals
                 ? 5000000001
                 : 5000000000),
@@ -461,20 +468,29 @@ const Modal = (props) => {
         React__default["default"].createElement("style", null, style$2),
         React__default["default"].createElement("div", { className: "Modal-backdrop", style: {
                 zIndex: 5000000003,
-            }, onClick: () => {
+            }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                 // Skip if exit via backdrop not allowed
-                if (dontAllowBackdropExit) {
+                if (dontAllowBackdropExit || !onClose) {
+                    // Show pop animation
+                    if (!animatingPop) {
+                        setAnimatingPop(true);
+                        // Wait then stop pop animation
+                        yield waitMs(MS_TO_ANIMATE);
+                        setAnimatingPop(false);
+                    }
                     return;
                 }
                 // Handle close
                 handleClose(ModalButtonType$1.Cancel);
-            } }),
-        React__default["default"].createElement("div", { className: "modal-dialog", style: {
+            }) }),
+        React__default["default"].createElement("div", { className: `modal-dialog ${animationClass}`, style: {
                 zIndex: 5000000002,
             } },
             React__default["default"].createElement("div", { className: "modal-content" },
-                React__default["default"].createElement("div", { className: "modal-header pt-1 pb-1" },
-                    React__default["default"].createElement("h5", { className: "modal-title font-weight-bold" }, title),
+                React__default["default"].createElement("div", { className: "modal-header" },
+                    React__default["default"].createElement("h5", { className: "modal-title", style: {
+                            fontWeight: 'bold',
+                        } }, title),
                     onClose && (React__default["default"].createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: () => {
                             // Handle close
                             handleClose(ModalButtonType$1.Cancel);

@@ -21,8 +21,6 @@ import ModalType from '../types/ModalType';
 
 // Constants
 const MS_TO_ANIMATE = 400; // Animation duration
-const MS_ANIMATE_IN_DELAY = 10;
-// Time to wait before animating in (must be >0 or animation won't trigger)
 
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes: {
@@ -118,6 +116,12 @@ const style = `
     width: 100vw;
     height: 100vw;
     background-color: rgba(0, 0, 0, 0.7);
+
+    animation-name: Modal-animating-in;
+    animation-duration: ${Math.floor(MS_TO_ANIMATE / 2)}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
   }
 
   .Modal-animating-in {
@@ -288,6 +292,7 @@ const Modal: React.FC<Props> = (props) => {
         // Wait and then set visible to true
         await waitMs(MS_TO_ANIMATE);
         setVisible(true);
+        setAnimatingIn(false);
       })();
     },
     [],
@@ -321,6 +326,7 @@ const Modal: React.FC<Props> = (props) => {
 
     // Update the state
     setVisible(false);
+    setAnimatingOut(true);
 
     // Call the handler after the modal has animated out
     await waitMs(MS_TO_ANIMATE);
@@ -397,7 +403,7 @@ const Modal: React.FC<Props> = (props) => {
   // Render the modal
   return (
     <div
-      className={`modal show modal-dialog-scrollable modal-dialog-centered modal-${size} ${animationClass}`}
+      className={`modal show modal-dialog-scrollable modal-dialog-centered modal-${size}`}
       tabIndex={-1}
       style={{
         zIndex: (
@@ -417,9 +423,17 @@ const Modal: React.FC<Props> = (props) => {
         style={{
           zIndex: 5000000003,
         }}
-        onClick={() => {
+        onClick={async () => {
           // Skip if exit via backdrop not allowed
-          if (dontAllowBackdropExit) {
+          if (dontAllowBackdropExit || !onClose) {
+            // Show pop animation
+            if (!animatingPop) {
+              setAnimatingPop(true);
+
+              // Wait then stop pop animation
+              await waitMs(MS_TO_ANIMATE);
+              setAnimatingPop(false);
+            }
             return;
           }
           // Handle close
@@ -427,14 +441,19 @@ const Modal: React.FC<Props> = (props) => {
         }}
       />
       <div
-        className="modal-dialog"
+        className={`modal-dialog ${animationClass}`}
         style={{
           zIndex: 5000000002,
         }}
       >
         <div className="modal-content">
-          <div className="modal-header pt-1 pb-1">
-            <h5 className="modal-title font-weight-bold">
+          <div className="modal-header">
+            <h5
+              className="modal-title"
+              style={{
+                fontWeight: 'bold',
+              }}
+            >
               {title}
             </h5>
 
