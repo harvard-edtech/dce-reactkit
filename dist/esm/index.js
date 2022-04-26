@@ -663,10 +663,10 @@ const AppWrapper = (props) => {
     const [fatalErrorTitle, setFatalErrorTitleInner,] = useState();
     setFatalErrorTitle = setFatalErrorTitleInner;
     // Alert
-    const [alertInfo, setAlertInfoInner,] = useState();
+    const [alertInfo, setAlertInfoInner,] = useState(undefined);
     setAlertInfo = setAlertInfoInner;
     // Confirm
-    const [confirmInfo, setConfirmInfoInner,] = useState();
+    const [confirmInfo, setConfirmInfoInner,] = useState(undefined);
     setConfirmInfo = setConfirmInfoInner;
     // Session expired
     const [sessionHasExpired, setSessionHasExpiredInner,] = useState(false);
@@ -693,6 +693,7 @@ const AppWrapper = (props) => {
                 if (onConfirmClosed) {
                     onConfirmClosed(buttonType === ModalButtonType$1.Okay);
                 }
+                setConfirmInfo(undefined);
             }, dontAllowBackdropExit: true }, confirmInfo.text));
     }
     /*----------------------------------------*/

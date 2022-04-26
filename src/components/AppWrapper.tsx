@@ -43,7 +43,7 @@ type Props = {
 /*----------------------------------------*/
 
 // Stored copies of setters
-let setAlertInfo: (info: { title: string, text: string }) => void;
+let setAlertInfo: (info: undefined | { title: string, text: string }) => void;
 let onAlertClosed: () => void;
 
 /**
@@ -79,7 +79,7 @@ export const alert = async (title: string, text: string): Promise<undefined> => 
 /*----------------------------------------*/
 
 // Stored copies of setters
-let setConfirmInfo: (info: { title: string, text: string }) => void;
+let setConfirmInfo: (info: undefined | { title: string, text: string }) => void;
 let onConfirmClosed: (confirmed: boolean) => void;
 
 /**
@@ -217,20 +217,26 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   const [
     alertInfo,
     setAlertInfoInner,
-  ] = useState<{
-    title: string,
-    text: string
-  }>();
+  ] = useState<
+    undefined
+    | {
+      title: string,
+      text: string
+    }
+  >(undefined);
   setAlertInfo = setAlertInfoInner;
 
   // Confirm
   const [
     confirmInfo,
     setConfirmInfoInner,
-  ] = useState<{
-    title: string,
-    text: string
-  }>();
+  ] = useState<
+    undefined
+    | {
+      title: string,
+      text: string
+    }
+  >(undefined);
   setConfirmInfo = setConfirmInfoInner;
 
   // Session expired
@@ -282,6 +288,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
           if (onConfirmClosed) {
             onConfirmClosed(buttonType === ModalButtonType.Okay);
           }
+          setConfirmInfo(undefined);
         }}
         dontAllowBackdropExit
       >
