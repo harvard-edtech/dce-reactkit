@@ -872,8 +872,8 @@ const style = `
     border-top-right-radius: 0.3rem;
 
     /* Add Text Padding */
-    padding-left: 0.3rem;
-    padding-right: 0.3rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 
     /* Match Background Color of Box */
     background: #fdfdfd;
