@@ -285,7 +285,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         }}
         dontAllowBackdropExit
       >
-
+        {confirmInfo.text}
       </Modal>
     );
   }

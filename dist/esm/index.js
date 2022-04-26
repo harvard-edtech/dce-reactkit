@@ -693,7 +693,7 @@ const AppWrapper = (props) => {
                 if (onConfirmClosed) {
                     onConfirmClosed(buttonType === ModalButtonType$1.Okay);
                 }
-            }, dontAllowBackdropExit: true }));
+            }, dontAllowBackdropExit: true }, confirmInfo.text));
     }
     /*----------------------------------------*/
     /*                  Views                 */
