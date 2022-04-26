@@ -63,9 +63,9 @@ const ErrorBox: React.FC<Props> = (props) => {
         <span
           style={{
             backgroundColor: 'white',
-            borderRadius: '5px',
-            paddingLeft: '3px',
-            paddingRight: '3px',
+            borderRadius: '0.3rem',
+            paddingLeft: '0.2rem',
+            paddingRight: '0.2rem',
             color: '#DC4150',
             fontVariant: 'small-caps',
             fontSize: '80%',
@@ -85,7 +85,7 @@ const ErrorBox: React.FC<Props> = (props) => {
     <div
       className="alert alert-danger text-center"
       style={{
-        maxWidth: '650px',
+        maxWidth: '40rem',
         margin: 'auto',
       }}
     >

@@ -71,9 +71,9 @@ const ErrorBox = (props) => {
             ' ',
             React.createElement("span", { style: {
                     backgroundColor: 'white',
-                    borderRadius: '5px',
-                    paddingLeft: '3px',
-                    paddingRight: '3px',
+                    borderRadius: '0.3rem',
+                    paddingLeft: '0.2rem',
+                    paddingRight: '0.2rem',
                     color: '#DC4150',
                     fontVariant: 'small-caps',
                     fontSize: '80%',
@@ -85,7 +85,7 @@ const ErrorBox = (props) => {
     }
     // Main UI
     return (React.createElement("div", { className: "alert alert-danger text-center", style: {
-            maxWidth: '650px',
+            maxWidth: '40rem',
             margin: 'auto',
         } },
         React.createElement("h4", { className: "mb-1" },
@@ -745,10 +745,10 @@ const style$1 = `
 .LoadingSpinner-blip-2,
 .LoadingSpinner-blip-3,
 .LoadingSpinner-blip-4 {
-  font-size: 25px;
+  font-size: 3rem;
   opacity: 0.6;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 /* First Blip */
@@ -815,63 +815,63 @@ const LoadingSpinner = () => {
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
 const style = `
-/* Tab Box */
-.TabBox-box {
-  /* Light Border */
-  border: 2px solid #dedede;
-  
-  /* Rounded Corners (except top-left) */
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border-top-right-radius: 5px;
+  /* Tab Box */
+  .TabBox-box {
+    /* Light Border */
+    border: 0.2rem solid #dedede;
+    
+    /* Rounded Corners (except top-left) */
+    border-bottom-right-radius: 0.3rem;
+    border-bottom-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
 
-  /* Very Light Gray Border */
-  background: #fdfdfd;
+    /* Very Light Gray Border */
+    background: #fdfdfd;
 
-  /* Align Contents on Left */
-  text-align: left;
-}
+    /* Align Contents on Left */
+    text-align: left;
+  }
 
-/* Container for Title */
-.TabBox-title-container {
-  /* Place on Left */
-  position: relative;
-  left: 0;
-  text-align: left;
-}
+  /* Container for Title */
+  .TabBox-title-container {
+    /* Place on Left */
+    position: relative;
+    left: 0;
+    text-align: left;
+  }
 
-/* Tab-style Title */
-.TabBox-title {
-  /* Place so it Barely Overlaps the Box Border */
-  display: inline-block;
-  position: relative;
-  top: 2px; /* Gives Illusion that Border Doesn't Exist Below Tab */
+  /* Tab-style Title */
+  .TabBox-title {
+    /* Place so it Barely Overlaps the Box Border */
+    display: inline-block;
+    position: relative;
+    top: 0.2rem; /* Gives Illusion that Border Doesn't Exist Below Tab */
 
-  /* Title-sized Font */
-  font-size: 25px;
+    /* Title-sized Font */
+    font-size: 1.5rem;
 
-  /* Add Border on Top and Sides */
-  border-top: 2px solid #dedede;
-  border-left: 2px solid #dedede;
-  border-right: 2px solid #dedede;
+    /* Add Border on Top and Sides */
+    border-top: 0.2rem solid #dedede;
+    border-left: 0.2rem solid #dedede;
+    border-right: 0.2rem solid #dedede;
 
-  /* Round the Top Corners */
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+    /* Round the Top Corners */
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
 
-  /* Add Text Padding */
-  padding-left: 12px;
-  padding-right: 12px;
+    /* Add Text Padding */
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
 
-  /* Match Background Color of Box */
-  background: #fdfdfd;
-}
+    /* Match Background Color of Box */
+    background: #fdfdfd;
+  }
 
-/* Make the TabBox's Children Appear Above Title if Overlap Occurs */
-.TabBox-children {
-  position: relative;
-  z-index: 1;
-}
+  /* Make the TabBox's Children Appear Above Title if Overlap Occurs */
+  .TabBox-children {
+    position: relative;
+    z-index: 1;
+  }
 `;
 /*------------------------------------------------------------------------*/
 /*                                Component                               */
@@ -881,7 +881,7 @@ const TabBox = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { title, children, } = props;
+    const { title, children, noBottomPadding, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -889,7 +889,7 @@ const TabBox = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     // Full UI
-    return (React.createElement("div", null,
+    return (React.createElement("div", { className: noBottomPadding ? '' : 'mb-2' },
         React.createElement("style", null, style),
         React.createElement("div", { className: "TabBox-title-container" },
             React.createElement("div", { className: "TabBox-title" }, title)),

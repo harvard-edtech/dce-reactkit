@@ -157,6 +157,7 @@ declare const Modal: React.FC<Props$1>;
 declare type Props = {
     title: React.ReactNode;
     children: React.ReactNode;
+    noBottomPadding?: boolean;
 };
 declare const TabBox: React.FC<Props>;
 
