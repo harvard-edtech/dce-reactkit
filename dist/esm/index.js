@@ -818,7 +818,7 @@ const style = `
   /* Tab Box */
   .TabBox-box {
     /* Light Border */
-    border: 0.2rem solid #dedede;
+    border: 0.15rem solid #dedede;
     
     /* Rounded Corners (except top-left) */
     border-bottom-right-radius: 0.3rem;
@@ -830,6 +830,10 @@ const style = `
 
     /* Align Contents on Left */
     text-align: left;
+
+    /* Add Text Padding */
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
   }
 
   /* Container for Title */
@@ -845,15 +849,15 @@ const style = `
     /* Place so it Barely Overlaps the Box Border */
     display: inline-block;
     position: relative;
-    top: 0.2rem; /* Gives Illusion that Border Doesn't Exist Below Tab */
+    top: 0.15rem; /* Gives Illusion that Border Doesn't Exist Below Tab */
 
     /* Title-sized Font */
     font-size: 1.5rem;
 
     /* Add Border on Top and Sides */
-    border-top: 0.2rem solid #dedede;
-    border-left: 0.2rem solid #dedede;
-    border-right: 0.2rem solid #dedede;
+    border-top: 0.15rem solid #dedede;
+    border-left: 0.15rem solid #dedede;
+    border-right: 0.15rem solid #dedede;
 
     /* Round the Top Corners */
     border-top-left-radius: 0.3rem;
@@ -889,7 +893,7 @@ const TabBox = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     // Full UI
-    return (React.createElement("div", { className: noBottomPadding ? '' : 'mb-2' },
+    return (React.createElement("div", { className: `TabBox-container ${noBottomPadding ? '' : 'mb-2'}` },
         React.createElement("style", null, style),
         React.createElement("div", { className: "TabBox-title-container" },
             React.createElement("div", { className: "TabBox-title" }, title)),
