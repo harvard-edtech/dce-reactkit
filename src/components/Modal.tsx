@@ -16,26 +16,11 @@ import ModalSize from '../types/ModalSize';
 import ModalType from '../types/ModalType';
 
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
-/*------------------------------------------------------------------------*/
-
-const style = `
-.Modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vw;
-  background-color: rgba(0, 0, 0, 0.7);
-}
-`;
-
-/*------------------------------------------------------------------------*/
 /*                                Constants                               */
 /*------------------------------------------------------------------------*/
 
 // Constants
-const MS_TO_ANIMATE = 400; // Time to animate in/out (defined by bootstrap)
+const MS_TO_ANIMATE = 400; // Animation duration
 const MS_ANIMATE_IN_DELAY = 10;
 // Time to wait before animating in (must be >0 or animation won't trigger)
 
@@ -120,6 +105,82 @@ const ModalButtonTypeToLabelAndVariant = {
     variant: Variant.Dark,
   },
 };
+
+/*------------------------------------------------------------------------*/
+/*                                  Style                                 */
+/*------------------------------------------------------------------------*/
+
+const style = `
+  .Modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vw;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .Modal-animating-in {
+    animation-name: Modal-animating-in;
+    animation-duration: ${MS_TO_ANIMATE}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes Modal-animating-in {
+    0% {
+      transform: scale(1.05);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .Modal-animating-pop {
+    animation-name: Modal-animating-pop;
+    animation-duration: ${MS_TO_ANIMATE}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in-out;
+  }
+
+  @keyframes Modal-animating-pop {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .Modal-animating-out {
+    animation-name: Modal-animating-out;
+    animation-duration: ${MS_TO_ANIMATE}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in;
+  }
+
+  @keyframes Modal-animating-out {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.05);
+      opacity: 0;
+    }
+  }
+`;
 
 /*------------------------------------------------------------------------*/
 /*                                  Types                                 */
@@ -208,8 +269,10 @@ const Modal: React.FC<Props> = (props) => {
   // If true, the modal is shown
   const [visible, setVisible] = useState(false);
 
-  // True if currently animating in
-  const [animatingIn, setAnimatingIn] = useState(false);
+  // True if animation is in use
+  const [animatingIn, setAnimatingIn] = useState(true);
+  const [animatingPop, setAnimatingPop] = useState(false);
+  const [animatingOut, setAnimatingOut] = useState(false);
 
   /*------------------------------------------------------------------------*/
   /*                           Lifecycle Functions                          */
@@ -222,10 +285,6 @@ const Modal: React.FC<Props> = (props) => {
   useEffect(
     () => {
       (async () => {
-        // Start the component animating in
-        await waitMs(MS_ANIMATE_IN_DELAY);
-        setAnimatingIn(true);
-
         // Wait and then set visible to true
         await waitMs(MS_TO_ANIMATE);
         setVisible(true);
@@ -325,10 +384,20 @@ const Modal: React.FC<Props> = (props) => {
       : undefined
   );
 
+  // Choose an animation
+  let animationClass = '';
+  if (animatingIn) {
+    animationClass = 'Modal-animating-in';
+  } else if (animatingOut) {
+    animationClass = 'Modal-animating-out';
+  } else if (animatingPop) {
+    animationClass = 'Modal-animating-pop';
+  }
+
   // Render the modal
   return (
     <div
-      className={`modal show modal-dialog-scrollable modal-dialog-centered modal-${size}`}
+      className={`modal show modal-dialog-scrollable modal-dialog-centered modal-${size} ${animationClass}`}
       tabIndex={-1}
       style={{
         zIndex: (
@@ -348,6 +417,14 @@ const Modal: React.FC<Props> = (props) => {
         style={{
           zIndex: 5000000003,
         }}
+        onClick={() => {
+          // Skip if exit via backdrop not allowed
+          if (dontAllowBackdropExit) {
+            return;
+          }
+          // Handle close
+          handleClose(ModalButtonType.Cancel);
+        }}
       />
       <div
         className="modal-dialog"
@@ -356,8 +433,8 @@ const Modal: React.FC<Props> = (props) => {
         }}
       >
         <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">
+          <div className="modal-header pt-1 pb-1">
+            <h5 className="modal-title font-weight-bold">
               {title}
             </h5>
 
@@ -365,9 +442,9 @@ const Modal: React.FC<Props> = (props) => {
               <button
                 type="button"
                 className="btn-close"
-                data-bs-dismiss="modal"
                 aria-label="Close"
                 onClick={() => {
+                  // Handle close
                   handleClose(ModalButtonType.Cancel);
                 }}
               />
@@ -379,7 +456,7 @@ const Modal: React.FC<Props> = (props) => {
             </div>
           )}
           {footer && (
-            <div className="modal-footer">
+            <div className="modal-footer pt-1 pb-1">
               {footer}
             </div>
           )}

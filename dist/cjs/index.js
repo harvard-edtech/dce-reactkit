@@ -189,24 +189,10 @@ var ModalSize$1 = ModalSize;
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
-/*------------------------------------------------------------------------*/
-const style$2 = `
-.Modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vw;
-  background-color: rgba(0, 0, 0, 0.7);
-}
-`;
-/*------------------------------------------------------------------------*/
 /*                                Constants                               */
 /*------------------------------------------------------------------------*/
 // Constants
-const MS_TO_ANIMATE = 400; // Time to animate in/out (defined by bootstrap)
-const MS_ANIMATE_IN_DELAY = 10;
+const MS_TO_ANIMATE = 400; // Animation duration
 // Time to wait before animating in (must be >0 or animation won't trigger)
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes = {
@@ -287,6 +273,80 @@ const ModalButtonTypeToLabelAndVariant = {
     },
 };
 /*------------------------------------------------------------------------*/
+/*                                  Style                                 */
+/*------------------------------------------------------------------------*/
+const style$2 = `
+  .Modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vw;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .Modal-animating-in {
+    animation-name: Modal-animating-in;
+    animation-duration: ${MS_TO_ANIMATE}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes Modal-animating-in {
+    0% {
+      transform: scale(1.05);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .Modal-animating-pop {
+    animation-name: Modal-animating-pop;
+    animation-duration: ${MS_TO_ANIMATE}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in-out;
+  }
+
+  @keyframes Modal-animating-pop {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .Modal-animating-out {
+    animation-name: Modal-animating-out;
+    animation-duration: ${MS_TO_ANIMATE}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in;
+  }
+
+  @keyframes Modal-animating-out {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.05);
+      opacity: 0;
+    }
+  }
+`;
+/*------------------------------------------------------------------------*/
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
 const Modal = (props) => {
@@ -299,8 +359,10 @@ const Modal = (props) => {
     /* -------------- State ------------- */
     // If true, the modal is shown
     const [visible, setVisible] = React.useState(false);
-    // True if currently animating in
-    const [animatingIn, setAnimatingIn] = React.useState(false);
+    // True if animation is in use
+    const [animatingIn, setAnimatingIn] = React.useState(true);
+    const [animatingPop, setAnimatingPop] = React.useState(false);
+    const [animatingOut, setAnimatingOut] = React.useState(false);
     /*------------------------------------------------------------------------*/
     /*                           Lifecycle Functions                          */
     /*------------------------------------------------------------------------*/
@@ -310,9 +372,6 @@ const Modal = (props) => {
      */
     React.useEffect(() => {
         (() => __awaiter(void 0, void 0, void 0, function* () {
-            // Start the component animating in
-            yield waitMs(MS_ANIMATE_IN_DELAY);
-            setAnimatingIn(true);
             // Wait and then set visible to true
             yield waitMs(MS_TO_ANIMATE);
             setVisible(true);
@@ -378,8 +437,19 @@ const Modal = (props) => {
     const footer = ((buttons && buttons.length)
         ? (React__default["default"].createElement("div", null, buttons))
         : undefined);
+    // Choose an animation
+    let animationClass = '';
+    if (animatingIn) {
+        animationClass = 'Modal-animating-in';
+    }
+    else if (animatingOut) {
+        animationClass = 'Modal-animating-out';
+    }
+    else if (animatingPop) {
+        animationClass = 'Modal-animating-pop';
+    }
     // Render the modal
-    return (React__default["default"].createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered modal-${size}`, tabIndex: -1, style: {
+    return (React__default["default"].createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered modal-${size} ${animationClass}`, tabIndex: -1, style: {
             zIndex: (onTopOfOtherModals
                 ? 5000000001
                 : 5000000000),
@@ -391,18 +461,26 @@ const Modal = (props) => {
         React__default["default"].createElement("style", null, style$2),
         React__default["default"].createElement("div", { className: "Modal-backdrop", style: {
                 zIndex: 5000000003,
+            }, onClick: () => {
+                // Skip if exit via backdrop not allowed
+                if (dontAllowBackdropExit) {
+                    return;
+                }
+                // Handle close
+                handleClose(ModalButtonType$1.Cancel);
             } }),
         React__default["default"].createElement("div", { className: "modal-dialog", style: {
                 zIndex: 5000000002,
             } },
             React__default["default"].createElement("div", { className: "modal-content" },
-                React__default["default"].createElement("div", { className: "modal-header" },
-                    React__default["default"].createElement("h5", { className: "modal-title" }, title),
-                    onClose && (React__default["default"].createElement("button", { type: "button", className: "btn-close", "data-bs-dismiss": "modal", "aria-label": "Close", onClick: () => {
+                React__default["default"].createElement("div", { className: "modal-header pt-1 pb-1" },
+                    React__default["default"].createElement("h5", { className: "modal-title font-weight-bold" }, title),
+                    onClose && (React__default["default"].createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: () => {
+                            // Handle close
                             handleClose(ModalButtonType$1.Cancel);
                         } }))),
                 children && (React__default["default"].createElement("div", { className: "modal-body" }, children)),
-                footer && (React__default["default"].createElement("div", { className: "modal-footer" }, footer))))));
+                footer && (React__default["default"].createElement("div", { className: "modal-footer pt-1 pb-1" }, footer))))));
 };
 
 /**
