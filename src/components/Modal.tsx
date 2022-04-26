@@ -20,7 +20,7 @@ import ModalType from '../types/ModalType';
 /*------------------------------------------------------------------------*/
 
 // Constants
-const MS_TO_ANIMATE = 400; // Animation duration
+const MS_TO_ANIMATE = 200; // Animation duration
 
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes: {
@@ -407,7 +407,7 @@ const Modal: React.FC<Props> = (props) => {
     return (
       <button
         type="button"
-        className={`Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'mr-1'}`}
+        className={`Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`}
         onClick={() => {
           handleClose(ModalButtonType);
         }}

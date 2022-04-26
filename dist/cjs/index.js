@@ -192,7 +192,7 @@ var ModalSize$1 = ModalSize;
 /*                                Constants                               */
 /*------------------------------------------------------------------------*/
 // Constants
-const MS_TO_ANIMATE = 400; // Animation duration
+const MS_TO_ANIMATE = 200; // Animation duration
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes = {
     [ModalType$1.Okay]: [
@@ -472,7 +472,7 @@ const Modal = (props) => {
         // Check if this button is last
         const last = (i === ModalButtonTypes.length - 1);
         // Create the button
-        return (React__default["default"].createElement("button", { type: "button", className: `Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'mr-1'}`, onClick: () => {
+        return (React__default["default"].createElement("button", { type: "button", className: `Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
                 handleClose(ModalButtonType);
             } }, label));
     });
