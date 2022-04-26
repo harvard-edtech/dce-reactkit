@@ -137,10 +137,10 @@ const style = `
 
   .Modal-fading-out {
     animation-name: Modal-fading-out;
-    animation-duration: ${Math.floor(MS_TO_ANIMATE * 2)}ms;
+    animation-duration: ${MS_TO_ANIMATE}ms;
     animation-iteration-count: 1;
     animation-fill-mode: both;
-    animation-timing-function: ease-out;
+    animation-timing-function: ease-in;
   }
 
   @keyframes Modal-fading-out {
