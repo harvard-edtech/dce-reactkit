@@ -274,12 +274,40 @@ const style$2 = `
     width: 100vw;
     height: 100vw;
     background-color: rgba(0, 0, 0, 0.7);
+  }
 
-    animation-name: Modal-animating-in;
-    animation-duration: ${Math.floor(MS_TO_ANIMATE / 2)}ms;
+  .Modal-fading-in {
+    animation-name: Modal-fading-in;
+    animation-duration: ${Math.floor(MS_TO_ANIMATE * 2)}ms;
     animation-iteration-count: 1;
     animation-fill-mode: both;
     animation-timing-function: ease-out;
+  }
+
+  @keyframes Modal-fading-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .Modal-fading-out {
+    animation-name: Modal-fading-out;
+    animation-duration: ${Math.floor(MS_TO_ANIMATE * 2)}ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes Modal-fading-out {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
   }
 
   .Modal-animating-in {
@@ -292,11 +320,11 @@ const style$2 = `
 
   @keyframes Modal-animating-in {
     0% {
-      transform: scale(1.05);
+      transform: scale(1.05) translate(0, -1.5rem);
       opacity: 0;
     }
     100% {
-      transform: scale(1);
+      transform: scale(1) translate(0, 0);
       opacity: 1;
     }
   }
@@ -334,11 +362,11 @@ const style$2 = `
 
   @keyframes Modal-animating-out {
     0% {
-      transform: scale(1);
+      transform: scale(1) translate(0, 0);
       opacity: 1;
     }
     100% {
-      transform: scale(1.05);
+      transform: scale(1.05) translate(0, -1.5rem);
       opacity: 0;
     }
   }
@@ -354,6 +382,9 @@ const Modal = (props) => {
     /* -------------- Props ------------- */
     const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, children, onClose, dontAllowBackdropExit, onTopOfOtherModals, } = props;
     /* -------------- State ------------- */
+    // If true, the modal is completely gone
+    // (not just invisible, also removed from the dom)
+    const [gone, setGone] = useState(false);
     // If true, the modal is shown
     const [visible, setVisible] = useState(false);
     // True if animation is in use
@@ -403,10 +434,15 @@ const Modal = (props) => {
         // Call the handler after the modal has animated out
         yield waitMs(MS_TO_ANIMATE);
         onClose(ModalButtonType);
+        setGone(true);
     });
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
+    // Return nothing if gone
+    if (gone) {
+        return null;
+    }
     /*----------------------------------------*/
     /*                 Footer                 */
     /*----------------------------------------*/
@@ -438,11 +474,14 @@ const Modal = (props) => {
         : undefined);
     // Choose an animation
     let animationClass = '';
+    let backdropAnimationClass = '';
     if (animatingIn) {
         animationClass = 'Modal-animating-in';
+        backdropAnimationClass = 'Modal-fading-in';
     }
     else if (animatingOut) {
         animationClass = 'Modal-animating-out';
+        backdropAnimationClass = 'Modal-fading-out';
     }
     else if (animatingPop) {
         animationClass = 'Modal-animating-pop';
@@ -458,7 +497,7 @@ const Modal = (props) => {
             right: 0,
         } },
         React.createElement("style", null, style$2),
-        React.createElement("div", { className: "Modal-backdrop", style: {
+        React.createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                 // Skip if exit via backdrop not allowed
