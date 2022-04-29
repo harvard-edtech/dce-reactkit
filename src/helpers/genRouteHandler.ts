@@ -23,7 +23,7 @@ import handleSuccess from './handleSuccess';
  */
 const genRouteHandler = (
   opts: {
-    paramTypes: {
+    paramTypes?: {
       [k: string]: ParamType
     },
     handler: (
@@ -49,7 +49,7 @@ const genRouteHandler = (
     /*----------------------------------------*/
 
     // Process items one by one
-    const paramList = Object.entries(opts.paramTypes);
+    const paramList = Object.entries(opts.paramTypes ?? {});
     for (let i = 0; i < paramList.length; i++) {
       const [name, type] = paramList[i];
 

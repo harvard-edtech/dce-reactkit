@@ -1250,13 +1250,14 @@ const handleSuccess = (res, body) => {
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         // Output params
         const output = {};
         /*----------------------------------------*/
         /*              Parse Params              */
         /*----------------------------------------*/
         // Process items one by one
-        const paramList = Object.entries(opts.paramTypes);
+        const paramList = Object.entries((_a = opts.paramTypes) !== null && _a !== void 0 ? _a : {});
         for (let i = 0; i < paramList.length; i++) {
             const [name, type] = paramList[i];
             // Find the value as a string

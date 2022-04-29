@@ -350,9 +350,9 @@ declare const handleSuccess: (res: any, body: any) => undefined;
  *   req (express request object), res (express response object)
  */
 declare const genRouteHandler: (opts: {
-    paramTypes: {
+    paramTypes?: {
         [k: string]: ParamType;
-    };
+    } | undefined;
     handler: (opts: {
         params: {
             [k: string]: any;
