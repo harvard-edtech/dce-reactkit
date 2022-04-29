@@ -1139,9 +1139,22 @@ let _cacclGetLaunchInfo;
  * @returns object { launched, launchInfo }
  */
 const cacclGetLaunchInfo = (req) => {
-    {
+    if (!_cacclGetLaunchInfo) {
         throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
     }
+    return _cacclGetLaunchInfo(req);
+};
+/*------------------------------------------------------------------------*/
+/*                                  Main                                  */
+/*------------------------------------------------------------------------*/
+/**
+ * Prepare dce-reactkit to run on the server
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.getLaunchInfo CACCL LTI's get launch info function
+ */
+const initServer = (opts) => {
+    _cacclGetLaunchInfo = opts.getLaunchInfo;
 };
 
 /**
@@ -1472,5 +1485,5 @@ const genRouteHandler = (opts) => {
     });
 };
 
-export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, ReactKitErrorCode$1 as ReactKitErrorCode, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, ReactKitErrorCode$1 as ReactKitErrorCode, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

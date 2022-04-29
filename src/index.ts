@@ -23,6 +23,7 @@ import visitServerEndpoint from './helpers/visitServerEndpoint';
 import genRouteHandler from './helpers/genRouteHandler';
 import handleError from './helpers/handleError';
 import handleSuccess from './helpers/handleSuccess';
+import initServer from './server/initServer';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -60,6 +61,7 @@ export {
   // Client helpers
   visitServerEndpoint,
   // Server helpers
+  initServer,
   genRouteHandler,
   handleError,
   handleSuccess,

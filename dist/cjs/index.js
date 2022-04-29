@@ -1147,9 +1147,22 @@ let _cacclGetLaunchInfo;
  * @returns object { launched, launchInfo }
  */
 const cacclGetLaunchInfo = (req) => {
-    {
+    if (!_cacclGetLaunchInfo) {
         throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
     }
+    return _cacclGetLaunchInfo(req);
+};
+/*------------------------------------------------------------------------*/
+/*                                  Main                                  */
+/*------------------------------------------------------------------------*/
+/**
+ * Prepare dce-reactkit to run on the server
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.getLaunchInfo CACCL LTI's get launch info function
+ */
+const initServer = (opts) => {
+    _cacclGetLaunchInfo = opts.getLaunchInfo;
 };
 
 /**
@@ -1502,6 +1515,7 @@ exports.forceNumIntoBounds = forceNumIntoBounds;
 exports.genRouteHandler = genRouteHandler;
 exports.handleError = handleError;
 exports.handleSuccess = handleSuccess;
+exports.initServer = initServer;
 exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;
 exports.roundToNumDecimals = roundToNumDecimals;

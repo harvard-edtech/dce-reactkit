@@ -364,6 +364,20 @@ declare const genRouteHandler: (opts: {
     }) => void;
 }) => (req: any, res: any) => Promise<undefined>;
 
+declare type GetLaunchInfoFunction = (req: any) => {
+    launched: boolean;
+    launchInfo?: any;
+};
+/**
+ * Prepare dce-reactkit to run on the server
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.getLaunchInfo CACCL LTI's get launch info function
+ */
+declare const initServer: (opts: {
+    getLaunchInfo: GetLaunchInfoFunction;
+}) => void;
+
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -379,4 +393,4 @@ declare enum ReactKitErrorCode {
     NoCACCLGetLaunchInfoFunction = "DRK8"
 }
 
-export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
