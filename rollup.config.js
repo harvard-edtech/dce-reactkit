@@ -4,7 +4,6 @@ import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
-
 const packageJson = require("./package.json");
 
 export default [

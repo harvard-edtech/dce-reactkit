@@ -9,9 +9,27 @@ import React from 'react';
 
 declare type Props$3 = {
     children: React.ReactNode;
+    sendRequest: SendRequestFunction;
     dark?: boolean;
     sessionExpiredMessage?: string;
 };
+declare type SendRequestFunction = (opts: {
+    path: string;
+    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
+    params?: {
+        [x: string]: any;
+    } | undefined;
+    headers?: {
+        [x: string]: any;
+    } | undefined;
+    numRetries?: number | undefined;
+}) => Promise<{
+    body: any;
+    status: number;
+    headers: {
+        [x: string]: any;
+    };
+}>;
 /**
  * Show an alert modal with an "Okay" button
  * @author Gabe Abrams
@@ -260,6 +278,89 @@ declare const sum: (nums: number[]) => number;
 declare const waitMs: (ms?: number) => Promise<unknown>;
 
 /**
+ * Visit an endpoint on the server [for client only]
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.path - the path of the server endpoint
+ * @param [opts.method=GET] - the method of the endpoint
+ * @param [opts.params] - query/body parameters to include
+ * @returns response from server
+ */
+declare const visitServerEndpoint: (opts: {
+    path: string;
+    method?: "GET" | "POST" | "DELETE" | "PUT" | undefined;
+    params?: {
+        [x: string]: any;
+    } | undefined;
+}) => Promise<any>;
+
+/**
+ * Server-side API param types
+ * @author Gabe Abrams
+ */
+declare enum ParamType {
+    Boolean = "boolean",
+    BooleanOptional = "boolean-optional",
+    Float = "float",
+    FloatOptional = "float-optional",
+    Int = "int",
+    IntOptional = "int-optional",
+    JSON = "json",
+    JSONOptional = "json-optional",
+    String = "string",
+    StringOptional = "string-optional"
+}
+
+/**
+ * Handle an error and respond to the client
+ * @author Gabe Abrams
+ * @param res express response
+ * @param error error info
+ * @param opts.err the error to send to the client
+ *   or the error message
+ * @param [opts.code] an error code (only used if err.code is not
+ *   included)
+ * @param [opts.status=500] the https status code to use
+ *   defined)
+ */
+declare const handleError: (res: any, error: ({
+    message: any;
+    code?: string;
+    status?: number;
+} | Error | string | any)) => undefined;
+
+/**
+ * Send successful API response
+ * @author Gabe Abrams
+ * @param res express response
+ * @param body the body of the response to send to the client
+ */
+declare const handleSuccess: (res: any, body: any) => undefined;
+
+/**
+ * Generate an express API route handler
+ * @author Gabe Abrams
+ * @param params map containing parameters that are included in the request
+ *   (map: param name => type)
+ * @param handler function that processes the request
+ * @returns express route handler that takes the following arguments:
+ *   params (map: param name => value), handleSuccess (function for handling
+ *   successful requests), handleError (function for handling failed requests),
+ *   req (express request object), res (express response object)
+ */
+declare const genRouteHandler: (params: {
+    [k: string]: ParamType;
+}, handler: (opts: {
+    params: {
+        [k: string]: any;
+    };
+    handleSuccess: (body: any) => void;
+    handleError: (error: any) => void;
+    req: any;
+    res: any;
+}) => void) => (req: any, res: any) => Promise<undefined>;
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -269,7 +370,9 @@ declare enum ReactKitErrorCode {
     SessionExpired = "DRK3",
     MissingParameter = "DRK4",
     InvalidParameter = "DRK5",
-    WrongCourse = "DRK6"
+    WrongCourse = "DRK6",
+    NoCACCLSendRequestFunction = "DRK7",
+    NoCACCLGetLaunchInfoFunction = "DRK8"
 }
 
-export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, waitMs };
+export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };

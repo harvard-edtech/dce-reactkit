@@ -35,7 +35,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK2
+// Highest error code = DRK8
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -48,6 +48,8 @@ var ReactKitErrorCode;
     ReactKitErrorCode["MissingParameter"] = "DRK4";
     ReactKitErrorCode["InvalidParameter"] = "DRK5";
     ReactKitErrorCode["WrongCourse"] = "DRK6";
+    ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
+    ReactKitErrorCode["NoCACCLGetLaunchInfoFunction"] = "DRK8";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -559,6 +561,24 @@ class ErrorWithCode extends Error {
 /*                             Static Helpers                             */
 /*------------------------------------------------------------------------*/
 /*----------------------------------------*/
+/*              Send Request              */
+/*----------------------------------------*/
+// Store copy of caccl send request
+let _cacclSendRequest;
+/**
+ * Send a request using caccl's send request feature
+ * @author Gabe Abrams
+ * @param opts send request options
+ * @returns send request response
+ */
+const cacclSendRequest = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    // Make sure send request has been passed in
+    if (!_cacclSendRequest) {
+        throw new ErrorWithCode('The request could not be sent because the AppWrapper component does not have a copy of sendRequest from CACCL.', ReactKitErrorCode$1.NoCACCLSendRequestFunction);
+    }
+    return _cacclSendRequest(opts);
+});
+/*----------------------------------------*/
 /*                  Alert                 */
 /*----------------------------------------*/
 // Stored copies of setters
@@ -570,7 +590,7 @@ let onAlertClosed;
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-const alert = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
+const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
     // Fallback if alert not available
     if (!setAlertInfo) {
         window.alert(`${title}\n\n${text}`);
@@ -644,7 +664,7 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
         : String((_b = error.code) !== null && _b !== void 0 ? _b : ReactKitErrorCode$1.NoCode));
     // Handle case where app hasn't loaded
     if (!setFatalErrorMessage || !setFatalErrorCode) {
-        alert(errorTitle, `${message} (code: ${code}). Please contact support.`);
+        alert$1(errorTitle, `${message} (code: ${code}). Please contact support.`);
         return undefined;
     }
     // Use setters
@@ -661,7 +681,9 @@ const AppWrapper = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { children, dark, sessionExpiredMessage = 'Your session has expired. Please go back to Canvas and start over.', } = props;
+    const { children, sendRequest, dark, sessionExpiredMessage = 'Your session has expired. Please go back to Canvas and start over.', } = props;
+    // Store copy of send request
+    _cacclSendRequest = sendRequest;
     /* -------------- State ------------- */
     // Fatal error
     const [fatalErrorMessage, setFatalErrorMessageInner,] = React.useState();
@@ -1053,6 +1075,409 @@ const roundToNumDecimals = (num, numDecimals) => {
     return (Math.round(num * rounder) / rounder);
 };
 
+// Keep track of whether or not session expiry has already been handled
+let sessionAlreadyExpired = false;
+/*------------------------------------------------------------------------*/
+/*                                  Main                                  */
+/*------------------------------------------------------------------------*/
+/**
+ * Visit an endpoint on the server [for client only]
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.path - the path of the server endpoint
+ * @param [opts.method=GET] - the method of the endpoint
+ * @param [opts.params] - query/body parameters to include
+ * @returns response from server
+ */
+const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Send the request
+    const response = yield cacclSendRequest({
+        path: opts.path,
+        method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
+        params: opts.params,
+    });
+    // Check for failure
+    if (!response || !response.body) {
+        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+    }
+    if (!response.body.success) {
+        // Session expired
+        if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
+            // Skip notice if session was already expired
+            if (sessionAlreadyExpired) {
+                // Never return (browser is already reloading)
+                yield new Promise(() => {
+                    // Promise that never returns
+                });
+            }
+            sessionAlreadyExpired = true;
+            // Show session expiration message
+            {
+                // Fallback to alert
+                // eslint-disable-next-line no-alert
+                alert('Your session has expired. Please start over.');
+            }
+            // Never return (don't continue execution)
+            yield new Promise(() => {
+                // Promise that never returns
+            });
+        }
+        // Other errors
+        throw new ErrorWithCode((response.body.message
+            || 'An unknown error occurred. Please contact an admin.'), (response.body.code
+            || ReactKitErrorCode$1.NoCode));
+    }
+    // Success! Extract the body
+    const { body } = response.body;
+    // Return
+    return body;
+});
+
+// Import custom error
+// Stored copy of caccl functions
+let _cacclGetLaunchInfo;
+/*------------------------------------------------------------------------*/
+/*                                 Helpers                                */
+/*------------------------------------------------------------------------*/
+/**
+ * Get launch info via CACCL
+ * @author Gabe Abrams
+ * @param req express request object
+ * @returns object { launched, launchInfo }
+ */
+const cacclGetLaunchInfo = (req) => {
+    {
+        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
+    }
+};
+
+/**
+ * Server-side API param types
+ * @author Gabe Abrams
+ */
+var ParamType;
+(function (ParamType) {
+    ParamType["Boolean"] = "boolean";
+    ParamType["BooleanOptional"] = "boolean-optional";
+    ParamType["Float"] = "float";
+    ParamType["FloatOptional"] = "float-optional";
+    ParamType["Int"] = "int";
+    ParamType["IntOptional"] = "int-optional";
+    ParamType["JSON"] = "json";
+    ParamType["JSONOptional"] = "json-optional";
+    ParamType["String"] = "string";
+    ParamType["StringOptional"] = "string-optional";
+})(ParamType || (ParamType = {}));
+var ParamType$1 = ParamType;
+
+// Import shared types
+/**
+ * Handle an error and respond to the client
+ * @author Gabe Abrams
+ * @param res express response
+ * @param error error info
+ * @param opts.err the error to send to the client
+ *   or the error message
+ * @param [opts.code] an error code (only used if err.code is not
+ *   included)
+ * @param [opts.status=500] the https status code to use
+ *   defined)
+ */
+const handleError = (res, error) => {
+    // Get the error message
+    let message;
+    if (error && error.message) {
+        message = (error.message || 'An unknown error occurred.');
+    }
+    else if (typeof error === 'string') {
+        message = (error.trim().length > 0
+            ? error
+            : 'An unknown error occurred.');
+    }
+    else {
+        message = 'An unknown error occurred.';
+    }
+    // Get the error code
+    const code = (error.code || ReactKitErrorCode$1.NoCode);
+    // Get the status code
+    const status = (error.status || 500);
+    // Respond to user
+    res
+        // Set the http status code
+        .status(status)
+        // Send a JSON response
+        .json({
+        // Error message
+        message,
+        // Error code
+        code,
+        // Success = false flag so client can detect server-side errors
+        success: false,
+    });
+    return undefined;
+};
+
+/**
+ * Send successful API response
+ * @author Gabe Abrams
+ * @param res express response
+ * @param body the body of the response to send to the client
+ */
+const handleSuccess = (res, body) => {
+    // Send a http 200 json response
+    res.json({
+        // Include the body as a parameter
+        body,
+        // Success = true flag so client can detect successful responses
+        success: true,
+    });
+    return undefined;
+};
+
+/**
+ * Generate an express API route handler
+ * @author Gabe Abrams
+ * @param params map containing parameters that are included in the request
+ *   (map: param name => type)
+ * @param handler function that processes the request
+ * @returns express route handler that takes the following arguments:
+ *   params (map: param name => value), handleSuccess (function for handling
+ *   successful requests), handleError (function for handling failed requests),
+ *   req (express request object), res (express response object)
+ */
+const genRouteHandler = (params, handler) => {
+    // Return a route handler
+    return (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        // Output params
+        const output = {};
+        /*----------------------------------------*/
+        /*              Parse Params              */
+        /*----------------------------------------*/
+        // Process items one by one
+        const paramList = Object.entries(params);
+        for (let i = 0; i < paramList.length; i++) {
+            const [name, type] = paramList[i];
+            // Find the value as a string
+            const value = (req.params[name]
+                || req.query[name]
+                || req.body[name]);
+            // Parse
+            if (type === ParamType$1.Boolean || type === ParamType$1.BooleanOptional) {
+                // Boolean
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.BooleanOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Simplify value
+                    const simpleVal = (String(value)
+                        .trim()
+                        .toLowerCase());
+                    // Parse
+                    output[name] = ([
+                        'true',
+                        'yes',
+                        'y',
+                        '1',
+                        't',
+                    ].indexOf(simpleVal) >= 0);
+                }
+            }
+            else if (type === ParamType$1.Float || type === ParamType$1.FloatOptional) {
+                // Float
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.FloatOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else if (!Number.isNaN(Number.parseFloat(String(value)))) {
+                    // Value is a number
+                    output[name] = Number.parseFloat(String(value));
+                }
+                else {
+                    // Issue!
+                    return handleError(res, {
+                        message: `Request data was malformed: ${name} was not a valid float.`,
+                        code: ReactKitErrorCode$1.InvalidParameter,
+                        status: 422,
+                    });
+                }
+            }
+            else if (type === ParamType$1.Int || type === ParamType$1.IntOptional) {
+                // Int
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.IntOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else if (!Number.isNaN(Number.parseInt(String(value), 10))) {
+                    // Value is a number
+                    output[name] = Number.parseInt(String(value), 10);
+                }
+                else {
+                    // Issue!
+                    return handleError(res, {
+                        message: `Request data was malformed: ${name} was not a valid int.`,
+                        code: ReactKitErrorCode$1.InvalidParameter,
+                        status: 422,
+                    });
+                }
+            }
+            else if (type === ParamType$1.JSON || type === ParamType$1.JSONOptional) {
+                // Stringified JSON
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.JSONOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Parse
+                    try {
+                        output[name] = JSON.parse(String(value));
+                    }
+                    catch (err) {
+                        return handleError(res, {
+                            message: `Request data was malformed: ${name} was not a valid JSON payload.`,
+                            code: ReactKitErrorCode$1.InvalidParameter,
+                            status: 422,
+                        });
+                    }
+                }
+            }
+            else if (type === ParamType$1.String || type === ParamType$1.StringOptional) {
+                // String
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.StringOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Leave as is
+                    output[name] = value;
+                }
+            }
+            else {
+                // No valid data type
+                return handleError(res, {
+                    message: `An internal error occurred: we could not determine the type of ${name}.`,
+                    code: ReactKitErrorCode$1.InvalidParameter,
+                    status: 422,
+                });
+            }
+        }
+        /*----------------------------------------*/
+        /*               Launch Info              */
+        /*----------------------------------------*/
+        // Get launch info
+        const { launched, launchInfo } = cacclGetLaunchInfo(req);
+        if (!launched || !launchInfo) {
+            return handleError(res, {
+                message: 'Your session has expired. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.SessionExpired,
+                status: 440,
+            });
+        }
+        // Error if user info cannot be found
+        if (!launchInfo.userId
+            || !launchInfo.userFirstName
+            || !launchInfo.userLastName
+            || (launchInfo.notInCourse
+                && !launchInfo.isAdmin)
+            || (!launchInfo.isTTM
+                && !launchInfo.isLearner
+                && !launchInfo.isAdmin)) {
+            return handleError(res, {
+                message: 'Your session was invalid. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.SessionExpired,
+                status: 440,
+            });
+        }
+        // Add launch info to output
+        output.userId = launchInfo.userId;
+        output.userFirstName = launchInfo.userFirstName;
+        output.userLastName = launchInfo.userLastName;
+        output.isLearner = !!launchInfo.isLearner;
+        output.isTTM = !!launchInfo.isTTM;
+        output.isAdmin = !!launchInfo.isAdmin;
+        output.isWatchingInPrivate = !!(req.session.isWatchingInPrivate);
+        /*----------------------------------------*/
+        /*       Require Course Consistency       */
+        /*----------------------------------------*/
+        // Make sure the user actually launched from the appropriate course
+        if (output.courseId
+            && launchInfo.courseId
+            && output.courseId !== launchInfo.courseId
+            && !output.isTTM
+            && !output.isAdmin) {
+            // Course of interest is not the launch course
+            return handleError(res, {
+                message: 'You switched sessions by opening Immersive Classroom in another tab. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.WrongCourse,
+                status: 401,
+            });
+        }
+        /*------------------------------------------------------------------------*/
+        /*                              Call handler                              */
+        /*------------------------------------------------------------------------*/
+        handler({
+            params: output,
+            handleSuccess: (body) => {
+                return handleSuccess(res, body);
+            },
+            handleError: (error) => {
+                return handleError(res, error);
+            },
+            req,
+            res,
+        });
+    });
+};
+
 exports.AppWrapper = AppWrapper;
 exports.ErrorBox = ErrorBox;
 exports.ErrorWithCode = ErrorWithCode;
@@ -1061,20 +1486,25 @@ exports.Modal = Modal;
 exports.ModalButtonType = ModalButtonType$1;
 exports.ModalSize = ModalSize$1;
 exports.ModalType = ModalType$1;
+exports.ParamType = ParamType$1;
 exports.ReactKitErrorCode = ReactKitErrorCode$1;
 exports.TabBox = TabBox;
 exports.Variant = Variant$1;
 exports.abbreviate = abbreviate;
-exports.alert = alert;
+exports.alert = alert$1;
 exports.avg = avg;
 exports.ceilToNumDecimals = ceilToNumDecimals;
 exports.confirm = confirm;
 exports.floorToNumDecimals = floorToNumDecimals;
 exports.forceNumIntoBounds = forceNumIntoBounds;
+exports.genRouteHandler = genRouteHandler;
+exports.handleError = handleError;
+exports.handleSuccess = handleSuccess;
 exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;
 exports.roundToNumDecimals = roundToNumDecimals;
 exports.showFatalError = showFatalError;
 exports.sum = sum;
+exports.visitServerEndpoint = visitServerEndpoint;
 exports.waitMs = waitMs;
 //# sourceMappingURL=index.js.map

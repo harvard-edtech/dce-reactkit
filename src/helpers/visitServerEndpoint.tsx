@@ -1,9 +1,9 @@
-// Initialize caccl
-import { sendRequest } from 'caccl/client';
-
 // Import custom error
 import ErrorWithCode from '../errors/ErrorWithCode';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
+
+// Import helpers from app wrapper
+import { cacclSendRequest } from '../components/AppWrapper';
 
 /*------------------------------------------------------------------------*/
 /*                                Listener                                */
@@ -45,7 +45,7 @@ const visitServerEndpoint = async (
   },
 ): Promise<any> => {
   // Send the request
-  const response = await sendRequest({
+  const response = await cacclSendRequest({
     path: opts.path,
     method: opts.method ?? 'GET',
     params: opts.params,

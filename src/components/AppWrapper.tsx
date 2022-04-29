@@ -28,15 +28,63 @@ import ErrorWithCode from '../errors/ErrorWithCode';
 type Props = {
   // The entire app
   children: React.ReactNode,
+  // Copy of CACCL's send request function
+  sendRequest: SendRequestFunction,
   // True if this app is a dark-themed app
   dark?: boolean,
   // Custom session expired message
   sessionExpiredMessage?: string,
 };
 
+// Type of CACCL's send request function
+type SendRequestFunction = (
+  opts: {
+    path: string;
+    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
+    params?: {
+      [x: string]: any;
+    } | undefined;
+    headers?: {
+      [x: string]: any;
+    } | undefined;
+    numRetries?: number | undefined;
+  },
+) => Promise<{
+  body: any;
+  status: number;
+  headers: {
+    [x: string]: any;
+  };
+}>;
+
 /*------------------------------------------------------------------------*/
 /*                             Static Helpers                             */
 /*------------------------------------------------------------------------*/
+
+/*----------------------------------------*/
+/*              Send Request              */
+/*----------------------------------------*/
+
+// Store copy of caccl send request
+let _cacclSendRequest: SendRequestFunction;
+
+/**
+ * Send a request using caccl's send request feature
+ * @author Gabe Abrams
+ * @param opts send request options
+ * @returns send request response
+ */
+export const cacclSendRequest: SendRequestFunction = async (opts) => {
+  // Make sure send request has been passed in
+  if (!_cacclSendRequest) {
+    throw new ErrorWithCode(
+      'The request could not be sent because the AppWrapper component does not have a copy of sendRequest from CACCL.',
+      ReactKitErrorCode.NoCACCLSendRequestFunction,
+    );
+  }
+
+  return _cacclSendRequest(opts);
+};
 
 /*----------------------------------------*/
 /*                  Alert                 */
@@ -190,9 +238,13 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   const {
     children,
+    sendRequest,
     dark,
     sessionExpiredMessage = 'Your session has expired. Please go back to Canvas and start over.',
   } = props;
+
+  // Store copy of send request
+  _cacclSendRequest = sendRequest;
 
   /* -------------- State ------------- */
 

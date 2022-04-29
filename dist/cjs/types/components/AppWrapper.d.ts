@@ -6,9 +6,34 @@
 import React from 'react';
 declare type Props = {
     children: React.ReactNode;
+    sendRequest: SendRequestFunction;
     dark?: boolean;
     sessionExpiredMessage?: string;
 };
+declare type SendRequestFunction = (opts: {
+    path: string;
+    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
+    params?: {
+        [x: string]: any;
+    } | undefined;
+    headers?: {
+        [x: string]: any;
+    } | undefined;
+    numRetries?: number | undefined;
+}) => Promise<{
+    body: any;
+    status: number;
+    headers: {
+        [x: string]: any;
+    };
+}>;
+/**
+ * Send a request using caccl's send request feature
+ * @author Gabe Abrams
+ * @param opts send request options
+ * @returns send request response
+ */
+export declare const cacclSendRequest: SendRequestFunction;
 /**
  * Show an alert modal with an "Okay" button
  * @author Gabe Abrams

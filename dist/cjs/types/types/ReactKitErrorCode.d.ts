@@ -8,6 +8,8 @@ declare enum ReactKitErrorCode {
     SessionExpired = "DRK3",
     MissingParameter = "DRK4",
     InvalidParameter = "DRK5",
-    WrongCourse = "DRK6"
+    WrongCourse = "DRK6",
+    NoCACCLSendRequestFunction = "DRK7",
+    NoCACCLGetLaunchInfoFunction = "DRK8"
 }
 export default ReactKitErrorCode;
