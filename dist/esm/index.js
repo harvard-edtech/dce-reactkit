@@ -1230,15 +1230,16 @@ const handleSuccess = (res, body) => {
 /**
  * Generate an express API route handler
  * @author Gabe Abrams
- * @param params map containing parameters that are included in the request
- *   (map: param name => type)
- * @param handler function that processes the request
+ * @param opts object containing all arguments
+ * @param opts.paramTypes map containing the types for each parameter that is
+ *   included in the request (map: param name => type)
+ * @param opts.handler function that processes the request
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value), handleSuccess (function for handling
  *   successful requests), handleError (function for handling failed requests),
  *   req (express request object), res (express response object)
  */
-const genRouteHandler = (params, handler) => {
+const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Output params
@@ -1247,7 +1248,7 @@ const genRouteHandler = (params, handler) => {
         /*              Parse Params              */
         /*----------------------------------------*/
         // Process items one by one
-        const paramList = Object.entries(params);
+        const paramList = Object.entries(opts.paramTypes);
         for (let i = 0; i < paramList.length; i++) {
             const [name, type] = paramList[i];
             // Find the value as a string
@@ -1456,7 +1457,7 @@ const genRouteHandler = (params, handler) => {
         /*------------------------------------------------------------------------*/
         /*                              Call handler                              */
         /*------------------------------------------------------------------------*/
-        handler({
+        opts.handler({
             params: output,
             handleSuccess: (body) => {
                 return handleSuccess(res, body);
