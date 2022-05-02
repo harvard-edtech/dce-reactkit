@@ -20,7 +20,7 @@ const style = `
 .LoadingSpinner-blip-2,
 .LoadingSpinner-blip-3,
 .LoadingSpinner-blip-4 {
-  font-size: 3rem;
+  font-size: 1.8rem;
   opacity: 0.6;
   margin-top: 1rem;
   margin-bottom: 1rem;
