@@ -702,7 +702,7 @@ const AppWrapper = (props) => {
     let modal;
     /* -------------- Alert ------------- */
     if (alertInfo) {
-        modal = (React.createElement(Modal, { title: alertInfo.title, type: ModalType$1.Okay, onClose: () => {
+        modal = (React.createElement(Modal, { key: `alert-${alertInfo.title}-${alertInfo.text}`, title: alertInfo.title, type: ModalType$1.Okay, onClose: () => {
                 // Alert closed
                 setAlertInfo(undefined);
                 if (onAlertClosed) {
@@ -712,7 +712,7 @@ const AppWrapper = (props) => {
     }
     /* ------------- Confirm ------------ */
     if (confirmInfo) {
-        modal = (React.createElement(Modal, { title: confirmInfo.title, type: ModalType$1.OkayCancel, onClose: (buttonType) => {
+        modal = (React.createElement(Modal, { key: `confirm-${confirmInfo.title}-${confirmInfo.text}`, title: confirmInfo.title, type: ModalType$1.OkayCancel, onClose: (buttonType) => {
                 setConfirmInfo(undefined);
                 if (onConfirmClosed) {
                     onConfirmClosed(buttonType === ModalButtonType$1.Okay);

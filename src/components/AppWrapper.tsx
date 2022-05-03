@@ -314,6 +314,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   if (alertInfo) {
     modal = (
       <Modal
+        key={`alert-${alertInfo.title}-${alertInfo.text}`}
         title={alertInfo.title}
         type={ModalType.Okay}
         onClose={() => {
@@ -335,6 +336,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   if (confirmInfo) {
     modal = (
       <Modal
+        key={`confirm-${confirmInfo.title}-${confirmInfo.text}`}
         title={confirmInfo.title}
         type={ModalType.OkayCancel}
         onClose={(buttonType) => {
