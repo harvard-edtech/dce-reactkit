@@ -406,6 +406,7 @@ const Modal: React.FC<Props> = (props) => {
     // Create the button
     return (
       <button
+        key={ModalButtonType}
         type="button"
         className={`Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`}
         onClick={() => {

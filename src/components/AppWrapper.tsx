@@ -318,6 +318,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         type={ModalType.Okay}
         onClose={() => {
           // Alert closed
+          setAlertInfo(undefined);
           if (onAlertClosed) {
             onAlertClosed();
           }
@@ -337,10 +338,10 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         title={confirmInfo.title}
         type={ModalType.OkayCancel}
         onClose={(buttonType) => {
+          setConfirmInfo(undefined);
           if (onConfirmClosed) {
             onConfirmClosed(buttonType === ModalButtonType.Okay);
           }
-          setConfirmInfo(undefined);
         }}
         dontAllowBackdropExit
       >

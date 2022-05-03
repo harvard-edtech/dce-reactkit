@@ -466,7 +466,7 @@ const Modal = (props) => {
         // Check if this button is last
         const last = (i === ModalButtonTypes.length - 1);
         // Create the button
-        return (React.createElement("button", { type: "button", className: `Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
+        return (React.createElement("button", { key: ModalButtonType, type: "button", className: `Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
                 handleClose(ModalButtonType);
             } }, label));
     });
@@ -704,6 +704,7 @@ const AppWrapper = (props) => {
     if (alertInfo) {
         modal = (React.createElement(Modal, { title: alertInfo.title, type: ModalType$1.Okay, onClose: () => {
                 // Alert closed
+                setAlertInfo(undefined);
                 if (onAlertClosed) {
                     onAlertClosed();
                 }
@@ -712,10 +713,10 @@ const AppWrapper = (props) => {
     /* ------------- Confirm ------------ */
     if (confirmInfo) {
         modal = (React.createElement(Modal, { title: confirmInfo.title, type: ModalType$1.OkayCancel, onClose: (buttonType) => {
+                setConfirmInfo(undefined);
                 if (onConfirmClosed) {
                     onConfirmClosed(buttonType === ModalButtonType$1.Okay);
                 }
-                setConfirmInfo(undefined);
             }, dontAllowBackdropExit: true }, confirmInfo.text));
     }
     /*----------------------------------------*/
