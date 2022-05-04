@@ -989,6 +989,34 @@ const CheckboxButton = (props) => {
 };
 
 /**
+ * Input group with a title and space for buttons
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const ButtonInputGroup = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { label, minLabelWidth, children, } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    return (React__default["default"].createElement("div", { className: "input-group" },
+        React__default["default"].createElement("div", { className: "input-group-prepend d-flex w-100" },
+            React__default["default"].createElement("span", { className: "input-group-text", style: {
+                    minWidth: (minLabelWidth !== null && minLabelWidth !== void 0 ? minLabelWidth : undefined),
+                } }, label),
+            React__default["default"].createElement("span", { className: "input-group-text flex-grow-1 rounded-right" }, children))));
+};
+
+/**
  * Shorten text so it fits into a certain number of chars
  * @author Gabe Abrams
  * @param text the text to abbreviate
@@ -1550,6 +1578,7 @@ const genRouteHandler = (opts) => {
 };
 
 exports.AppWrapper = AppWrapper;
+exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
 exports.ErrorBox = ErrorBox;
 exports.ErrorWithCode = ErrorWithCode;

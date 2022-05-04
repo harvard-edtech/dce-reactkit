@@ -7,7 +7,7 @@ import React from 'react';
  * @author Gabe Abrams
  */
 
-declare type Props$5 = {
+declare type Props$6 = {
     children: React.ReactNode;
     sendRequest: SendRequestFunction;
     dark?: boolean;
@@ -52,7 +52,7 @@ declare const confirm: (title: string, text: string) => Promise<boolean>;
  * @param [errorTitle] title of the error box
  */
 declare const showFatalError: (error: any, errorTitle?: string) => undefined;
-declare const AppWrapper: React.FC<Props$5>;
+declare const AppWrapper: React.FC<Props$6>;
 
 /**
  * Loading spinner/indicator
@@ -65,12 +65,12 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-declare type Props$4 = {
+declare type Props$5 = {
     error: any;
     title?: string;
     onClose?: () => void;
 };
-declare const ErrorBox: React.FC<Props$4>;
+declare const ErrorBox: React.FC<Props$5>;
 
 /**
  * Bootstrap variants
@@ -136,7 +136,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-declare type Props$3 = {
+declare type Props$4 = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -165,26 +165,26 @@ declare type Props$3 = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props$3>;
+declare const Modal: React.FC<Props$4>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
  * @author Gabe Abrams
  */
 
-declare type Props$2 = {
+declare type Props$3 = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props$2>;
+declare const TabBox: React.FC<Props$3>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-declare type Props$1 = {
+declare type Props$2 = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;
@@ -196,14 +196,14 @@ declare type Props$1 = {
     unselectedVariant?: Variant;
     small?: boolean;
 };
-declare const RadioButton: React.FC<Props$1>;
+declare const RadioButton: React.FC<Props$2>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-declare type Props = {
+declare type Props$1 = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -215,7 +215,19 @@ declare type Props = {
     uncheckedVariant?: Variant;
     small?: boolean;
 };
-declare const CheckboxButton: React.FC<Props>;
+declare const CheckboxButton: React.FC<Props$1>;
+
+/**
+ * Input group with a title and space for buttons
+ * @author Gabe Abrams
+ */
+
+declare type Props = {
+    label: string;
+    minLabelWidth?: string;
+    children: React.ReactNode;
+};
+declare const ButtonInputGroup: React.FC<Props>;
 
 /**
  * An error with a code
@@ -431,4 +443,4 @@ declare enum ReactKitErrorCode {
     NoCACCLGetLaunchInfoFunction = "DRK8"
 }
 
-export { AppWrapper, CheckboxButton, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };

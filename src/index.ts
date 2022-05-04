@@ -6,6 +6,7 @@ import Modal from './components/Modal';
 import TabBox from './components/TabBox';
 import RadioButton from './components/RadioButton';
 import CheckboxButton from './components/CheckboxButton';
+import ButtonInputGroup from './components/ButtonInputGroup';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -45,6 +46,7 @@ export {
   TabBox,
   RadioButton,
   CheckboxButton,
+  ButtonInputGroup,
   // Global functions
   alert,
   confirm,
