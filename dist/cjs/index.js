@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var React = require('react');
 var reactFontawesome = require('@fortawesome/react-fontawesome');
 var freeSolidSvgIcons = require('@fortawesome/free-solid-svg-icons');
+var freeRegularSvgIcons = require('@fortawesome/free-regular-svg-icons');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -934,6 +935,34 @@ const TabBox = (props) => {
 };
 
 /**
+ * A radio selection button
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const RadioButton = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$1.Primary, unselectedVariant = Variant$1.Light, small, } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                Main UI                 */
+    /*----------------------------------------*/
+    return (React__default["default"].createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' mr-2'}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
+            if (!selected) {
+                onSelected();
+            }
+        } },
+        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: selected ? freeSolidSvgIcons.faDotCircle : freeRegularSvgIcons.faCircle, className: "mr-1" }),
+        text));
+};
+
+/**
  * Shorten text so it fits into a certain number of chars
  * @author Gabe Abrams
  * @param text the text to abbreviate
@@ -1503,6 +1532,7 @@ exports.ModalButtonType = ModalButtonType$1;
 exports.ModalSize = ModalSize$1;
 exports.ModalType = ModalType$1;
 exports.ParamType = ParamType$1;
+exports.RadioButton = RadioButton;
 exports.ReactKitErrorCode = ReactKitErrorCode$1;
 exports.TabBox = TabBox;
 exports.Variant = Variant$1;

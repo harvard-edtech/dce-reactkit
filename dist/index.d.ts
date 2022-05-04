@@ -7,7 +7,7 @@ import React from 'react';
  * @author Gabe Abrams
  */
 
-declare type Props$3 = {
+declare type Props$4 = {
     children: React.ReactNode;
     sendRequest: SendRequestFunction;
     dark?: boolean;
@@ -52,7 +52,7 @@ declare const confirm: (title: string, text: string) => Promise<boolean>;
  * @param [errorTitle] title of the error box
  */
 declare const showFatalError: (error: any, errorTitle?: string) => undefined;
-declare const AppWrapper: React.FC<Props$3>;
+declare const AppWrapper: React.FC<Props$4>;
 
 /**
  * Loading spinner/indicator
@@ -65,12 +65,12 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-declare type Props$2 = {
+declare type Props$3 = {
     error: any;
     title?: string;
     onClose?: () => void;
 };
-declare const ErrorBox: React.FC<Props$2>;
+declare const ErrorBox: React.FC<Props$3>;
 
 /**
  * Bootstrap variants
@@ -136,7 +136,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-declare type Props$1 = {
+declare type Props$2 = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -165,19 +165,38 @@ declare type Props$1 = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props$1>;
+declare const Modal: React.FC<Props$2>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
  * @author Gabe Abrams
  */
 
-declare type Props = {
+declare type Props$1 = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props>;
+declare const TabBox: React.FC<Props$1>;
+
+/**
+ * A radio selection button
+ * @author Gabe Abrams
+ */
+
+declare type Props = {
+    text: string;
+    onSelected: () => void;
+    ariaLabel: string;
+    title?: string;
+    selected?: boolean;
+    id?: string;
+    noMarginOnRight?: boolean;
+    selectedVariant?: Variant;
+    unselectedVariant?: Variant;
+    small?: boolean;
+};
+declare const RadioButton: React.FC<Props>;
 
 /**
  * An error with a code
@@ -393,4 +412,4 @@ declare enum ReactKitErrorCode {
     NoCACCLGetLaunchInfoFunction = "DRK8"
 }
 
-export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };

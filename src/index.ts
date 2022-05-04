@@ -4,6 +4,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBox from './components/ErrorBox';
 import Modal from './components/Modal';
 import TabBox from './components/TabBox';
+import RadioButton from './components/RadioButton';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -41,6 +42,7 @@ export {
   ErrorBox,
   Modal,
   TabBox,
+  RadioButton,
   // Global functions
   alert,
   confirm,
