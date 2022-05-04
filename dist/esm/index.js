@@ -945,7 +945,7 @@ const RadioButton = (props) => {
     /*----------------------------------------*/
     /*                Main UI                 */
     /*----------------------------------------*/
-    return (React.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-2'}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
+    return (React.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
             if (!selected) {
                 onSelected();
             }
@@ -973,7 +973,7 @@ const CheckboxButton = (props) => {
     /*----------------------------------------*/
     /*                Main UI                 */
     /*----------------------------------------*/
-    return (React.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-2'}`, "aria-label": `${ariaLabel}${checked ? ': currently selected' : ''}`, onClick: () => {
+    return (React.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`, "aria-label": `${ariaLabel}${checked ? ': currently checked' : ''}`, onClick: () => {
             onChanged(!checked);
         } },
         React.createElement(FontAwesomeIcon, { icon: checked ? faCheckSquare : faSquare, className: "me-1" }),
