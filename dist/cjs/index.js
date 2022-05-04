@@ -946,7 +946,7 @@ const RadioButton = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$1.Primary, unselectedVariant = Variant$1.Light, small, } = props;
+    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$1.Secondary, unselectedVariant = Variant$1.Light, small, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -959,6 +959,32 @@ const RadioButton = (props) => {
             }
         } },
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: selected ? freeSolidSvgIcons.faDotCircle : freeRegularSvgIcons.faCircle, className: "me-1" }),
+        text));
+};
+
+/**
+ * A checkbox button
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const CheckboxButton = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    const { text, onChanged, ariaLabel, title, checked, id, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                Main UI                 */
+    /*----------------------------------------*/
+    return (React__default["default"].createElement("button", { type: "button", id: id, title: title, className: `btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-2'}`, "aria-label": `${ariaLabel}${checked ? ': currently selected' : ''}`, onClick: () => {
+            onChanged(!checked);
+        } },
+        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: checked ? freeSolidSvgIcons.faCheckSquare : freeRegularSvgIcons.faSquare, className: "me-1" }),
         text));
 };
 
@@ -1524,6 +1550,7 @@ const genRouteHandler = (opts) => {
 };
 
 exports.AppWrapper = AppWrapper;
+exports.CheckboxButton = CheckboxButton;
 exports.ErrorBox = ErrorBox;
 exports.ErrorWithCode = ErrorWithCode;
 exports.LoadingSpinner = LoadingSpinner;

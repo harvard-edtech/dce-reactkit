@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faCircle, faDotCircle } from '@fortawesome/free-solid-svg-icons';
-import { faCircle as faCircle$1 } from '@fortawesome/free-regular-svg-icons';
+import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircle$1, faSquare } from '@fortawesome/free-regular-svg-icons';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -938,7 +938,7 @@ const RadioButton = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$1.Primary, unselectedVariant = Variant$1.Light, small, } = props;
+    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$1.Secondary, unselectedVariant = Variant$1.Light, small, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -951,6 +951,32 @@ const RadioButton = (props) => {
             }
         } },
         React.createElement(FontAwesomeIcon, { icon: selected ? faDotCircle : faCircle$1, className: "me-1" }),
+        text));
+};
+
+/**
+ * A checkbox button
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const CheckboxButton = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    const { text, onChanged, ariaLabel, title, checked, id, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                Main UI                 */
+    /*----------------------------------------*/
+    return (React.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-2'}`, "aria-label": `${ariaLabel}${checked ? ': currently selected' : ''}`, onClick: () => {
+            onChanged(!checked);
+        } },
+        React.createElement(FontAwesomeIcon, { icon: checked ? faCheckSquare : faSquare, className: "me-1" }),
         text));
 };
 
@@ -1515,5 +1541,5 @@ const genRouteHandler = (opts) => {
     });
 };
 
-export { AppWrapper, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, CheckboxButton, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

@@ -1,5 +1,5 @@
 /**
- * A radio selection button
+ * A checkbox button
  * @author Gabe Abrams
  */
 
@@ -8,8 +8,8 @@ import React from 'react';
 
 // Import FontAwesome Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
-import { faCircle } from '@fortawesome/free-regular-svg-icons';
+import { faCheckSquare } from '@fortawesome/free-solid-svg-icons';
+import { faSquare } from '@fortawesome/free-regular-svg-icons';
 
 // Import shared types
 import Variant from '../types/Variant';
@@ -21,22 +21,22 @@ import Variant from '../types/Variant';
 type Props = {
   // Text of the button
   text: string,
-  // Handler for when this item is selected (not called if already selected)
-  onSelected: () => void,
+  // Handler for when this item is toggled
+  onChanged: (checked: boolean) => void,
   // Aria label
   ariaLabel: string,
   // Button title
   title?: string,
-  // True if selected
-  selected?: boolean,
+  // True if checked
+  checked?: boolean,
   // The id of the button
   id?: string,
   // If true, no margin on right
   noMarginOnRight?: boolean,
-  // Variant for when radio is selected
-  selectedVariant?: Variant,
-  // Variant for when radio is not selected
-  unselectedVariant?: Variant,
+  // Variant for when checkbox is checked
+  checkedVariant?: Variant,
+  // Variant for when checkbox is not checked
+  uncheckedVariant?: Variant,
   // True if using a small button
   small?: boolean,
 };
@@ -45,7 +45,7 @@ type Props = {
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
 
-const RadioButton: React.FC<Props> = (props) => {
+const CheckboxButton: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
   /*                                  Setup                                 */
   /*------------------------------------------------------------------------*/
@@ -54,14 +54,14 @@ const RadioButton: React.FC<Props> = (props) => {
 
   const {
     text,
-    onSelected,
+    onChanged,
     ariaLabel,
     title,
-    selected,
+    checked,
     id,
     noMarginOnRight,
-    selectedVariant = Variant.Secondary,
-    unselectedVariant = Variant.Light,
+    checkedVariant = Variant.Secondary,
+    uncheckedVariant = Variant.Light,
     small,
   } = props;
 
@@ -78,16 +78,14 @@ const RadioButton: React.FC<Props> = (props) => {
       type="button"
       id={id}
       title={title}
-      className={`btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-2'}`}
-      aria-label={`${ariaLabel}${selected ? ': currently selected' : ''}`}
+      className={`btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-2'}`}
+      aria-label={`${ariaLabel}${checked ? ': currently selected' : ''}`}
       onClick={() => {
-        if (!selected) {
-          onSelected();
-        }
+        onChanged(!checked);
       }}
     >
       <FontAwesomeIcon
-        icon={selected ? faDotCircle : faCircle}
+        icon={checked ? faCheckSquare : faSquare}
         className="me-1"
       />
       {text}
@@ -99,4 +97,4 @@ const RadioButton: React.FC<Props> = (props) => {
 /*                                 Wrap up                                */
 /*------------------------------------------------------------------------*/
 
-export default RadioButton;
+export default CheckboxButton;
