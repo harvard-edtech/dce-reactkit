@@ -1012,8 +1012,15 @@ const ButtonInputGroup = (props) => {
         React__default["default"].createElement("div", { className: "input-group-prepend d-flex w-100" },
             React__default["default"].createElement("span", { className: "input-group-text", style: {
                     minWidth: (minLabelWidth !== null && minLabelWidth !== void 0 ? minLabelWidth : undefined),
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
                 } }, label),
-            React__default["default"].createElement("span", { className: "input-group-text flex-grow-1 rounded-right" }, children))));
+            React__default["default"].createElement("span", { className: "input-group-text flex-grow-1 rounded-right", style: {
+                    backgroundColor: 'white',
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                    borderLeftWidth: 0,
+                } }, children))));
 };
 
 /**

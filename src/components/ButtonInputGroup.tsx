@@ -57,13 +57,23 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
               minLabelWidth
               ?? undefined
             ),
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
           }}
         >
           {label}
         </span>
 
         {/* Contents */}
-        <span className="input-group-text flex-grow-1 rounded-right">
+        <span
+          className="input-group-text flex-grow-1 rounded-right"
+          style={{
+            backgroundColor: 'white',
+            borderTopLeftRadius: 0,
+            borderBottomLeftRadius: 0,
+            borderLeftWidth: 0,
+          }}
+        >
           {children}
         </span>
       </div>
