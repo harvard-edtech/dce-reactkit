@@ -78,7 +78,7 @@ const RadioButton: React.FC<Props> = (props) => {
       type="button"
       id={id}
       title={title}
-      className={`btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' mr-2'}`}
+      className={`btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-2'}`}
       aria-label={`${ariaLabel}${selected ? ': currently selected' : ''}`}
       onClick={() => {
         if (!selected) {
@@ -88,7 +88,7 @@ const RadioButton: React.FC<Props> = (props) => {
     >
       <FontAwesomeIcon
         icon={selected ? faDotCircle : faCircle}
-        className="mr-1"
+        className="me-1"
       />
       {text}
     </button>

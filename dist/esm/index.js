@@ -945,12 +945,12 @@ const RadioButton = (props) => {
     /*----------------------------------------*/
     /*                Main UI                 */
     /*----------------------------------------*/
-    return (React.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' mr-2'}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
+    return (React.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-2'}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
             if (!selected) {
                 onSelected();
             }
         } },
-        React.createElement(FontAwesomeIcon, { icon: selected ? faDotCircle : faCircle$1, className: "mr-1" }),
+        React.createElement(FontAwesomeIcon, { icon: selected ? faDotCircle : faCircle$1, className: "me-1" }),
         text));
 };
 
