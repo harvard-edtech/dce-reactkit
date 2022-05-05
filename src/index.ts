@@ -7,6 +7,7 @@ import TabBox from './components/TabBox';
 import RadioButton from './components/RadioButton';
 import CheckboxButton from './components/CheckboxButton';
 import ButtonInputGroup from './components/ButtonInputGroup';
+import SimpleDateChooser from './components/SimpleDateChooser';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -27,6 +28,8 @@ import genRouteHandler from './helpers/genRouteHandler';
 import handleError from './helpers/handleError';
 import handleSuccess from './helpers/handleSuccess';
 import initServer from './server/initServer';
+import getOrdinal from './helpers/getOrdinal';
+import getTimeInfoInET from './helpers/getTimeInfoInET';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -47,6 +50,7 @@ export {
   RadioButton,
   CheckboxButton,
   ButtonInputGroup,
+  SimpleDateChooser,
   // Global functions
   alert,
   confirm,
@@ -64,6 +68,8 @@ export {
   roundToNumDecimals,
   sum,
   waitMs,
+  getOrdinal,
+  getTimeInfoInET,
   // Client helpers
   visitServerEndpoint,
   // Server helpers

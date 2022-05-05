@@ -1015,6 +1015,163 @@ const ButtonInputGroup = (props) => {
                 } }, children))));
 };
 
+const ORDINALS = ['th', 'st', 'nd', 'rd'];
+/**
+ * Get a number's ordinal
+ * @author Gabe Abrams
+ * @param num the number being analyzed
+ * @returns ordinal
+ */
+const getOrdinal = (num) => {
+    var _a, _b;
+    return ((_b = (_a = ORDINALS[(num - 20) % 10]) !== null && _a !== void 0 ? _a : ORDINALS[num]) !== null && _b !== void 0 ? _b : ORDINALS[0]);
+};
+
+/**
+ * Get current time info in US Boston Eastern Time, independent of machine
+ *   timezone
+ * @author Gabe Abrams
+ * @param {Date} [date=now] the date to get info on
+ * @returns object with timestamp (ms since epoch) and numbers
+ *   corresponding to ET time values for year, month, day, hour, minute
+ */
+const getTimeInfoInET = (date) => {
+    // Create a time string
+    const d = (date || new Date());
+    const str = d.toLocaleString('en-US', // Using US encoding (it's the only one installed on containers)
+    { timeZone: 'America/New_York' } // Force EST timezone
+    );
+    // Parse the string for the date/time info
+    const [dateStr, timeStr] = str.split(', '); // Format: MM/DD/YYYY, HH:MM:SS AM
+    const [monthStr, dayStr, yearStr] = dateStr.split('/'); // Format: MM/DD/YYYY
+    const [hourStr, minStr, ending] = timeStr.split(':'); // Format: HH:MM:SS AM
+    // Create all time numbers
+    const timestamp = d.getTime();
+    const year = Number.parseInt(yearStr, 10);
+    const month = Number.parseInt(monthStr, 10);
+    const day = Number.parseInt(dayStr, 10);
+    const minute = Number.parseInt(minStr, 10);
+    let hour = Number.parseInt(hourStr, 10);
+    // Convert from am/pm to 24hr
+    const isAM = ending.toLowerCase().includes('am');
+    const isPM = !isAM;
+    if (isPM && hour !== 12) {
+        hour += 12;
+    }
+    else if (isAM && hour === 12) {
+        hour = 0;
+    }
+    // Return
+    return {
+        timestamp,
+        year,
+        month,
+        day,
+        hour,
+        minute,
+    };
+};
+
+/**
+ * A very simple, lightweight date chooser
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                Constants                               */
+/*------------------------------------------------------------------------*/
+// Constants
+const MONTH_NAMES = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+];
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const SimpleDateChooser = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    var _a;
+    /* -------------- Props ------------- */
+    const { name, month, day, year, onChange, } = props;
+    const numMonthsToShow = Math.min((_a = props.numMonthsToShow) !== null && _a !== void 0 ? _a : 6, 12);
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                Main UI                 */
+    /*----------------------------------------*/
+    // Determine the set of choices allowed
+    const today = getTimeInfoInET();
+    const choices = [];
+    for (let i = 0; i < numMonthsToShow; i++) {
+        // Get month and year info
+        const unmoddedMonth = (today.month + i);
+        const month = (unmoddedMonth > 12
+            ? unmoddedMonth - 12
+            : unmoddedMonth);
+        const monthName = MONTH_NAMES[month - 1];
+        const year = (unmoddedMonth > 12
+            ? today.year + 1
+            : today.year);
+        // Figure out which days are allowed
+        const days = [];
+        const numDaysInMonth = (new Date(year, month, 0)).getDate();
+        const firstDay = (month === today.month
+            ? today.day // Current month: start at current date
+            : 1 // Future month: start at beginning of month
+        );
+        for (let day = firstDay; day <= numDaysInMonth; day++) {
+            days.push(day);
+        }
+        choices.push({
+            choiceName: `${monthName} ${year}`,
+            month,
+            year,
+            days,
+        });
+    }
+    // Create choice options
+    const monthOptions = [];
+    const dayOptions = [];
+    choices.forEach((choice) => {
+        // Create month option
+        monthOptions.push(React.createElement("option", { key: choice.month, value: choice.month, "aria-label": `choose ${choice.choiceName}`, onSelect: () => {
+                onChange(choice.month, choice.days[0], choice.year);
+            } }, choice.choiceName));
+        if (month === choice.month) {
+            // This is the currently selected month
+            // Create day options
+            choice.days.forEach((dayChoice) => {
+                const ordinal = getOrdinal(dayChoice);
+                dayOptions.push(React.createElement("option", { key: dayChoice, value: dayChoice, "aria-label": `choose date ${dayChoice}` },
+                    dayChoice,
+                    ordinal));
+            });
+        }
+    });
+    return (React.createElement("div", { className: "SimpleDateChooser d-inline-block", "aria-label": `date chooser with selected date: ${month} ${day}, ${year}` },
+        React.createElement("select", { className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: month, onChange: (e) => {
+                const choice = choices[e.target.selectedIndex];
+                // Change day, month, and year
+                onChange(choice.month, choice.days[0], choice.year);
+            } }, monthOptions),
+        React.createElement("select", { className: "custom-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
+                // Only change the day
+                onChange(month, Number.parseInt(e.target.value, 10), year);
+            } }, dayOptions)));
+};
+
 /**
  * Shorten text so it fits into a certain number of chars
  * @author Gabe Abrams
@@ -1576,5 +1733,5 @@ const genRouteHandler = (opts) => {
     });
 };
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

@@ -7,7 +7,7 @@ import React from 'react';
  * @author Gabe Abrams
  */
 
-declare type Props$6 = {
+declare type Props$7 = {
     children: React.ReactNode;
     sendRequest: SendRequestFunction;
     dark?: boolean;
@@ -52,7 +52,7 @@ declare const confirm: (title: string, text: string) => Promise<boolean>;
  * @param [errorTitle] title of the error box
  */
 declare const showFatalError: (error: any, errorTitle?: string) => undefined;
-declare const AppWrapper: React.FC<Props$6>;
+declare const AppWrapper: React.FC<Props$7>;
 
 /**
  * Loading spinner/indicator
@@ -65,12 +65,12 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-declare type Props$5 = {
+declare type Props$6 = {
     error: any;
     title?: string;
     onClose?: () => void;
 };
-declare const ErrorBox: React.FC<Props$5>;
+declare const ErrorBox: React.FC<Props$6>;
 
 /**
  * Bootstrap variants
@@ -136,7 +136,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-declare type Props$4 = {
+declare type Props$5 = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -165,26 +165,26 @@ declare type Props$4 = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props$4>;
+declare const Modal: React.FC<Props$5>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
  * @author Gabe Abrams
  */
 
-declare type Props$3 = {
+declare type Props$4 = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props$3>;
+declare const TabBox: React.FC<Props$4>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-declare type Props$2 = {
+declare type Props$3 = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;
@@ -196,14 +196,14 @@ declare type Props$2 = {
     unselectedVariant?: Variant;
     small?: boolean;
 };
-declare const RadioButton: React.FC<Props$2>;
+declare const RadioButton: React.FC<Props$3>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-declare type Props$1 = {
+declare type Props$2 = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -215,19 +215,40 @@ declare type Props$1 = {
     uncheckedVariant?: Variant;
     small?: boolean;
 };
-declare const CheckboxButton: React.FC<Props$1>;
+declare const CheckboxButton: React.FC<Props$2>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-declare type Props = {
+declare type Props$1 = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;
 };
-declare const ButtonInputGroup: React.FC<Props>;
+declare const ButtonInputGroup: React.FC<Props$1>;
+
+/**
+ * A very simple, lightweight date chooser
+ * @author Gabe Abrams
+ */
+
+declare type Props = {
+    name: string;
+    month: number;
+    day: number;
+    year: number;
+    /**
+     * Handler for when date changes
+     * @param month new 1-indexed month number
+     * @param day new 1-indexed day number
+     * @param year new full year number
+     */
+    onChange: (month: number, day: number, year: number) => void;
+    numMonthsToShow?: number;
+};
+declare const SimpleDateChooser: React.FC<Props>;
 
 /**
  * An error with a code
@@ -429,6 +450,31 @@ declare const initServer: (opts: {
 }) => void;
 
 /**
+ * Get a number's ordinal
+ * @author Gabe Abrams
+ * @param num the number being analyzed
+ * @returns ordinal
+ */
+declare const getOrdinal: (num: number) => string;
+
+/**
+ * Get current time info in US Boston Eastern Time, independent of machine
+ *   timezone
+ * @author Gabe Abrams
+ * @param {Date} [date=now] the date to get info on
+ * @returns object with timestamp (ms since epoch) and numbers
+ *   corresponding to ET time values for year, month, day, hour, minute
+ */
+declare const getTimeInfoInET: (date?: Date | undefined) => {
+    timestamp: number;
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    minute: number;
+};
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -443,4 +489,4 @@ declare enum ReactKitErrorCode {
     NoCACCLGetLaunchInfoFunction = "DRK8"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
