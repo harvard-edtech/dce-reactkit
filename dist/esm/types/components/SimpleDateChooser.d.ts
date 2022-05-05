@@ -4,6 +4,7 @@
  */
 import React from 'react';
 declare type Props = {
+    ariaLabel: string;
     name: string;
     month: number;
     day: number;

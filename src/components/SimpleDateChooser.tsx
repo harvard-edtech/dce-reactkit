@@ -15,6 +15,8 @@ import getTimeInfoInET from '../helpers/getTimeInfoInET';
 /*------------------------------------------------------------------------*/
 
 type Props = {
+  // Aria label
+  ariaLabel: string,
   // Name of the chooser (machine-readable, hyphenated)
   name: string,
   // Currently selected month
@@ -67,6 +69,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   /* -------------- Props ------------- */
 
   const {
+    ariaLabel,
     name,
     month,
     day,
@@ -170,6 +173,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     >
       {/* Month Chooser */}
       <select
+        aria-label={`month for ${ariaLabel}`}
         className="custom-select d-inline-block mr-1"
         style={{ width: 'auto' }}
         id={`SimpleDateChooser-${name}-month`}
@@ -190,6 +194,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
 
       {/* Day Chooser */}
       <select
+        aria-label={`day for ${ariaLabel}`}
         className="custom-select d-inline-block"
         style={{ width: 'auto' }}
         id={`SimpleDateChooser-${name}-day`}

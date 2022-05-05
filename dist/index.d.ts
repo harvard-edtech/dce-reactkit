@@ -235,6 +235,7 @@ declare const ButtonInputGroup: React.FC<Props$1>;
  */
 
 declare type Props = {
+    ariaLabel: string;
     name: string;
     month: number;
     day: number;

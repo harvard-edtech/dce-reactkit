@@ -1111,7 +1111,7 @@ const SimpleDateChooser = (props) => {
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
-    const { name, month, day, year, onChange, } = props;
+    const { ariaLabel, name, month, day, year, onChange, } = props;
     const numMonthsToShow = Math.min((_a = props.numMonthsToShow) !== null && _a !== void 0 ? _a : 6, 12);
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
@@ -1169,12 +1169,12 @@ const SimpleDateChooser = (props) => {
         }
     });
     return (React__default["default"].createElement("div", { className: "SimpleDateChooser d-inline-block", "aria-label": `date chooser with selected date: ${month} ${day}, ${year}` },
-        React__default["default"].createElement("select", { className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: month, onChange: (e) => {
+        React__default["default"].createElement("select", { "aria-label": `month for ${ariaLabel}`, className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: month, onChange: (e) => {
                 const choice = choices[e.target.selectedIndex];
                 // Change day, month, and year
                 onChange(choice.month, choice.days[0], choice.year);
             } }, monthOptions),
-        React__default["default"].createElement("select", { className: "custom-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
+        React__default["default"].createElement("select", { "aria-label": `day for ${ariaLabel}`, className: "custom-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
                 // Only change the day
                 onChange(month, Number.parseInt(e.target.value, 10), year);
             } }, dayOptions)));
