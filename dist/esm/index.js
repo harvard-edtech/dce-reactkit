@@ -1498,11 +1498,12 @@ const handleSuccess = (res, body) => {
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value), handleSuccess (function for handling
  *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), res (express response object)
+ *   req (express request object), res (express response object),
+ *   next (express next function)
  */
 const genRouteHandler = (opts) => {
     // Return a route handler
-    return (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         // Output params
         const output = {};
@@ -1729,6 +1730,7 @@ const genRouteHandler = (opts) => {
             },
             req,
             res,
+            next,
         });
     });
 };

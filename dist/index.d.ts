@@ -419,7 +419,8 @@ declare const handleSuccess: (res: any, body: any) => undefined;
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value), handleSuccess (function for handling
  *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), res (express response object)
+ *   req (express request object), res (express response object),
+ *   next (express next function)
  */
 declare const genRouteHandler: (opts: {
     paramTypes?: {
@@ -433,8 +434,9 @@ declare const genRouteHandler: (opts: {
         handleError: (error: any) => void;
         req: any;
         res: any;
+        next: () => void;
     }) => void;
-}) => (req: any, res: any) => Promise<undefined>;
+}) => (req: any, res: any, next: () => void) => Promise<undefined>;
 
 declare type GetLaunchInfoFunction = (req: any) => {
     launched: boolean;

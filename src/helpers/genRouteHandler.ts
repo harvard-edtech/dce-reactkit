@@ -19,7 +19,8 @@ import handleSuccess from './handleSuccess';
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value), handleSuccess (function for handling
  *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), res (express response object)
+ *   req (express request object), res (express response object),
+ *   next (express next function)
  */
 const genRouteHandler = (
   opts: {
@@ -35,12 +36,13 @@ const genRouteHandler = (
         handleError: (error: any) => void,
         req: any,
         res: any,
+        next: () => void,
       },
     ) => void,
   },
 ) => {
   // Return a route handler
-  return async (req: any, res: any) => {
+  return async (req: any, res: any, next: () => void) => {
     // Output params
     const output: { [k in string]: any } = {};
 
@@ -319,6 +321,7 @@ const genRouteHandler = (
       },
       req,
       res,
+      next,
     });
   };
 };
