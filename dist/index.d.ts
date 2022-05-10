@@ -430,7 +430,9 @@ declare const handleSuccess: (res: any, body: any) => undefined;
  *   params (map: param name => value), handleSuccess (function for handling
  *   successful requests), handleError (function for handling failed requests),
  *   req (express request object), res (express response object),
- *   next (express next function)
+ *   next (express next function). Params also has userId, userFirstName,
+ *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
+ *   are directly added to the session
  */
 declare const genRouteHandler: (opts: {
     paramTypes?: {

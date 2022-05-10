@@ -1542,7 +1542,9 @@ const handleSuccess = (res, body) => {
  *   params (map: param name => value), handleSuccess (function for handling
  *   successful requests), handleError (function for handling failed requests),
  *   req (express request object), res (express response object),
- *   next (express next function)
+ *   next (express next function). Params also has userId, userFirstName,
+ *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
+ *   are directly added to the session
  */
 const genRouteHandler = (opts) => {
     // Return a route handler
@@ -1743,7 +1745,20 @@ const genRouteHandler = (opts) => {
         output.isLearner = !!launchInfo.isLearner;
         output.isTTM = !!launchInfo.isTTM;
         output.isAdmin = !!launchInfo.isAdmin;
-        output.isWatchingInPrivate = !!(req.session.isWatchingInPrivate);
+        // Add other session variables
+        Object.keys(req.session).forEach((propName) => {
+            // Skip if prop already in output
+            if (output[propName] !== undefined) {
+                return;
+            }
+            // Add to output
+            const value = req.session[propName];
+            if (typeof value === 'string'
+                || typeof value === 'boolean'
+                || typeof value === 'number') {
+                output[propName] = value;
+            }
+        });
         /*----------------------------------------*/
         /*       Require Course Consistency       */
         /*----------------------------------------*/
