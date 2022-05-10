@@ -8,6 +8,7 @@ import RadioButton from './components/RadioButton';
 import CheckboxButton from './components/CheckboxButton';
 import ButtonInputGroup from './components/ButtonInputGroup';
 import SimpleDateChooser from './components/SimpleDateChooser';
+import Drawer from './components/Drawer';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -51,6 +52,7 @@ export {
   CheckboxButton,
   ButtonInputGroup,
   SimpleDateChooser,
+  Drawer,
   // Global functions
   alert,
   confirm,

@@ -277,7 +277,7 @@ const ModalButtonTypeToLabelAndVariant = {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$2 = `
+const style$3 = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -507,7 +507,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default["default"].createElement("style", null, style$2),
+        React__default["default"].createElement("style", null, style$3),
         React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -772,7 +772,7 @@ const AppWrapper = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$1 = `
+const style$2 = `
 /* Blips */
 .LoadingSpinner-blip-1,
 .LoadingSpinner-blip-2,
@@ -833,7 +833,7 @@ const LoadingSpinner = () => {
     /*------------------------------------------------------------------------*/
     // Add all four blips to a container
     return (React__default["default"].createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default["default"].createElement("style", null, style$1),
+        React__default["default"].createElement("style", null, style$2),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-1 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-2 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-3 me-1" }),
@@ -847,7 +847,7 @@ const LoadingSpinner = () => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style = `
+const style$1 = `
   /* Tab Box */
   .TabBox-box {
     /* Light Border */
@@ -927,7 +927,7 @@ const TabBox = (props) => {
     /*----------------------------------------*/
     // Full UI
     return (React__default["default"].createElement("div", { className: `TabBox-container ${noBottomPadding ? '' : 'mb-2'}` },
-        React__default["default"].createElement("style", null, style),
+        React__default["default"].createElement("style", null, style$1),
         React__default["default"].createElement("div", { className: "TabBox-title-container" },
             React__default["default"].createElement("div", { className: "TabBox-title" }, title)),
         React__default["default"].createElement("div", { className: "TabBox-box p-2" },
@@ -1178,6 +1178,49 @@ const SimpleDateChooser = (props) => {
                 // Only change the day
                 onChange(month, Number.parseInt(e.target.value, 10), year);
             } }, dayOptions)));
+};
+
+/**
+ * Drawer container
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                  Style                                 */
+/*------------------------------------------------------------------------*/
+const style = `
+  .Drawer-container {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-left: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    border-bottom-left-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+    box-shadow: inset 0 0 0.5rem 0 rgba(0, 0, 0, 0.05);
+  }
+`;
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const Drawer = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { children, } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    return (React__default["default"].createElement("div", { className: "Drawer-container" },
+        React__default["default"].createElement("style", null, style),
+        children));
 };
 
 /**
@@ -1746,6 +1789,7 @@ const genRouteHandler = (opts) => {
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
+exports.Drawer = Drawer;
 exports.ErrorBox = ErrorBox;
 exports.ErrorWithCode = ErrorWithCode;
 exports.LoadingSpinner = LoadingSpinner;
