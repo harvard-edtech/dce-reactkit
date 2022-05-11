@@ -15,6 +15,23 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons';
 /*------------------------------------------------------------------------*/
 
 const style = `
+/* Container fades in */
+.LoadingSpinner-container {
+  animation-name: LoadingSpinner-container-fade-in;
+  animation-duration: 0.3s;
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
+  animation-timing-function: ease-out;
+}
+@keyframes LoadingSpinner-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 /* Blips */
 .LoadingSpinner-blip-1,
 .LoadingSpinner-blip-2,

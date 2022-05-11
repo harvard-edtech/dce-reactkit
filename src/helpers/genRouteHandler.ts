@@ -319,7 +319,7 @@ const genRouteHandler = (
       return handleError(
         res,
         {
-          message: 'You switched sessions by opening Immersive Classroom in another tab. Please refresh the page and try again.',
+          message: 'You switched sessions by opening this app in another tab. Please refresh the page and try again.',
           code: ReactKitErrorCode.WrongCourse,
           status: 401,
         },

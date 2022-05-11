@@ -773,6 +773,23 @@ const AppWrapper = (props) => {
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
 const style$2 = `
+/* Container fades in */
+.LoadingSpinner-container {
+  animation-name: LoadingSpinner-container-fade-in;
+  animation-duration: 0.3s;
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
+  animation-timing-function: ease-out;
+}
+@keyframes LoadingSpinner-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 /* Blips */
 .LoadingSpinner-blip-1,
 .LoadingSpinner-blip-2,
@@ -1778,7 +1795,7 @@ const genRouteHandler = (opts) => {
             && !output.isAdmin) {
             // Course of interest is not the launch course
             return handleError(res, {
-                message: 'You switched sessions by opening Immersive Classroom in another tab. Please refresh the page and try again.',
+                message: 'You switched sessions by opening this app in another tab. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.WrongCourse,
                 status: 401,
             });
