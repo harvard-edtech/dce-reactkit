@@ -781,7 +781,7 @@ const style$2 = `
   animation-fill-mode: both;
   animation-timing-function: ease-out;
 }
-@keyframes LoadingSpinner-fade-in {
+@keyframes LoadingSpinner-container-fade-in {
   0% {
     opacity: 0;
   }
