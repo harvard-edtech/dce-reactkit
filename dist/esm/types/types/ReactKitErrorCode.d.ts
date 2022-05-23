@@ -10,6 +10,8 @@ declare enum ReactKitErrorCode {
     InvalidParameter = "DRK5",
     WrongCourse = "DRK6",
     NoCACCLSendRequestFunction = "DRK7",
-    NoCACCLGetLaunchInfoFunction = "DRK8"
+    NoCACCLGetLaunchInfoFunction = "DRK8",
+    NotTTM = "DRK9",
+    NotAdmin = "DRK10"
 }
 export default ReactKitErrorCode;

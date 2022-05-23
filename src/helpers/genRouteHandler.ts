@@ -326,22 +326,71 @@ const genRouteHandler = (
       );
     }
 
+    /*----------------------------------------*/
+    /*       Require Proper Permissions       */
+    /*----------------------------------------*/
+
+    // Add TTM endpoint security
+    if (
+      // This is a TTM endpoint
+      req.path.startsWith('/api/ttm')
+      // User is not a TTM
+      && (
+        // User is not a TTM
+        !output.isTTM
+        // User is not an admin
+        && !output.isAdmin
+      )
+    ) {
+      // User does not have access
+      return handleError(
+        res,
+        {
+          message: 'This action is only allowed if you are a teaching team member for the course. Please go back to Canvas, log in as a teaching team member, and try again.',
+          code: ReactKitErrorCode.NotTTM,
+          status: 401,
+        },
+      );
+    }
+    
+    // Add Admin endpoint security
+    if (
+      // This is an admin endpoint
+      req.path.startsWith('/api/admin')
+      // User is not an admin
+      && !output.isAdmin
+    ) {
+      // User does not have access
+      return handleError(
+        res,
+        {
+          message: 'This action is only allowed if you are a Canvas admin. Please go back to Canvas, log in as an admin, and try again.',
+          code: ReactKitErrorCode.NotAdmin,
+          status: 401,
+        },
+      );
+    }
+
     /*------------------------------------------------------------------------*/
     /*                              Call handler                              */
     /*------------------------------------------------------------------------*/
 
-    opts.handler({
-      params: output,
-      handleSuccess: (body: any) => {
-        return handleSuccess(res, body);
-      },
-      handleError: (error: any) => {
-        return handleError(res, error);
-      },
-      req,
-      res,
-      next,
-    });
+    try {
+      await opts.handler({
+        params: output,
+        handleSuccess: (body: any) => {
+          return handleSuccess(res, body);
+        },
+        handleError: (error: any) => {
+          return handleError(res, error);
+        },
+        req,
+        res,
+        next,
+      });
+    } catch (err) {
+      handleError(res, err);
+    }
   };
 };
 

@@ -501,7 +501,9 @@ declare enum ReactKitErrorCode {
     InvalidParameter = "DRK5",
     WrongCourse = "DRK6",
     NoCACCLSendRequestFunction = "DRK7",
-    NoCACCLGetLaunchInfoFunction = "DRK8"
+    NoCACCLGetLaunchInfoFunction = "DRK8",
+    NotTTM = "DRK9",
+    NotAdmin = "DRK10"
 }
 
 export { AppWrapper, ButtonInputGroup, CheckboxButton, Drawer, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, sum, visitServerEndpoint, waitMs };
