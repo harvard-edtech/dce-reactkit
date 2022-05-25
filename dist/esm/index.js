@@ -731,8 +731,8 @@ const AppWrapper = (props) => {
     if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
-            ? new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode))
-            : new ErrorWithCode(sessionExpiredMessage, ReactKitErrorCode$1.SessionExpired));
+            ? new ErrorWithCode(sessionExpiredMessage, ReactKitErrorCode$1.SessionExpired)
+            : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode)));
         // Build error screen
         body = (React.createElement("div", { style: {
                 display: 'block',
@@ -1394,19 +1394,16 @@ let sessionAlreadyExpired = false;
 const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     // Send the request
-    console.log('Request:', opts);
     const response = yield cacclSendRequest({
         path: opts.path,
         method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
         params: opts.params,
     });
-    console.log('Response:', response);
     // Check for failure
     if (!response || !response.body) {
         throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
     }
     if (!response.body.success) {
-        console.log('Expired code', ReactKitErrorCode$1.SessionExpired, response.body.code);
         // Session expired
         if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
             // Skip notice if session was already expired
@@ -1428,7 +1425,6 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
                 // Promise that never returns
             });
         }
-        console.log('Other error', response.body.message, response.body.code);
         // Other errors
         throw new ErrorWithCode((response.body.message
             || 'An unknown error occurred. Please contact an admin.'), (response.body.code

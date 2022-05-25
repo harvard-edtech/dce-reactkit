@@ -366,12 +366,12 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
     const error = (
       sessionHasExpired
         ? new ErrorWithCode(
-          (fatalErrorMessage ?? 'An unknown error has occurred. Please contact support.'),
-          (fatalErrorCode ?? ReactKitErrorCode.NoCode),
-        )
-        : new ErrorWithCode(
           sessionExpiredMessage,
           ReactKitErrorCode.SessionExpired,
+        )
+        : new ErrorWithCode(
+          (fatalErrorMessage ?? 'An unknown error has occurred. Please contact support.'),
+          (fatalErrorCode ?? ReactKitErrorCode.NoCode),
         )
     );
 

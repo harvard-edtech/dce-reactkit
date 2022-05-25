@@ -45,13 +45,11 @@ const visitServerEndpoint = async (
   },
 ): Promise<any> => {
   // Send the request
-  console.log('Request:', opts);
   const response = await cacclSendRequest({
     path: opts.path,
     method: opts.method ?? 'GET',
     params: opts.params,
   });
-  console.log('Response:', response);
 
   // Check for failure
   if (!response || !response.body) {
@@ -61,7 +59,6 @@ const visitServerEndpoint = async (
     );
   }
   if (!response.body.success) {
-    console.log('Expired code', ReactKitErrorCode.SessionExpired, response.body.code);
     // Session expired
     if (response.body.code === ReactKitErrorCode.SessionExpired) {
       // Skip notice if session was already expired
@@ -89,7 +86,6 @@ const visitServerEndpoint = async (
         // Promise that never returns
       });
     }
-    console.log('Other error', response.body.message, response.body.code);
 
     // Other errors
     throw new ErrorWithCode(
