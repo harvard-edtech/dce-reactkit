@@ -1394,16 +1394,19 @@ let sessionAlreadyExpired = false;
 const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     // Send the request
+    console.log('Request:', opts);
     const response = yield cacclSendRequest({
         path: opts.path,
         method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
         params: opts.params,
     });
+    console.log('Response:', response);
     // Check for failure
     if (!response || !response.body) {
         throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
     }
     if (!response.body.success) {
+        console.log(response);
         // Session expired
         if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
             // Skip notice if session was already expired

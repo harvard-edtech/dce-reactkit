@@ -45,11 +45,13 @@ const visitServerEndpoint = async (
   },
 ): Promise<any> => {
   // Send the request
+  console.log('Request:', opts);
   const response = await cacclSendRequest({
     path: opts.path,
     method: opts.method ?? 'GET',
     params: opts.params,
   });
+  console.log('Response:', response);
 
   // Check for failure
   if (!response || !response.body) {
