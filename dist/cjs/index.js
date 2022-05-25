@@ -1414,7 +1414,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
         throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
     }
     if (!response.body.success) {
-        console.log(response);
+        console.log('Expired code', ReactKitErrorCode$1.SessionExpired, response.body.code);
         // Session expired
         if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
             // Skip notice if session was already expired
@@ -1436,6 +1436,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
                 // Promise that never returns
             });
         }
+        console.log('Other error', response.body.message, response.body.code);
         // Other errors
         throw new ErrorWithCode((response.body.message
             || 'An unknown error occurred. Please contact an admin.'), (response.body.code
