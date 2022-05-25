@@ -59,6 +59,7 @@ const visitServerEndpoint = async (
     );
   }
   if (!response.body.success) {
+    console.log(response);
     // Session expired
     if (response.body.code === ReactKitErrorCode.SessionExpired) {
       // Skip notice if session was already expired
