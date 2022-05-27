@@ -492,7 +492,7 @@ const Modal = (props) => {
         animationClass = 'Modal-animating-pop';
     }
     // Render the modal
-    return (React.createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered modal-${size}`, tabIndex: -1, style: {
+    return (React.createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered`, tabIndex: -1, style: {
             zIndex: (onTopOfOtherModals
                 ? 5000000001
                 : 5000000000),
@@ -519,7 +519,7 @@ const Modal = (props) => {
                 // Handle close
                 handleClose(ModalButtonType$1.Cancel);
             }) }),
-        React.createElement("div", { className: `modal-dialog ${animationClass}`, style: {
+        React.createElement("div", { className: `modal-dialog modal-${size} ${animationClass}`, style: {
                 zIndex: 5000000002,
             } },
             React.createElement("div", { className: "modal-content" },
