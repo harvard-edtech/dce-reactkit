@@ -2,11 +2,11 @@
  * Get current time info in US Boston Eastern Time, independent of machine
  *   timezone
  * @author Gabe Abrams
- * @param {Date} [date=now] the date to get info on
+ * @param [date=now] the date to get info on or a ms since epoch timestamp
  * @returns object with timestamp (ms since epoch) and numbers
  *   corresponding to ET time values for year, month, day, hour, minute
  */
-const getTimeInfoInET = (date?: Date): {
+const getTimeInfoInET = (dateOrTimestamp?: Date | number): {
   timestamp: number,
   year: number,
   month: number,
@@ -15,7 +15,17 @@ const getTimeInfoInET = (date?: Date): {
   minute: number,
 } => {
   // Create a time string
-  const d = (date || new Date());
+  let d: Date;
+  if (!dateOrTimestamp) {
+    // Use now
+    d = new Date();
+  } else if (typeof dateOrTimestamp === 'number') {
+    // Convert to date
+    d = new Date(dateOrTimestamp);
+  } else {
+    // Already a date
+    d = dateOrTimestamp;
+  }
   const str = d.toLocaleString(
     'en-US', // Using US encoding (it's the only one installed on containers)
     { timeZone: 'America/New_York' } // Force EST timezone

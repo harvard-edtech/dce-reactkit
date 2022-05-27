@@ -476,11 +476,11 @@ declare const getOrdinal: (num: number) => string;
  * Get current time info in US Boston Eastern Time, independent of machine
  *   timezone
  * @author Gabe Abrams
- * @param {Date} [date=now] the date to get info on
+ * @param [date=now] the date to get info on or a ms since epoch timestamp
  * @returns object with timestamp (ms since epoch) and numbers
  *   corresponding to ET time values for year, month, day, hour, minute
  */
-declare const getTimeInfoInET: (date?: Date | undefined) => {
+declare const getTimeInfoInET: (dateOrTimestamp?: number | Date | undefined) => {
     timestamp: number;
     year: number;
     month: number;

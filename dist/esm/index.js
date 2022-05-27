@@ -1050,13 +1050,25 @@ const getOrdinal = (num) => {
  * Get current time info in US Boston Eastern Time, independent of machine
  *   timezone
  * @author Gabe Abrams
- * @param {Date} [date=now] the date to get info on
+ * @param [date=now] the date to get info on or a ms since epoch timestamp
  * @returns object with timestamp (ms since epoch) and numbers
  *   corresponding to ET time values for year, month, day, hour, minute
  */
-const getTimeInfoInET = (date) => {
+const getTimeInfoInET = (dateOrTimestamp) => {
     // Create a time string
-    const d = (date || new Date());
+    let d;
+    if (!dateOrTimestamp) {
+        // Use now
+        d = new Date();
+    }
+    else if (typeof dateOrTimestamp === 'number') {
+        // Convert to date
+        d = new Date(dateOrTimestamp);
+    }
+    else {
+        // Already a date
+        d = dateOrTimestamp;
+    }
     const str = d.toLocaleString('en-US', // Using US encoding (it's the only one installed on containers)
     { timeZone: 'America/New_York' } // Force EST timezone
     );
