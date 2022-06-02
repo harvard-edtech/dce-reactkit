@@ -1781,9 +1781,12 @@ const genRouteHandler = (opts) => {
         output.userId = launchInfo.userId;
         output.userFirstName = launchInfo.userFirstName;
         output.userLastName = launchInfo.userLastName;
+        output.userEmail = launchInfo.userEmail;
         output.isLearner = !!launchInfo.isLearner;
         output.isTTM = !!launchInfo.isTTM;
         output.isAdmin = !!launchInfo.isAdmin;
+        output.courseId = launchInfo.courseId;
+        output.courseId = launchInfo.contextLabel;
         // Add other session variables
         Object.keys(req.session).forEach((propName) => {
             // Skip if prop already in output
