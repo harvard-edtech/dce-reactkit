@@ -1588,7 +1588,7 @@ const handleSuccess = (res, body) => {
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
+        var _a, _b;
         // Output params
         const output = {};
         /*----------------------------------------*/
@@ -1785,8 +1785,8 @@ const genRouteHandler = (opts) => {
         output.isLearner = !!launchInfo.isLearner;
         output.isTTM = !!launchInfo.isTTM;
         output.isAdmin = !!launchInfo.isAdmin;
-        output.courseId = launchInfo.courseId;
-        output.courseId = launchInfo.contextLabel;
+        output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
+        output.courseName = launchInfo.contextLabel;
         // Add other session variables
         Object.keys(req.session).forEach((propName) => {
             // Skip if prop already in output
