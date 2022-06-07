@@ -25,6 +25,79 @@ export const setSessionExpiryHandler = (handler: () => void) => {
 };
 
 /*------------------------------------------------------------------------*/
+/*                               Stub Logic                               */
+/*------------------------------------------------------------------------*/
+
+// Stored stub responses
+const stubResponses: {
+  [method: string]: {
+    [path: string]: (
+      | {
+        // Success boolean
+        success: true,
+        // Body of response from fake server
+        body: any,
+      }
+      | {
+        // Success boolean
+        success: false,
+        // Error message
+        errorMessage: string,
+        // Error code
+        errorCode: string,
+      }
+    )
+  }
+} = {};
+
+/**
+ * Add a stub response
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param [opts.method=GET] http request method
+ * @param opts.path pathname of the request
+ * @param [opts.body] body of the response if successful
+ * @param [opts.errorMessage] error message if not successful
+ * @param [opts.errorCode] error code if not successful
+ */
+export const _setStubResponse = (
+  opts: {
+    method?: string,
+    path: string,
+    body?: any,
+    errorMessage?: string,
+    errorCode?: string,
+  },
+) => {
+  const {
+    path,
+    body,
+  } = opts;
+  const method = (opts.method ?? 'GET').toUpperCase();
+  const errorMessage = (opts.errorMessage ?? 'An unknown error has occurred.');
+  const errorCode = (opts.errorCode ?? ReactKitErrorCode.NoCode);
+
+  // Store to stub responses
+  if (!stubResponses[method]) {
+    stubResponses[method] = {};
+  }
+  if (!stubResponses[method][path]) {
+    stubResponses[method][path] = (
+      (opts.errorMessage || opts.errorCode)
+        ? {
+          success: false,
+          errorMessage,
+          errorCode,
+        }
+        : {
+          success: true,
+          body: body ?? undefined,
+        }
+    );
+  }
+};
+
+/*------------------------------------------------------------------------*/
 /*                                  Main                                  */
 /*------------------------------------------------------------------------*/
 
@@ -44,6 +117,27 @@ const visitServerEndpoint = async (
     params?: { [key in string]: any },
   },
 ): Promise<any> => {
+  // Handle stubs
+  const stubResponse = stubResponses[opts.method ?? 'GET']?.[opts.path];
+  if (stubResponse) {
+    // Remove stub
+    try {
+      delete stubResponses[opts.method ?? 'GET'][opts.path];
+    } catch (err) {
+      // Ignore
+    }
+
+    // Success
+    if (stubResponse.success) {
+      return stubResponse.body;
+    }
+    // Error
+    throw new ErrorWithCode(
+      stubResponse.errorMessage,
+      stubResponse.errorCode,
+    );
+  }
+
   // Send the request
   const response = await cacclSendRequest({
     path: opts.path,

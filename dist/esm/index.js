@@ -1392,6 +1392,11 @@ const roundToNumDecimals = (num, numDecimals) => {
 // Keep track of whether or not session expiry has already been handled
 let sessionAlreadyExpired = false;
 /*------------------------------------------------------------------------*/
+/*                               Stub Logic                               */
+/*------------------------------------------------------------------------*/
+// Stored stub responses
+const stubResponses = {};
+/*------------------------------------------------------------------------*/
 /*                                  Main                                  */
 /*------------------------------------------------------------------------*/
 /**
@@ -1404,11 +1409,28 @@ let sessionAlreadyExpired = false;
  * @returns response from server
  */
 const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b, _c, _d;
+    // Handle stubs
+    const stubResponse = (_b = stubResponses[(_a = opts.method) !== null && _a !== void 0 ? _a : 'GET']) === null || _b === void 0 ? void 0 : _b[opts.path];
+    if (stubResponse) {
+        // Remove stub
+        try {
+            delete stubResponses[(_c = opts.method) !== null && _c !== void 0 ? _c : 'GET'][opts.path];
+        }
+        catch (err) {
+            // Ignore
+        }
+        // Success
+        if (stubResponse.success) {
+            return stubResponse.body;
+        }
+        // Error
+        throw new ErrorWithCode(stubResponse.errorMessage, stubResponse.errorCode);
+    }
     // Send the request
     const response = yield cacclSendRequest({
         path: opts.path,
-        method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
+        method: (_d = opts.method) !== null && _d !== void 0 ? _d : 'GET',
         params: opts.params,
     });
     // Check for failure
