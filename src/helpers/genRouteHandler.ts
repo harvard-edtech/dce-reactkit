@@ -34,13 +34,11 @@ const genRouteHandler = (
         params: {
           [k: string]: any
         },
-        handleSuccess: (body: any) => void,
-        handleError: (error: any) => void,
         req: any,
         res: any,
         next: () => void,
       },
-    ) => void,
+    ) => any,
   },
 ) => {
   // Return a route handler
@@ -379,19 +377,17 @@ const genRouteHandler = (
     /*------------------------------------------------------------------------*/
 
     try {
-      await opts.handler({
+      const results = await opts.handler({
         params: output,
-        handleSuccess: (body: any) => {
-          return handleSuccess(res, body);
-        },
-        handleError: (error: any) => {
-          return handleError(res, error);
-        },
         req,
         res,
         next,
       });
+
+      // Send results to client
+      handleSuccess(res, results ?? undefined);
     } catch (err) {
+      // Send error to client
       handleError(res, err);
     }
   };

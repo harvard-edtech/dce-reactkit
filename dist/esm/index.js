@@ -1901,20 +1901,17 @@ const genRouteHandler = (opts) => {
         /*                              Call handler                              */
         /*------------------------------------------------------------------------*/
         try {
-            yield opts.handler({
+            const results = yield opts.handler({
                 params: output,
-                handleSuccess: (body) => {
-                    return handleSuccess(res, body);
-                },
-                handleError: (error) => {
-                    return handleError(res, error);
-                },
                 req,
                 res,
                 next,
             });
+            // Send results to client
+            handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
         }
         catch (err) {
+            // Send error to client
             handleError(res, err);
         }
     });

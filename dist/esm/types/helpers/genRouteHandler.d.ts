@@ -1,6 +1,4 @@
 import ParamType from '../types/ParamType';
-import handleError from './handleError';
-import handleSuccess from './handleSuccess';
 /**
  * Generate an express API route handler
  * @author Gabe Abrams
@@ -24,11 +22,9 @@ declare const genRouteHandler: (opts: {
         params: {
             [k: string]: any;
         };
-        handleSuccess: (body: any) => void;
-        handleError: (error: any) => void;
         req: any;
         res: any;
         next: () => void;
-    }) => void;
+    }) => any;
 }) => (req: any, res: any, next: () => void) => Promise<undefined>;
 export default genRouteHandler;
