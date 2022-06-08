@@ -1404,6 +1404,39 @@ let sessionAlreadyExpired = false;
 /*------------------------------------------------------------------------*/
 // Stored stub responses
 const stubResponses = {};
+/**
+ * Add a stub response
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param [opts.method=GET] http request method
+ * @param opts.path pathname of the request
+ * @param [opts.body] body of the response if successful
+ * @param [opts.errorMessage] error message if not successful
+ * @param [opts.errorCode] error code if not successful
+ */
+const _setStubResponse = (opts) => {
+    var _a, _b, _c;
+    const { path, body, } = opts;
+    const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET').toUpperCase();
+    const errorMessage = ((_b = opts.errorMessage) !== null && _b !== void 0 ? _b : 'An unknown error has occurred.');
+    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode);
+    // Store to stub responses
+    if (!stubResponses[method]) {
+        stubResponses[method] = {};
+    }
+    if (!stubResponses[method][path]) {
+        stubResponses[method][path] = ((opts.errorMessage || opts.errorCode)
+            ? {
+                success: false,
+                errorMessage,
+                errorCode,
+            }
+            : {
+                success: true,
+                body: body !== null && body !== void 0 ? body : undefined,
+            });
+    }
+};
 /*------------------------------------------------------------------------*/
 /*                                  Main                                  */
 /*------------------------------------------------------------------------*/
@@ -1895,6 +1928,35 @@ const genRouteHandler = (opts) => {
     });
 };
 
+/**
+ * Stub a server endpoint response
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param [opts.method=GET] http method to stub
+ * @param opts.path full pathname to stub
+ * @param opts.body body of response if stubbing a successful response
+ * @param opts.errorMessage message of error if stubbing a failed response
+ * @param [opts.errorCode] error code if stubbing a failed response
+ */
+const stubServerEndpoint = (opts) => {
+    const { method, path, } = opts;
+    if (!opts.errorMessage) {
+        _setStubResponse({
+            method,
+            path,
+            body: opts.body,
+        });
+    }
+    else {
+        _setStubResponse({
+            method,
+            path,
+            errorMessage: opts.errorMessage,
+            errorCode: opts.errorCode,
+        });
+    }
+};
+
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
@@ -1929,6 +1991,7 @@ exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;
 exports.roundToNumDecimals = roundToNumDecimals;
 exports.showFatalError = showFatalError;
+exports.stubServerEndpoint = stubServerEndpoint;
 exports.sum = sum;
 exports.visitServerEndpoint = visitServerEndpoint;
 exports.waitMs = waitMs;

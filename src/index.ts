@@ -31,6 +31,7 @@ import handleSuccess from './helpers/handleSuccess';
 import initServer from './server/initServer';
 import getOrdinal from './helpers/getOrdinal';
 import getTimeInfoInET from './helpers/getTimeInfoInET';
+import stubServerEndpoint from './helpers/stubServerEndpoint';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -72,6 +73,7 @@ export {
   waitMs,
   getOrdinal,
   getTimeInfoInET,
+  stubServerEndpoint,
   // Client helpers
   visitServerEndpoint,
   // Server helpers
