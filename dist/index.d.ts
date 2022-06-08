@@ -499,18 +499,13 @@ declare const getTimeInfoInET: (dateOrTimestamp?: number | Date | undefined) => 
  * @param opts.errorMessage message of error if stubbing a failed response
  * @param [opts.errorCode] error code if stubbing a failed response
  */
-declare const stubServerEndpoint: (opts: ({
-    method?: ('GET' | 'PUT' | 'DELETE' | 'POST');
+declare const stubServerEndpoint: (opts: {
+    method?: string | undefined;
     path: string;
-} & ({
-    body: any;
-    errorMessage: undefined;
-    errorCode: undefined;
-} | {
-    body: undefined;
-    errorMessage: string;
-    errorCode?: string;
-}))) => void;
+    body?: any;
+    errorMessage?: string | undefined;
+    errorCode?: string | undefined;
+}) => void;
 
 /**
  * List of error codes built into the react kit

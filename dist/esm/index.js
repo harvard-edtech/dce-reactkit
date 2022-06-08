@@ -1930,24 +1930,7 @@ const genRouteHandler = (opts) => {
  * @param opts.errorMessage message of error if stubbing a failed response
  * @param [opts.errorCode] error code if stubbing a failed response
  */
-const stubServerEndpoint = (opts) => {
-    const { method, path, } = opts;
-    if (!opts.errorMessage) {
-        _setStubResponse({
-            method,
-            path,
-            body: opts.body,
-        });
-    }
-    else {
-        _setStubResponse({
-            method,
-            path,
-            errorMessage: opts.errorMessage,
-            errorCode: opts.errorCode,
-        });
-    }
-};
+const stubServerEndpoint = _setStubResponse;
 
 export { AppWrapper, ButtonInputGroup, CheckboxButton, Drawer, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

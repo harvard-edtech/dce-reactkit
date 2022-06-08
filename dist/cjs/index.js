@@ -1938,24 +1938,7 @@ const genRouteHandler = (opts) => {
  * @param opts.errorMessage message of error if stubbing a failed response
  * @param [opts.errorCode] error code if stubbing a failed response
  */
-const stubServerEndpoint = (opts) => {
-    const { method, path, } = opts;
-    if (!opts.errorMessage) {
-        _setStubResponse({
-            method,
-            path,
-            body: opts.body,
-        });
-    }
-    else {
-        _setStubResponse({
-            method,
-            path,
-            errorMessage: opts.errorMessage,
-            errorCode: opts.errorCode,
-        });
-    }
-};
+const stubServerEndpoint = _setStubResponse;
 
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
