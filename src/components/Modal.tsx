@@ -298,10 +298,6 @@ const Modal: React.FC<Props> = (props) => {
 
   /* -------------- State ------------- */
 
-  // If true, the modal is completely gone
-  // (not just invisible, also removed from the dom)
-  const [gone, setGone] = useState(false);
-
   // If true, the modal is shown
   const [visible, setVisible] = useState(false);
 
@@ -321,8 +317,14 @@ const Modal: React.FC<Props> = (props) => {
   useEffect(
     () => {
       (async () => {
-        // Wait and then set visible to true
+        // Set defaults
+        setVisible(false);
+        setAnimatingIn(true);
+        setAnimatingPop(false);
+        setAnimatingOut(false);
+        // Wait for animation
         await waitMs(MS_TO_ANIMATE);
+        // Update to state after animated in
         setVisible(true);
         setAnimatingIn(false);
       })();
@@ -362,18 +364,12 @@ const Modal: React.FC<Props> = (props) => {
 
     // Call the handler after the modal has animated out
     await waitMs(MS_TO_ANIMATE);
-    setGone(true);
     onClose(ModalButtonType);
   };
 
   /*------------------------------------------------------------------------*/
   /*                                 Render                                 */
   /*------------------------------------------------------------------------*/
-
-  // Return nothing if gone
-  if (gone) {
-    return null;
-  }
 
   /*----------------------------------------*/
   /*                 Footer                 */

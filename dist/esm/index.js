@@ -387,9 +387,6 @@ const Modal = (props) => {
     /* -------------- Props ------------- */
     const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, children, onClose, dontAllowBackdropExit, onTopOfOtherModals, } = props;
     /* -------------- State ------------- */
-    // If true, the modal is completely gone
-    // (not just invisible, also removed from the dom)
-    const [gone, setGone] = useState(false);
     // If true, the modal is shown
     const [visible, setVisible] = useState(false);
     // True if animation is in use
@@ -405,8 +402,14 @@ const Modal = (props) => {
      */
     useEffect(() => {
         (() => __awaiter(void 0, void 0, void 0, function* () {
-            // Wait and then set visible to true
+            // Set defaults
+            setVisible(false);
+            setAnimatingIn(true);
+            setAnimatingPop(false);
+            setAnimatingOut(false);
+            // Wait for animation
             yield waitMs(MS_TO_ANIMATE);
+            // Update to state after animated in
             setVisible(true);
             setAnimatingIn(false);
         }))();
@@ -438,16 +441,11 @@ const Modal = (props) => {
         setAnimatingOut(true);
         // Call the handler after the modal has animated out
         yield waitMs(MS_TO_ANIMATE);
-        setGone(true);
         onClose(ModalButtonType);
     });
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
-    // Return nothing if gone
-    if (gone) {
-        return null;
-    }
     /*----------------------------------------*/
     /*                 Footer                 */
     /*----------------------------------------*/
