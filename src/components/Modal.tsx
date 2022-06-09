@@ -359,11 +359,11 @@ const Modal: React.FC<Props> = (props) => {
     }
 
     // Update the state
-    setVisible(false);
-    setAnimatingOut(true);
+    // setVisible(false);
+    // setAnimatingOut(true);
 
-    // Call the handler after the modal has animated out
-    await waitMs(MS_TO_ANIMATE);
+    // // Call the handler after the modal has animated out
+    // await waitMs(MS_TO_ANIMATE);
     onClose(ModalButtonType);
   };
 

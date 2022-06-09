@@ -437,10 +437,10 @@ const Modal = (props) => {
             return;
         }
         // Update the state
-        setVisible(false);
-        setAnimatingOut(true);
-        // Call the handler after the modal has animated out
-        yield waitMs(MS_TO_ANIMATE);
+        // setVisible(false);
+        // setAnimatingOut(true);
+        // // Call the handler after the modal has animated out
+        // await waitMs(MS_TO_ANIMATE);
         onClose(ModalButtonType);
     });
     /*------------------------------------------------------------------------*/
