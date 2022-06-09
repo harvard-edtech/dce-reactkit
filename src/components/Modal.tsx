@@ -362,8 +362,8 @@ const Modal: React.FC<Props> = (props) => {
 
     // Call the handler after the modal has animated out
     await waitMs(MS_TO_ANIMATE);
-    onClose(ModalButtonType);
     setGone(true);
+    onClose(ModalButtonType);
   };
 
   /*------------------------------------------------------------------------*/

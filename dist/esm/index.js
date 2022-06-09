@@ -438,8 +438,8 @@ const Modal = (props) => {
         setAnimatingOut(true);
         // Call the handler after the modal has animated out
         yield waitMs(MS_TO_ANIMATE);
-        onClose(ModalButtonType);
         setGone(true);
+        onClose(ModalButtonType);
     });
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
