@@ -348,22 +348,7 @@ const Modal: React.FC<Props> = (props) => {
       return;
     }
 
-    // Don't close if animating in
-    if (animatingIn) {
-      return;
-    }
-
-    // Don't close if already closed
-    if (!visible) {
-      return;
-    }
-
-    // Update the state
-    // setVisible(false);
-    // setAnimatingOut(true);
-
-    // // Call the handler after the modal has animated out
-    // await waitMs(MS_TO_ANIMATE);
+    // Call onClose
     onClose(ModalButtonType);
   };
 
