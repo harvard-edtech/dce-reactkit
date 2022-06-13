@@ -81,20 +81,18 @@ export const _setStubResponse = (
   if (!stubResponses[method]) {
     stubResponses[method] = {};
   }
-  if (!stubResponses[method][path]) {
-    stubResponses[method][path] = (
-      (opts.errorMessage || opts.errorCode)
-        ? {
-          success: false,
-          errorMessage,
-          errorCode,
-        }
-        : {
-          success: true,
-          body: body ?? undefined,
-        }
-    );
-  }
+  stubResponses[method][path] = (
+    (opts.errorMessage || opts.errorCode)
+      ? {
+        success: false,
+        errorMessage,
+        errorCode,
+      }
+      : {
+        success: true,
+        body: body ?? undefined,
+      }
+  );
 };
 
 /*------------------------------------------------------------------------*/
@@ -117,9 +115,12 @@ const visitServerEndpoint = async (
     params?: { [key in string]: any },
   },
 ): Promise<any> => {
+  const method = (opts.method ?? 'GET');
   // Handle stubs
-  const stubResponse = stubResponses[opts.method ?? 'GET']?.[opts.path];
+  const stubResponse = stubResponses[method]?.[opts.path];
   if (stubResponse) {
+    // Remove from list
+    delete stubResponses[method]?.[opts.path];
     // Success
     if (stubResponse.success) {
       return stubResponse.body;
