@@ -287,23 +287,6 @@ const style$3 = `
     }
   }
 
-  .Modal-fading-out {
-    animation-name: Modal-fading-out;
-    animation-duration: ${MS_TO_ANIMATE}ms;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
-    animation-timing-function: ease-in;
-  }
-
-  @keyframes Modal-fading-out {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
   .Modal-animating-in {
     animation-name: Modal-animating-in;
     animation-duration: ${MS_TO_ANIMATE}ms;
@@ -320,48 +303,6 @@ const style$3 = `
     100% {
       transform: scale(1) translate(0, 0);
       opacity: 1;
-    }
-  }
-
-  .Modal-animating-pop {
-    animation-name: Modal-animating-pop;
-    animation-duration: ${MS_TO_ANIMATE}ms;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
-    animation-timing-function: ease-in-out;
-  }
-
-  @keyframes Modal-animating-pop {
-    0% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
-  .Modal-animating-out {
-    animation-name: Modal-animating-out;
-    animation-duration: ${MS_TO_ANIMATE}ms;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
-    animation-timing-function: ease-in;
-  }
-
-  @keyframes Modal-animating-out {
-    0% {
-      transform: scale(1) translate(0, 0);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1.05) translate(0, -1.5rem);
-      opacity: 0;
     }
   }
 `;
