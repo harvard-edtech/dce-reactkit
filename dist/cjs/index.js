@@ -391,6 +391,8 @@ const Modal = (props) => {
     const [animatingIn, setAnimatingIn] = React.useState(true);
     const [animatingPop, setAnimatingPop] = React.useState(false);
     const [animatingOut, setAnimatingOut] = React.useState(false);
+    // Keep track of whether modal is still mounted
+    const mounted = React.useRef(false);
     /*------------------------------------------------------------------------*/
     /*                           Lifecycle Functions                          */
     /*------------------------------------------------------------------------*/
@@ -408,9 +410,14 @@ const Modal = (props) => {
             // Wait for animation
             yield waitMs(MS_TO_ANIMATE);
             // Update to state after animated in
-            setVisible(true);
-            setAnimatingIn(false);
+            if (mounted.current) {
+                setVisible(true);
+                setAnimatingIn(false);
+            }
         }))();
+        return () => {
+            mounted.current = false;
+        };
     }, []);
     /*------------------------------------------------------------------------*/
     /*                           Component Functions                          */

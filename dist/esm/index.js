@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircle$1, faSquare } from '@fortawesome/free-regular-svg-icons';
@@ -383,6 +383,8 @@ const Modal = (props) => {
     const [animatingIn, setAnimatingIn] = useState(true);
     const [animatingPop, setAnimatingPop] = useState(false);
     const [animatingOut, setAnimatingOut] = useState(false);
+    // Keep track of whether modal is still mounted
+    const mounted = useRef(false);
     /*------------------------------------------------------------------------*/
     /*                           Lifecycle Functions                          */
     /*------------------------------------------------------------------------*/
@@ -400,9 +402,14 @@ const Modal = (props) => {
             // Wait for animation
             yield waitMs(MS_TO_ANIMATE);
             // Update to state after animated in
-            setVisible(true);
-            setAnimatingIn(false);
+            if (mounted.current) {
+                setVisible(true);
+                setAnimatingIn(false);
+            }
         }))();
+        return () => {
+            mounted.current = false;
+        };
     }, []);
     /*------------------------------------------------------------------------*/
     /*                           Component Functions                          */

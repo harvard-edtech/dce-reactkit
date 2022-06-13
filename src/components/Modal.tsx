@@ -4,7 +4,7 @@
  */
 
 // Import React
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // Import other components
 import waitMs from '../helpers/waitMs';
@@ -296,6 +296,9 @@ const Modal: React.FC<Props> = (props) => {
   const [animatingPop, setAnimatingPop] = useState(false);
   const [animatingOut, setAnimatingOut] = useState(false);
 
+  // Keep track of whether modal is still mounted
+  const mounted = useRef(false);
+
   /*------------------------------------------------------------------------*/
   /*                           Lifecycle Functions                          */
   /*------------------------------------------------------------------------*/
@@ -315,9 +318,15 @@ const Modal: React.FC<Props> = (props) => {
         // Wait for animation
         await waitMs(MS_TO_ANIMATE);
         // Update to state after animated in
-        setVisible(true);
-        setAnimatingIn(false);
+        if (mounted.current) {
+          setVisible(true);
+          setAnimatingIn(false);
+        }
       })();
+
+      return () => {
+        mounted.current = false;
+      };
     },
     [],
   );
