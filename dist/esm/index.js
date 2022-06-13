@@ -1384,13 +1384,18 @@ const _setStubResponse = (opts) => {
  * @returns response from server
  */
 const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b, _c;
     const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET');
     // Handle stubs
     const stubResponse = (_b = stubResponses[method]) === null || _b === void 0 ? void 0 : _b[opts.path];
     if (stubResponse) {
         // Remove from list
-        (_c = stubResponses[method]) === null || _c === void 0 ? true : delete _c[opts.path];
+        try {
+            stubResponses[method][opts.path] = undefined;
+        }
+        catch (err) {
+            // Ignore
+        }
         // Success
         if (stubResponse.success) {
             return stubResponse.body;
@@ -1401,7 +1406,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     // Send the request
     const response = yield cacclSendRequest({
         path: opts.path,
-        method: (_d = opts.method) !== null && _d !== void 0 ? _d : 'GET',
+        method: (_c = opts.method) !== null && _c !== void 0 ? _c : 'GET',
         params: opts.params,
     });
     // Check for failure

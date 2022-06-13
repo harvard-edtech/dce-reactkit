@@ -46,6 +46,7 @@ const stubResponses: {
         // Error code
         errorCode: string,
       }
+      | undefined
     )
   }
 } = {};
@@ -120,7 +121,11 @@ const visitServerEndpoint = async (
   const stubResponse = stubResponses[method]?.[opts.path];
   if (stubResponse) {
     // Remove from list
-    delete stubResponses[method]?.[opts.path];
+    try {
+      stubResponses[method][opts.path] = undefined;
+    } catch (err) {
+      // Ignore
+    }
     // Success
     if (stubResponse.success) {
       return stubResponse.body;
