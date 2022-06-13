@@ -565,7 +565,7 @@ let _cacclSendRequest;
 const cacclSendRequest = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     // Make sure send request has been passed in
     if (!_cacclSendRequest) {
-        throw new ErrorWithCode('The request could not be sent because the AppWrapper component does not have a copy of sendRequest from CACCL. If you are currently writing tests for your app, this means you did not properly stub the server response.', ReactKitErrorCode$1.NoCACCLSendRequestFunction);
+        throw new ErrorWithCode(`The request could not be sent because the AppWrapper component does not have a copy of sendRequest from CACCL.\nIf you are currently writing tests for your app, this means you did not properly stub the server response.\nMethod: ${opts.method}\nPath: ${opts.path}`, ReactKitErrorCode$1.NoCACCLSendRequestFunction);
     }
     return _cacclSendRequest(opts);
 });
