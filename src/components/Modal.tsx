@@ -132,21 +132,6 @@ const style = `
       opacity: 1;
     }
   }
-  .Modal-fading-out {
-    animation-name: Modal-fading-out;
-    animation-duration: ${MS_TO_ANIMATE}ms;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
-    animation-timing-function: ease-in;
-  }
-  @keyframes Modal-fading-out {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
   .Modal-animating-in {
     animation-name: Modal-animating-in;
     animation-duration: ${MS_TO_ANIMATE}ms;
@@ -183,23 +168,6 @@ const style = `
     100% {
       transform: scale(1);
       opacity: 1;
-    }
-  }
-  .Modal-animating-out {
-    animation-name: Modal-animating-out;
-    animation-duration: ${MS_TO_ANIMATE}ms;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
-    animation-timing-function: ease-in;
-  }
-  @keyframes Modal-animating-out {
-    0% {
-      transform: scale(1) translate(0, 0);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1.05) translate(0, -1.5rem);
-      opacity: 0;
     }
   }
 `;
@@ -294,7 +262,6 @@ const Modal: React.FC<Props> = (props) => {
   // True if animation is in use
   const [animatingIn, setAnimatingIn] = useState(true);
   const [animatingPop, setAnimatingPop] = useState(false);
-  const [animatingOut, setAnimatingOut] = useState(false);
 
   // Keep track of whether modal is still mounted
   const mounted = useRef(false);
@@ -314,7 +281,6 @@ const Modal: React.FC<Props> = (props) => {
         setVisible(false);
         setAnimatingIn(true);
         setAnimatingPop(false);
-        setAnimatingOut(false);
         // Wait for animation
         await waitMs(MS_TO_ANIMATE);
         // Update to state after animated in
@@ -347,22 +313,6 @@ const Modal: React.FC<Props> = (props) => {
       return;
     }
 
-    // Don't close if animating in
-    if (animatingIn) {
-      return;
-    }
-
-    // Don't close if already closed
-    if (!visible) {
-      return;
-    }
-
-    // Update the state
-    setVisible(false);
-    setAnimatingOut(true);
-
-    // Call the handler after the modal has animated out
-    await waitMs(MS_TO_ANIMATE);
     onClose(ModalButtonType);
   };
 
@@ -430,9 +380,6 @@ const Modal: React.FC<Props> = (props) => {
   if (animatingIn) {
     animationClass = 'Modal-animating-in';
     backdropAnimationClass = 'Modal-fading-in';
-  } else if (animatingOut) {
-    animationClass = 'Modal-animating-out';
-    backdropAnimationClass = 'Modal-fading-out';
   } else if (animatingPop) {
     animationClass = 'Modal-animating-pop';
   }
