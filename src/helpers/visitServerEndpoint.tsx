@@ -120,13 +120,6 @@ const visitServerEndpoint = async (
   // Handle stubs
   const stubResponse = stubResponses[opts.method ?? 'GET']?.[opts.path];
   if (stubResponse) {
-    // Remove stub
-    try {
-      delete stubResponses[opts.method ?? 'GET'][opts.path];
-    } catch (err) {
-      // Ignore
-    }
-
     // Success
     if (stubResponse.success) {
       return stubResponse.body;
