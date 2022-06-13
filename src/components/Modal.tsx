@@ -4,10 +4,7 @@
  */
 
 // Import React
-import React, { useState, useEffect } from 'react';
-
-// Import other components
-import waitMs from '../helpers/waitMs';
+import React from 'react';
 
 // Import types
 import Variant from '../types/Variant';
@@ -296,62 +293,6 @@ const Modal: React.FC<Props> = (props) => {
     onTopOfOtherModals,
   } = props;
 
-  /* -------------- State ------------- */
-
-  // If true, the modal is shown
-  const [visible, setVisible] = useState(false);
-
-  // True if animation is in use
-  const [animatingIn, setAnimatingIn] = useState(true);
-  const [animatingPop, setAnimatingPop] = useState(false);
-  const [animatingOut, setAnimatingOut] = useState(false);
-
-  /*------------------------------------------------------------------------*/
-  /*                           Lifecycle Functions                          */
-  /*------------------------------------------------------------------------*/
-
-  /**
-   * Mount
-   * @author Gabe Abrams
-   */
-  useEffect(
-    () => {
-      (async () => {
-        // Set defaults
-        setVisible(false);
-        setAnimatingIn(true);
-        setAnimatingPop(false);
-        setAnimatingOut(false);
-        // Wait for animation
-        await waitMs(MS_TO_ANIMATE);
-        // Update to state after animated in
-        setVisible(true);
-        setAnimatingIn(false);
-      })();
-    },
-    [],
-  );
-
-  /*------------------------------------------------------------------------*/
-  /*                           Component Functions                          */
-  /*------------------------------------------------------------------------*/
-
-  /**
-   * Handles the closing of the modal
-   * @author Gabe Abrams
-   * @param ModalButtonType the button that was clicked when closing the
-   *   modal
-   */
-  const handleClose = async (ModalButtonType: ModalButtonType) => {
-    // Don't close if no handler
-    if (!onClose) {
-      return;
-    }
-
-    // Call onClose
-    onClose(ModalButtonType);
-  };
-
   /*------------------------------------------------------------------------*/
   /*                                 Render                                 */
   /*------------------------------------------------------------------------*/
@@ -364,19 +305,19 @@ const Modal: React.FC<Props> = (props) => {
   const ModalButtonTypes: ModalButtonType[] = modalTypeToModalButtonTypes[type] ?? [];
 
   // Create buttons
-  const buttons = ModalButtonTypes.map((ModalButtonType: ModalButtonType, i) => {
+  const buttons = ModalButtonTypes.map((buttonType: ModalButtonType, i) => {
     // Get default style
     let {
       label,
       variant,
-    } = ModalButtonTypeToLabelAndVariant[ModalButtonType];
+    } = ModalButtonTypeToLabelAndVariant[buttonType];
 
     // Override with customizations
-    const newLabel = props[`${ModalButtonType}Label`];
+    const newLabel = props[`${buttonType}Label`];
     if (newLabel) {
       label = newLabel;
     }
-    const newVariant = props[`${ModalButtonType}Variant`];
+    const newVariant = props[`${buttonType}Variant`];
     if (newVariant) {
       variant = newVariant;
     }
@@ -387,11 +328,13 @@ const Modal: React.FC<Props> = (props) => {
     // Create the button
     return (
       <button
-        key={ModalButtonType}
+        key={buttonType}
         type="button"
-        className={`Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`}
+        className={`Modal-${buttonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`}
         onClick={() => {
-          handleClose(ModalButtonType);
+          if (onClose) {
+            onClose(buttonType);
+          }
         }}
       >
         {label}
@@ -410,23 +353,10 @@ const Modal: React.FC<Props> = (props) => {
       : undefined
   );
 
-  // Choose an animation
-  let animationClass = '';
-  let backdropAnimationClass = '';
-  if (animatingIn) {
-    animationClass = 'Modal-animating-in';
-    backdropAnimationClass = 'Modal-fading-in';
-  } else if (animatingOut) {
-    animationClass = 'Modal-animating-out';
-    backdropAnimationClass = 'Modal-fading-out';
-  } else if (animatingPop) {
-    animationClass = 'Modal-animating-pop';
-  }
-
   // Render the modal
   return (
     <div
-      className={`modal show modal-dialog-scrollable modal-dialog-centered`}
+      className="modal show modal-dialog-scrollable modal-dialog-centered"
       tabIndex={-1}
       style={{
         zIndex: (
@@ -442,29 +372,22 @@ const Modal: React.FC<Props> = (props) => {
     >
       <style>{style}</style>
       <div
-        className={`Modal-backdrop ${backdropAnimationClass}`}
+        className="Modal-backdrop Modal-fading-in"
         style={{
           zIndex: 5000000003,
         }}
         onClick={async () => {
           // Skip if exit via backdrop not allowed
           if (dontAllowBackdropExit || !onClose) {
-            // Show pop animation
-            if (!animatingPop) {
-              setAnimatingPop(true);
-
-              // Wait then stop pop animation
-              await waitMs(MS_TO_ANIMATE);
-              setAnimatingPop(false);
-            }
             return;
           }
+
           // Handle close
-          handleClose(ModalButtonType.Cancel);
+          onClose(ModalButtonType.Cancel);
         }}
       />
       <div
-        className={`modal-dialog modal-${size} ${animationClass}`}
+        className={`modal-dialog modal-${size} Modal-animating-in`}
         style={{
           zIndex: 5000000002,
         }}
@@ -487,7 +410,7 @@ const Modal: React.FC<Props> = (props) => {
                 aria-label="Close"
                 onClick={() => {
                   // Handle close
-                  handleClose(ModalButtonType.Cancel);
+                  onClose(ModalButtonType.Cancel);
                 }}
               />
             )}

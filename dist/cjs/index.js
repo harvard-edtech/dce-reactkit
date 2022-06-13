@@ -149,17 +149,6 @@ var ModalType;
 var ModalType$1 = ModalType;
 
 /**
- * Wait for a certain number of ms
- * @author Gabe Abrams
- * @param ms number of ms to wait
- */
-const waitMs = (ms = 0) => __awaiter(void 0, void 0, void 0, function* () {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-});
-
-/**
  * Bootstrap variants
  * @author Gabe Abrams
  */
@@ -394,51 +383,6 @@ const Modal = (props) => {
     var _a;
     /* -------------- Props ------------- */
     const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, children, onClose, dontAllowBackdropExit, onTopOfOtherModals, } = props;
-    /* -------------- State ------------- */
-    // If true, the modal is shown
-    const [visible, setVisible] = React.useState(false);
-    // True if animation is in use
-    const [animatingIn, setAnimatingIn] = React.useState(true);
-    const [animatingPop, setAnimatingPop] = React.useState(false);
-    const [animatingOut, setAnimatingOut] = React.useState(false);
-    /*------------------------------------------------------------------------*/
-    /*                           Lifecycle Functions                          */
-    /*------------------------------------------------------------------------*/
-    /**
-     * Mount
-     * @author Gabe Abrams
-     */
-    React.useEffect(() => {
-        (() => __awaiter(void 0, void 0, void 0, function* () {
-            // Set defaults
-            setVisible(false);
-            setAnimatingIn(true);
-            setAnimatingPop(false);
-            setAnimatingOut(false);
-            // Wait for animation
-            yield waitMs(MS_TO_ANIMATE);
-            // Update to state after animated in
-            setVisible(true);
-            setAnimatingIn(false);
-        }))();
-    }, []);
-    /*------------------------------------------------------------------------*/
-    /*                           Component Functions                          */
-    /*------------------------------------------------------------------------*/
-    /**
-     * Handles the closing of the modal
-     * @author Gabe Abrams
-     * @param ModalButtonType the button that was clicked when closing the
-     *   modal
-     */
-    const handleClose = (ModalButtonType) => __awaiter(void 0, void 0, void 0, function* () {
-        // Don't close if no handler
-        if (!onClose) {
-            return;
-        }
-        // Call onClose
-        onClose(ModalButtonType);
-    });
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -448,45 +392,33 @@ const Modal = (props) => {
     // Get list of buttons for this modal type
     const ModalButtonTypes = (_a = modalTypeToModalButtonTypes[type]) !== null && _a !== void 0 ? _a : [];
     // Create buttons
-    const buttons = ModalButtonTypes.map((ModalButtonType, i) => {
+    const buttons = ModalButtonTypes.map((buttonType, i) => {
         // Get default style
-        let { label, variant, } = ModalButtonTypeToLabelAndVariant[ModalButtonType];
+        let { label, variant, } = ModalButtonTypeToLabelAndVariant[buttonType];
         // Override with customizations
-        const newLabel = props[`${ModalButtonType}Label`];
+        const newLabel = props[`${buttonType}Label`];
         if (newLabel) {
             label = newLabel;
         }
-        const newVariant = props[`${ModalButtonType}Variant`];
+        const newVariant = props[`${buttonType}Variant`];
         if (newVariant) {
             variant = newVariant;
         }
         // Check if this button is last
         const last = (i === ModalButtonTypes.length - 1);
         // Create the button
-        return (React__default["default"].createElement("button", { key: ModalButtonType, type: "button", className: `Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
-                handleClose(ModalButtonType);
+        return (React__default["default"].createElement("button", { key: buttonType, type: "button", className: `Modal-${buttonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
+                if (onClose) {
+                    onClose(buttonType);
+                }
             } }, label));
     });
     // Put all buttons in a footer
     const footer = ((buttons && buttons.length)
         ? (React__default["default"].createElement("div", null, buttons))
         : undefined);
-    // Choose an animation
-    let animationClass = '';
-    let backdropAnimationClass = '';
-    if (animatingIn) {
-        animationClass = 'Modal-animating-in';
-        backdropAnimationClass = 'Modal-fading-in';
-    }
-    else if (animatingOut) {
-        animationClass = 'Modal-animating-out';
-        backdropAnimationClass = 'Modal-fading-out';
-    }
-    else if (animatingPop) {
-        animationClass = 'Modal-animating-pop';
-    }
     // Render the modal
-    return (React__default["default"].createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered`, tabIndex: -1, style: {
+    return (React__default["default"].createElement("div", { className: "modal show modal-dialog-scrollable modal-dialog-centered", tabIndex: -1, style: {
             zIndex: (onTopOfOtherModals
                 ? 5000000001
                 : 5000000000),
@@ -496,24 +428,17 @@ const Modal = (props) => {
             right: 0,
         } },
         React__default["default"].createElement("style", null, style$3),
-        React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
+        React__default["default"].createElement("div", { className: "Modal-backdrop Modal-fading-in", style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                 // Skip if exit via backdrop not allowed
                 if (dontAllowBackdropExit || !onClose) {
-                    // Show pop animation
-                    if (!animatingPop) {
-                        setAnimatingPop(true);
-                        // Wait then stop pop animation
-                        yield waitMs(MS_TO_ANIMATE);
-                        setAnimatingPop(false);
-                    }
                     return;
                 }
                 // Handle close
-                handleClose(ModalButtonType$1.Cancel);
+                onClose(ModalButtonType$1.Cancel);
             }) }),
-        React__default["default"].createElement("div", { className: `modal-dialog modal-${size} ${animationClass}`, style: {
+        React__default["default"].createElement("div", { className: `modal-dialog modal-${size} Modal-animating-in`, style: {
                 zIndex: 5000000002,
             } },
             React__default["default"].createElement("div", { className: "modal-content" },
@@ -523,7 +448,7 @@ const Modal = (props) => {
                         } }, title),
                     onClose && (React__default["default"].createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: () => {
                             // Handle close
-                            handleClose(ModalButtonType$1.Cancel);
+                            onClose(ModalButtonType$1.Cancel);
                         } }))),
                 children && (React__default["default"].createElement("div", { className: "modal-body" }, children)),
                 footer && (React__default["default"].createElement("div", { className: "modal-footer pt-1 pb-1" }, footer))))));
@@ -1382,6 +1307,17 @@ const roundToNumDecimals = (num, numDecimals) => {
     const rounder = 10 ** numDecimals;
     return (Math.round(num * rounder) / rounder);
 };
+
+/**
+ * Wait for a certain number of ms
+ * @author Gabe Abrams
+ * @param ms number of ms to wait
+ */
+const waitMs = (ms = 0) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+});
 
 // Keep track of whether or not session expiry has already been handled
 let sessionAlreadyExpired = false;
