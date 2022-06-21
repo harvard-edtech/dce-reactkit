@@ -13,6 +13,11 @@ import Drawer from './components/Drawer';
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
 
+// Import constants
+import MINUTE_IN_MS from './constants/MINUTE_IN_MS';
+import HOUR_IN_MS from './constants/HOUR_IN_MS';
+import DAY_IN_MS from './constants/DAY_IN_MS';
+
 // Import helpers
 import abbreviate from './helpers/abbreviate';
 import avg from './helpers/avg';
@@ -60,6 +65,10 @@ export {
   showFatalError,
   // Errors
   ErrorWithCode,
+  // Constants
+  MINUTE_IN_MS,
+  HOUR_IN_MS,
+  DAY_IN_MS,
   // Helpers
   abbreviate,
   avg,

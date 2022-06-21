@@ -271,6 +271,24 @@ declare class ErrorWithCode extends Error {
 }
 
 /**
+ * One minute in ms
+ * @author Gabe Abrams
+ */
+declare const MINUTE_IN_MS = 60000;
+
+/**
+ * One hour in ms
+ * @author Gabe Abrams
+ */
+declare const HOUR_IN_MS = 3600000;
+
+/**
+ * One day in ms
+ * @author Gabe Abrams
+ */
+declare const DAY_IN_MS = 86400000;
+
+/**
  * Shorten text so it fits into a certain number of chars
  * @author Gabe Abrams
  * @param text the text to abbreviate
@@ -522,4 +540,4 @@ declare enum ReactKitErrorCode {
     NotAdmin = "DRK10"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, Drawer, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

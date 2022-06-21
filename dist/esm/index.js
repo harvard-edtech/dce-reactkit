@@ -1191,6 +1191,24 @@ const Drawer = (props) => {
 };
 
 /**
+ * One minute in ms
+ * @author Gabe Abrams
+ */
+const MINUTE_IN_MS = 60000;
+
+/**
+ * One hour in ms
+ * @author Gabe Abrams
+ */
+const HOUR_IN_MS = 3600000;
+
+/**
+ * One day in ms
+ * @author Gabe Abrams
+ */
+const DAY_IN_MS = 86400000;
+
+/**
  * Shorten text so it fits into a certain number of chars
  * @author Gabe Abrams
  * @param text the text to abbreviate
@@ -1872,5 +1890,5 @@ const genRouteHandler = (opts) => {
  */
 const stubServerEndpoint = _setStubResponse;
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, Drawer, ErrorBox, ErrorWithCode, LoadingSpinner, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

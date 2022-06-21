@@ -1199,6 +1199,24 @@ const Drawer = (props) => {
 };
 
 /**
+ * One minute in ms
+ * @author Gabe Abrams
+ */
+const MINUTE_IN_MS = 60000;
+
+/**
+ * One hour in ms
+ * @author Gabe Abrams
+ */
+const HOUR_IN_MS = 3600000;
+
+/**
+ * One day in ms
+ * @author Gabe Abrams
+ */
+const DAY_IN_MS = 86400000;
+
+/**
  * Shorten text so it fits into a certain number of chars
  * @author Gabe Abrams
  * @param text the text to abbreviate
@@ -1883,10 +1901,13 @@ const stubServerEndpoint = _setStubResponse;
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
+exports.DAY_IN_MS = DAY_IN_MS;
 exports.Drawer = Drawer;
 exports.ErrorBox = ErrorBox;
 exports.ErrorWithCode = ErrorWithCode;
+exports.HOUR_IN_MS = HOUR_IN_MS;
 exports.LoadingSpinner = LoadingSpinner;
+exports.MINUTE_IN_MS = MINUTE_IN_MS;
 exports.Modal = Modal;
 exports.ModalButtonType = ModalButtonType$1;
 exports.ModalSize = ModalSize$1;
