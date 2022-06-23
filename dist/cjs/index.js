@@ -1898,6 +1898,32 @@ const genRouteHandler = (opts) => {
  */
 const stubServerEndpoint = _setStubResponse;
 
+/**
+ * Start a dynamic wait, call the function once the operation has completed and
+ *   the dynamic wait will continue waiting for the rest of the minimum time
+ * @author Gabe Abrams
+ * @param minWaitMs the minimum number of ms to wait
+ * @returns async function to call to finish the wait
+ */
+const startMinWait = (minWaitMs) => {
+    const startTimestamp = Date.now();
+    /**
+     * Finish the remaining time to wait
+     * @author Gabe Abrams
+     */
+    return () => __awaiter(void 0, void 0, void 0, function* () {
+        const endTimestamp = Date.now();
+        // Calculate remaining time to wait
+        const elapsedTimeMs = (endTimestamp - startTimestamp);
+        const remainingTimeToWaitMs = minWaitMs - elapsedTimeMs;
+        if (remainingTimeToWaitMs <= 0) {
+            return;
+        }
+        // Perform wait
+        yield waitMs(remainingTimeToWaitMs);
+    });
+};
+
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
@@ -1935,6 +1961,7 @@ exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;
 exports.roundToNumDecimals = roundToNumDecimals;
 exports.showFatalError = showFatalError;
+exports.startMinWait = startMinWait;
 exports.stubServerEndpoint = stubServerEndpoint;
 exports.sum = sum;
 exports.visitServerEndpoint = visitServerEndpoint;

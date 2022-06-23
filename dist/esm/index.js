@@ -1890,5 +1890,31 @@ const genRouteHandler = (opts) => {
  */
 const stubServerEndpoint = _setStubResponse;
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+/**
+ * Start a dynamic wait, call the function once the operation has completed and
+ *   the dynamic wait will continue waiting for the rest of the minimum time
+ * @author Gabe Abrams
+ * @param minWaitMs the minimum number of ms to wait
+ * @returns async function to call to finish the wait
+ */
+const startMinWait = (minWaitMs) => {
+    const startTimestamp = Date.now();
+    /**
+     * Finish the remaining time to wait
+     * @author Gabe Abrams
+     */
+    return () => __awaiter(void 0, void 0, void 0, function* () {
+        const endTimestamp = Date.now();
+        // Calculate remaining time to wait
+        const elapsedTimeMs = (endTimestamp - startTimestamp);
+        const remainingTimeToWaitMs = minWaitMs - elapsedTimeMs;
+        if (remainingTimeToWaitMs <= 0) {
+            return;
+        }
+        // Perform wait
+        yield waitMs(remainingTimeToWaitMs);
+    });
+};
+
+export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

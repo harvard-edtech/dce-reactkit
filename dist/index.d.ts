@@ -524,6 +524,15 @@ declare const stubServerEndpoint: (opts: {
 }) => void;
 
 /**
+ * Start a dynamic wait, call the function once the operation has completed and
+ *   the dynamic wait will continue waiting for the rest of the minimum time
+ * @author Gabe Abrams
+ * @param minWaitMs the minimum number of ms to wait
+ * @returns async function to call to finish the wait
+ */
+declare const startMinWait: (minWaitMs: number) => () => Promise<void>;
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -540,4 +549,4 @@ declare enum ReactKitErrorCode {
     NotAdmin = "DRK10"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
