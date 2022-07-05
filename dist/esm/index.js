@@ -271,7 +271,7 @@ const ModalButtonTypeToLabelAndVariant = {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$3 = `
+const style$4 = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -445,7 +445,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React.createElement("style", null, style$3),
+        React.createElement("style", null, style$4),
         React.createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -710,7 +710,7 @@ const AppWrapper = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$2 = `
+const style$3 = `
 /* Container fades in */
 .LoadingSpinner-container {
   animation-name: LoadingSpinner-container-fade-in;
@@ -788,7 +788,7 @@ const LoadingSpinner = () => {
     /*------------------------------------------------------------------------*/
     // Add all four blips to a container
     return (React.createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React.createElement("style", null, style$2),
+        React.createElement("style", null, style$3),
         React.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-1 me-1" }),
         React.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-2 me-1" }),
         React.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-3 me-1" }),
@@ -802,7 +802,7 @@ const LoadingSpinner = () => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$1 = `
+const style$2 = `
   /* Tab Box */
   .TabBox-box {
     /* Light Border */
@@ -882,7 +882,7 @@ const TabBox = (props) => {
     /*----------------------------------------*/
     // Full UI
     return (React.createElement("div", { className: `TabBox-container ${noBottomPadding ? '' : 'mb-2'}` },
-        React.createElement("style", null, style$1),
+        React.createElement("style", null, style$2),
         React.createElement("div", { className: "TabBox-title-container" },
             React.createElement("div", { className: "TabBox-title" }, title)),
         React.createElement("div", { className: "TabBox-box p-2" },
@@ -1154,7 +1154,7 @@ const SimpleDateChooser = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style = `
+const style$1 = `
   .Drawer-container {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -1186,8 +1186,129 @@ const Drawer = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     return (React.createElement("div", { className: "Drawer-container" },
-        React.createElement("style", null, style),
+        React.createElement("style", null, style$1),
         children));
+};
+
+/**
+ * Success checkmark that pops into view
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                  Style                                 */
+/*------------------------------------------------------------------------*/
+const style = `
+  .PopSuccessMark-outer-container {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+
+    animation-name: PopSuccessMark-outer-container;
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+  }
+  @keyframes PopSuccessMark-outer-container {
+    0% {
+      opacity: 0;
+      transform: scale(1.5);
+      filter: saturate(0);
+    }
+    80.7% {
+      opacity: 1;
+      transform: scale(1);
+      filter: saturate(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      filter: saturate(1);
+    }
+  }
+
+  .PopSuccessMark-check-stroke-1 {
+    position: absolute;
+    left: 20%;
+    top: 36%;
+
+    display: inline-block;
+    height: 16%;
+    width: 35%;
+
+    transform-origin: left;
+
+    animation-name: PopSuccessMark-check-stroke-1;
+    animation-duration: 0.3s;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+  }
+  @keyframes PopSuccessMark-check-stroke-1 {
+    0% {
+      transform: rotate(45deg) scaleX(0);
+    }
+    100% {
+      transform: rotate(45deg) scaleX(1);
+    }
+  }
+
+
+  .PopSuccessMark-check-stroke-2 {
+    position: absolute;
+    left: 35%;
+    top: 63%;
+
+    display: inline-block;
+    height: 16%;
+    width: 60%;
+
+    transform-origin: left;
+
+    animation-name: PopSuccessMark-check-stroke-2;
+    animation-duration: 0.3s;
+    animation-delay: 0.6s;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+  }
+  @keyframes PopSuccessMark-check-stroke-2 {
+    0% {
+      transform: rotate(-40deg) scaleX(0);
+    }
+    100% {
+      transform: rotate(-40deg) scaleX(1);
+    }
+  }
+`;
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const PopSuccessMark = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { sizeRem = 3, circleVariant = 'success', checkVariant = 'white', } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    return (React.createElement("div", { className: `PopSuccessMark-outer-container bg-${circleVariant}`, style: {
+            width: `${sizeRem}rem`,
+            height: `${sizeRem}rem`,
+        }, "aria-label": "checkmark indicating success" },
+        React.createElement("style", null, style),
+        React.createElement("div", { className: `PopSuccessMark-check-stroke-1 bg-${checkVariant}`, style: {
+                borderRadius: `${sizeRem / 5}rem`,
+            } }),
+        React.createElement("div", { className: `PopSuccessMark-check-stroke-2 bg-${checkVariant}`, style: {
+                borderRadius: `${sizeRem / 5}rem`,
+            } })));
 };
 
 /**
@@ -1916,5 +2037,5 @@ const startMinWait = (minWaitMs) => {
     });
 };
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

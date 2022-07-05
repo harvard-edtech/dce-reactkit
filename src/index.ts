@@ -9,6 +9,7 @@ import CheckboxButton from './components/CheckboxButton';
 import ButtonInputGroup from './components/ButtonInputGroup';
 import SimpleDateChooser from './components/SimpleDateChooser';
 import Drawer from './components/Drawer';
+import PopSuccessMark from './components/PopSuccessMark';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -60,6 +61,7 @@ export {
   ButtonInputGroup,
   SimpleDateChooser,
   Drawer,
+  PopSuccessMark,
   // Global functions
   alert,
   confirm,
