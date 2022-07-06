@@ -893,7 +893,7 @@ const TabBox = (props) => {
         React__default["default"].createElement("style", null, style$2),
         React__default["default"].createElement("div", { className: "TabBox-title-container" },
             React__default["default"].createElement("div", { className: "TabBox-title" }, title)),
-        React__default["default"].createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'mb-2'}` },
+        React__default["default"].createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },
             React__default["default"].createElement("div", { className: "TabBox-children" }, children))));
 };
 

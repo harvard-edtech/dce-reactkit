@@ -885,7 +885,7 @@ const TabBox = (props) => {
         React.createElement("style", null, style$2),
         React.createElement("div", { className: "TabBox-title-container" },
             React.createElement("div", { className: "TabBox-title" }, title)),
-        React.createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'mb-2'}` },
+        React.createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },
             React.createElement("div", { className: "TabBox-children" }, children))));
 };
 

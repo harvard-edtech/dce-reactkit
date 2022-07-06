@@ -129,7 +129,7 @@ const TabBox: React.FC<Props> = (props) => {
       </div>
 
       {/* Contents */}
-      <div className={`TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'mb-2'}`}>
+      <div className={`TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}`}>
         <div className="TabBox-children">
           {children}
         </div>
