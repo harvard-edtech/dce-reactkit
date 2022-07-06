@@ -2071,7 +2071,7 @@ const getHumanReadableDate = (dateOrTimestamp) => {
     const { month, day, year, } = getTimeInfoInET(dateOrTimestamp);
     const currYear = getTimeInfoInET().year;
     // Create start of description
-    let description = `${monthMap[month]} ${getOrdinal(day)}`;
+    let description = `${monthMap[month]} ${day}${getOrdinal(day)}`;
     // Add on year if it's different
     if (year !== currYear) {
         description += ` ${year}`;
