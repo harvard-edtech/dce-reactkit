@@ -15,7 +15,9 @@ type Props = {
   title: React.ReactNode,
   // Children/contents inside the box
   children: React.ReactNode,
-  // If true, don't add padding below the tab box
+  // If true, don't add margin below the tab box
+  noBottomMargin?: boolean,
+  // If true, don't add padding to bottom of tab box
   noBottomPadding?: boolean,
 };
 
@@ -102,6 +104,7 @@ const TabBox: React.FC<Props> = (props) => {
     title,
     children,
     noBottomPadding,
+    noBottomMargin,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -114,7 +117,7 @@ const TabBox: React.FC<Props> = (props) => {
 
   // Full UI
   return (
-    <div className={`TabBox-container ${noBottomPadding ? '' : 'mb-2'}`}>
+    <div className={`TabBox-container ${noBottomMargin ? '' : 'mb-2'}`}>
       {/* Style */}
       <style>{style}</style>
 
@@ -126,7 +129,7 @@ const TabBox: React.FC<Props> = (props) => {
       </div>
 
       {/* Contents */}
-      <div className="TabBox-box p-2">
+      <div className={`TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'mb-2'}`}>
         <div className="TabBox-children">
           {children}
         </div>

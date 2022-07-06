@@ -6,6 +6,7 @@ import React from 'react';
 declare type Props = {
     title: React.ReactNode;
     children: React.ReactNode;
+    noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
 declare const TabBox: React.FC<Props>;

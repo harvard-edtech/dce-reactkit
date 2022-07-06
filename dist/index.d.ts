@@ -175,6 +175,7 @@ declare const Modal: React.FC<Props$7>;
 declare type Props$6 = {
     title: React.ReactNode;
     children: React.ReactNode;
+    noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
 declare const TabBox: React.FC<Props$6>;
@@ -545,6 +546,14 @@ declare const stubServerEndpoint: (opts: {
 declare const startMinWait: (minWaitMs: number) => () => Promise<void>;
 
 /**
+ * Get a human-readable description of a date (all in ET)
+ * @author Gabe Abrams
+ * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
+ * @returns human-readable description of the date
+ */
+declare const getHumanReadableDate: (dateOrTimestamp?: number | Date | undefined) => string;
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -561,4 +570,4 @@ declare enum ReactKitErrorCode {
     NotAdmin = "DRK10"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

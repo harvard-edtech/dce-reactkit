@@ -39,6 +39,7 @@ import getOrdinal from './helpers/getOrdinal';
 import getTimeInfoInET from './helpers/getTimeInfoInET';
 import stubServerEndpoint from './helpers/stubServerEndpoint';
 import startMinWait from './helpers/startMinWait';
+import getHumanReadableDate from './helpers/getHumanReadableDate';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -87,6 +88,7 @@ export {
   getTimeInfoInET,
   stubServerEndpoint,
   startMinWait,
+  getHumanReadableDate,
   // Client helpers
   visitServerEndpoint,
   // Server helpers

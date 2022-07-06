@@ -873,7 +873,7 @@ const TabBox = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { title, children, noBottomPadding, } = props;
+    const { title, children, noBottomPadding, noBottomMargin, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -881,11 +881,11 @@ const TabBox = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     // Full UI
-    return (React.createElement("div", { className: `TabBox-container ${noBottomPadding ? '' : 'mb-2'}` },
+    return (React.createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
         React.createElement("style", null, style$2),
         React.createElement("div", { className: "TabBox-title-container" },
             React.createElement("div", { className: "TabBox-title" }, title)),
-        React.createElement("div", { className: "TabBox-box p-2" },
+        React.createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'mb-2'}` },
             React.createElement("div", { className: "TabBox-children" }, children))));
 };
 
@@ -2037,5 +2037,40 @@ const startMinWait = (minWaitMs) => {
     });
 };
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+// Map of month to three letter description
+const monthMap = {
+    1: 'Jan',
+    2: 'Feb',
+    3: 'Mar',
+    4: 'Apr',
+    5: 'May',
+    6: 'Jun',
+    7: 'Jul',
+    8: 'Aug',
+    9: 'Sep',
+    10: 'Oct',
+    11: 'Nov',
+    12: 'Dec',
+};
+/**
+ * Get a human-readable description of a date (all in ET)
+ * @author Gabe Abrams
+ * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
+ * @returns human-readable description of the date
+ */
+const getHumanReadableDate = (dateOrTimestamp) => {
+    // Get the date info
+    const { month, day, year, } = getTimeInfoInET(dateOrTimestamp);
+    const currYear = getTimeInfoInET().year;
+    // Create start of description
+    let description = `${monthMap[month]} ${getOrdinal(day)}`;
+    // Add on year if it's different
+    if (year !== currYear) {
+        description += ` ${year}`;
+    }
+    // Return description
+    return description;
+};
+
+export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map
