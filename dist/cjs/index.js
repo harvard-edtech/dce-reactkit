@@ -279,7 +279,7 @@ const ModalButtonTypeToLabelAndVariant = {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$4 = `
+const style$6 = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -453,7 +453,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default["default"].createElement("style", null, style$4),
+        React__default["default"].createElement("style", null, style$6),
         React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -718,7 +718,7 @@ const AppWrapper = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$3 = `
+const style$5 = `
 /* Container fades in */
 .LoadingSpinner-container {
   animation-name: LoadingSpinner-container-fade-in;
@@ -796,7 +796,7 @@ const LoadingSpinner = () => {
     /*------------------------------------------------------------------------*/
     // Add all four blips to a container
     return (React__default["default"].createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default["default"].createElement("style", null, style$3),
+        React__default["default"].createElement("style", null, style$5),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-1 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-2 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-3 me-1" }),
@@ -810,7 +810,7 @@ const LoadingSpinner = () => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$2 = `
+const style$4 = `
   /* Tab Box */
   .TabBox-box {
     /* Light Border */
@@ -890,7 +890,7 @@ const TabBox = (props) => {
     /*----------------------------------------*/
     // Full UI
     return (React__default["default"].createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
-        React__default["default"].createElement("style", null, style$2),
+        React__default["default"].createElement("style", null, style$4),
         React__default["default"].createElement("div", { className: "TabBox-title-container" },
             React__default["default"].createElement("div", { className: "TabBox-title" }, title)),
         React__default["default"].createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },
@@ -1162,7 +1162,7 @@ const SimpleDateChooser = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$1 = `
+const style$3 = `
   .Drawer-container {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -1194,7 +1194,7 @@ const Drawer = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     return (React__default["default"].createElement("div", { className: "Drawer-container" },
-        React__default["default"].createElement("style", null, style$1),
+        React__default["default"].createElement("style", null, style$3),
         children));
 };
 
@@ -1205,7 +1205,7 @@ const Drawer = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style = `
+const style$2 = `
   .PopSuccessMark-outer-container {
     position: relative;
     display: inline-block;
@@ -1310,13 +1310,220 @@ const PopSuccessMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "checkmark indicating success" },
-        React__default["default"].createElement("style", null, style),
+        React__default["default"].createElement("style", null, style$2),
         React__default["default"].createElement("div", { className: `PopSuccessMark-check-stroke-1 bg-${checkVariant}`, style: {
                 borderRadius: `${sizeRem / 5}rem`,
             } }),
         React__default["default"].createElement("div", { className: `PopSuccessMark-check-stroke-2 bg-${checkVariant}`, style: {
                 borderRadius: `${sizeRem / 5}rem`,
             } })));
+};
+
+/**
+ * Failure x mark that pops into view
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                  Style                                 */
+/*------------------------------------------------------------------------*/
+const style$1 = `
+  .PopFailureMark-outer-container {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+
+    animation-name: PopFailureMark-outer-container;
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+  }
+  @keyframes PopFailureMark-outer-container {
+    0% {
+      opacity: 0;
+      transform: scale(1.5);
+      filter: saturate(0);
+    }
+    80.7% {
+      opacity: 1;
+      transform: scale(1);
+      filter: saturate(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      filter: saturate(1);
+    }
+  }
+
+  .PopFailureMark-x-stroke-1 {
+    position: absolute;
+    left: 25%;
+    top: 19%;
+
+    display: inline-block;
+    height: 16%;
+    width: 70%;
+
+    transform-origin: left;
+
+    animation-name: PopFailureMark-x-stroke-1;
+    animation-duration: 0.3s;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+  }
+  @keyframes PopFailureMark-x-stroke-1 {
+    0% {
+      transform: rotate(45deg) scaleX(0);
+    }
+    100% {
+      transform: rotate(45deg) scaleX(1);
+    }
+  }
+
+  .PopFailureMark-x-stroke-2 {
+    position: absolute;
+    left: 75%;
+    top: 19%;
+
+    display: inline-block;
+    height: 16%;
+    width: 70%;
+
+    transform-origin: left;
+
+    animation-name: PopFailureMark-x-stroke-2;
+    animation-duration: 0.3s;
+    animation-delay: 0.6s;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+  }
+  @keyframes PopFailureMark-x-stroke-2 {
+    0% {
+      transform: rotate(135deg) scaleX(0);
+    }
+    100% {
+      transform: rotate(135deg) scaleX(1);
+    }
+  }
+`;
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const PopFailureMark = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { sizeRem = 3, circleVariant = 'danger', xVariant = 'white', } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    return (React__default["default"].createElement("div", { className: `PopFailureMark-outer-container bg-${circleVariant}`, style: {
+            width: `${sizeRem}rem`,
+            height: `${sizeRem}rem`,
+        }, "aria-label": "mark indicating failure" },
+        React__default["default"].createElement("style", null, style$1),
+        React__default["default"].createElement("div", { className: `PopFailureMark-x-stroke-1 bg-${xVariant}`, style: {
+                borderRadius: `${sizeRem / 5}rem`,
+            } }),
+        React__default["default"].createElement("div", { className: `PopFailureMark-x-stroke-2 bg-${xVariant}`, style: {
+                borderRadius: `${sizeRem / 5}rem`,
+            } })));
+};
+
+/**
+ * Failure pending that pops into view
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                  Style                                 */
+/*------------------------------------------------------------------------*/
+const style = `
+  .PopPendingMark-outer-container {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+
+    animation-name: PopPendingMark-outer-container;
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+  }
+  @keyframes PopPendingMark-outer-container {
+    0% {
+      opacity: 0;
+      transform: scale(1.5);
+      filter: saturate(0);
+    }
+    80.7% {
+      opacity: 1;
+      transform: scale(1);
+      filter: saturate(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      filter: saturate(1);
+    }
+  }
+
+  .PopPendingMark-hourglass {
+    position: absolute;
+    left: 28%;
+    top: 21%;
+
+    animation-name: PopPendingMark-pending;
+    animation-duration: 0.3s;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+  }
+  @keyframes PopPendingMark-pending {
+    0% {
+      transform: scale(0.7) rotate(30deg);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1) rotate(0);
+      opacity: 1;
+    }
+  }
+`;
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const PopPendingMark = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { sizeRem = 3, circleVariant = 'warning', hourglassVariant = 'white', } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    return (React__default["default"].createElement("div", { className: `PopPendingMark-outer-container bg-${circleVariant}`, style: {
+            width: `${sizeRem}rem`,
+            height: `${sizeRem}rem`,
+        }, "aria-label": "mark indicating that the item is pending" },
+        React__default["default"].createElement("style", null, style),
+        React__default["default"].createElement("div", null,
+            React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faHourglass, className: `PopPendingMark-hourglass text-${hourglassVariant}`, style: {
+                    fontSize: `${sizeRem * 0.6}rem`,
+                } }))));
 };
 
 /**
@@ -2095,6 +2302,8 @@ exports.ModalButtonType = ModalButtonType$1;
 exports.ModalSize = ModalSize$1;
 exports.ModalType = ModalType$1;
 exports.ParamType = ParamType$1;
+exports.PopFailureMark = PopFailureMark;
+exports.PopPendingMark = PopPendingMark;
 exports.PopSuccessMark = PopSuccessMark;
 exports.RadioButton = RadioButton;
 exports.ReactKitErrorCode = ReactKitErrorCode$1;

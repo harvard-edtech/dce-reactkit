@@ -10,6 +10,8 @@ import ButtonInputGroup from './components/ButtonInputGroup';
 import SimpleDateChooser from './components/SimpleDateChooser';
 import Drawer from './components/Drawer';
 import PopSuccessMark from './components/PopSuccessMark';
+import PopFailureMark from './components/PopFailureMark';
+import PopPendingMark from './components/PopPendingMark';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -63,6 +65,8 @@ export {
   SimpleDateChooser,
   Drawer,
   PopSuccessMark,
+  PopFailureMark,
+  PopPendingMark,
   // Global functions
   alert,
   confirm,
