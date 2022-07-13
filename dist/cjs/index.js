@@ -2414,6 +2414,60 @@ const getHumanReadableDate = (dateOrTimestamp) => {
     return description;
 };
 
+/**
+ * Get the current part of day (morning, evening, etc.)
+ * @author Gabe Abrams
+ */
+const getPartOfDay = () => {
+    // Setup the post-it time of day
+    let partOfDay = 'day';
+    let hours = new Date().getHours();
+    if (hours < 12) {
+        partOfDay = 'morning';
+    }
+    else if (hours >= 12 && hours <= 16) {
+        partOfDay = 'afternoon';
+    }
+    else if (hours > 16 && hours <= 24) {
+        partOfDay = 'evening';
+    }
+    return partOfDay;
+};
+
+/**
+ * Create a human readable list from an array of strings.
+ *   For example, ['apple', 'orange'] becomes "apple and orange"
+ *   and ['apple', 'orange', 'mango'] becomes "apple, orange, and mango"
+ * @author Gabe Abrams
+ * @param items list of items in the list
+ * @returns human-readable list
+ */
+const stringsToHumanReadableList = (items) => {
+    // Handle 0-item case
+    if (items.length === 0) {
+        return '';
+    }
+    // Handle 1-item case
+    if (items.length === 1) {
+        return items[0];
+    }
+    // Handle 2-item case
+    if (items.length === 2) {
+        return `${items[0]} and ${items[1]}`;
+    }
+    // Handle 3+ item case
+    let list = '';
+    items.forEach((item, i) => {
+        if (i === items.length - 1) {
+            // Last item
+            list += `, and ${item}`;
+        }
+        // Previous items
+        list += `, ${item}`;
+    });
+    return list;
+};
+
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
@@ -2448,6 +2502,7 @@ exports.forceNumIntoBounds = forceNumIntoBounds;
 exports.genRouteHandler = genRouteHandler;
 exports.getHumanReadableDate = getHumanReadableDate;
 exports.getOrdinal = getOrdinal;
+exports.getPartOfDay = getPartOfDay;
 exports.getTimeInfoInET = getTimeInfoInET;
 exports.handleError = handleError;
 exports.handleSuccess = handleSuccess;
@@ -2457,6 +2512,7 @@ exports.padZerosLeft = padZerosLeft;
 exports.roundToNumDecimals = roundToNumDecimals;
 exports.showFatalError = showFatalError;
 exports.startMinWait = startMinWait;
+exports.stringsToHumanReadableList = stringsToHumanReadableList;
 exports.stubServerEndpoint = stubServerEndpoint;
 exports.sum = sum;
 exports.visitServerEndpoint = visitServerEndpoint;

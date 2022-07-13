@@ -43,6 +43,8 @@ import getTimeInfoInET from './helpers/getTimeInfoInET';
 import stubServerEndpoint from './helpers/stubServerEndpoint';
 import startMinWait from './helpers/startMinWait';
 import getHumanReadableDate from './helpers/getHumanReadableDate';
+import getPartOfDay from './helpers/getPartOfDay';
+import stringsToHumanReadableList from './helpers/stringsToHumanReadableList';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -95,6 +97,8 @@ export {
   stubServerEndpoint,
   startMinWait,
   getHumanReadableDate,
+  getPartOfDay,
+  stringsToHumanReadableList,
   // Client helpers
   visitServerEndpoint,
   // Server helpers
