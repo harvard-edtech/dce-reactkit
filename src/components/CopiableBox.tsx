@@ -19,8 +19,6 @@ import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 
 // Props definition
 type Props = {
-  // Unique name of the item to copy (no spaces, compatible with css classes)
-  name: string,
   // The text to copy
   text: string,
   // Human-readable label of the copy field
@@ -35,6 +33,10 @@ type Props = {
   numVisibleLines?: number,
   // If defined, text box becomes clickable and this is the handler
   onClick?: () => void,
+  // Id of the text area
+  textAreaId?: string,
+  // Id of the copy button
+  copyButtonId?: string,
 };
 
 /*------------------------------------------------------------------------*/
@@ -104,7 +106,6 @@ const CopiableBox: React.FC<Props> = (props) => {
 
   // Destructure all props
   const {
-    name,
     text,
     label,
     labelIcon,
@@ -112,6 +113,8 @@ const CopiableBox: React.FC<Props> = (props) => {
     multiline,
     numVisibleLines = 10,
     onClick,
+    textAreaId,
+    copyButtonId,
   } = props;
 
   /* -------------- State ------------- */
@@ -133,38 +136,19 @@ const CopiableBox: React.FC<Props> = (props) => {
   /*                           Component Functions                          */
   /*------------------------------------------------------------------------*/
 
-  // Determine the id for the copiable text field
-  const copiableFieldClassName = `CopiableBox-text-box-${name}`;
-
   /**
    * Perform a copy
    * @author Gabe Abrams
    */
   const performCopy = async () => {
     // Write to clipboard
-    let copyFailed = false;
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {
-      copyFailed = true;
-    }
-
-    // Try copy again if it failed
-    if (copyFailed) {
-      try {
-        const input = (
-          document.getElementsByClassName(copiableFieldClassName)[0]
-        ) as HTMLInputElement;
-        input.focus();
-        input.select();
-        document.execCommand('copy');
-        input.blur();
-      } catch (err) {
-        return alert(
-          'Unable to copy',
-          'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.',
-        );
-      }
+      return alert(
+        'Unable to copy',
+        'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.',
+      );
     }
 
     // Show copied notice
@@ -216,7 +200,8 @@ const CopiableBox: React.FC<Props> = (props) => {
         multiline
           ? (
             <textarea
-              className={`${copiableFieldClassName} CopiableBox-text-multiline form-control bg-white text-dark`}
+              id={textAreaId}
+              className="CopiableBox-text CopiableBox-text-multiline form-control bg-white text-dark"
               value={text}
               aria-label={`${label} text`}
               rows={numVisibleLines}
@@ -238,8 +223,9 @@ const CopiableBox: React.FC<Props> = (props) => {
           )
           : (
             <input
+              id={textAreaId}
               type="text"
-              className={`${copiableFieldClassName} CopiableBox-text-single-line form-control bg-white text-dark`}
+              className="CopiableBox-text CopiableBox-text-single-line form-control bg-white text-dark"
               value={text}
               aria-label={`${label} text`}
               onClick={onClick}
@@ -261,6 +247,7 @@ const CopiableBox: React.FC<Props> = (props) => {
       }
       
       <button
+        id={copyButtonId}
         className="btn btn-secondary"
         type="button"
         aria-label={`copy ${label} to the clipboard`}

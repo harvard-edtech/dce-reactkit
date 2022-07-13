@@ -1563,7 +1563,7 @@ const CopiableBox = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { name, text, label, labelIcon, minLabelWidthRem, multiline, numVisibleLines = 10, onClick, } = props;
+    const { text, label, labelIcon, minLabelWidthRem, multiline, numVisibleLines = 10, onClick, textAreaId, copyButtonId, } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
@@ -1576,33 +1576,17 @@ const CopiableBox = (props) => {
     /*------------------------------------------------------------------------*/
     /*                           Component Functions                          */
     /*------------------------------------------------------------------------*/
-    // Determine the id for the copiable text field
-    const copiableFieldClassName = `CopiableBox-text-box-${name}`;
     /**
      * Perform a copy
      * @author Gabe Abrams
      */
     const performCopy = () => __awaiter(void 0, void 0, void 0, function* () {
         // Write to clipboard
-        let copyFailed = false;
         try {
             yield navigator.clipboard.writeText(text);
         }
         catch (err) {
-            copyFailed = true;
-        }
-        // Try copy again if it failed
-        if (copyFailed) {
-            try {
-                const input = (document.getElementsByClassName(copiableFieldClassName)[0]);
-                input.focus();
-                input.select();
-                document.execCommand('copy');
-                input.blur();
-            }
-            catch (err) {
-                return alert$1('Unable to copy', 'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.');
-            }
+            return alert$1('Unable to copy', 'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.');
         }
         // Show copied notice
         dispatch({
@@ -1630,7 +1614,7 @@ const CopiableBox = (props) => {
             labelIcon && (React.createElement(FontAwesomeIcon, { icon: labelIcon, className: "me-1" })),
             label),
         multiline
-            ? (React.createElement("textarea", { className: `${copiableFieldClassName} CopiableBox-text-multiline form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, rows: numVisibleLines, onClick: onClick, style: {
+            ? (React.createElement("textarea", { id: textAreaId, className: "CopiableBox-text CopiableBox-text-multiline form-control bg-white text-dark", value: text, "aria-label": `${label} text`, rows: numVisibleLines, onClick: onClick, style: {
                     cursor: (onClick
                         ? 'pointer'
                         : 'default'),
@@ -1638,7 +1622,7 @@ const CopiableBox = (props) => {
                         ? 'underline'
                         : undefined),
                 }, readOnly: true }))
-            : (React.createElement("input", { type: "text", className: `${copiableFieldClassName} CopiableBox-text-single-line form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, onClick: onClick, style: {
+            : (React.createElement("input", { id: textAreaId, type: "text", className: "CopiableBox-text CopiableBox-text-single-line form-control bg-white text-dark", value: text, "aria-label": `${label} text`, onClick: onClick, style: {
                     cursor: (onClick
                         ? 'pointer'
                         : 'default'),
@@ -1646,7 +1630,7 @@ const CopiableBox = (props) => {
                         ? 'underline'
                         : undefined),
                 }, readOnly: true })),
-        React.createElement("button", { className: "btn btn-secondary", type: "button", "aria-label": `copy ${label} to the clipboard`, disabled: recentlyCopied, style: {
+        React.createElement("button", { id: copyButtonId, className: "btn btn-secondary", type: "button", "aria-label": `copy ${label} to the clipboard`, disabled: recentlyCopied, style: {
                 minWidth: '5.2rem',
             }, onClick: performCopy }, recentlyCopied
             ? 'Copied!'

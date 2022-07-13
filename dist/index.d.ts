@@ -304,7 +304,6 @@ declare const PopPendingMark: React.FC<Props$1>;
  */
 
 declare type Props = {
-    name: string;
     text: string;
     label: string;
     labelIcon?: any;
@@ -312,6 +311,8 @@ declare type Props = {
     multiline?: boolean;
     numVisibleLines?: number;
     onClick?: () => void;
+    textAreaId?: string;
+    copyButtonId?: string;
 };
 declare const CopiableBox: React.FC<Props>;
 
