@@ -1527,6 +1527,129 @@ const PopPendingMark = (props) => {
 };
 
 /**
+ * Copiable text box
+ * @author Gabe Abrams
+ */
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType;
+(function (ActionType) {
+    // Indicate that the text was recently copied
+    ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
+    // Clear the status
+    ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
+})(ActionType || (ActionType = {}));
+/**
+ * Reducer that executes actions
+ * @author Gabe Abrams
+ * @param state current state
+ * @param action action to execute
+ */
+const reducer = (state, action) => {
+    switch (action.type) {
+        case ActionType.IndicateRecentlyCopied: {
+            return {
+                recentlyCopied: true,
+            };
+        }
+        case ActionType.ClearRecentlyCopiedStatus: {
+            return {
+                recentlyCopied: false,
+            };
+        }
+        default: {
+            return state;
+        }
+    }
+};
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const CopiableBox = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { name, text, label, labelIcon, minLabelWidthRem, multiline, numVisibleLines = 10, } = props;
+    /* -------------- State ------------- */
+    // Initial state
+    const initialState = {
+        recentlyCopied: false,
+    };
+    // Initialize state
+    const [state, dispatch] = React.useReducer(reducer, initialState);
+    // Destructure common state
+    const { recentlyCopied, } = state;
+    /*------------------------------------------------------------------------*/
+    /*                           Component Functions                          */
+    /*------------------------------------------------------------------------*/
+    // Determine the id for the copiable text field
+    const copiableFieldClassName = `CopiableBox-text-box-${name}`;
+    /**
+     * Perform a copy
+     * @author Gabe Abrams
+     */
+    const performCopy = () => __awaiter(void 0, void 0, void 0, function* () {
+        // Write to clipboard
+        let copyFailed = false;
+        try {
+            yield navigator.clipboard.writeText(text);
+        }
+        catch (err) {
+            copyFailed = true;
+        }
+        // Try copy again if it failed
+        if (copyFailed) {
+            try {
+                const input = (document.getElementsByClassName(copiableFieldClassName)[0]);
+                input.focus();
+                input.select();
+                document.execCommand('copy');
+                input.blur();
+            }
+            catch (err) {
+                return alert$1('Unable to copy', 'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.');
+            }
+        }
+        // Show copied notice
+        dispatch({
+            type: ActionType.IndicateRecentlyCopied,
+        });
+        // Wait a moment
+        yield waitMs(4000);
+        // Hide copied notice
+        dispatch({
+            type: ActionType.ClearRecentlyCopiedStatus,
+        });
+    });
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    return (React__default["default"].createElement("div", { className: "input-group mb-2" },
+        React__default["default"].createElement("span", { className: "input-group-text", style: {
+                minWidth: (minLabelWidthRem
+                    ? `${minLabelWidthRem}rem`
+                    : undefined),
+            } },
+            labelIcon && (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: labelIcon, className: "me-1" })),
+            label),
+        multiline
+            ? (React__default["default"].createElement("textarea", { className: `${copiableFieldClassName} CopiableBox-text-multiline form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, rows: numVisibleLines, readOnly: true }))
+            : (React__default["default"].createElement("input", { type: "text", className: `${copiableFieldClassName} CopiableBox-text-single-line form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, readOnly: true })),
+        React__default["default"].createElement("button", { className: "btn btn-secondary", type: "button", "aria-label": `copy ${label} to the clipboard`, disabled: recentlyCopied, style: {
+                minWidth: '5.2rem',
+            }, onClick: performCopy }, recentlyCopied
+            ? 'Copied!'
+            : (React__default["default"].createElement("span", null,
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faClipboard, className: "me-1" }),
+                "Copy")))));
+};
+
+/**
  * One minute in ms
  * @author Gabe Abrams
  */
@@ -2290,6 +2413,7 @@ const getHumanReadableDate = (dateOrTimestamp) => {
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
+exports.CopiableBox = CopiableBox;
 exports.DAY_IN_MS = DAY_IN_MS;
 exports.Drawer = Drawer;
 exports.ErrorBox = ErrorBox;

@@ -12,6 +12,7 @@ import Drawer from './components/Drawer';
 import PopSuccessMark from './components/PopSuccessMark';
 import PopFailureMark from './components/PopFailureMark';
 import PopPendingMark from './components/PopPendingMark';
+import CopiableBox from './components/CopiableBox';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -67,6 +68,7 @@ export {
   PopSuccessMark,
   PopFailureMark,
   PopPendingMark,
+  CopiableBox,
   // Global functions
   alert,
   confirm,

@@ -1,0 +1,267 @@
+/**
+ * Copiable text box
+ * @author Gabe Abrams
+ */
+
+// Import React
+import React, { useReducer } from 'react';
+
+// Import other reactkit functions
+import { alert, waitMs } from '..';
+
+// Import FontAwesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClipboard } from '@fortawesome/free-solid-svg-icons';
+
+/*------------------------------------------------------------------------*/
+/*                                  Types                                 */
+/*------------------------------------------------------------------------*/
+
+// Props definition
+type Props = {
+  // Unique name of the item to copy (no spaces, compatible with css classes)
+  name: string,
+  // The text to copy
+  text: string,
+  // Human-readable label of the copy field
+  label: string,
+  // FontAwesome icon to place before the label
+  labelIcon?: any,
+  // If defined, the label will have a minimum width
+  minLabelWidthRem: number,
+  // If true, the box will be a textarea to support larger, multiline text
+  multiline?: boolean,
+  // Number of lines to show in multiline view (only relevant if multiline)
+  numVisibleLines?: number,
+};
+
+/*------------------------------------------------------------------------*/
+/*                                  State                                 */
+/*------------------------------------------------------------------------*/
+
+/* -------- State Definition -------- */
+
+type State = {
+  // True if text was recently copied
+  recentlyCopied: boolean,
+};
+
+/* ------------- Actions ------------ */
+
+// Types of actions
+enum ActionType {
+  // Indicate that the text was recently copied
+  IndicateRecentlyCopied = 'indicate-recently-copied',
+  // Clear the status
+  ClearRecentlyCopiedStatus = 'clear-recently-copied-status',
+}
+
+// Action definitions
+type Action = {
+  // Action type
+  type: (
+    | ActionType.IndicateRecentlyCopied
+    | ActionType.ClearRecentlyCopiedStatus
+  ),
+};
+
+/**
+ * Reducer that executes actions
+ * @author Gabe Abrams
+ * @param state current state
+ * @param action action to execute
+ */
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case ActionType.IndicateRecentlyCopied: {
+      return {
+        recentlyCopied: true,
+      };
+    }
+    case ActionType.ClearRecentlyCopiedStatus: {
+      return {
+        recentlyCopied: false,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+
+const CopiableBox: React.FC<Props> = (props) => {
+  /*------------------------------------------------------------------------*/
+  /*                                  Setup                                 */
+  /*------------------------------------------------------------------------*/
+
+  /* -------------- Props ------------- */
+
+  // Destructure all props
+  const {
+    name,
+    text,
+    label,
+    labelIcon,
+    minLabelWidthRem,
+    multiline,
+    numVisibleLines = 10,
+  } = props;
+
+  /* -------------- State ------------- */
+
+  // Initial state
+  const initialState: State = {
+    recentlyCopied: false,
+  };
+
+  // Initialize state
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  // Destructure common state
+  const {
+    recentlyCopied,
+  } = state;
+
+  /*------------------------------------------------------------------------*/
+  /*                           Component Functions                          */
+  /*------------------------------------------------------------------------*/
+
+  // Determine the id for the copiable text field
+  const copiableFieldClassName = `CopiableBox-text-box-${name}`;
+
+  /**
+   * Perform a copy
+   * @author Gabe Abrams
+   */
+  const performCopy = async () => {
+    // Write to clipboard
+    let copyFailed = false;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      copyFailed = true;
+    }
+
+    // Try copy again if it failed
+    if (copyFailed) {
+      try {
+        const input = (
+          document.getElementsByClassName(copiableFieldClassName)[0]
+        ) as HTMLInputElement;
+        input.focus();
+        input.select();
+        document.execCommand('copy');
+        input.blur();
+      } catch (err) {
+        return alert(
+          'Unable to copy',
+          'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.',
+        );
+      }
+    }
+
+    // Show copied notice
+    dispatch({
+      type: ActionType.IndicateRecentlyCopied,
+    });
+
+    // Wait a moment
+    await waitMs(4000);
+
+    // Hide copied notice
+    dispatch({
+      type: ActionType.ClearRecentlyCopiedStatus,
+    });
+  };
+
+  /*------------------------------------------------------------------------*/
+  /*                                 Render                                 */
+  /*------------------------------------------------------------------------*/
+
+  /*----------------------------------------*/
+  /*                 Main UI                */
+  /*----------------------------------------*/
+
+  return (
+    <div className="input-group mb-2">
+      {/* Label */}
+      <span
+        className="input-group-text"
+        style={{
+          minWidth: (
+            minLabelWidthRem
+              ? `${minLabelWidthRem}rem`
+              : undefined
+          ),
+        }}
+      >
+        {labelIcon && (
+          <FontAwesomeIcon
+            icon={labelIcon}
+            className="me-1"
+          />
+        )}
+        {label}
+      </span>
+
+      {/* Text */}
+      {
+        multiline
+          ? (
+            <textarea
+              className={`${copiableFieldClassName} CopiableBox-text-multiline form-control bg-white text-dark`}
+              value={text}
+              aria-label={`${label} text`}
+              rows={numVisibleLines}
+              readOnly
+            />
+          )
+          : (
+            <input
+              type="text"
+              className={`${copiableFieldClassName} CopiableBox-text-single-line form-control bg-white text-dark`}
+              value={text}
+              aria-label={`${label} text`}
+              readOnly
+            />
+          )
+      }
+      
+      <button
+        className="btn btn-secondary"
+        type="button"
+        aria-label={`copy ${label} to the clipboard`}
+        disabled={recentlyCopied}
+        style={{
+          minWidth: '5.2rem',
+        }}
+        onClick={performCopy}
+      >
+        {
+          recentlyCopied
+            ? 'Copied!'
+            : (
+              <span>
+                <FontAwesomeIcon
+                  icon={faClipboard}
+                  className="me-1"
+                />
+                Copy
+              </span>
+            )
+        }
+      </button>
+    </div>
+  );
+};
+
+/*------------------------------------------------------------------------*/
+/*                                 Wrap Up                                */
+/*------------------------------------------------------------------------*/
+
+// Export component
+export default CopiableBox;

@@ -7,7 +7,7 @@ import React from 'react';
  * @author Gabe Abrams
  */
 
-declare type Props$b = {
+declare type Props$c = {
     children: React.ReactNode;
     sendRequest: SendRequestFunction;
     dark?: boolean;
@@ -52,7 +52,7 @@ declare const confirm: (title: string, text: string) => Promise<boolean>;
  * @param [errorTitle] title of the error box
  */
 declare const showFatalError: (error: any, errorTitle?: string) => undefined;
-declare const AppWrapper: React.FC<Props$b>;
+declare const AppWrapper: React.FC<Props$c>;
 
 /**
  * Loading spinner/indicator
@@ -65,12 +65,12 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-declare type Props$a = {
+declare type Props$b = {
     error: any;
     title?: string;
     onClose?: () => void;
 };
-declare const ErrorBox: React.FC<Props$a>;
+declare const ErrorBox: React.FC<Props$b>;
 
 /**
  * Bootstrap variants
@@ -136,7 +136,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-declare type Props$9 = {
+declare type Props$a = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -165,27 +165,27 @@ declare type Props$9 = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props$9>;
+declare const Modal: React.FC<Props$a>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
  * @author Gabe Abrams
  */
 
-declare type Props$8 = {
+declare type Props$9 = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props$8>;
+declare const TabBox: React.FC<Props$9>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-declare type Props$7 = {
+declare type Props$8 = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;
@@ -197,14 +197,14 @@ declare type Props$7 = {
     unselectedVariant?: Variant;
     small?: boolean;
 };
-declare const RadioButton: React.FC<Props$7>;
+declare const RadioButton: React.FC<Props$8>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-declare type Props$6 = {
+declare type Props$7 = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -216,26 +216,26 @@ declare type Props$6 = {
     uncheckedVariant?: Variant;
     small?: boolean;
 };
-declare const CheckboxButton: React.FC<Props$6>;
+declare const CheckboxButton: React.FC<Props$7>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-declare type Props$5 = {
+declare type Props$6 = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;
 };
-declare const ButtonInputGroup: React.FC<Props$5>;
+declare const ButtonInputGroup: React.FC<Props$6>;
 
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
  */
 
-declare type Props$4 = {
+declare type Props$5 = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -250,53 +250,69 @@ declare type Props$4 = {
     onChange: (month: number, day: number, year: number) => void;
     numMonthsToShow?: number;
 };
-declare const SimpleDateChooser: React.FC<Props$4>;
+declare const SimpleDateChooser: React.FC<Props$5>;
 
 /**
  * Drawer container
  * @author Gabe Abrams
  */
 
-declare type Props$3 = {
+declare type Props$4 = {
     children: React.ReactNode;
 };
-declare const Drawer: React.FC<Props$3>;
+declare const Drawer: React.FC<Props$4>;
 
 /**
  * Success checkmark that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$2 = {
+declare type Props$3 = {
     sizeRem?: number;
     circleVariant?: string;
     checkVariant?: string;
 };
-declare const PopSuccessMark: React.FC<Props$2>;
+declare const PopSuccessMark: React.FC<Props$3>;
 
 /**
  * Failure x mark that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$1 = {
+declare type Props$2 = {
     sizeRem?: number;
     circleVariant?: string;
     xVariant?: string;
 };
-declare const PopFailureMark: React.FC<Props$1>;
+declare const PopFailureMark: React.FC<Props$2>;
 
 /**
  * Failure pending that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props = {
+declare type Props$1 = {
     sizeRem?: number;
     circleVariant?: string;
     hourglassVariant?: string;
 };
-declare const PopPendingMark: React.FC<Props>;
+declare const PopPendingMark: React.FC<Props$1>;
+
+/**
+ * Copiable text box
+ * @author Gabe Abrams
+ */
+
+declare type Props = {
+    name: string;
+    text: string;
+    label: string;
+    labelIcon?: any;
+    minLabelWidthRem: number;
+    multiline?: boolean;
+    numVisibleLines?: number;
+};
+declare const CopiableBox: React.FC<Props>;
 
 /**
  * An error with a code
@@ -594,4 +610,4 @@ declare enum ReactKitErrorCode {
     NotAdmin = "DRK10"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

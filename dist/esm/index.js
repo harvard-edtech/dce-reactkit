@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useReducer } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare, faHourglass } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircle$1, faSquare } from '@fortawesome/free-regular-svg-icons';
 
 /******************************************************************************
@@ -1519,6 +1519,129 @@ const PopPendingMark = (props) => {
 };
 
 /**
+ * Copiable text box
+ * @author Gabe Abrams
+ */
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType;
+(function (ActionType) {
+    // Indicate that the text was recently copied
+    ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
+    // Clear the status
+    ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
+})(ActionType || (ActionType = {}));
+/**
+ * Reducer that executes actions
+ * @author Gabe Abrams
+ * @param state current state
+ * @param action action to execute
+ */
+const reducer = (state, action) => {
+    switch (action.type) {
+        case ActionType.IndicateRecentlyCopied: {
+            return {
+                recentlyCopied: true,
+            };
+        }
+        case ActionType.ClearRecentlyCopiedStatus: {
+            return {
+                recentlyCopied: false,
+            };
+        }
+        default: {
+            return state;
+        }
+    }
+};
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const CopiableBox = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { name, text, label, labelIcon, minLabelWidthRem, multiline, numVisibleLines = 10, } = props;
+    /* -------------- State ------------- */
+    // Initial state
+    const initialState = {
+        recentlyCopied: false,
+    };
+    // Initialize state
+    const [state, dispatch] = useReducer(reducer, initialState);
+    // Destructure common state
+    const { recentlyCopied, } = state;
+    /*------------------------------------------------------------------------*/
+    /*                           Component Functions                          */
+    /*------------------------------------------------------------------------*/
+    // Determine the id for the copiable text field
+    const copiableFieldClassName = `CopiableBox-text-box-${name}`;
+    /**
+     * Perform a copy
+     * @author Gabe Abrams
+     */
+    const performCopy = () => __awaiter(void 0, void 0, void 0, function* () {
+        // Write to clipboard
+        let copyFailed = false;
+        try {
+            yield navigator.clipboard.writeText(text);
+        }
+        catch (err) {
+            copyFailed = true;
+        }
+        // Try copy again if it failed
+        if (copyFailed) {
+            try {
+                const input = (document.getElementsByClassName(copiableFieldClassName)[0]);
+                input.focus();
+                input.select();
+                document.execCommand('copy');
+                input.blur();
+            }
+            catch (err) {
+                return alert$1('Unable to copy', 'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.');
+            }
+        }
+        // Show copied notice
+        dispatch({
+            type: ActionType.IndicateRecentlyCopied,
+        });
+        // Wait a moment
+        yield waitMs(4000);
+        // Hide copied notice
+        dispatch({
+            type: ActionType.ClearRecentlyCopiedStatus,
+        });
+    });
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    return (React.createElement("div", { className: "input-group mb-2" },
+        React.createElement("span", { className: "input-group-text", style: {
+                minWidth: (minLabelWidthRem
+                    ? `${minLabelWidthRem}rem`
+                    : undefined),
+            } },
+            labelIcon && (React.createElement(FontAwesomeIcon, { icon: labelIcon, className: "me-1" })),
+            label),
+        multiline
+            ? (React.createElement("textarea", { className: `${copiableFieldClassName} CopiableBox-text-multiline form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, rows: numVisibleLines, readOnly: true }))
+            : (React.createElement("input", { type: "text", className: `${copiableFieldClassName} CopiableBox-text-single-line form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, readOnly: true })),
+        React.createElement("button", { className: "btn btn-secondary", type: "button", "aria-label": `copy ${label} to the clipboard`, disabled: recentlyCopied, style: {
+                minWidth: '5.2rem',
+            }, onClick: performCopy }, recentlyCopied
+            ? 'Copied!'
+            : (React.createElement("span", null,
+                React.createElement(FontAwesomeIcon, { icon: faClipboard, className: "me-1" }),
+                "Copy")))));
+};
+
+/**
  * One minute in ms
  * @author Gabe Abrams
  */
@@ -2279,5 +2402,5 @@ const getHumanReadableDate = (dateOrTimestamp) => {
     return description;
 };
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getTimeInfoInET, handleError, handleSuccess, initServer, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map
