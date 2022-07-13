@@ -1571,7 +1571,7 @@ const CopiableBox = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { text, label, labelIcon, minLabelWidthRem, multiline, numVisibleLines = 10, onClick, textAreaId, copyButtonId, } = props;
+    const { text, maxTextWidthRem, label, labelIcon, minLabelWidthRem, multiline, numVisibleLines = 10, onClick, textAreaId, copyButtonId, } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
@@ -1629,6 +1629,9 @@ const CopiableBox = (props) => {
                     textDecoration: (onClick
                         ? 'underline'
                         : undefined),
+                    maxWidth: (maxTextWidthRem
+                        ? `${maxTextWidthRem}rem`
+                        : undefined),
                 }, readOnly: true }))
             : (React__default["default"].createElement("input", { id: textAreaId, type: "text", className: "CopiableBox-text CopiableBox-text-single-line form-control bg-white text-dark", value: text, "aria-label": `${label} text`, onClick: onClick, style: {
                     cursor: (onClick
@@ -1636,6 +1639,9 @@ const CopiableBox = (props) => {
                         : 'default'),
                     textDecoration: (onClick
                         ? 'underline'
+                        : undefined),
+                    maxWidth: (maxTextWidthRem
+                        ? `${maxTextWidthRem}rem`
                         : undefined),
                 }, readOnly: true })),
         React__default["default"].createElement("button", { id: copyButtonId, className: "btn btn-secondary", type: "button", "aria-label": `copy ${label} to the clipboard`, disabled: recentlyCopied, style: {

@@ -21,6 +21,8 @@ import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 type Props = {
   // The text to copy
   text: string,
+  // If defined, the text area will have a maximum width
+  maxTextWidthRem?: number,
   // Human-readable label of the copy field
   label: string,
   // FontAwesome icon to place before the label
@@ -107,6 +109,7 @@ const CopiableBox: React.FC<Props> = (props) => {
   // Destructure all props
   const {
     text,
+    maxTextWidthRem,
     label,
     labelIcon,
     minLabelWidthRem,
@@ -217,6 +220,11 @@ const CopiableBox: React.FC<Props> = (props) => {
                     ? 'underline'
                     : undefined
                 ),
+                maxWidth: (
+                  maxTextWidthRem
+                    ? `${maxTextWidthRem}rem`
+                    : undefined
+                ),
               }}
               readOnly
             />
@@ -238,6 +246,11 @@ const CopiableBox: React.FC<Props> = (props) => {
                 textDecoration: (
                   onClick
                     ? 'underline'
+                    : undefined
+                ),
+                maxWidth: (
+                  maxTextWidthRem
+                    ? `${maxTextWidthRem}rem`
                     : undefined
                 ),
               }}

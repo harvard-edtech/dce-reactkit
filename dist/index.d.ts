@@ -305,6 +305,7 @@ declare const PopPendingMark: React.FC<Props$1>;
 
 declare type Props = {
     text: string;
+    maxTextWidthRem?: number;
     label: string;
     labelIcon?: any;
     minLabelWidthRem?: number;

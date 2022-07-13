@@ -5,6 +5,7 @@
 import React from 'react';
 declare type Props = {
     text: string;
+    maxTextWidthRem?: number;
     label: string;
     labelIcon?: any;
     minLabelWidthRem?: number;
