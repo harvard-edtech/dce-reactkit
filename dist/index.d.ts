@@ -308,7 +308,7 @@ declare type Props = {
     text: string;
     label: string;
     labelIcon?: any;
-    minLabelWidthRem: number;
+    minLabelWidthRem?: number;
     multiline?: boolean;
     numVisibleLines?: number;
     onClick?: () => void;

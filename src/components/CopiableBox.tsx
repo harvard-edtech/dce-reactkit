@@ -28,7 +28,7 @@ type Props = {
   // FontAwesome icon to place before the label
   labelIcon?: any,
   // If defined, the label will have a minimum width
-  minLabelWidthRem: number,
+  minLabelWidthRem?: number,
   // If true, the box will be a textarea to support larger, multiline text
   multiline?: boolean,
   // Number of lines to show in multiline view (only relevant if multiline)
