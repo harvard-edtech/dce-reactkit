@@ -1571,7 +1571,7 @@ const CopiableBox = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { name, text, label, labelIcon, minLabelWidthRem, multiline, numVisibleLines = 10, } = props;
+    const { name, text, label, labelIcon, minLabelWidthRem, multiline, numVisibleLines = 10, onClick, } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
@@ -1638,8 +1638,22 @@ const CopiableBox = (props) => {
             labelIcon && (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: labelIcon, className: "me-1" })),
             label),
         multiline
-            ? (React__default["default"].createElement("textarea", { className: `${copiableFieldClassName} CopiableBox-text-multiline form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, rows: numVisibleLines, readOnly: true }))
-            : (React__default["default"].createElement("input", { type: "text", className: `${copiableFieldClassName} CopiableBox-text-single-line form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, readOnly: true })),
+            ? (React__default["default"].createElement("textarea", { className: `${copiableFieldClassName} CopiableBox-text-multiline form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, rows: numVisibleLines, onClick: onClick, style: {
+                    cursor: (onClick
+                        ? 'pointer'
+                        : 'default'),
+                    textDecoration: (onClick
+                        ? 'underline'
+                        : undefined),
+                }, readOnly: true }))
+            : (React__default["default"].createElement("input", { type: "text", className: `${copiableFieldClassName} CopiableBox-text-single-line form-control bg-white text-dark`, value: text, "aria-label": `${label} text`, onClick: onClick, style: {
+                    cursor: (onClick
+                        ? 'pointer'
+                        : 'default'),
+                    textDecoration: (onClick
+                        ? 'underline'
+                        : undefined),
+                }, readOnly: true })),
         React__default["default"].createElement("button", { className: "btn btn-secondary", type: "button", "aria-label": `copy ${label} to the clipboard`, disabled: recentlyCopied, style: {
                 minWidth: '5.2rem',
             }, onClick: performCopy }, recentlyCopied

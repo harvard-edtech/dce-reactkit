@@ -33,6 +33,8 @@ type Props = {
   multiline?: boolean,
   // Number of lines to show in multiline view (only relevant if multiline)
   numVisibleLines?: number,
+  // If defined, text box becomes clickable and this is the handler
+  onClick?: () => void,
 };
 
 /*------------------------------------------------------------------------*/
@@ -109,6 +111,7 @@ const CopiableBox: React.FC<Props> = (props) => {
     minLabelWidthRem,
     multiline,
     numVisibleLines = 10,
+    onClick,
   } = props;
 
   /* -------------- State ------------- */
@@ -217,6 +220,19 @@ const CopiableBox: React.FC<Props> = (props) => {
               value={text}
               aria-label={`${label} text`}
               rows={numVisibleLines}
+              onClick={onClick}
+              style={{
+                cursor: (
+                  onClick
+                    ? 'pointer'
+                    : 'default'
+                ),
+                textDecoration: (
+                  onClick
+                    ? 'underline'
+                    : undefined
+                ),
+              }}
               readOnly
             />
           )
@@ -226,6 +242,19 @@ const CopiableBox: React.FC<Props> = (props) => {
               className={`${copiableFieldClassName} CopiableBox-text-single-line form-control bg-white text-dark`}
               value={text}
               aria-label={`${label} text`}
+              onClick={onClick}
+              style={{
+                cursor: (
+                  onClick
+                    ? 'pointer'
+                    : 'default'
+                ),
+                textDecoration: (
+                  onClick
+                    ? 'underline'
+                    : undefined
+                ),
+              }}
               readOnly
             />
           )

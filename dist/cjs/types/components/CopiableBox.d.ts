@@ -11,6 +11,7 @@ declare type Props = {
     minLabelWidthRem: number;
     multiline?: boolean;
     numVisibleLines?: number;
+    onClick?: () => void;
 };
 declare const CopiableBox: React.FC<Props>;
 export default CopiableBox;
