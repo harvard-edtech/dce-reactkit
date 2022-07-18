@@ -8,8 +8,8 @@ import React from 'react';
 
 // Import FontAwesome Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckSquare } from '@fortawesome/free-solid-svg-icons';
-import { faSquare } from '@fortawesome/free-regular-svg-icons';
+import { faCheckSquare, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faSquare, faSquareMinus } from '@fortawesome/free-regular-svg-icons';
 
 // Import shared types
 import Variant from '../types/Variant';
@@ -27,7 +27,7 @@ type Props = {
   ariaLabel: string,
   // Button title
   title?: string,
-  // True if checked
+  // If true, show a checkmark in the checkbox
   checked?: boolean,
   // The id of the button
   id?: string,
@@ -39,6 +39,8 @@ type Props = {
   uncheckedVariant?: Variant,
   // True if using a small button
   small?: boolean,
+  // If true, show a dash in the checkbox (only relevant if unchecked)
+  dashed?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -63,6 +65,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
     checkedVariant = Variant.Secondary,
     uncheckedVariant = Variant.Light,
     small,
+    dashed,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -73,6 +76,19 @@ const CheckboxButton: React.FC<Props> = (props) => {
   /*                Main UI                 */
   /*----------------------------------------*/
 
+  // Determine the icon
+  let icon: IconDefinition;
+  if (checked) {
+    icon = faCheckSquare;
+  } else {
+    icon = (
+      dashed
+        ? faSquareMinus
+        : faSquare
+    );
+  }
+
+  // Create the button
   return (
     <button
       type="button"
@@ -85,7 +101,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
       }}
     >
       <FontAwesomeIcon
-        icon={checked ? faCheckSquare : faSquare}
+        icon={icon}
         className="me-1"
       />
       {text}

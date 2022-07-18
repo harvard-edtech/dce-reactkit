@@ -937,17 +937,28 @@ const CheckboxButton = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onChanged, ariaLabel, title, checked, id, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, } = props;
+    const { text, onChanged, ariaLabel, title, checked, id, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, dashed, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /*                Main UI                 */
     /*----------------------------------------*/
+    // Determine the icon
+    let icon;
+    if (checked) {
+        icon = freeSolidSvgIcons.faCheckSquare;
+    }
+    else {
+        icon = (dashed
+            ? freeRegularSvgIcons.faSquareMinus
+            : freeRegularSvgIcons.faSquare);
+    }
+    // Create the button
     return (React__default["default"].createElement("button", { type: "button", id: id, title: title, className: `btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`, "aria-label": `${ariaLabel}${checked ? ': currently checked' : ''}`, onClick: () => {
             onChanged(!checked);
         } },
-        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: checked ? freeSolidSvgIcons.faCheckSquare : freeRegularSvgIcons.faSquare, className: "me-1" }),
+        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: icon, className: "me-1" }),
         text));
 };
 

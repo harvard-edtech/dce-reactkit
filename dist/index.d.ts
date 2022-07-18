@@ -215,6 +215,7 @@ declare type Props$7 = {
     checkedVariant?: Variant;
     uncheckedVariant?: Variant;
     small?: boolean;
+    dashed?: boolean;
 };
 declare const CheckboxButton: React.FC<Props$7>;
 

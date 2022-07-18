@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard } from '@fortawesome/free-solid-svg-icons';
-import { faCircle as faCircle$1, faSquare } from '@fortawesome/free-regular-svg-icons';
+import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -929,17 +929,28 @@ const CheckboxButton = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onChanged, ariaLabel, title, checked, id, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, } = props;
+    const { text, onChanged, ariaLabel, title, checked, id, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, dashed, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /*                Main UI                 */
     /*----------------------------------------*/
+    // Determine the icon
+    let icon;
+    if (checked) {
+        icon = faCheckSquare;
+    }
+    else {
+        icon = (dashed
+            ? faSquareMinus
+            : faSquare);
+    }
+    // Create the button
     return (React.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`, "aria-label": `${ariaLabel}${checked ? ': currently checked' : ''}`, onClick: () => {
             onChanged(!checked);
         } },
-        React.createElement(FontAwesomeIcon, { icon: checked ? faCheckSquare : faSquare, className: "me-1" }),
+        React.createElement(FontAwesomeIcon, { icon: icon, className: "me-1" }),
         text));
 };
 

@@ -15,6 +15,7 @@ declare type Props = {
     checkedVariant?: Variant;
     uncheckedVariant?: Variant;
     small?: boolean;
+    dashed?: boolean;
 };
 declare const CheckboxButton: React.FC<Props>;
 export default CheckboxButton;
