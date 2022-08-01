@@ -94,7 +94,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
       type="button"
       id={id}
       title={title}
-      className={`btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`}
+      className={`CheckboxButton-status-${checked ? 'checked' : 'unchecked'} ${dashed ? 'CheckboxButton-dashed ' : ''}btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`}
       aria-label={`${ariaLabel}${checked ? ': currently checked' : ''}`}
       onClick={() => {
         onChanged(!checked);
