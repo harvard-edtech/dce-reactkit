@@ -2479,11 +2479,28 @@ const stringsToHumanReadableList = (items) => {
     return list;
 };
 
+/**
+ * Days of the week
+ * @author Gabe Abrams
+ */
+var DayOfWeek;
+(function (DayOfWeek) {
+    DayOfWeek["Monday"] = "m";
+    DayOfWeek["Tuesday"] = "t";
+    DayOfWeek["Wednesday"] = "w";
+    DayOfWeek["Thursday"] = "r";
+    DayOfWeek["Friday"] = "f";
+    DayOfWeek["Saturday"] = "s";
+    DayOfWeek["Sunday"] = "u";
+})(DayOfWeek || (DayOfWeek = {}));
+var DayOfWeek$1 = DayOfWeek;
+
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
 exports.CopiableBox = CopiableBox;
 exports.DAY_IN_MS = DAY_IN_MS;
+exports.DayOfWeek = DayOfWeek$1;
 exports.Drawer = Drawer;
 exports.ErrorBox = ErrorBox;
 exports.ErrorWithCode = ErrorWithCode;

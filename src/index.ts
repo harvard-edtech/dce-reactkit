@@ -53,6 +53,7 @@ import ModalType from './types/ModalType';
 import ReactKitErrorCode from './types/ReactKitErrorCode';
 import Variant from './types/Variant';
 import ParamType from './types/ParamType';
+import DayOfWeek from './types/DayOfWeek';
 
 // Export each item
 export {
@@ -112,6 +113,7 @@ export {
   ModalType,
   ReactKitErrorCode,
   Variant,
+  DayOfWeek,
   // Server types
   ParamType,
 };
