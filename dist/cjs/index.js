@@ -2480,6 +2480,16 @@ const stringsToHumanReadableList = (items) => {
 };
 
 /**
+ * Given a string, only keep the letters inside it
+ * @author Gabe Abrams
+ * @param str the string to parse
+ * @returns only the letters inside of the string
+ */
+const onlyKeepLetters = (str) => {
+    return str.replace(/[^a-zA-Z]+/g, '');
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -2535,6 +2545,7 @@ exports.getTimeInfoInET = getTimeInfoInET;
 exports.handleError = handleError;
 exports.handleSuccess = handleSuccess;
 exports.initServer = initServer;
+exports.onlyKeepLetters = onlyKeepLetters;
 exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;
 exports.roundToNumDecimals = roundToNumDecimals;

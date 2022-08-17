@@ -45,6 +45,7 @@ import startMinWait from './helpers/startMinWait';
 import getHumanReadableDate from './helpers/getHumanReadableDate';
 import getPartOfDay from './helpers/getPartOfDay';
 import stringsToHumanReadableList from './helpers/stringsToHumanReadableList';
+import onlyKeepLetters from './helpers/onlyKeepLetters';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -100,6 +101,7 @@ export {
   getHumanReadableDate,
   getPartOfDay,
   stringsToHumanReadableList,
+  onlyKeepLetters,
   // Client helpers
   visitServerEndpoint,
   // Server helpers
