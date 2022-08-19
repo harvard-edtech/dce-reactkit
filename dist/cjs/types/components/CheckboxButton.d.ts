@@ -11,6 +11,7 @@ declare type Props = {
     title?: string;
     checked?: boolean;
     id?: string;
+    className?: string;
     noMarginOnRight?: boolean;
     checkedVariant?: Variant;
     uncheckedVariant?: Variant;
