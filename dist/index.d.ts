@@ -7,7 +7,7 @@ import React from 'react';
  * @author Gabe Abrams
  */
 
-declare type Props$c = {
+declare type Props$d = {
     children: React.ReactNode;
     sendRequest: SendRequestFunction;
     dark?: boolean;
@@ -52,7 +52,7 @@ declare const confirm: (title: string, text: string) => Promise<boolean>;
  * @param [errorTitle] title of the error box
  */
 declare const showFatalError: (error: any, errorTitle?: string) => undefined;
-declare const AppWrapper: React.FC<Props$c>;
+declare const AppWrapper: React.FC<Props$d>;
 
 /**
  * Loading spinner/indicator
@@ -65,12 +65,12 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-declare type Props$b = {
+declare type Props$c = {
     error: any;
     title?: string;
     onClose?: () => void;
 };
-declare const ErrorBox: React.FC<Props$b>;
+declare const ErrorBox: React.FC<Props$c>;
 
 /**
  * Bootstrap variants
@@ -136,7 +136,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-declare type Props$a = {
+declare type Props$b = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -165,27 +165,27 @@ declare type Props$a = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props$a>;
+declare const Modal: React.FC<Props$b>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
  * @author Gabe Abrams
  */
 
-declare type Props$9 = {
+declare type Props$a = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props$9>;
+declare const TabBox: React.FC<Props$a>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-declare type Props$8 = {
+declare type Props$9 = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;
@@ -197,14 +197,14 @@ declare type Props$8 = {
     unselectedVariant?: Variant;
     small?: boolean;
 };
-declare const RadioButton: React.FC<Props$8>;
+declare const RadioButton: React.FC<Props$9>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-declare type Props$7 = {
+declare type Props$8 = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -218,26 +218,26 @@ declare type Props$7 = {
     small?: boolean;
     dashed?: boolean;
 };
-declare const CheckboxButton: React.FC<Props$7>;
+declare const CheckboxButton: React.FC<Props$8>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-declare type Props$6 = {
+declare type Props$7 = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;
 };
-declare const ButtonInputGroup: React.FC<Props$6>;
+declare const ButtonInputGroup: React.FC<Props$7>;
 
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
  */
 
-declare type Props$5 = {
+declare type Props$6 = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -252,60 +252,60 @@ declare type Props$5 = {
     onChange: (month: number, day: number, year: number) => void;
     numMonthsToShow?: number;
 };
-declare const SimpleDateChooser: React.FC<Props$5>;
+declare const SimpleDateChooser: React.FC<Props$6>;
 
 /**
  * Drawer container
  * @author Gabe Abrams
  */
 
-declare type Props$4 = {
+declare type Props$5 = {
     children: React.ReactNode;
 };
-declare const Drawer: React.FC<Props$4>;
+declare const Drawer: React.FC<Props$5>;
 
 /**
  * Success checkmark that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$3 = {
+declare type Props$4 = {
     sizeRem?: number;
     circleVariant?: string;
     checkVariant?: string;
 };
-declare const PopSuccessMark: React.FC<Props$3>;
+declare const PopSuccessMark: React.FC<Props$4>;
 
 /**
  * Failure x mark that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$2 = {
+declare type Props$3 = {
     sizeRem?: number;
     circleVariant?: string;
     xVariant?: string;
 };
-declare const PopFailureMark: React.FC<Props$2>;
+declare const PopFailureMark: React.FC<Props$3>;
 
 /**
  * Failure pending that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$1 = {
+declare type Props$2 = {
     sizeRem?: number;
     circleVariant?: string;
     hourglassVariant?: string;
 };
-declare const PopPendingMark: React.FC<Props$1>;
+declare const PopPendingMark: React.FC<Props$2>;
 
 /**
  * Copiable text box
  * @author Gabe Abrams
  */
 
-declare type Props = {
+declare type Props$1 = {
     text: string;
     maxTextWidthRem?: number;
     label: string;
@@ -317,7 +317,40 @@ declare type Props = {
     textAreaId?: string;
     copyButtonId?: string;
 };
-declare const CopiableBox: React.FC<Props>;
+declare const CopiableBox: React.FC<Props$1>;
+
+/**
+ * An item that can be chosen (for use within ItemPicker)
+ * @author Gabe Abrams
+ */
+declare type PickableItem = ({
+    id: number | string;
+    name: string;
+    link?: string;
+} & ({
+    isGroup: false;
+    checked: boolean;
+} | {
+    isGroup: true;
+    children: PickableItem[];
+}));
+
+/**
+ * Reusable nested item picker
+ * @author Yuen Ler Chow
+ */
+
+declare type Props = {
+    title: string;
+    items: PickableItem[];
+    /**
+     * Handler to call when item selection is changed
+     * @param updatedItems an updated copy of the list of items with checked
+     *   values updated
+     */
+    onChanged: (updatedItems: PickableItem[]) => void;
+};
+declare const ItemPicker: React.FC<Props>;
 
 /**
  * An error with a code
@@ -653,4 +686,4 @@ declare enum DayOfWeek {
     Sunday = "u"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

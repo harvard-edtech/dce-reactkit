@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
 
 /******************************************************************************
@@ -1535,27 +1535,27 @@ const PopPendingMark = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType;
+var ActionType$1;
 (function (ActionType) {
     // Indicate that the text was recently copied
     ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
     // Clear the status
     ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType || (ActionType = {}));
+})(ActionType$1 || (ActionType$1 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer = (state, action) => {
+const reducer$1 = (state, action) => {
     switch (action.type) {
-        case ActionType.IndicateRecentlyCopied: {
+        case ActionType$1.IndicateRecentlyCopied: {
             return {
                 recentlyCopied: true,
             };
         }
-        case ActionType.ClearRecentlyCopiedStatus: {
+        case ActionType$1.ClearRecentlyCopiedStatus: {
             return {
                 recentlyCopied: false,
             };
@@ -1581,7 +1581,7 @@ const CopiableBox = (props) => {
         recentlyCopied: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useReducer(reducer$1, initialState);
     // Destructure common state
     const { recentlyCopied, } = state;
     /*------------------------------------------------------------------------*/
@@ -1601,13 +1601,13 @@ const CopiableBox = (props) => {
         }
         // Show copied notice
         dispatch({
-            type: ActionType.IndicateRecentlyCopied,
+            type: ActionType$1.IndicateRecentlyCopied,
         });
         // Wait a moment
         yield waitMs(4000);
         // Hide copied notice
         dispatch({
-            type: ActionType.ClearRecentlyCopiedStatus,
+            type: ActionType$1.ClearRecentlyCopiedStatus,
         });
     });
     /*------------------------------------------------------------------------*/
@@ -1654,6 +1654,183 @@ const CopiableBox = (props) => {
             : (React.createElement("span", null,
                 React.createElement(FontAwesomeIcon, { icon: faClipboard, className: "me-1" }),
                 "Copy")))));
+};
+
+/**
+ * Reusable nested item picker
+ * @author Yuen Ler Chow
+ */
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType;
+(function (ActionType) {
+    // Toggle whether the children are being shown
+    ActionType["ToggleItems"] = "toggle-items";
+})(ActionType || (ActionType = {}));
+/**
+ * Reducer that executes actions
+ * @author Yuen Ler Chow
+ * @param state current state
+ * @param action action to execute
+ */
+const reducer = (state, action) => {
+    switch (action.type) {
+        case ActionType.ToggleItems: {
+            return { isShowingItems: !state.isShowingItems };
+        }
+        default: {
+            return state;
+        }
+    }
+};
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const NestableItemList = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { items, onChanged, } = props;
+    /* -------------- State ------------- */
+    // Initial state
+    const initialState = {
+        isShowingItems: true,
+    };
+    // Initialize state
+    const [state, dispatch] = useReducer(reducer, initialState);
+    // Destructure common state
+    const { isShowingItems, } = state;
+    /*------------------------------------------------------------------------*/
+    /*                           Component Functions                          */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Checks if all items in a list are checked
+     * @author Yuen Ler Chow
+     * @param pickableItems a list of items
+     * @returns true if all items are checked. If any item is a group,
+     *   we recursively check its children
+     */
+    const allChecked = (pickableItems) => {
+        return pickableItems.every((item) => {
+            if (item.isGroup) {
+                return allChecked(item.children);
+            }
+            return item.checked;
+        });
+    };
+    /**
+     * Checks if none of the items in a list are checked
+     * @author Yuen Ler Chow
+     * @param pickableItems a list of items
+     * @returns true if all items are unchecked. If any item is a group, we
+     *   recursively check its children
+     */
+    const noneChecked = (pickableItems) => {
+        return pickableItems.every((item) => {
+            if (item.isGroup) {
+                return noneChecked(item.children);
+            }
+            return !item.checked;
+        });
+    };
+    /**
+     * Change whether specific items are checked
+     * @author Yuen Ler Chow
+     * @param id the id of the item we want to check or uncheck OR true if
+     *   we are checking/unchecking all items, independent of their id
+     * @param checked if true, the item will be checked.
+     * @param pickableItems the list of items we iterate through to find the item
+     *   we want to check/uncheck
+     * @returns a list of items with the item now checked/unchecked.
+     *   If it is a group, its children will also become checked/unchecked
+     */
+    const changeChecked = (id, checked, pickableItems) => {
+        const updatedItems = pickableItems.map((item) => {
+            if (item.id === id || id === true) {
+                if (item.isGroup) {
+                    return Object.assign(Object.assign({}, item), { children: changeChecked(true, checked, item.children) });
+                }
+                return Object.assign(Object.assign({}, item), { checked });
+            }
+            if (item.isGroup) {
+                return Object.assign(Object.assign({}, item), { children: changeChecked(id, checked, item.children) });
+            }
+            return item;
+        });
+        return updatedItems;
+    };
+    /**
+     * Within a tree of items, swap in the list of updated items into the spot
+     *   indicated by the id
+     * @author Yuen Ler Chow
+     * @param id the id of the item group we want to change
+     * @param updatedItems the list of items we want to change the items in the group to
+     * @returns a list of all items containing the updated items
+     */
+    const changeItems = (id, updatedItems) => {
+        return items.map((item) => {
+            if (item.id === id) {
+                return Object.assign(Object.assign({}, item), { children: updatedItems });
+            }
+            return item;
+        });
+    };
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    return (React.createElement("div", null, items.map((item) => {
+        return (React.createElement("div", { key: item.id },
+            React.createElement("span", { className: "NestableItemList-dropdown-button-container d-inline-block", style: {
+                    minWidth: '2rem',
+                } }, item.isGroup && (React.createElement("button", { className: `NestableItemList-dropdown-button NestableItemList-dropdown-button-${item.id}`, style: {
+                    border: 0,
+                    backgroundColor: 'transparent',
+                }, type: "button", onClick: () => {
+                    dispatch({
+                        type: ActionType.ToggleItems,
+                    });
+                }, "aria-label": `${isShowingItems ? 'Hide' : 'Show'} items in ${item.name}` },
+                React.createElement(FontAwesomeIcon, { icon: isShowingItems ? faChevronDown : faChevronRight })))),
+            React.createElement(CheckboxButton, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
+                    onChanged(changeChecked(item.id, checked, items));
+                }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$1.Light }),
+            item.isGroup && isShowingItems && (React.createElement("div", { className: "NestableItemList-children-container", style: {
+                    paddingLeft: '2.2rem',
+                } },
+                React.createElement(NestableItemList, { items: item.children, onChanged: (updatedItems) => {
+                        onChanged(changeItems(item.id, updatedItems));
+                    } })))));
+    })));
+};
+
+/**
+ * Reusable nested item picker
+ * @author Yuen Ler Chow
+ */
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const ItemPicker = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { title, items, onChanged, } = props;
+    /*------------------------------------------------------------------------*/
+    /*                           Component Functions                          */
+    /*------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    return (React.createElement(TabBox, { title: title },
+        React.createElement("div", { style: { overflowX: 'scroll' } },
+            React.createElement(NestableItemList, { items: items, onChanged: onChanged }))));
 };
 
 /**
@@ -2497,5 +2674,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

@@ -13,6 +13,7 @@ import PopSuccessMark from './components/PopSuccessMark';
 import PopFailureMark from './components/PopFailureMark';
 import PopPendingMark from './components/PopPendingMark';
 import CopiableBox from './components/CopiableBox';
+import ItemPicker from './components/ItemPicker';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -73,6 +74,7 @@ export {
   PopFailureMark,
   PopPendingMark,
   CopiableBox,
+  ItemPicker,
   // Global functions
   alert,
   confirm,
