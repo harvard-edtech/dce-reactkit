@@ -4,13 +4,13 @@
  * @author Gabe Abrams
  * @param taskFunctions functions that start asynchronous tasks and optionally
  *   resolve with values
- * @param limit maximum number of asynchronous tasks to permit to run at
+ * @param [limit=no limit] maximum number of asynchronous tasks to permit to run at
  *   once
  * @returns array of resolved values in the same order as the task functions
  */
 const parallelLimit = async (
   taskFunctions: (() => Promise<any>)[],
-  limit: number,
+  limit?: number,
 ): Promise<any[]> => {
   const results: any[] = [];
 
@@ -49,8 +49,10 @@ const parallelLimit = async (
     };
 
     /* ----------- Start Tasks ---------- */
-
-    for (let i = 0; i < limit; i++) {
+    
+    // If no limit, start all tasks. At least start 1 task
+    const numTasks = Math.max((limit || taskFunctions.length), 1);
+    for (let i = 0; i < numTasks; i++) {
       startTask();
     }
   });

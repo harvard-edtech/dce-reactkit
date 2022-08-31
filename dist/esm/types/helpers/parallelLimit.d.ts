@@ -4,9 +4,9 @@
  * @author Gabe Abrams
  * @param taskFunctions functions that start asynchronous tasks and optionally
  *   resolve with values
- * @param limit maximum number of asynchronous tasks to permit to run at
+ * @param [limit=no limit] maximum number of asynchronous tasks to permit to run at
  *   once
  * @returns array of resolved values in the same order as the task functions
  */
-declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit: number) => Promise<any[]>;
+declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number | undefined) => Promise<any[]>;
 export default parallelLimit;
