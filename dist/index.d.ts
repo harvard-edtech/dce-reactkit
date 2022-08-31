@@ -656,6 +656,18 @@ declare const stringsToHumanReadableList: (items: string[]) => string;
 declare const onlyKeepLetters: (str: string) => string;
 
 /**
+ * Run tasks in parallel with a limit on how many tasks can execute at once.
+ *   No guarantees are made about the order of task execution
+ * @author Gabe Abrams
+ * @param taskFunctions functions that start asynchronous tasks and optionally
+ *   resolve with values
+ * @param limit maximum number of asynchronous tasks to permit to run at
+ *   once
+ * @returns array of resolved values in the same order as the task functions
+ */
+declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit: number) => Promise<any[]>;
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -686,4 +698,4 @@ declare enum DayOfWeek {
     Sunday = "u"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

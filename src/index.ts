@@ -47,6 +47,7 @@ import getHumanReadableDate from './helpers/getHumanReadableDate';
 import getPartOfDay from './helpers/getPartOfDay';
 import stringsToHumanReadableList from './helpers/stringsToHumanReadableList';
 import onlyKeepLetters from './helpers/onlyKeepLetters';
+import parallelLimit from './helpers/parallelLimit';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -104,6 +105,7 @@ export {
   getPartOfDay,
   stringsToHumanReadableList,
   onlyKeepLetters,
+  parallelLimit,
   // Client helpers
   visitServerEndpoint,
   // Server helpers

@@ -2659,6 +2659,53 @@ const onlyKeepLetters = (str) => {
 };
 
 /**
+ * Run tasks in parallel with a limit on how many tasks can execute at once.
+ *   No guarantees are made about the order of task execution
+ * @author Gabe Abrams
+ * @param taskFunctions functions that start asynchronous tasks and optionally
+ *   resolve with values
+ * @param limit maximum number of asynchronous tasks to permit to run at
+ *   once
+ * @returns array of resolved values in the same order as the task functions
+ */
+const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0, function* () {
+    const results = [];
+    // Wait until finished with all tasks
+    yield new Promise((resolve) => {
+        /* ------------- Helpers ------------ */
+        let nextTaskIndex = 0;
+        let numFinishedTasks = 0;
+        /**
+         * Start the next task
+         * @author Gabe Abrams
+         */
+        const startTask = () => __awaiter(void 0, void 0, void 0, function* () {
+            const taskIndex = nextTaskIndex++;
+            // Get the task
+            const taskFunction = taskFunctions[taskIndex];
+            if (!taskFunction) {
+                return;
+            }
+            // Execute task
+            const result = yield taskFunction();
+            // Add results
+            results[taskIndex] = result;
+            // Tally and finish
+            if (++numFinishedTasks === taskFunctions.length) {
+                return resolve();
+            }
+            // Not finished! Start another task
+            startTask();
+        });
+        /* ----------- Start Tasks ---------- */
+        for (let i = 0; i < limit; i++) {
+            startTask();
+        }
+    });
+    return results;
+});
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -2674,5 +2721,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

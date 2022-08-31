@@ -3,3 +3,6 @@ node_modules/
 
 # Ignore DS
 **/.DS_Store
+
+# Sandbox
+sandbox.js
