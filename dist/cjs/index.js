@@ -1625,13 +1625,13 @@ const CopiableBox = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     return (React__default["default"].createElement("div", { className: "input-group mb-2" },
-        React__default["default"].createElement("span", { className: "input-group-text", style: {
+        (label || labelIcon) && (React__default["default"].createElement("span", { className: "input-group-text", style: {
                 minWidth: (minLabelWidthRem
                     ? `${minLabelWidthRem}rem`
                     : undefined),
             } },
             labelIcon && (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: labelIcon, className: "me-1" })),
-            label),
+            label)),
         multiline
             ? (React__default["default"].createElement("textarea", { id: textAreaId, className: "CopiableBox-text CopiableBox-text-multiline form-control bg-white text-dark", value: text, "aria-label": `${label} text`, rows: numVisibleLines, onClick: onClick, style: {
                     cursor: (onClick

@@ -24,7 +24,7 @@ type Props = {
   // If defined, the text area will have a maximum width
   maxTextWidthRem?: number,
   // Human-readable label of the copy field
-  label: string,
+  label?: string,
   // FontAwesome icon to place before the label
   labelIcon?: any,
   // If defined, the label will have a minimum width
@@ -179,24 +179,26 @@ const CopiableBox: React.FC<Props> = (props) => {
   return (
     <div className="input-group mb-2">
       {/* Label */}
-      <span
-        className="input-group-text"
-        style={{
-          minWidth: (
-            minLabelWidthRem
-              ? `${minLabelWidthRem}rem`
-              : undefined
-          ),
-        }}
-      >
-        {labelIcon && (
-          <FontAwesomeIcon
-            icon={labelIcon}
-            className="me-1"
-          />
-        )}
-        {label}
-      </span>
+      {(label || labelIcon) && (
+        <span
+          className="input-group-text"
+          style={{
+            minWidth: (
+              minLabelWidthRem
+                ? `${minLabelWidthRem}rem`
+                : undefined
+            ),
+          }}
+        >
+          {labelIcon && (
+            <FontAwesomeIcon
+              icon={labelIcon}
+              className="me-1"
+            />
+          )}
+          {label}
+        </span>
+      )}
 
       {/* Text */}
       {
