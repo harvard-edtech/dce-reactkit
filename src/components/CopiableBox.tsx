@@ -193,7 +193,7 @@ const CopiableBox: React.FC<Props> = (props) => {
           {labelIcon && (
             <FontAwesomeIcon
               icon={labelIcon}
-              className="me-1"
+              className={label ? 'me-1' : undefined}
             />
           )}
           {label}

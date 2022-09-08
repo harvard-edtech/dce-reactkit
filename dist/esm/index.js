@@ -1622,7 +1622,7 @@ const CopiableBox = (props) => {
                     ? `${minLabelWidthRem}rem`
                     : undefined),
             } },
-            labelIcon && (React.createElement(FontAwesomeIcon, { icon: labelIcon, className: "me-1" })),
+            labelIcon && (React.createElement(FontAwesomeIcon, { icon: labelIcon, className: label ? 'me-1' : undefined })),
             label)),
         multiline
             ? (React.createElement("textarea", { id: textAreaId, className: "CopiableBox-text CopiableBox-text-multiline form-control bg-white text-dark", value: text, "aria-label": `${label} text`, rows: numVisibleLines, onClick: onClick, style: {
