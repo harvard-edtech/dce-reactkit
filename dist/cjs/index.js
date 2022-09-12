@@ -1837,7 +1837,7 @@ const ItemPicker = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     return (React__default["default"].createElement(TabBox, { title: title },
-        React__default["default"].createElement("div", { style: { overflowX: 'scroll' } },
+        React__default["default"].createElement("div", { style: { overflowX: 'auto' } },
             React__default["default"].createElement(NestableItemList, { items: items, onChanged: onChanged }))));
 };
 

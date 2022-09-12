@@ -67,7 +67,7 @@ const ItemPicker: React.FC<Props> = (props) => {
     <TabBox
       title={title}
     >
-      <div style={{ overflowX: 'scroll' }}>
+      <div style={{ overflowX: 'auto' }}>
         <NestableItemList
           items={items}
           onChanged={onChanged}

@@ -1829,7 +1829,7 @@ const ItemPicker = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     return (React.createElement(TabBox, { title: title },
-        React.createElement("div", { style: { overflowX: 'scroll' } },
+        React.createElement("div", { style: { overflowX: 'auto' } },
             React.createElement(NestableItemList, { items: items, onChanged: onChanged }))));
 };
 
