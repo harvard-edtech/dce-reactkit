@@ -101,7 +101,7 @@ const NestableItemList: React.FC<Props> = (props) => {
 
   // Initial state
   const initialState: State = {
-    isShowingItems: true,
+    isShowingItems: false,
   };
 
   // Initialize state

@@ -1704,7 +1704,7 @@ const NestableItemList = (props) => {
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
-        isShowingItems: true,
+        isShowingItems: false,
     };
     // Initialize state
     const [state, dispatch] = React.useReducer(reducer, initialState);
