@@ -58,6 +58,9 @@ import Variant from './types/Variant';
 import ParamType from './types/ParamType';
 import DayOfWeek from './types/DayOfWeek';
 
+// Component-specific-types
+import PickableItem from './components/ItemPicker/types/PickableItem';
+
 // Export each item
 export {
   // Components
@@ -120,6 +123,8 @@ export {
   ReactKitErrorCode,
   Variant,
   DayOfWeek,
+  // Component-specific-types
+  PickableItem,
   // Server types
   ParamType,
 };
