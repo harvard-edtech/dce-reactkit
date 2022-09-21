@@ -2512,19 +2512,35 @@ const genRouteHandler = (opts) => {
         /*------------------------------------------------------------------------*/
         /*                              Call handler                              */
         /*------------------------------------------------------------------------*/
+        // Keep track of whether "next" was called
+        let nextCalled = false;
+        /**
+         * Call the "next" function and keep track of the call so responses
+         *   are not sent
+         * @author Gabe Abrams
+         */
+        const nextWithTracking = () => {
+            nextCalled = true;
+            next();
+        };
+        // Call the handler
         try {
             const results = yield opts.handler({
                 params: output,
                 req,
                 res,
-                next,
+                next: nextWithTracking,
             });
-            // Send results to client
-            handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
+            // Send results to client (only if next wasn't called)
+            if (!nextCalled) {
+                return handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
+            }
         }
         catch (err) {
-            // Send error to client
-            handleError(res, err);
+            // Send error to client (only if next wasn't called)
+            if (!nextCalled) {
+                return handleError(res, err);
+            }
         }
     });
 };
