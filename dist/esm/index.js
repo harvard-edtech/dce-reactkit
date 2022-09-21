@@ -2228,18 +2228,21 @@ const handleSuccess = (res, body) => {
  * @param opts.paramTypes map containing the types for each parameter that is
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
+ * @param [opts.allowNotLoggedIn] if true, allow the user to not be logged
+ *   in (the user will be allowed to not have launched via LTI)
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value), handleSuccess (function for handling
  *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), res (express response object),
- *   next (express next function). Params also has userId, userFirstName,
+ *   req (express request object), redirect (a function that takes a url and
+ *   redirects the user to the url), and send (a function that sends a string
+ *   and optional http status code). Params also has userId, userFirstName,
  *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
  *   are directly added to the session
  */
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
+        var _a, _b, _c;
         // Output params
         const output = {};
         /*----------------------------------------*/
@@ -2406,7 +2409,12 @@ const genRouteHandler = (opts) => {
         /*----------------------------------------*/
         // Get launch info
         const { launched, launchInfo } = cacclGetLaunchInfo(req);
-        if (!launched || !launchInfo) {
+        if (
+        // Requiring user to be logged in
+        !opts.allowNotLoggedIn
+            // User is not logged in
+            && (!launched || !launchInfo)) {
+            // Throw an error
             return handleError(res, {
                 message: 'Your session has expired. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.SessionExpired,
@@ -2414,32 +2422,39 @@ const genRouteHandler = (opts) => {
             });
         }
         // Error if user info cannot be found
-        if (!launchInfo.userId
-            || !launchInfo.userFirstName
-            || !launchInfo.userLastName
-            || (launchInfo.notInCourse
-                && !launchInfo.isAdmin)
-            || (!launchInfo.isTTM
-                && !launchInfo.isLearner
-                && !launchInfo.isAdmin)) {
-            return handleError(res, {
-                message: 'Your session was invalid. Please refresh the page and try again.',
-                code: ReactKitErrorCode$1.SessionExpired,
-                status: 440,
-            });
+        if (launched && launchInfo) {
+            if (!launchInfo.userId
+                || !launchInfo.userFirstName
+                || !launchInfo.userLastName
+                || (launchInfo.notInCourse
+                    && !launchInfo.isAdmin)
+                || (!launchInfo.isTTM
+                    && !launchInfo.isLearner
+                    && !launchInfo.isAdmin)) {
+                return handleError(res, {
+                    message: 'Your session was invalid. Please refresh the page and try again.',
+                    code: ReactKitErrorCode$1.SessionExpired,
+                    status: 440,
+                });
+            }
+            else {
+                // Add launch info to output
+                output.userId = launchInfo.userId;
+                output.userFirstName = launchInfo.userFirstName;
+                output.userLastName = launchInfo.userLastName;
+                output.userEmail = launchInfo.userEmail;
+                output.isLearner = !!launchInfo.isLearner;
+                output.isTTM = !!launchInfo.isTTM;
+                output.isAdmin = !!launchInfo.isAdmin;
+                output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
+                output.courseName = launchInfo.contextLabel;
+            }
         }
-        // Add launch info to output
-        output.userId = launchInfo.userId;
-        output.userFirstName = launchInfo.userFirstName;
-        output.userLastName = launchInfo.userLastName;
-        output.userEmail = launchInfo.userEmail;
-        output.isLearner = !!launchInfo.isLearner;
-        output.isTTM = !!launchInfo.isTTM;
-        output.isAdmin = !!launchInfo.isAdmin;
-        output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
-        output.courseName = launchInfo.contextLabel;
+        /*----------------------------------------*/
+        /*                 Session                */
+        /*----------------------------------------*/
         // Add other session variables
-        Object.keys(req.session).forEach((propName) => {
+        Object.keys((_c = req.session) !== null && _c !== void 0 ? _c : {}).forEach((propName) => {
             // Skip if prop already in output
             if (output[propName] !== undefined) {
                 return;
@@ -2457,6 +2472,7 @@ const genRouteHandler = (opts) => {
         /*----------------------------------------*/
         // Make sure the user actually launched from the appropriate course
         if (output.courseId
+            && launchInfo
             && launchInfo.courseId
             && output.courseId !== launchInfo.courseId
             && !output.isTTM
@@ -2504,35 +2520,51 @@ const genRouteHandler = (opts) => {
         /*------------------------------------------------------------------------*/
         /*                              Call handler                              */
         /*------------------------------------------------------------------------*/
-        // Keep track of whether "next" was called
-        let nextCalled = false;
+        // Keep track of whether a response was already sent
+        let responseSent = false;
         /**
-         * Call the "next" function and keep track of the call so responses
-         *   are not sent
+         * Redirect the user to another path or url
          * @author Gabe Abrams
+         * @param pathOrURL the path or url to redirect to
          */
-        const nextWithTracking = () => {
-            nextCalled = true;
-            next();
+        const redirect = (pathOrURL) => {
+            responseSent = true;
+            res.redirect(pathOrURL);
+        };
+        /**
+         * Send text to the client (with an optional status code)
+         * @author Gabe Abrams
+         * @param text the text to send to the client
+         * @parm [status=200] the http status code to send
+         */
+        const send = (text, status = 200) => {
+            responseSent = true;
+            res.status(status).send(text);
         };
         // Call the handler
         try {
             const results = yield opts.handler({
                 params: output,
                 req,
-                res,
-                next: nextWithTracking,
+                send,
+                next: () => {
+                    responseSent = true;
+                    next();
+                },
+                redirect,
             });
             // Send results to client (only if next wasn't called)
-            if (!nextCalled) {
+            if (!responseSent) {
                 return handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
             }
         }
         catch (err) {
             // Send error to client (only if next wasn't called)
-            if (!nextCalled) {
+            if (!responseSent) {
                 return handleError(res, err);
             }
+            // Log error that was not responded with
+            console.log('Error occurred but could not be sent to client because a response was already sent:', err);
         }
     });
 };

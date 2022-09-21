@@ -19,8 +19,9 @@ import handleSuccess from './handleSuccess';
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value), handleSuccess (function for handling
  *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), res (express response object),
- *   next (express next function). Params also has userId, userFirstName,
+ *   req (express request object), redirect (a function that takes a url and
+ *   redirects the user to the url), and send (a function that sends a string
+ *   and optional http status code). Params also has userId, userFirstName,
  *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
  *   are directly added to the session
  */
@@ -35,8 +36,9 @@ const genRouteHandler = (
           [k: string]: any
         },
         req: any,
-        res: any,
         next: () => void,
+        redirect: (pathOrURL: string) => void,
+        send: (text: string, status?: number) => void,
       },
     ) => any,
   },
@@ -376,17 +378,28 @@ const genRouteHandler = (
     /*                              Call handler                              */
     /*------------------------------------------------------------------------*/
 
-    // Keep track of whether "next" was called
-    let nextCalled = false;
+    // Keep track of whether a response was already sent
+    let responseSent = false;
 
     /**
-     * Call the "next" function and keep track of the call so responses
-     *   are not sent
+     * Redirect the user to another path or url
      * @author Gabe Abrams
+     * @param pathOrURL the path or url to redirect to
      */
-    const nextWithTracking = () => {
-      nextCalled = true;
-      next();
+    const redirect = (pathOrURL: string) => {
+      responseSent = true;
+      res.redirect(pathOrURL);
+    };
+
+    /**
+     * Send text to the client (with an optional status code)
+     * @author Gabe Abrams
+     * @param text the text to send to the client
+     * @parm [status=200] the http status code to send
+     */
+    const send = (text: string, status: number = 200) => {
+      responseSent = true;
+      res.status(status).send(text);
     };
 
     // Call the handler
@@ -394,19 +407,26 @@ const genRouteHandler = (
       const results = await opts.handler({
         params: output,
         req,
-        res,
-        next: nextWithTracking,
+        send,
+        next: () => {
+          responseSent = true;
+          next();
+        },
+        redirect,
       });
 
       // Send results to client (only if next wasn't called)
-      if (!nextCalled) {
+      if (!responseSent) {
         return handleSuccess(res, results ?? undefined);
       }
     } catch (err) {
       // Send error to client (only if next wasn't called)
-      if (!nextCalled) {
+      if (!responseSent) {
         return handleError(res, err);
       }
+
+      // Log error that was not responded with
+      console.log('Error occurred but could not be sent to client because a response was already sent:', err);
     }
   };
 };
