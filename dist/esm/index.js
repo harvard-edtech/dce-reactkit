@@ -2221,6 +2221,140 @@ const handleSuccess = (res, body) => {
     return undefined;
 };
 
+// Import shared types
+/**
+ * Generate a static error page
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param [opts.title=An Error Occurred] title of the error box
+ * @param [opts.description=An unknown server error occurred. Please contact support.]
+ *   a human-readable description of the error
+ * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
+ * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
+ *   the title of the error
+ * @returns html of the page
+ */
+const genErrorPage = (opts = {}) => {
+    var _a, _b, _c, _d;
+    const title = ((_a = opts.title) !== null && _a !== void 0 ? _a : 'An Error Occurred');
+    const pageTitle = ((_b = opts.pageTitle) !== null && _b !== void 0 ? _b : title);
+    const description = ((_c = opts.description) !== null && _c !== void 0 ? _c : 'An unknown server error occurred. Please contact support.');
+    const code = ((_d = opts.code) !== null && _d !== void 0 ? _d : ReactKitErrorCode$1.NoCode);
+    return `
+<head>
+  <!-- Metadata -->
+  <meta
+    name="viewport"
+    content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"
+  >
+
+  <!-- Title -->
+  <title>${pageTitle}</title>
+
+  <!-- Bootstrap -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
+    integrity="sha512-siwe/oXMhSjGCwLn+scraPOWrJxHlUgMBMZXdPe2Tnk3I0x3ESCoLz7WZ5NTH6SZrywMY+PB1cjyqJ5jAluCOg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/js/bootstrap.min.js"
+    integrity="sha512-vyRAVI0IEm6LI/fVSv/Wq/d0KUfrg3hJq2Qz5FlfER69sf3ZHlOrsLriNm49FxnpUGmhx+TaJKwJ+ByTLKT+Yg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+  <!-- FontAwesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Style -->
+  <style>
+    .DCEReactKit-pop-in {
+      animation-name: DCEReactKit-pop-in;
+      animation-duration: 0.5s;
+      animation-iteration-count: 1;
+      animation-timing-function: ease-out;
+      animation-fill-mode: both;
+
+      transform-origin: center;
+    }
+
+    @keyframes DCEReactKit-pop-in {
+      0% {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .DCEReactKit-slide-in {
+      animation-name: DCEReactKit-slide-in;
+      animation-duration: 1s;
+      animation-iteration-count: 1;
+      animation-timing-function: ease-out;
+      animation-fill-mode: both;
+      animation-delay: 0.2s;
+    }
+
+    @keyframes DCEReactKit-slide-in {
+      0% {
+        opacity: 0;
+        transform: translate(0, 0.3em);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+    }
+  </style>
+</head>
+
+<!-- Body -->
+<body class="bg-dark text-center pt-3 ps-3 pe-3">
+  <!-- Alert -->
+  <div
+    class="DCEReactKit-pop-in alert alert-warning d-inline-block"
+    style="width: 50em; max-width: 100%"
+  >
+    <!-- Title -->
+    <h2>
+      <i class="me-1 fa-solid fa-triangle-exclamation"></i>
+      ${title}
+    </h2>
+    <!-- Description -->
+    <div>
+      ${description}
+    </div>
+  </div>
+
+  <!-- Error Code -->
+  <div class="DCEReactKit-slide-in text-light">
+    <strong>
+      Error Code:
+    </strong>
+    ${code}
+  </div>
+</body>
+  `;
+};
+
+/*------------------------------------------------------------------------*/
+/*                                 Helpers                                */
+/*------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
+/*                                  Main                                  */
+/*------------------------------------------------------------------------*/
 /**
  * Generate an express API route handler
  * @author Gabe Abrams
@@ -2228,21 +2362,23 @@ const handleSuccess = (res, body) => {
  * @param opts.paramTypes map containing the types for each parameter that is
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
- * @param [opts.allowNotLoggedIn] if true, allow the user to not be logged
- *   in (the user will be allowed to not have launched via LTI)
  * @returns express route handler that takes the following arguments:
- *   params (map: param name => value), handleSuccess (function for handling
- *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), redirect (a function that takes a url and
- *   redirects the user to the url), and send (a function that sends a string
- *   and optional http status code). Params also has userId, userFirstName,
+ *   params (map: param name => value),
+ *   req (express request object),
+ *   next (express next function),
+ *   send (a function that sends a string to the client),
+ *   redirect (takes a url and redirects the user to that url),
+ *   renderErrorPage (shows a static error page to the user),
+ *   and returns the value to send to the client as a JSON API response, or
+ *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
+ *   Note: params also has userId, userFirstName,
  *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
  *   are directly added to the session
  */
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c;
+        var _a, _b;
         // Output params
         const output = {};
         /*----------------------------------------*/
@@ -2409,12 +2545,7 @@ const genRouteHandler = (opts) => {
         /*----------------------------------------*/
         // Get launch info
         const { launched, launchInfo } = cacclGetLaunchInfo(req);
-        if (
-        // Requiring user to be logged in
-        !opts.allowNotLoggedIn
-            // User is not logged in
-            && (!launched || !launchInfo)) {
-            // Throw an error
+        if (!launched || !launchInfo) {
             return handleError(res, {
                 message: 'Your session has expired. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.SessionExpired,
@@ -2422,39 +2553,32 @@ const genRouteHandler = (opts) => {
             });
         }
         // Error if user info cannot be found
-        if (launched && launchInfo) {
-            if (!launchInfo.userId
-                || !launchInfo.userFirstName
-                || !launchInfo.userLastName
-                || (launchInfo.notInCourse
-                    && !launchInfo.isAdmin)
-                || (!launchInfo.isTTM
-                    && !launchInfo.isLearner
-                    && !launchInfo.isAdmin)) {
-                return handleError(res, {
-                    message: 'Your session was invalid. Please refresh the page and try again.',
-                    code: ReactKitErrorCode$1.SessionExpired,
-                    status: 440,
-                });
-            }
-            else {
-                // Add launch info to output
-                output.userId = launchInfo.userId;
-                output.userFirstName = launchInfo.userFirstName;
-                output.userLastName = launchInfo.userLastName;
-                output.userEmail = launchInfo.userEmail;
-                output.isLearner = !!launchInfo.isLearner;
-                output.isTTM = !!launchInfo.isTTM;
-                output.isAdmin = !!launchInfo.isAdmin;
-                output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
-                output.courseName = launchInfo.contextLabel;
-            }
+        if (!launchInfo.userId
+            || !launchInfo.userFirstName
+            || !launchInfo.userLastName
+            || (launchInfo.notInCourse
+                && !launchInfo.isAdmin)
+            || (!launchInfo.isTTM
+                && !launchInfo.isLearner
+                && !launchInfo.isAdmin)) {
+            return handleError(res, {
+                message: 'Your session was invalid. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.SessionExpired,
+                status: 440,
+            });
         }
-        /*----------------------------------------*/
-        /*                 Session                */
-        /*----------------------------------------*/
+        // Add launch info to output
+        output.userId = launchInfo.userId;
+        output.userFirstName = launchInfo.userFirstName;
+        output.userLastName = launchInfo.userLastName;
+        output.userEmail = launchInfo.userEmail;
+        output.isLearner = !!launchInfo.isLearner;
+        output.isTTM = !!launchInfo.isTTM;
+        output.isAdmin = !!launchInfo.isAdmin;
+        output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
+        output.courseName = launchInfo.contextLabel;
         // Add other session variables
-        Object.keys((_c = req.session) !== null && _c !== void 0 ? _c : {}).forEach((propName) => {
+        Object.keys(req.session).forEach((propName) => {
             // Skip if prop already in output
             if (output[propName] !== undefined) {
                 return;
@@ -2472,7 +2596,6 @@ const genRouteHandler = (opts) => {
         /*----------------------------------------*/
         // Make sure the user actually launched from the appropriate course
         if (output.courseId
-            && launchInfo
             && launchInfo.courseId
             && output.courseId !== launchInfo.courseId
             && !output.isTTM
@@ -2541,6 +2664,23 @@ const genRouteHandler = (opts) => {
             responseSent = true;
             res.status(status).send(text);
         };
+        /**
+         * Render an error page
+         * @author Gabe Abrams
+         * @param opts object containing all arguments
+         * @param [opts.title=An Error Occurred] title of the error box
+         * @param [opts.description=An unknown server error occurred. Please contact support.]
+         *   a human-readable description of the error
+         * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
+         * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
+         *   the title of the error
+         * @param [opts.status=500] http status code
+         */
+        const renderErrorPage = (opts = {}) => {
+            var _a;
+            const html = genErrorPage(opts);
+            send(html, (_a = opts.status) !== null && _a !== void 0 ? _a : 500);
+        };
         // Call the handler
         try {
             const results = yield opts.handler({
@@ -2552,6 +2692,7 @@ const genRouteHandler = (opts) => {
                     next();
                 },
                 redirect,
+                renderErrorPage,
             });
             // Send results to client (only if next wasn't called)
             if (!responseSent) {

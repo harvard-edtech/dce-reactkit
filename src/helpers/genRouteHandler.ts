@@ -8,6 +8,15 @@ import ParamType from '../types/ParamType';
 // Import helpers
 import handleError from './handleError';
 import handleSuccess from './handleSuccess';
+import genErrorPage from '../html/genErrorPage';
+
+/*------------------------------------------------------------------------*/
+/*                                 Helpers                                */
+/*------------------------------------------------------------------------*/
+
+/*------------------------------------------------------------------------*/
+/*                                  Main                                  */
+/*------------------------------------------------------------------------*/
 
 /**
  * Generate an express API route handler
@@ -17,11 +26,15 @@ import handleSuccess from './handleSuccess';
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
  * @returns express route handler that takes the following arguments:
- *   params (map: param name => value), handleSuccess (function for handling
- *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), redirect (a function that takes a url and
- *   redirects the user to the url), and send (a function that sends a string
- *   and optional http status code). Params also has userId, userFirstName,
+ *   params (map: param name => value),
+ *   req (express request object),
+ *   next (express next function),
+ *   send (a function that sends a string to the client),
+ *   redirect (takes a url and redirects the user to that url),
+ *   renderErrorPage (shows a static error page to the user),
+ *   and returns the value to send to the client as a JSON API response, or
+ *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
+ *   Note: params also has userId, userFirstName,
  *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
  *   are directly added to the session
  */
@@ -39,6 +52,15 @@ const genRouteHandler = (
         next: () => void,
         redirect: (pathOrURL: string) => void,
         send: (text: string, status?: number) => void,
+        renderErrorPage: (
+          opts?: {
+            title?: string,
+            description?: string,
+            code?: string,
+            pageTitle?: string,
+            status?: number,
+          },
+        ) => void,
       },
     ) => any,
   },
@@ -402,6 +424,31 @@ const genRouteHandler = (
       res.status(status).send(text);
     };
 
+    /**
+     * Render an error page
+     * @author Gabe Abrams
+     * @param opts object containing all arguments
+     * @param [opts.title=An Error Occurred] title of the error box
+     * @param [opts.description=An unknown server error occurred. Please contact support.]
+     *   a human-readable description of the error
+     * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
+     * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
+     *   the title of the error
+     * @param [opts.status=500] http status code
+     */
+    const renderErrorPage = (
+      opts: {
+        title?: string,
+        description?: string,
+        code?: string,
+        pageTitle?: string,
+        status?: number,
+      } = {},
+    ) => {
+      const html = genErrorPage(opts);
+      send(html, opts.status ?? 500);
+    };
+
     // Call the handler
     try {
       const results = await opts.handler({
@@ -413,6 +460,7 @@ const genRouteHandler = (
           next();
         },
         redirect,
+        renderErrorPage,
       });
 
       // Send results to client (only if next wasn't called)
