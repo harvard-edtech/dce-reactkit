@@ -2563,7 +2563,8 @@ const genRouteHandler = (opts) => {
         // Error if user info cannot be found
         if (
         // User information is incomplete
-        (!launchInfo.userId
+        (!launchInfo
+            || !launchInfo.userId
             || !launchInfo.userFirstName
             || !launchInfo.userLastName
             || (launchInfo.notInCourse

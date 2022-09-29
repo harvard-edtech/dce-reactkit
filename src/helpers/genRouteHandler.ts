@@ -278,7 +278,8 @@ const genRouteHandler = (
     if (
       // User information is incomplete
       (
-        !launchInfo.userId
+        !launchInfo
+        || !launchInfo.userId
         || !launchInfo.userFirstName
         || !launchInfo.userLastName
         || (
