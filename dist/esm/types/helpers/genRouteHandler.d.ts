@@ -6,6 +6,8 @@ import ParamType from '../types/ParamType';
  * @param opts.paramTypes map containing the types for each parameter that is
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
+ * @param [opts.skipSessionCheck] if true, skip the session check (allow users
+ *   to not be logged in and launched via LTI)
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value),
  *   req (express request object),
@@ -17,7 +19,7 @@ import ParamType from '../types/ParamType';
  *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
  *   Note: params also has userId, userFirstName,
  *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
- *   are directly added to the session
+ *   are directly added to the session, if the user does have a session.
  */
 declare const genRouteHandler: (opts: {
     paramTypes?: {
@@ -39,5 +41,6 @@ declare const genRouteHandler: (opts: {
             status?: number | undefined;
         } | undefined) => void;
     }) => any;
+    skipSessionCheck?: boolean | undefined;
 }) => (req: any, res: any, next: () => void) => Promise<undefined>;
 export default genRouteHandler;

@@ -17,6 +17,8 @@ import genErrorPage from '../html/genErrorPage';
  * @param opts.paramTypes map containing the types for each parameter that is
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
+ * @param [opts.skipSessionCheck] if true, skip the session check (allow users
+ *   to not be logged in and launched via LTI)
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value),
  *   req (express request object),
@@ -28,7 +30,7 @@ import genErrorPage from '../html/genErrorPage';
  *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
  *   Note: params also has userId, userFirstName,
  *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
- *   are directly added to the session
+ *   are directly added to the session, if the user does have a session.
  */
 const genRouteHandler = (
   opts: {
@@ -55,6 +57,7 @@ const genRouteHandler = (
         ) => void,
       },
     ) => any,
+    skipSessionCheck?: boolean,
   },
 ) => {
   // Return a route handler
@@ -255,7 +258,12 @@ const genRouteHandler = (
 
     // Get launch info
     const { launched, launchInfo } = cacclGetLaunchInfo(req);
-    if (!launched || !launchInfo) {
+    if (
+      // Not launched
+      (!launched || !launchInfo)
+      // Not skipping the session check
+      && !opts.skipSessionCheck
+    ) {
       return handleError(
         res,
         {
@@ -268,18 +276,23 @@ const genRouteHandler = (
 
     // Error if user info cannot be found
     if (
-      !launchInfo.userId
-      || !launchInfo.userFirstName
-      || !launchInfo.userLastName
-      || (
-        launchInfo.notInCourse
-        && !launchInfo.isAdmin
+      // User information is incomplete
+      (
+        !launchInfo.userId
+        || !launchInfo.userFirstName
+        || !launchInfo.userLastName
+        || (
+          launchInfo.notInCourse
+          && !launchInfo.isAdmin
+        )
+        || (
+          !launchInfo.isTTM
+          && !launchInfo.isLearner
+          && !launchInfo.isAdmin
+        )
       )
-      || (
-        !launchInfo.isTTM
-        && !launchInfo.isLearner
-        && !launchInfo.isAdmin
-      )
+      // Not skipping the session check
+      && !opts.skipSessionCheck
     ) {
       return handleError(
         res,
@@ -292,15 +305,51 @@ const genRouteHandler = (
     }
 
     // Add launch info to output
-    output.userId = launchInfo.userId;
-    output.userFirstName = launchInfo.userFirstName;
-    output.userLastName = launchInfo.userLastName;
-    output.userEmail = launchInfo.userEmail;
-    output.isLearner = !!launchInfo.isLearner;
-    output.isTTM = !!launchInfo.isTTM;
-    output.isAdmin = !!launchInfo.isAdmin;
-    output.courseId = (output.courseId ?? launchInfo.courseId);
-    output.courseName = launchInfo.contextLabel;
+    output.userId = (
+      launchInfo
+        ? launchInfo.userId
+        : undefined
+    );
+    output.userFirstName = (
+      launchInfo
+        ? launchInfo.userFirstName
+        : undefined
+    );
+    output.userLastName = (
+      launchInfo
+        ? launchInfo.userLastName
+        : undefined
+    );
+    output.userEmail = (
+      launchInfo
+        ? launchInfo.userEmail
+        : undefined
+    );
+    output.isLearner = (
+      launchInfo
+        ? !!launchInfo.isLearner
+        : undefined
+    );
+    output.isTTM = (
+      launchInfo
+        ? !!launchInfo.isTTM
+        : undefined
+    );
+    output.isAdmin = (
+      launchInfo
+        ? !!launchInfo.isAdmin
+        : undefined
+    );
+    output.courseId = (
+      launchInfo
+        ? (output.courseId ?? launchInfo.courseId)
+        : undefined
+    );
+    output.courseName = (
+      launchInfo
+        ? launchInfo.contextLabel
+        : undefined
+    );
 
     // Add other session variables
     Object.keys(req.session).forEach((propName) => {
@@ -327,6 +376,7 @@ const genRouteHandler = (
     // Make sure the user actually launched from the appropriate course
     if (
       output.courseId
+      && launchInfo
       && launchInfo.courseId
       && output.courseId !== launchInfo.courseId
       && !output.isTTM
