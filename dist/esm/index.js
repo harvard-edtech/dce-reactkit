@@ -2349,12 +2349,6 @@ const genErrorPage = (opts = {}) => {
   `;
 };
 
-/*------------------------------------------------------------------------*/
-/*                                 Helpers                                */
-/*------------------------------------------------------------------------*/
-/*------------------------------------------------------------------------*/
-/*                                  Main                                  */
-/*------------------------------------------------------------------------*/
 /**
  * Generate an express API route handler
  * @author Gabe Abrams
@@ -2549,7 +2543,7 @@ const genRouteHandler = (opts) => {
             return handleError(res, {
                 message: 'Your session has expired. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.SessionExpired,
-                status: 440,
+                status: 401,
             });
         }
         // Error if user info cannot be found
@@ -2564,7 +2558,7 @@ const genRouteHandler = (opts) => {
             return handleError(res, {
                 message: 'Your session was invalid. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.SessionExpired,
-                status: 440,
+                status: 401,
             });
         }
         // Add launch info to output

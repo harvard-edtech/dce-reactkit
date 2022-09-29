@@ -10,14 +10,6 @@ import handleError from './handleError';
 import handleSuccess from './handleSuccess';
 import genErrorPage from '../html/genErrorPage';
 
-/*------------------------------------------------------------------------*/
-/*                                 Helpers                                */
-/*------------------------------------------------------------------------*/
-
-/*------------------------------------------------------------------------*/
-/*                                  Main                                  */
-/*------------------------------------------------------------------------*/
-
 /**
  * Generate an express API route handler
  * @author Gabe Abrams
@@ -269,7 +261,7 @@ const genRouteHandler = (
         {
           message: 'Your session has expired. Please refresh the page and try again.',
           code: ReactKitErrorCode.SessionExpired,
-          status: 440,
+          status: 401,
         },
       );
     }
@@ -294,7 +286,7 @@ const genRouteHandler = (
         {
           message: 'Your session was invalid. Please refresh the page and try again.',
           code: ReactKitErrorCode.SessionExpired,
-          status: 440,
+          status: 401,
         },
       );
     }
