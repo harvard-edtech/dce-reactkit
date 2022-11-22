@@ -14,6 +14,7 @@ import ErrorBox from './ErrorBox';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 import ModalButtonType from '../types/ModalButtonType';
 import ModalType from '../types/ModalType';
+import Variant from '../types/Variant';
 
 // Import shared components
 import Modal from './Modal';
@@ -133,8 +134,12 @@ let setConfirmInfo: (
     | {
       title: string,
       text: string,
-      confirmButtonText: string,
-      cancelButtonText: string,
+      opts: {
+        confirmButtonText?: string,
+        confirmButtonVariant?: Variant,
+        cancelButtonText?: string,
+        cancelButtonVariant?: Variant,
+      },
     }
   ),
 ) => void;
@@ -146,15 +151,24 @@ let onConfirmClosed: (confirmed: boolean) => void;
  * @author Gabe Abrams
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
- * @param [confirmButtonText=Okay] the text of the confirm button
- * @param [cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts={}] additional options for the confirmation dialog
+ * @param [opts.confirmButtonText=Okay] the text of the confirm button
+ * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm
+ *   button
+ * @param [opts.cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel
+ *   button
  * @returns true if the user confirmed
  */
 export const confirm = async (
   title: string,
   text: string,
-  confirmButtonText: string = 'Okay',
-  cancelButtonText: string = 'Cancel',
+  opts?: {
+    confirmButtonText?: string,
+    confirmButtonVariant?: Variant,
+    cancelButtonText?: string,
+    cancelButtonVariant?: Variant,
+  },
 ): Promise<boolean> => {
   // Fallback if confirm is not available
   if (!setConfirmInfo) {
@@ -172,8 +186,7 @@ export const confirm = async (
     setConfirmInfo({
       title,
       text,
-      confirmButtonText,
-      cancelButtonText,
+      opts: (opts ?? {}),
     });
   });
 };
@@ -304,8 +317,12 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
     | {
       title: string,
       text: string,
-      confirmButtonText: string,
-      cancelButtonText: string,
+      opts: {
+        confirmButtonText?: string,
+        confirmButtonVariant?: Variant,
+        cancelButtonText?: string,
+        cancelButtonVariant?: Variant,
+      },
     }
   >(undefined);
   setConfirmInfo = setConfirmInfoInner;
@@ -358,8 +375,10 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         key={`confirm-${confirmInfo.title}-${confirmInfo.text}`}
         title={confirmInfo.title}
         type={ModalType.OkayCancel}
-        okayLabel={confirmInfo.confirmButtonText}
-        cancelLabel={confirmInfo.cancelButtonText}
+        okayLabel={confirmInfo.opts.confirmButtonText}
+        okayVariant={confirmInfo.opts.confirmButtonVariant}
+        cancelLabel={confirmInfo.opts.cancelButtonText}
+        cancelVariant={confirmInfo.opts.cancelButtonVariant}
         onClose={(buttonType) => {
           setConfirmInfo(undefined);
           if (onConfirmClosed) {

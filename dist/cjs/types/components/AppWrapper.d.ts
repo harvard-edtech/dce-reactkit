@@ -4,6 +4,7 @@
  * @author Gabe Abrams
  */
 import React from 'react';
+import Variant from '../types/Variant';
 declare type Props = {
     children: React.ReactNode;
     sendRequest: SendRequestFunction;
@@ -47,11 +48,21 @@ export declare const alert: (title: string, text: string) => Promise<undefined>;
  * @author Gabe Abrams
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
- * @param [confirmButtonText=Okay] the text of the confirm button
- * @param [cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts={}] additional options for the confirmation dialog
+ * @param [opts.confirmButtonText=Okay] the text of the confirm button
+ * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm
+ *   button
+ * @param [opts.cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel
+ *   button
  * @returns true if the user confirmed
  */
-export declare const confirm: (title: string, text: string, confirmButtonText?: string, cancelButtonText?: string) => Promise<boolean>;
+export declare const confirm: (title: string, text: string, opts?: {
+    confirmButtonText?: string | undefined;
+    confirmButtonVariant?: Variant | undefined;
+    cancelButtonText?: string | undefined;
+    cancelButtonVariant?: Variant | undefined;
+} | undefined) => Promise<boolean>;
 /**
  * Show a fatal error message
  * @author Gabe Abrams

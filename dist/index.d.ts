@@ -2,6 +2,21 @@
 import React from 'react';
 
 /**
+ * Bootstrap variants
+ * @author Gabe Abrams
+ */
+declare enum Variant {
+    Primary = "primary",
+    Secondary = "secondary",
+    Success = "success",
+    Warning = "warning",
+    Info = "info",
+    Danger = "danger",
+    Light = "light",
+    Dark = "dark"
+}
+
+/**
  * A wrapper for the entire React app that adds global functionality like
  *   handling for fatal error messages, adds bootstrap support
  * @author Gabe Abrams
@@ -43,11 +58,21 @@ declare const alert: (title: string, text: string) => Promise<undefined>;
  * @author Gabe Abrams
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
- * @param [confirmButtonText=Okay] the text of the confirm button
- * @param [cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts={}] additional options for the confirmation dialog
+ * @param [opts.confirmButtonText=Okay] the text of the confirm button
+ * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm
+ *   button
+ * @param [opts.cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel
+ *   button
  * @returns true if the user confirmed
  */
-declare const confirm: (title: string, text: string, confirmButtonText?: string, cancelButtonText?: string) => Promise<boolean>;
+declare const confirm: (title: string, text: string, opts?: {
+    confirmButtonText?: string | undefined;
+    confirmButtonVariant?: Variant | undefined;
+    cancelButtonText?: string | undefined;
+    cancelButtonVariant?: Variant | undefined;
+} | undefined) => Promise<boolean>;
 /**
  * Show a fatal error message
  * @author Gabe Abrams
@@ -74,21 +99,6 @@ declare type Props$c = {
     onClose?: () => void;
 };
 declare const ErrorBox: React.FC<Props$c>;
-
-/**
- * Bootstrap variants
- * @author Gabe Abrams
- */
-declare enum Variant {
-    Primary = "primary",
-    Secondary = "secondary",
-    Success = "success",
-    Warning = "warning",
-    Info = "info",
-    Danger = "danger",
-    Light = "light",
-    Dark = "dark"
-}
 
 /**
  * Types of buttons in the modal
