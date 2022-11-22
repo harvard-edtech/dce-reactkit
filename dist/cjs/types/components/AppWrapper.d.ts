@@ -43,12 +43,15 @@ export declare const cacclSendRequest: SendRequestFunction;
 export declare const alert: (title: string, text: string) => Promise<undefined>;
 /**
  * Show a confirmation modal with an "Okay" and a "Cancel" button
+ *   (with the option to customize the text of those buttons)
  * @author Gabe Abrams
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
+ * @param [confirmButtonText=Okay] the text of the confirm button
+ * @param [cancelButtonText=Cancel] the text of the cancel button
  * @returns true if the user confirmed
  */
-export declare const confirm: (title: string, text: string) => Promise<boolean>;
+export declare const confirm: (title: string, text: string, confirmButtonText?: string, cancelButtonText?: string) => Promise<boolean>;
 /**
  * Show a fatal error message
  * @author Gabe Abrams

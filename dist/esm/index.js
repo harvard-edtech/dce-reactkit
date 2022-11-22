@@ -556,12 +556,15 @@ let setConfirmInfo;
 let onConfirmClosed;
 /**
  * Show a confirmation modal with an "Okay" and a "Cancel" button
+ *   (with the option to customize the text of those buttons)
  * @author Gabe Abrams
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
+ * @param [confirmButtonText=Okay] the text of the confirm button
+ * @param [cancelButtonText=Cancel] the text of the cancel button
  * @returns true if the user confirmed
  */
-const confirm = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
+const confirm = (title, text, confirmButtonText = 'Okay', cancelButtonText = 'Cancel') => __awaiter(void 0, void 0, void 0, function* () {
     // Fallback if confirm is not available
     if (!setConfirmInfo) {
         return window.confirm(`${title}\n\n${text}`);
@@ -576,6 +579,8 @@ const confirm = (title, text) => __awaiter(void 0, void 0, void 0, function* () 
         setConfirmInfo({
             title,
             text,
+            confirmButtonText,
+            cancelButtonText,
         });
     });
 });
@@ -659,7 +664,7 @@ const AppWrapper = (props) => {
     }
     /* ------------- Confirm ------------ */
     if (confirmInfo) {
-        modal = (React.createElement(Modal, { key: `confirm-${confirmInfo.title}-${confirmInfo.text}`, title: confirmInfo.title, type: ModalType$1.OkayCancel, onClose: (buttonType) => {
+        modal = (React.createElement(Modal, { key: `confirm-${confirmInfo.title}-${confirmInfo.text}`, title: confirmInfo.title, type: ModalType$1.OkayCancel, okayLabel: confirmInfo.confirmButtonText, cancelLabel: confirmInfo.cancelButtonText, onClose: (buttonType) => {
                 setConfirmInfo(undefined);
                 if (onConfirmClosed) {
                     onConfirmClosed(buttonType === ModalButtonType$1.Okay);

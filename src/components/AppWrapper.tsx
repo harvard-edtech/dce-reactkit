@@ -127,19 +127,34 @@ export const alert = async (title: string, text: string): Promise<undefined> => 
 /*----------------------------------------*/
 
 // Stored copies of setters
-let setConfirmInfo: (info: undefined | { title: string, text: string }) => void;
+let setConfirmInfo: (
+  info: (
+    | undefined
+    | {
+      title: string,
+      text: string,
+      confirmButtonText: string,
+      cancelButtonText: string,
+    }
+  ),
+) => void;
 let onConfirmClosed: (confirmed: boolean) => void;
 
 /**
  * Show a confirmation modal with an "Okay" and a "Cancel" button
+ *   (with the option to customize the text of those buttons)
  * @author Gabe Abrams
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
+ * @param [confirmButtonText=Okay] the text of the confirm button
+ * @param [cancelButtonText=Cancel] the text of the cancel button
  * @returns true if the user confirmed
  */
 export const confirm = async (
   title: string,
   text: string,
+  confirmButtonText: string = 'Okay',
+  cancelButtonText: string = 'Cancel',
 ): Promise<boolean> => {
   // Fallback if confirm is not available
   if (!setConfirmInfo) {
@@ -157,6 +172,8 @@ export const confirm = async (
     setConfirmInfo({
       title,
       text,
+      confirmButtonText,
+      cancelButtonText,
     });
   });
 };
@@ -286,7 +303,9 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
     undefined
     | {
       title: string,
-      text: string
+      text: string,
+      confirmButtonText: string,
+      cancelButtonText: string,
     }
   >(undefined);
   setConfirmInfo = setConfirmInfoInner;
@@ -339,6 +358,8 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         key={`confirm-${confirmInfo.title}-${confirmInfo.text}`}
         title={confirmInfo.title}
         type={ModalType.OkayCancel}
+        okayLabel={confirmInfo.confirmButtonText}
+        cancelLabel={confirmInfo.cancelButtonText}
         onClose={(buttonType) => {
           setConfirmInfo(undefined);
           if (onConfirmClosed) {
