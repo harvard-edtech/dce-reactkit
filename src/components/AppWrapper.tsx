@@ -303,7 +303,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
     undefined
     | {
       title: string,
-      text: string
+      text: string,
     }
   >(undefined);
   setAlertInfo = setAlertInfoInner;
