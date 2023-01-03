@@ -506,8 +506,16 @@ const genRouteHandler = (
         hour,
         minute,
         timestamp,
-        category: opts.category,
-        subcategory: opts.subcategory ?? 'none',
+        category: (
+          typeof opts.category === 'string'
+            ? opts.category
+            : opts.category.name
+        ),
+        subcategory: (
+          typeof opts.category === 'string'
+            ? opts.subcategory
+            : ((opts.subcategory as any) ?? { name: 'none' }).name
+        ),
         tags: opts.tags ?? [],
         metadata: opts.metadata ?? {},
       };

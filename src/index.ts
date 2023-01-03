@@ -48,6 +48,7 @@ import getPartOfDay from './helpers/getPartOfDay';
 import stringsToHumanReadableList from './helpers/stringsToHumanReadableList';
 import onlyKeepLetters from './helpers/onlyKeepLetters';
 import parallelLimit from './helpers/parallelLimit';
+import logClientEvent from './helpers/logClientEvent';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -115,6 +116,7 @@ export {
   parallelLimit,
   // Client helpers
   visitServerEndpoint,
+  logClientEvent,
   // Server helpers
   initServer,
   genRouteHandler,

@@ -5,8 +5,12 @@ import LogAction from './LogAction';
  * @author Gabe Abrams
  */
 declare type LogFunction = (opts: ({
-    category: string;
-    subcategory?: string;
+    category: string | {
+        name: string;
+    };
+    subcategory?: string | {
+        name: string;
+    };
     tags?: string[];
     metadata?: {
         [k: string]: any;

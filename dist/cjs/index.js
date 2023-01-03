@@ -2934,8 +2934,12 @@ const genRouteHandler = (opts) => {
                 hour,
                 minute,
                 timestamp,
-                category: opts.category,
-                subcategory: (_c = opts.subcategory) !== null && _c !== void 0 ? _c : 'none',
+                category: (typeof opts.category === 'string'
+                    ? opts.category
+                    : opts.category.name),
+                subcategory: (typeof opts.category === 'string'
+                    ? opts.subcategory
+                    : ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : { name: 'none' }).name),
                 tags: (_d = opts.tags) !== null && _d !== void 0 ? _d : [],
                 metadata: (_e = opts.metadata) !== null && _e !== void 0 ? _e : {},
             };
@@ -3240,6 +3244,43 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
 });
 
 /**
+ * Log a user action on the client (cannot be used on the server)
+ * @author Gabe Abrams
+ */
+const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    return visitServerEndpoint({
+        path: LOG_ROUTE_PATH,
+        method: 'POST',
+        params: {
+            category: (typeof opts.category === 'string'
+                ? opts.category
+                : opts.category.name),
+            subcategory: (typeof opts.category === 'string'
+                ? opts.subcategory
+                : ((_a = opts.subcategory) !== null && _a !== void 0 ? _a : { name: 'none' }).name),
+            tags: JSON.stringify(opts.tags),
+            metadata: JSON.stringify((_b = opts.metadata) !== null && _b !== void 0 ? _b : {}),
+            errorMessage: (opts.error
+                ? opts.error.message
+                : undefined),
+            errorCode: (opts.error
+                ? opts.error.code
+                : undefined),
+            errorStack: (opts.error
+                ? opts.error.stack
+                : undefined),
+            target: (opts.target
+                ? opts.target
+                : undefined),
+            action: (opts.action
+                ? opts.action
+                : undefined),
+        },
+    });
+});
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -3338,6 +3379,7 @@ exports.getTimeInfoInET = getTimeInfoInET;
 exports.handleError = handleError;
 exports.handleSuccess = handleSuccess;
 exports.initServer = initServer;
+exports.logClientEvent = logClientEvent;
 exports.onlyKeepLetters = onlyKeepLetters;
 exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;

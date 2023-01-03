@@ -14,8 +14,16 @@ const logClientEvent: LogFunction = async (opts) => {
     path: LOG_ROUTE_PATH,
     method: 'POST',
     params: {
-      category: opts.category,
-      subcategory: opts.subcategory,
+      category: (
+        typeof opts.category === 'string'
+          ? opts.category
+          : opts.category.name
+      ),
+      subcategory: (
+        typeof opts.category === 'string'
+          ? opts.subcategory
+          : ((opts.subcategory as any) ?? { name: 'none' }).name
+      ),
       tags: JSON.stringify(opts.tags),
       metadata: JSON.stringify(opts.metadata ?? {}),
       errorMessage: (
