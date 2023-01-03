@@ -1,4 +1,5 @@
 import ParamType from '../types/ParamType';
+import LogFunction from '../types/LogFunction';
 /**
  * Generate an express API route handler
  * @author Gabe Abrams
@@ -40,6 +41,7 @@ declare const genRouteHandler: (opts: {
             pageTitle?: string | undefined;
             status?: number | undefined;
         } | undefined) => void;
+        logServerEvent: LogFunction;
     }) => any;
     skipSessionCheck?: boolean | undefined;
 }) => (req: any, res: any, next: () => void) => Promise<undefined>;

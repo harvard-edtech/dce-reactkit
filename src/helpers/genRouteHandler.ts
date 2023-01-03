@@ -1,5 +1,8 @@
 // Import caccl functions
-import { cacclGetLaunchInfo } from '../server/initServer';
+import {
+  cacclGetLaunchInfo,
+  internalGetLogCollection,
+} from '../server/initServer';
 
 // Import shared types
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
@@ -9,6 +12,17 @@ import ParamType from '../types/ParamType';
 import handleError from './handleError';
 import handleSuccess from './handleSuccess';
 import genErrorPage from '../html/genErrorPage';
+import parseUserAgent from './parseUserAgent';
+import getTimeInfoInET from './getTimeInfoInET';
+
+// Import shared types
+import LogFunction from '../types/LogFunction';
+import Log from '../types/Log';
+import LogType from '../types/LogType';
+import LogSource from '../types/LogSource';
+import LogTypeSpecificInfo from '../types/Log/LogTypeSpecificInfo';
+import LogMainInfo from '../types/Log/LogMainInfo';
+import LogSourceSpecificInfo from '../types/Log/LogSourceSpecificInfo';
 
 /**
  * Generate an express API route handler
@@ -55,6 +69,7 @@ const genRouteHandler = (
             status?: number,
           },
         ) => void,
+        logServerEvent: LogFunction,
       },
     ) => any,
     skipSessionCheck?: boolean,
@@ -439,6 +454,118 @@ const genRouteHandler = (
       );
     }
 
+    /*----------------------------------------*/
+    /*               Log Handler              */
+    /*----------------------------------------*/
+
+    // Create a log handler function
+
+    /**
+     * Log an event on the server
+     * @author Gabe Abrams
+     */
+    const logServerEvent: LogFunction = async (opts) => {
+      // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
+      // that indicates that this is actually a client event, but we don't
+      // include that in the LogFunction type because this is internal and
+      // hidden from users
+
+      // Parse user agent
+      const {
+        browser,
+        device,
+      } = parseUserAgent(req.headers['user-agent']);
+
+      // Get time info in ET
+      const {
+        timestamp,
+        year,
+        month,
+        day,
+        hour,
+        minute,
+      } = getTimeInfoInET();
+
+      // Main log info
+      const mainLogInfo: LogMainInfo = {
+        id: `${launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
+        userFirstName: launchInfo.userFirstName,
+        userLastName: launchInfo.userLastName,
+        userEmail: launchInfo.userEmail,
+        userId: launchInfo.userId,
+        isLearner: !!launchInfo.isLearner,
+        isAdmin: !!launchInfo.isAdmin,
+        isTTM: !!launchInfo.isTTM,
+        courseId: launchInfo.courseId,
+        courseName: launchInfo.courseName,
+        browser,
+        device,
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        timestamp,
+        category: opts.category,
+        subcategory: opts.subcategory ?? 'none',
+        tags: opts.tags ?? [],
+        metadata: opts.metadata ?? {},
+      };
+
+      // Type-specific info
+      const typeSpecificInfo: LogTypeSpecificInfo = (
+        ('error' in opts && opts.error)
+          ? {
+            type: LogType.Error,
+            errorMessage: opts.error.message ?? 'Unknown message',
+            errorCode: opts.error.code ?? ReactKitErrorCode.NoCode,
+            errorStack: opts.error.stack ?? 'No stack',
+          }
+          : {
+            type: LogType.Action,
+            target: (opts as any).target ?? 'Unknown',
+            action: (opts as any).action ?? 'Unknown'
+          }
+      );
+
+      // Source-specific info
+      const sourceSpecificInfo: LogSourceSpecificInfo = (
+        (opts as any).overrideAsClientEvent
+          ? {
+            source: LogSource.Client,
+          }
+          : {
+            source: LogSource.Server,
+            routePath: req.path,
+            routeTemplate: req.route.path,
+          }
+      );
+
+      // Build log event
+      const log: Log = {
+        ...mainLogInfo,
+        ...typeSpecificInfo,
+        ...sourceSpecificInfo,
+      };
+
+      // Either print to console or save to db
+      const logCollection = internalGetLogCollection();
+      if (logCollection) {
+        // Store to the log collection
+        await logCollection.insert(log);
+      } else {
+        // Print to console
+        if (log.type === LogType.Error) {
+          console.error('dce-reactkit error log:', log);
+        } else {
+          console.log('dce-reactkit action log:', log);
+        }
+      }
+
+      // Return log entry
+      return log;
+    };
+
     /*------------------------------------------------------------------------*/
     /*                              Call handler                              */
     /*------------------------------------------------------------------------*/
@@ -504,6 +631,7 @@ const genRouteHandler = (
         },
         redirect,
         renderErrorPage,
+        logServerEvent,
       });
 
       // Send results to client (only if next wasn't called)

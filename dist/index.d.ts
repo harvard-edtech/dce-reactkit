@@ -516,6 +516,135 @@ declare enum ParamType {
 }
 
 /**
+ * Main information in a log event
+ * @author Gabe Abrams
+ */
+declare type LogMainInfo = {
+    id: string;
+    userFirstName: string;
+    userLastName: string;
+    userEmail: string;
+    userId: number;
+    isLearner: boolean;
+    isAdmin: boolean;
+    isTTM: boolean;
+    courseId: number;
+    courseName: string;
+    browser: {
+        name: string;
+        version: string;
+    };
+    device: {
+        os: string;
+        isMobile: boolean;
+    };
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    minute: number;
+    timestamp: number;
+    category: string;
+    subcategory: string;
+    tags: string[];
+    metadata?: {
+        [k: string]: any;
+    };
+};
+
+/**
+ * Source of a log event
+ * @author Gabe Abrams
+ */
+declare enum LogSource {
+    Client = "client",
+    Server = "server"
+}
+
+/**
+ * Log info that is specific to the type of source
+ * @author Gabe Abrams
+ */
+declare type LogSourceSpecificInfo = ({
+    source: LogSource.Client;
+} | {
+    source: LogSource.Server;
+    routePath: string;
+    routeTemplate: string;
+});
+
+/**
+ * Types of actions
+ * @author Gabe Abrams
+ */
+declare enum LogAction {
+    Open = "open",
+    Close = "close",
+    Expand = "expand",
+    Collapse = "collapse",
+    View = "view",
+    Interrupt = "interrupt",
+    Create = "create",
+    Edit = "edit",
+    Delete = "delete",
+    Add = "add",
+    Remove = "remove",
+    Activate = "activate",
+    Deactivate = "deactivate",
+    Peek = "peek",
+    Unknown = "unknown"
+}
+
+/**
+ * Type of a log event
+ * @author Gabe Abrams
+ */
+declare enum LogType {
+    Action = "action",
+    Error = "error"
+}
+
+/**
+ * Log info that is specific to the type of log
+ * @author Gabe Abrams
+ */
+declare type LogTypeSpecificInfo = ({
+    type: LogType.Error;
+    errorMessage: string;
+    errorCode: string;
+    errorStack: string;
+} | {
+    type: LogType.Action;
+    target: string;
+    action: LogAction;
+});
+
+/**
+ * A single log event corresponding to an action performed by a user or an
+ *   error encountered by a user
+ * @author Gabe Abrams
+ */
+declare type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
+
+/**
+ * Type of a log action function
+ * @author Gabe Abrams
+ */
+declare type LogFunction = (opts: ({
+    category: string;
+    subcategory?: string;
+    tags?: string[];
+    metadata?: {
+        [k: string]: any;
+    };
+} & ({
+    error: any;
+} | {
+    target: string;
+    action: LogAction;
+}))) => Promise<Log>;
+
+/**
  * Generate an express API route handler
  * @author Gabe Abrams
  * @param opts object containing all arguments
@@ -556,6 +685,7 @@ declare const genRouteHandler: (opts: {
             pageTitle?: string | undefined;
             status?: number | undefined;
         } | undefined) => void;
+        logServerEvent: LogFunction;
     }) => any;
     skipSessionCheck?: boolean | undefined;
 }) => (req: any, res: any, next: () => void) => Promise<undefined>;
@@ -594,10 +724,16 @@ declare type GetLaunchInfoFunction = (req: any) => {
  * Prepare dce-reactkit to run on the server
  * @author Gabe Abrams
  * @param opts object containing all arguments
+ * @param opts.app express app from inside of the postprocessor function that
+ *   we will add routes to
  * @param opts.getLaunchInfo CACCL LTI's get launch info function
+ * @param [opts.logCollection] mongo collection from dce-mango to use for
+ *   storing logs. If none is included, logs are written to the console
  */
 declare const initServer: (opts: {
+    app: any;
     getLaunchInfo: GetLaunchInfoFunction;
+    logCollection?: any;
 }) => void;
 
 /**
@@ -727,4 +863,4 @@ declare enum DayOfWeek {
     Sunday = "u"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, Log, LogAction, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

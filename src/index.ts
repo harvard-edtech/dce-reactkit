@@ -57,6 +57,10 @@ import ReactKitErrorCode from './types/ReactKitErrorCode';
 import Variant from './types/Variant';
 import ParamType from './types/ParamType';
 import DayOfWeek from './types/DayOfWeek';
+import Log from './types/Log';
+import LogType from './types/LogType';
+import LogSource from './types/LogSource';
+import LogAction from './types/LogAction';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -123,6 +127,10 @@ export {
   ReactKitErrorCode,
   Variant,
   DayOfWeek,
+  Log,
+  LogType,
+  LogSource,
+  LogAction,
   // Component-specific-types
   PickableItem,
   // Server types

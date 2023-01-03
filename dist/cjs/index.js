@@ -2124,36 +2124,17 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     return body;
 });
 
-// Import custom error
-// Stored copy of caccl functions
-let _cacclGetLaunchInfo;
-/*------------------------------------------------------------------------*/
-/*                                 Helpers                                */
-/*------------------------------------------------------------------------*/
 /**
- * Get launch info via CACCL
+ * Path that all routes start with
  * @author Gabe Abrams
- * @param req express request object
- * @returns object { launched, launchInfo }
  */
-const cacclGetLaunchInfo = (req) => {
-    if (!_cacclGetLaunchInfo) {
-        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
-    }
-    return _cacclGetLaunchInfo(req);
-};
-/*------------------------------------------------------------------------*/
-/*                                  Main                                  */
-/*------------------------------------------------------------------------*/
+const ROUTE_PATH_PREFIX = '/dce-reactkit';
+
 /**
- * Prepare dce-reactkit to run on the server
+ * Path of the route for storing client-side logs
  * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.getLaunchInfo CACCL LTI's get launch info function
  */
-const initServer = (opts) => {
-    _cacclGetLaunchInfo = opts.getLaunchInfo;
-};
+const LOG_ROUTE_PATH = `${ROUTE_PATH_PREFIX}/log`;
 
 /**
  * Server-side API param types
@@ -2173,6 +2154,109 @@ var ParamType;
     ParamType["StringOptional"] = "string-optional";
 })(ParamType || (ParamType = {}));
 var ParamType$1 = ParamType;
+
+// Import custom error
+// Stored copy of caccl functions
+let _cacclGetLaunchInfo;
+// Stored copy of dce-mango log collection
+let _logCollection;
+/*------------------------------------------------------------------------*/
+/*                                 Helpers                                */
+/*------------------------------------------------------------------------*/
+/**
+ * Get launch info via CACCL
+ * @author Gabe Abrams
+ * @param req express request object
+ * @returns object { launched, launchInfo }
+ */
+const cacclGetLaunchInfo = (req) => {
+    if (!_cacclGetLaunchInfo) {
+        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
+    }
+    return _cacclGetLaunchInfo(req);
+};
+/**
+ * Get log collection
+ * @author Gabe Abrams
+ * @returns log collection if one was included during launch or null if we don't
+ *   have a log collection (yet)
+ */
+const internalGetLogCollection = () => {
+    return _logCollection !== null && _logCollection !== void 0 ? _logCollection : null;
+};
+/*------------------------------------------------------------------------*/
+/*                                  Main                                  */
+/*------------------------------------------------------------------------*/
+/**
+ * Prepare dce-reactkit to run on the server
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.app express app from inside of the postprocessor function that
+ *   we will add routes to
+ * @param opts.getLaunchInfo CACCL LTI's get launch info function
+ * @param [opts.logCollection] mongo collection from dce-mango to use for
+ *   storing logs. If none is included, logs are written to the console
+ */
+const initServer = (opts) => {
+    _cacclGetLaunchInfo = opts.getLaunchInfo;
+    _logCollection = opts.logCollection;
+    /**
+     * Log an event
+     * @author Gabe Abrams
+     * @param {string} category Category of the event (each app determines how to
+     *   categorize its events)
+     * @param {string} subcategory Subcategory of the event (each app determines
+     *   how to categorize its events)
+     * @param {string} tags stringified list of tags that apply to this action
+     *   (each app determines tag usage)
+     * @param {string} metadata stringified object containing optional custom metadata
+     * @param {string} [errorMessage] error message if type is an error
+     * @param {string} [errorCode] error code if type is an error
+     * @param {string} [errorStack] error stack if type is an error
+     * @param {string} [target] Target of the action (each app determines the list
+     *   of targets) These are usually buttons, panels, elements, etc.
+     * @param {LogAction} [action] the type of action performed on the target
+     * @returns {Log}
+     */
+    opts.app.post(LOG_ROUTE_PATH, genRouteHandler({
+        paramTypes: {
+            category: ParamType$1.String,
+            subcategory: ParamType$1.String,
+            tags: ParamType$1.JSON,
+            metadata: ParamType$1.JSON,
+            errorMessage: ParamType$1.StringOptional,
+            errorCode: ParamType$1.StringOptional,
+            errorStack: ParamType$1.StringOptional,
+            target: ParamType$1.StringOptional,
+            action: ParamType$1.StringOptional,
+        },
+        handler: ({ params, logServerEvent }) => {
+            const log = logServerEvent((params.errorMessage || params.errorCode || params.errorStack)
+                // Error
+                ? {
+                    category: params.category,
+                    subcategory: params.subcategory,
+                    tags: params.tags,
+                    metadata: params.metadata,
+                    error: {
+                        message: params.errorMessage,
+                        code: params.errorCode,
+                        stack: params.errorStack,
+                    },
+                }
+                // Action
+                : {
+                    category: params.category,
+                    subcategory: params.subcategory,
+                    tags: params.tags,
+                    metadata: params.metadata,
+                    target: params.target,
+                    action: params.action,
+                });
+            return log;
+        },
+    }));
+};
 
 // Import shared types
 /**
@@ -2365,6 +2449,137 @@ const genErrorPage = (opts = {}) => {
 </body>
   `;
 };
+
+/**
+ * Perform a rudimentary parsing of the user's browser agent string
+ * @author Gabe Abrams
+ * @param userAgent the user's browser agent
+ * @returns user info
+ */
+const parseUserAgent = (userAgent) => {
+    /* ------------- Browser ------------ */
+    let browser = {
+        name: 'Unknown',
+        version: 'Unknown',
+    };
+    // Parse user agent
+    let verOffset;
+    let nameOffset;
+    if ((verOffset = userAgent.indexOf('Opera')) !== -1) {
+        // In Opera, the true version is after 'Opera' or after 'Version'
+        browser = {
+            name: 'Opera',
+            version: userAgent.substring(verOffset + 6),
+        };
+        if ((verOffset = userAgent.indexOf('Version')) !== -1) {
+            browser.version = userAgent.substring(verOffset + 8);
+        }
+    }
+    else if ((verOffset = userAgent.indexOf('MSIE')) !== -1) {
+        // In MSIE, the true version is after 'MSIE' in userAgent
+        browser = {
+            name: 'Internet Explorer',
+            version: userAgent.substring(verOffset + 5),
+        };
+    }
+    else if ((verOffset = userAgent.indexOf('Chrome')) !== -1) {
+        // In Chrome, the true version is after 'Chrome'
+        browser = {
+            name: 'Chrome',
+            version: userAgent.substring(verOffset + 7),
+        };
+    }
+    else if ((verOffset = userAgent.indexOf('Safari')) !== -1) {
+        // In Safari, the true version is after 'Safari' or after 'Version'
+        browser = {
+            name: 'Safari',
+            version: userAgent.substring(verOffset + 7),
+        };
+        if ((verOffset = userAgent.indexOf('Version')) !== -1) {
+            browser.version = userAgent.substring(verOffset + 8);
+        }
+    }
+    else if ((verOffset = userAgent.indexOf('Firefox')) != -1) {
+        // In Firefox, the true version is after 'Firefox'
+        browser = {
+            name: 'Firefox',
+            version: userAgent.substring(verOffset + 8),
+        };
+    }
+    else if ((nameOffset = userAgent.lastIndexOf(' ') + 1)
+        < (verOffset = userAgent.lastIndexOf('/'))) {
+        browser = {
+            name: userAgent.substring(nameOffset, verOffset),
+            version: userAgent.substring(verOffset + 1),
+        };
+    }
+    // Postprocess version
+    // trim the fullVersion string at semicolon/space if present
+    let ix;
+    if ((ix = browser.version.indexOf(';')) !== -1) {
+        browser.version = browser.version.substring(0, ix);
+    }
+    if ((ix = browser.version.indexOf(' ')) !== -1) {
+        browser.version = browser.version.substring(0, ix);
+    }
+    /* ------------- Device ------------- */
+    // Detect os
+    let os = 'Unknown';
+    if (userAgent.includes('Linux')) {
+        os = 'Linux';
+    }
+    else if (userAgent.includes('like Mac')) {
+        os = 'iOS';
+    }
+    else if (userAgent.includes('Mac')) {
+        os = 'Mac';
+    }
+    else if (userAgent.includes('Android')) {
+        os = 'Android';
+    }
+    else if (userAgent.includes('Win')) {
+        os = 'Win';
+    }
+    // Check if mobile
+    const isMobile = !!userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
+    // Device
+    const device = {
+        isMobile,
+        os,
+    };
+    /* ------------- Finish ------------- */
+    // Return info
+    return {
+        browser,
+        device,
+    };
+};
+
+/**
+ * Type of a log event
+ * @author Gabe Abrams
+ */
+var LogType;
+(function (LogType) {
+    // User action
+    LogType["Action"] = "action";
+    // Error
+    LogType["Error"] = "error";
+})(LogType || (LogType = {}));
+var LogType$1 = LogType;
+
+/**
+ * Source of a log event
+ * @author Gabe Abrams
+ */
+var LogSource;
+(function (LogSource) {
+    // Client
+    LogSource["Client"] = "client";
+    // Server
+    LogSource["Server"] = "server";
+})(LogSource || (LogSource = {}));
+var LogSource$1 = LogSource;
 
 /**
  * Generate an express API route handler
@@ -2681,6 +2896,92 @@ const genRouteHandler = (opts) => {
                 status: 401,
             });
         }
+        /*----------------------------------------*/
+        /*               Log Handler              */
+        /*----------------------------------------*/
+        // Create a log handler function
+        /**
+         * Log an event on the server
+         * @author Gabe Abrams
+         */
+        const logServerEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+            // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
+            // that indicates that this is actually a client event, but we don't
+            // include that in the LogFunction type because this is internal and
+            // hidden from users
+            var _c, _d, _e, _f, _g, _h, _j, _k;
+            // Parse user agent
+            const { browser, device, } = parseUserAgent(req.headers['user-agent']);
+            // Get time info in ET
+            const { timestamp, year, month, day, hour, minute, } = getTimeInfoInET();
+            // Main log info
+            const mainLogInfo = {
+                id: `${launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
+                userFirstName: launchInfo.userFirstName,
+                userLastName: launchInfo.userLastName,
+                userEmail: launchInfo.userEmail,
+                userId: launchInfo.userId,
+                isLearner: !!launchInfo.isLearner,
+                isAdmin: !!launchInfo.isAdmin,
+                isTTM: !!launchInfo.isTTM,
+                courseId: launchInfo.courseId,
+                courseName: launchInfo.courseName,
+                browser,
+                device,
+                year,
+                month,
+                day,
+                hour,
+                minute,
+                timestamp,
+                category: opts.category,
+                subcategory: (_c = opts.subcategory) !== null && _c !== void 0 ? _c : 'none',
+                tags: (_d = opts.tags) !== null && _d !== void 0 ? _d : [],
+                metadata: (_e = opts.metadata) !== null && _e !== void 0 ? _e : {},
+            };
+            // Type-specific info
+            const typeSpecificInfo = (('error' in opts && opts.error)
+                ? {
+                    type: LogType$1.Error,
+                    errorMessage: (_f = opts.error.message) !== null && _f !== void 0 ? _f : 'Unknown message',
+                    errorCode: (_g = opts.error.code) !== null && _g !== void 0 ? _g : ReactKitErrorCode$1.NoCode,
+                    errorStack: (_h = opts.error.stack) !== null && _h !== void 0 ? _h : 'No stack',
+                }
+                : {
+                    type: LogType$1.Action,
+                    target: (_j = opts.target) !== null && _j !== void 0 ? _j : 'Unknown',
+                    action: (_k = opts.action) !== null && _k !== void 0 ? _k : 'Unknown'
+                });
+            // Source-specific info
+            const sourceSpecificInfo = (opts.overrideAsClientEvent
+                ? {
+                    source: LogSource$1.Client,
+                }
+                : {
+                    source: LogSource$1.Server,
+                    routePath: req.path,
+                    routeTemplate: req.route.path,
+                });
+            // Build log event
+            const log = Object.assign(Object.assign(Object.assign({}, mainLogInfo), typeSpecificInfo), sourceSpecificInfo);
+            // Either print to console or save to db
+            const logCollection = internalGetLogCollection();
+            if (logCollection) {
+                // Store to the log collection
+                yield logCollection.insert(log);
+            }
+            else {
+                // Print to console
+                if (log.type === LogType$1.Error) {
+                    console.error('dce-reactkit error log:', log);
+                }
+                else {
+                    console.log('dce-reactkit action log:', log);
+                }
+            }
+            // Return log entry
+            return log;
+        });
         /*------------------------------------------------------------------------*/
         /*                              Call handler                              */
         /*------------------------------------------------------------------------*/
@@ -2734,6 +3035,7 @@ const genRouteHandler = (opts) => {
                 },
                 redirect,
                 renderErrorPage,
+                logServerEvent,
             });
             // Send results to client (only if next wasn't called)
             if (!responseSent) {
@@ -2953,6 +3255,45 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
+/**
+ * Types of actions
+ * @author Gabe Abrams
+ */
+var LogAction;
+(function (LogAction) {
+    // Target was opened by the user (it was not on screen, but now it is)
+    LogAction["Open"] = "open";
+    // Target was closed by the user (it was on screen, but now it is not)
+    LogAction["Close"] = "close";
+    // Target was expanded by the user (it always remains on screen, but size was changed)
+    LogAction["Expand"] = "expand";
+    // Target was collapsed by the user (it always remains on screen, but size was changed)
+    LogAction["Collapse"] = "collapse";
+    // Target was viewed by the user (only for items that are not opened or closed, those must use Open/Close actions)
+    LogAction["View"] = "view";
+    // Target interrupted the user (popup, dialog, validation message, etc. appeared without user prompting)
+    LogAction["Interrupt"] = "interrupt";
+    // Target was created by the user (it did not exist before)
+    LogAction["Create"] = "create";
+    // Target was edited by the user (it existed and was changed)
+    LogAction["Edit"] = "edit";
+    // Target was deleted by the user (it existed and now it doesn't)
+    LogAction["Delete"] = "delete";
+    // Target was added by the user (it already existed and was added to another place)
+    LogAction["Add"] = "add";
+    // Target was removed by the user (it was removed from something but still exists)
+    LogAction["Remove"] = "remove";
+    // Target was activated by the user (click, check, tap, keypress, etc.)
+    LogAction["Activate"] = "activate";
+    // Target was deactivated by the user (click away, uncheck, tap outside of, tab away, etc.)
+    LogAction["Deactivate"] = "deactivate";
+    // User showed interest in a target (hover, peek, etc.)
+    LogAction["Peek"] = "peek";
+    // Unknown action
+    LogAction["Unknown"] = "unknown";
+})(LogAction || (LogAction = {}));
+var LogAction$1 = LogAction;
+
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
@@ -2965,6 +3306,9 @@ exports.ErrorWithCode = ErrorWithCode;
 exports.HOUR_IN_MS = HOUR_IN_MS;
 exports.ItemPicker = ItemPicker;
 exports.LoadingSpinner = LoadingSpinner;
+exports.LogAction = LogAction$1;
+exports.LogSource = LogSource$1;
+exports.LogType = LogType$1;
 exports.MINUTE_IN_MS = MINUTE_IN_MS;
 exports.Modal = Modal;
 exports.ModalButtonType = ModalButtonType$1;
