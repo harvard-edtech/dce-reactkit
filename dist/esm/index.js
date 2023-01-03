@@ -2574,6 +2574,18 @@ var LogSource;
 var LogSource$1 = LogSource;
 
 /**
+ * Built-in categories for logs
+ * @author Gabe Abrams
+ */
+var LogBuiltInCategory;
+(function (LogBuiltInCategory) {
+    LogBuiltInCategory["Uncategorized"] = "n/a";
+    LogBuiltInCategory["ServerRenderedErrorPage"] = "_server-rendered-error-page";
+    LogBuiltInCategory["ServerEndpointError"] = "_server-endpoint-error";
+})(LogBuiltInCategory || (LogBuiltInCategory = {}));
+var LogBuiltInCategory$1 = LogBuiltInCategory;
+
+/**
  * Generate an express API route handler
  * @author Gabe Abrams
  * @param opts object containing all arguments
@@ -2897,86 +2909,136 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+            var _c, _d, _e, _f, _g, _h, _j, _k;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
             // hidden from users
-            var _c, _d, _e, _f, _g, _h, _j, _k;
-            // Parse user agent
-            const { browser, device, } = parseUserAgent(req.headers['user-agent']);
-            // Get time info in ET
-            const { timestamp, year, month, day, hour, minute, } = getTimeInfoInET();
-            // Main log info
-            const mainLogInfo = {
-                id: `${launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
-                userFirstName: launchInfo.userFirstName,
-                userLastName: launchInfo.userLastName,
-                userEmail: launchInfo.userEmail,
-                userId: launchInfo.userId,
-                isLearner: !!launchInfo.isLearner,
-                isAdmin: !!launchInfo.isAdmin,
-                isTTM: !!launchInfo.isTTM,
-                courseId: launchInfo.courseId,
-                courseName: launchInfo.courseName,
-                browser,
-                device,
-                year,
-                month,
-                day,
-                hour,
-                minute,
-                timestamp,
-                category: (typeof opts.category === 'string'
-                    ? opts.category
-                    : opts.category.name),
-                subcategory: (typeof opts.category === 'string'
-                    ? opts.subcategory
-                    : ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : { name: 'none' }).name),
-                tags: (_d = opts.tags) !== null && _d !== void 0 ? _d : [],
-                metadata: (_e = opts.metadata) !== null && _e !== void 0 ? _e : {},
-            };
-            // Type-specific info
-            const typeSpecificInfo = (('error' in opts && opts.error)
-                ? {
+            try {
+                // Parse user agent
+                const { browser, device, } = parseUserAgent(req.headers['user-agent']);
+                // Get time info in ET
+                const { timestamp, year, month, day, hour, minute, } = getTimeInfoInET();
+                // Main log info
+                const mainLogInfo = {
+                    id: `${launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
+                    userFirstName: launchInfo.userFirstName,
+                    userLastName: launchInfo.userLastName,
+                    userEmail: launchInfo.userEmail,
+                    userId: launchInfo.userId,
+                    isLearner: !!launchInfo.isLearner,
+                    isAdmin: !!launchInfo.isAdmin,
+                    isTTM: !!launchInfo.isTTM,
+                    courseId: launchInfo.courseId,
+                    courseName: launchInfo.courseName,
+                    browser,
+                    device,
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    timestamp,
+                    category: (typeof opts.category === 'string'
+                        ? opts.category
+                        : opts.category.name),
+                    subcategory: (typeof opts.category === 'string'
+                        ? opts.subcategory
+                        : ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : {}).name),
+                    tags: (_d = opts.tags) !== null && _d !== void 0 ? _d : [],
+                    metadata: (_e = opts.metadata) !== null && _e !== void 0 ? _e : {},
+                };
+                // Type-specific info
+                const typeSpecificInfo = (('error' in opts && opts.error)
+                    ? {
+                        type: LogType$1.Error,
+                        errorMessage: (_f = opts.error.message) !== null && _f !== void 0 ? _f : 'Unknown message',
+                        errorCode: (_g = opts.error.code) !== null && _g !== void 0 ? _g : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_h = opts.error.stack) !== null && _h !== void 0 ? _h : 'No stack',
+                    }
+                    : {
+                        type: LogType$1.Action,
+                        target: (_j = opts.target) !== null && _j !== void 0 ? _j : 'Unknown',
+                        action: (_k = opts.action) !== null && _k !== void 0 ? _k : 'Unknown'
+                    });
+                // Source-specific info
+                const sourceSpecificInfo = (opts.overrideAsClientEvent
+                    ? {
+                        source: LogSource$1.Client,
+                    }
+                    : {
+                        source: LogSource$1.Server,
+                        routePath: req.path,
+                        routeTemplate: req.route.path,
+                    });
+                // Build log event
+                const log = Object.assign(Object.assign(Object.assign({}, mainLogInfo), typeSpecificInfo), sourceSpecificInfo);
+                // Either print to console or save to db
+                const logCollection = internalGetLogCollection();
+                if (logCollection) {
+                    // Store to the log collection
+                    yield logCollection.insert(log);
+                }
+                else {
+                    // Print to console
+                    if (log.type === LogType$1.Error) {
+                        console.error('dce-reactkit error log:', log);
+                    }
+                    else {
+                        console.log('dce-reactkit action log:', log);
+                    }
+                }
+                // Return log entry
+                return log;
+            }
+            catch (err) {
+                // Print because we cannot store the error
+                console.error('Could not log the following:', opts);
+                // Create a dummy log to return
+                const dummyMainInfo = {
+                    id: '-1',
+                    userFirstName: 'Unknown',
+                    userLastName: 'Unknown',
+                    userEmail: 'unknown@harvard.edu',
+                    userId: 1,
+                    isLearner: false,
+                    isAdmin: false,
+                    isTTM: false,
+                    courseId: 1,
+                    courseName: 'Unknown',
+                    browser: {
+                        name: 'Unknown',
+                        version: 'Unknown',
+                    },
+                    device: {
+                        isMobile: false,
+                        os: 'Unknown',
+                    },
+                    year: 1,
+                    month: 1,
+                    day: 1,
+                    hour: 1,
+                    minute: 1,
+                    timestamp: Date.now(),
+                    tags: [],
+                    metadata: {},
+                    category: LogBuiltInCategory$1.Uncategorized,
+                    subcategory: LogBuiltInCategory$1.Uncategorized,
+                };
+                const dummyTypeSpecificInfo = {
                     type: LogType$1.Error,
-                    errorMessage: (_f = opts.error.message) !== null && _f !== void 0 ? _f : 'Unknown message',
-                    errorCode: (_g = opts.error.code) !== null && _g !== void 0 ? _g : ReactKitErrorCode$1.NoCode,
-                    errorStack: (_h = opts.error.stack) !== null && _h !== void 0 ? _h : 'No stack',
-                }
-                : {
-                    type: LogType$1.Action,
-                    target: (_j = opts.target) !== null && _j !== void 0 ? _j : 'Unknown',
-                    action: (_k = opts.action) !== null && _k !== void 0 ? _k : 'Unknown'
-                });
-            // Source-specific info
-            const sourceSpecificInfo = (opts.overrideAsClientEvent
-                ? {
-                    source: LogSource$1.Client,
-                }
-                : {
+                    errorMessage: 'Unknown',
+                    errorCode: 'Unknown',
+                    errorStack: 'No Stack',
+                };
+                const dummySourceSpecificInfo = {
                     source: LogSource$1.Server,
                     routePath: req.path,
                     routeTemplate: req.route.path,
-                });
-            // Build log event
-            const log = Object.assign(Object.assign(Object.assign({}, mainLogInfo), typeSpecificInfo), sourceSpecificInfo);
-            // Either print to console or save to db
-            const logCollection = internalGetLogCollection();
-            if (logCollection) {
-                // Store to the log collection
-                yield logCollection.insert(log);
+                };
+                const log = Object.assign(Object.assign(Object.assign({}, dummyMainInfo), dummyTypeSpecificInfo), dummySourceSpecificInfo);
+                return log;
             }
-            else {
-                // Print to console
-                if (log.type === LogType$1.Error) {
-                    console.error('dce-reactkit error log:', log);
-                }
-                else {
-                    console.log('dce-reactkit action log:', log);
-                }
-            }
-            // Return log entry
-            return log;
         });
         /*------------------------------------------------------------------------*/
         /*                              Call handler                              */
@@ -3015,9 +3077,24 @@ const genRouteHandler = (opts) => {
          * @param [opts.status=500] http status code
          */
         const renderErrorPage = (opts = {}) => {
-            var _a;
+            var _a, _b;
             const html = genErrorPage(opts);
             send(html, (_a = opts.status) !== null && _a !== void 0 ? _a : 500);
+            // Log
+            logServerEvent({
+                category: LogBuiltInCategory$1.ServerRenderedErrorPage,
+                error: {
+                    message: `${opts.title}: ${opts.description}`,
+                    code: opts.code,
+                },
+                metadata: {
+                    title: opts.title,
+                    description: opts.description,
+                    code: opts.code,
+                    pageTitle: opts.pageTitle,
+                    status: (_b = opts.status) !== null && _b !== void 0 ? _b : 500,
+                },
+            });
         };
         // Call the handler
         try {
@@ -3041,7 +3118,13 @@ const genRouteHandler = (opts) => {
         catch (err) {
             // Send error to client (only if next wasn't called)
             if (!responseSent) {
-                return handleError(res, err);
+                handleError(res, err);
+                // Log server-side error
+                logServerEvent({
+                    category: LogBuiltInCategory$1.ServerEndpointError,
+                    error: err,
+                });
+                return;
             }
             // Log error that was not responded with
             console.log('Error occurred but could not be sent to client because a response was already sent:', err);
@@ -3345,5 +3428,5 @@ var LogAction;
 })(LogAction || (LogAction = {}));
 var LogAction$1 = LogAction;
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInCategory$1 as LogBuiltInCategory, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

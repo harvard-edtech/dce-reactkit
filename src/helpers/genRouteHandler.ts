@@ -23,6 +23,7 @@ import LogSource from '../types/LogSource';
 import LogTypeSpecificInfo from '../types/Log/LogTypeSpecificInfo';
 import LogMainInfo from '../types/Log/LogMainInfo';
 import LogSourceSpecificInfo from '../types/Log/LogSourceSpecificInfo';
+import LogBuiltInCategory from '../types/LogBuiltInCategory';
 
 /**
  * Generate an express API route handler
@@ -469,109 +470,166 @@ const genRouteHandler = (
       // that indicates that this is actually a client event, but we don't
       // include that in the LogFunction type because this is internal and
       // hidden from users
+      try {
+        // Parse user agent
+        const {
+          browser,
+          device,
+        } = parseUserAgent(req.headers['user-agent']);
 
-      // Parse user agent
-      const {
-        browser,
-        device,
-      } = parseUserAgent(req.headers['user-agent']);
+        // Get time info in ET
+        const {
+          timestamp,
+          year,
+          month,
+          day,
+          hour,
+          minute,
+        } = getTimeInfoInET();
 
-      // Get time info in ET
-      const {
-        timestamp,
-        year,
-        month,
-        day,
-        hour,
-        minute,
-      } = getTimeInfoInET();
+        // Main log info
+        const mainLogInfo: LogMainInfo = {
+          id: `${launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
+          userFirstName: launchInfo.userFirstName,
+          userLastName: launchInfo.userLastName,
+          userEmail: launchInfo.userEmail,
+          userId: launchInfo.userId,
+          isLearner: !!launchInfo.isLearner,
+          isAdmin: !!launchInfo.isAdmin,
+          isTTM: !!launchInfo.isTTM,
+          courseId: launchInfo.courseId,
+          courseName: launchInfo.courseName,
+          browser,
+          device,
+          year,
+          month,
+          day,
+          hour,
+          minute,
+          timestamp,
+          category: (
+            typeof opts.category === 'string'
+              ? opts.category
+              : opts.category.name
+          ),
+          subcategory: (
+            typeof opts.category === 'string'
+              ? opts.subcategory
+              : ((opts.subcategory as any) ?? {}).name
+          ),
+          tags: opts.tags ?? [],
+          metadata: opts.metadata ?? {},
+        };
 
-      // Main log info
-      const mainLogInfo: LogMainInfo = {
-        id: `${launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
-        userFirstName: launchInfo.userFirstName,
-        userLastName: launchInfo.userLastName,
-        userEmail: launchInfo.userEmail,
-        userId: launchInfo.userId,
-        isLearner: !!launchInfo.isLearner,
-        isAdmin: !!launchInfo.isAdmin,
-        isTTM: !!launchInfo.isTTM,
-        courseId: launchInfo.courseId,
-        courseName: launchInfo.courseName,
-        browser,
-        device,
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        timestamp,
-        category: (
-          typeof opts.category === 'string'
-            ? opts.category
-            : opts.category.name
-        ),
-        subcategory: (
-          typeof opts.category === 'string'
-            ? opts.subcategory
-            : ((opts.subcategory as any) ?? { name: 'none' }).name
-        ),
-        tags: opts.tags ?? [],
-        metadata: opts.metadata ?? {},
-      };
+        // Type-specific info
+        const typeSpecificInfo: LogTypeSpecificInfo = (
+          ('error' in opts && opts.error)
+            ? {
+              type: LogType.Error,
+              errorMessage: opts.error.message ?? 'Unknown message',
+              errorCode: opts.error.code ?? ReactKitErrorCode.NoCode,
+              errorStack: opts.error.stack ?? 'No stack',
+            }
+            : {
+              type: LogType.Action,
+              target: (opts as any).target ?? 'Unknown',
+              action: (opts as any).action ?? 'Unknown'
+            }
+        );
 
-      // Type-specific info
-      const typeSpecificInfo: LogTypeSpecificInfo = (
-        ('error' in opts && opts.error)
-          ? {
-            type: LogType.Error,
-            errorMessage: opts.error.message ?? 'Unknown message',
-            errorCode: opts.error.code ?? ReactKitErrorCode.NoCode,
-            errorStack: opts.error.stack ?? 'No stack',
-          }
-          : {
-            type: LogType.Action,
-            target: (opts as any).target ?? 'Unknown',
-            action: (opts as any).action ?? 'Unknown'
-          }
-      );
+        // Source-specific info
+        const sourceSpecificInfo: LogSourceSpecificInfo = (
+          (opts as any).overrideAsClientEvent
+            ? {
+              source: LogSource.Client,
+            }
+            : {
+              source: LogSource.Server,
+              routePath: req.path,
+              routeTemplate: req.route.path,
+            }
+        );
 
-      // Source-specific info
-      const sourceSpecificInfo: LogSourceSpecificInfo = (
-        (opts as any).overrideAsClientEvent
-          ? {
-            source: LogSource.Client,
-          }
-          : {
-            source: LogSource.Server,
-            routePath: req.path,
-            routeTemplate: req.route.path,
-          }
-      );
+        // Build log event
+        const log: Log = {
+          ...mainLogInfo,
+          ...typeSpecificInfo,
+          ...sourceSpecificInfo,
+        };
 
-      // Build log event
-      const log: Log = {
-        ...mainLogInfo,
-        ...typeSpecificInfo,
-        ...sourceSpecificInfo,
-      };
-
-      // Either print to console or save to db
-      const logCollection = internalGetLogCollection();
-      if (logCollection) {
-        // Store to the log collection
-        await logCollection.insert(log);
-      } else {
-        // Print to console
-        if (log.type === LogType.Error) {
-          console.error('dce-reactkit error log:', log);
+        // Either print to console or save to db
+        const logCollection = internalGetLogCollection();
+        if (logCollection) {
+          // Store to the log collection
+          await logCollection.insert(log);
         } else {
-          console.log('dce-reactkit action log:', log);
+          // Print to console
+          if (log.type === LogType.Error) {
+            console.error('dce-reactkit error log:', log);
+          } else {
+            console.log('dce-reactkit action log:', log);
+          }
         }
-      }
 
-      // Return log entry
-      return log;
+        // Return log entry
+        return log;
+      } catch (err) {
+        // Print because we cannot store the error
+        console.error('Could not log the following:', opts);
+        
+        // Create a dummy log to return
+        const dummyMainInfo: LogMainInfo = {
+          id: '-1',
+          userFirstName: 'Unknown',
+          userLastName: 'Unknown',
+          userEmail: 'unknown@harvard.edu',
+          userId: 1,
+          isLearner: false,
+          isAdmin: false,
+          isTTM: false,
+          courseId: 1,
+          courseName: 'Unknown',
+          browser: {
+            name: 'Unknown',
+            version: 'Unknown',
+          },
+          device: {
+            isMobile: false,
+            os: 'Unknown',
+          },
+          year: 1,
+          month: 1,
+          day: 1,
+          hour: 1,
+          minute: 1,
+          timestamp: Date.now(),
+          tags: [],
+          metadata: {},
+          category: LogBuiltInCategory.Uncategorized,
+          subcategory: LogBuiltInCategory.Uncategorized,
+        };
+        
+        const dummyTypeSpecificInfo: LogTypeSpecificInfo = {
+          type: LogType.Error,
+          errorMessage: 'Unknown',
+          errorCode: 'Unknown',
+          errorStack: 'No Stack',
+        };
+
+        const dummySourceSpecificInfo: LogSourceSpecificInfo = {
+          source: LogSource.Server,
+          routePath: req.path,
+          routeTemplate: req.route.path,
+        };
+
+        const log: Log = {
+          ...dummyMainInfo,
+          ...dummyTypeSpecificInfo,
+          ...dummySourceSpecificInfo,
+        };
+
+        return log;
+      }
     };
 
     /*------------------------------------------------------------------------*/
@@ -625,6 +683,22 @@ const genRouteHandler = (
     ) => {
       const html = genErrorPage(opts);
       send(html, opts.status ?? 500);
+
+      // Log
+      logServerEvent({
+        category: LogBuiltInCategory.ServerRenderedErrorPage,
+        error: {
+          message: `${opts.title}: ${opts.description}`,
+          code: opts.code,
+        },
+        metadata: {
+          title: opts.title,
+          description: opts.description,
+          code: opts.code,
+          pageTitle: opts.pageTitle,
+          status: opts.status ?? 500,
+        },
+      });
     };
 
     // Call the handler
@@ -649,7 +723,15 @@ const genRouteHandler = (
     } catch (err) {
       // Send error to client (only if next wasn't called)
       if (!responseSent) {
-        return handleError(res, err);
+        handleError(res, err);
+
+        // Log server-side error
+        logServerEvent({
+          category: LogBuiltInCategory.ServerEndpointError,
+          error: err,
+        });
+
+        return;
       }
 
       // Log error that was not responded with

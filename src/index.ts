@@ -63,6 +63,7 @@ import Log from './types/Log';
 import LogType from './types/LogType';
 import LogSource from './types/LogSource';
 import LogAction from './types/LogAction';
+import LogBuiltInCategory from './types/LogBuiltInCategory';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -135,6 +136,7 @@ export {
   LogType,
   LogSource,
   LogAction,
+  LogBuiltInCategory,
   // Component-specific-types
   PickableItem,
   // Server types
