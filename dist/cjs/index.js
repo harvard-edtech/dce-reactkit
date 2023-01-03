@@ -3281,6 +3281,24 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
 });
 
 /**
+ * Initialize a log collection given the dce-mango Collection class
+ * @author Gabe Abrams
+ * @param Collection the Collection class from dce-mango
+ * @returns initialized logCollection
+ */
+const initLogCollection = (Collection) => {
+    return new Collection('Log', {
+        uniqueIndexKey: 'id',
+        indexKeys: [
+            'courseId',
+            'category',
+            'subcategory',
+            'tags',
+        ],
+    });
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -3378,6 +3396,7 @@ exports.getPartOfDay = getPartOfDay;
 exports.getTimeInfoInET = getTimeInfoInET;
 exports.handleError = handleError;
 exports.handleSuccess = handleSuccess;
+exports.initLogCollection = initLogCollection;
 exports.initServer = initServer;
 exports.logClientEvent = logClientEvent;
 exports.onlyKeepLetters = onlyKeepLetters;

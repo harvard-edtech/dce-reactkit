@@ -843,6 +843,14 @@ declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: num
 declare const logClientEvent: LogFunction;
 
 /**
+ * Initialize a log collection given the dce-mango Collection class
+ * @author Gabe Abrams
+ * @param Collection the Collection class from dce-mango
+ * @returns initialized logCollection
+ */
+declare const initLogCollection: (Collection: any) => any;
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -873,4 +881,4 @@ declare enum DayOfWeek {
     Sunday = "u"
 }
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, Log, LogAction, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, Log, LogAction, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

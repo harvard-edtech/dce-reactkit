@@ -3273,6 +3273,24 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
 });
 
 /**
+ * Initialize a log collection given the dce-mango Collection class
+ * @author Gabe Abrams
+ * @param Collection the Collection class from dce-mango
+ * @returns initialized logCollection
+ */
+const initLogCollection = (Collection) => {
+    return new Collection('Log', {
+        uniqueIndexKey: 'id',
+        indexKeys: [
+            'courseId',
+            'category',
+            'subcategory',
+            'tags',
+        ],
+    });
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -3327,5 +3345,5 @@ var LogAction;
 })(LogAction || (LogAction = {}));
 var LogAction$1 = LogAction;
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

@@ -49,6 +49,7 @@ import stringsToHumanReadableList from './helpers/stringsToHumanReadableList';
 import onlyKeepLetters from './helpers/onlyKeepLetters';
 import parallelLimit from './helpers/parallelLimit';
 import logClientEvent from './helpers/logClientEvent';
+import initLogCollection from './server/initLogCollection';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -122,6 +123,7 @@ export {
   genRouteHandler,
   handleError,
   handleSuccess,
+  initLogCollection,
   // Types
   ModalButtonType,
   ModalSize,
