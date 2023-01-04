@@ -23,7 +23,8 @@ import LogSource from '../types/LogSource';
 import LogTypeSpecificInfo from '../types/Log/LogTypeSpecificInfo';
 import LogMainInfo from '../types/Log/LogMainInfo';
 import LogSourceSpecificInfo from '../types/Log/LogSourceSpecificInfo';
-import LogBuiltInCategory from '../types/LogBuiltInCategory';
+import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
+import LogAction from '../types/LogAction';
 
 /**
  * Generate an express API route handler
@@ -512,7 +513,7 @@ const genRouteHandler = (
               ? opts.category
               : (
                 ((opts.category as any) ?? {})._
-                ?? LogBuiltInCategory.Uncategorized
+                ?? LogBuiltInMetadata.Category.Uncategorized
               )
           ),
           subcategory: (
@@ -520,7 +521,7 @@ const genRouteHandler = (
               ? opts.subcategory
               : (
                 ((opts.subcategory as any) ?? {})._
-                ?? LogBuiltInCategory.Uncategorized
+                ?? LogBuiltInMetadata.Category.Uncategorized
               )
           ),
           tags: opts.tags ?? [],
@@ -538,8 +539,14 @@ const genRouteHandler = (
             }
             : {
               type: LogType.Action,
-              target: (opts as any).target ?? 'Unknown',
-              action: (opts as any).action ?? 'Unknown'
+              target: (
+                (opts as any).target
+                ?? LogBuiltInMetadata.Target.NoSpecificTarget
+              ),
+              action: (
+                (opts as any).action
+                ?? LogAction.Unknown
+              ),
             }
         );
 
@@ -611,8 +618,8 @@ const genRouteHandler = (
           timestamp: Date.now(),
           tags: [],
           metadata: {},
-          category: LogBuiltInCategory.Uncategorized,
-          subcategory: LogBuiltInCategory.Uncategorized,
+          category: LogBuiltInMetadata.Category.Uncategorized,
+          subcategory: LogBuiltInMetadata.Category.Uncategorized,
         };
         
         const dummyTypeSpecificInfo: LogTypeSpecificInfo = {
@@ -692,7 +699,7 @@ const genRouteHandler = (
 
       // Log
       logServerEvent({
-        category: LogBuiltInCategory.ServerRenderedErrorPage,
+        category: LogBuiltInMetadata.Category.ServerRenderedErrorPage,
         error: {
           message: `${opts.title}: ${opts.description}`,
           code: opts.code,
@@ -733,7 +740,7 @@ const genRouteHandler = (
 
         // Log server-side error
         logServerEvent({
-          category: LogBuiltInCategory.ServerEndpointError,
+          category: LogBuiltInMetadata.Category.ServerEndpointError,
           error: err,
         });
 

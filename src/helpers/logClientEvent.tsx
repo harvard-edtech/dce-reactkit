@@ -1,6 +1,6 @@
 // Import shared types
 import LOG_ROUTE_PATH from '../constants/LOG_ROUTE_PATH';
-import LogBuiltInCategory from '../types/LogBuiltInCategory';
+import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 import LogFunction from '../types/LogFunction';
 
 // Import shared functions
@@ -20,7 +20,7 @@ const logClientEvent: LogFunction = async (opts) => {
           ? opts.category
           : (
             ((opts.category as any) ?? {})._
-            ?? LogBuiltInCategory.Uncategorized
+            ?? LogBuiltInMetadata.Category.Uncategorized
           )
       ),
       subcategory: (
@@ -28,7 +28,7 @@ const logClientEvent: LogFunction = async (opts) => {
           ? opts.subcategory
           : (
             ((opts.subcategory as any) ?? {})._
-            ?? LogBuiltInCategory.Uncategorized
+            ?? LogBuiltInMetadata.Category.Uncategorized
           )
       ),
       tags: JSON.stringify(opts.tags ?? []),
@@ -49,8 +49,11 @@ const logClientEvent: LogFunction = async (opts) => {
           : undefined
       ),
       target: (
-        (opts as any).target
-          ? (opts as any).target
+        (opts as any).action
+          ? (
+            (opts as any).target
+            ?? LogBuiltInMetadata.Target.NoSpecificTarget
+          )
           : undefined
       ),
       action: (

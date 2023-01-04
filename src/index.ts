@@ -63,7 +63,7 @@ import Log from './types/Log';
 import LogType from './types/LogType';
 import LogSource from './types/LogSource';
 import LogAction from './types/LogAction';
-import LogBuiltInCategory from './types/LogBuiltInCategory';
+import LogBuiltInCategory from './types/LogBuiltInMetadata';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';

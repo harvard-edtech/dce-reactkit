@@ -18,7 +18,7 @@ declare type LogFunction = (opts: ({
 } & ({
     error: any;
 } | {
-    target: string;
     action: LogAction;
+    target?: string;
 }))) => Promise<Log>;
 export default LogFunction;

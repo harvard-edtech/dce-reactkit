@@ -28,11 +28,13 @@ type LogFunction = (
       }
       // Action
       | {
+        // The type of action performed
+        action: LogAction,
         // Target of the action (each app determines the list of targets)
         // These are usually buttons, panels, elements, etc.
-        target: string,
-        // The type of action performed on the target
-        action: LogAction,
+        // If no target is included, this should indicate that this is an action
+        // being performed on the whole feature (open/close/etc)
+        target?: string,
       }
     )
   ),

@@ -2585,13 +2585,59 @@ var LogSource$1 = LogSource;
  * Built-in categories for logs
  * @author Gabe Abrams
  */
-var LogBuiltInCategory;
-(function (LogBuiltInCategory) {
-    LogBuiltInCategory["Uncategorized"] = "n/a";
-    LogBuiltInCategory["ServerRenderedErrorPage"] = "_server-rendered-error-page";
-    LogBuiltInCategory["ServerEndpointError"] = "_server-endpoint-error";
-})(LogBuiltInCategory || (LogBuiltInCategory = {}));
-var LogBuiltInCategory$1 = LogBuiltInCategory;
+const LogBuiltInMetadata = {
+    // Categories
+    Category: {
+        Uncategorized: 'n/a',
+        ServerRenderedErrorPage: '_server-rendered-error-page',
+        ServerEndpointError: '_server-endpoint-error',
+    },
+    // Targets
+    Target: {
+        NoSpecificTarget: 'n/a',
+    },
+};
+
+/**
+ * Types of actions
+ * @author Gabe Abrams
+ */
+var LogAction;
+(function (LogAction) {
+    // Target was opened by the user (it was not on screen, but now it is)
+    LogAction["Open"] = "open";
+    // Target was closed by the user (it was on screen, but now it is not)
+    LogAction["Close"] = "close";
+    // Target was cancelled by the user (it was on closed without saving)
+    LogAction["Cancel"] = "cancel";
+    // Target was expanded by the user (it always remains on screen, but size was changed)
+    LogAction["Expand"] = "expand";
+    // Target was collapsed by the user (it always remains on screen, but size was changed)
+    LogAction["Collapse"] = "collapse";
+    // Target was viewed by the user (only for items that are not opened or closed, those must use Open/Close actions)
+    LogAction["View"] = "view";
+    // Target interrupted the user (popup, dialog, validation message, etc. appeared without user prompting)
+    LogAction["Interrupt"] = "interrupt";
+    // Target was created by the user (it did not exist before)
+    LogAction["Create"] = "create";
+    // Target was edited by the user (it existed and was changed)
+    LogAction["Edit"] = "edit";
+    // Target was deleted by the user (it existed and now it doesn't)
+    LogAction["Delete"] = "delete";
+    // Target was added by the user (it already existed and was added to another place)
+    LogAction["Add"] = "add";
+    // Target was removed by the user (it was removed from something but still exists)
+    LogAction["Remove"] = "remove";
+    // Target was activated by the user (click, check, tap, keypress, etc.)
+    LogAction["Activate"] = "activate";
+    // Target was deactivated by the user (click away, uncheck, tap outside of, tab away, etc.)
+    LogAction["Deactivate"] = "deactivate";
+    // User showed interest in a target (hover, peek, etc.)
+    LogAction["Peek"] = "peek";
+    // Unknown action
+    LogAction["Unknown"] = "unknown";
+})(LogAction || (LogAction = {}));
+var LogAction$1 = LogAction;
 
 /**
  * Generate an express API route handler
@@ -2949,10 +2995,10 @@ const genRouteHandler = (opts) => {
                     timestamp,
                     category: (typeof opts.category === 'string'
                         ? opts.category
-                        : ((_d = ((_c = opts.category) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInCategory$1.Uncategorized)),
+                        : ((_d = ((_c = opts.category) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Category.Uncategorized)),
                     subcategory: (typeof opts.category === 'string'
                         ? opts.subcategory
-                        : ((_f = ((_e = opts.subcategory) !== null && _e !== void 0 ? _e : {})._) !== null && _f !== void 0 ? _f : LogBuiltInCategory$1.Uncategorized)),
+                        : ((_f = ((_e = opts.subcategory) !== null && _e !== void 0 ? _e : {})._) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Category.Uncategorized)),
                     tags: (_g = opts.tags) !== null && _g !== void 0 ? _g : [],
                     metadata: (_h = opts.metadata) !== null && _h !== void 0 ? _h : {},
                 };
@@ -2966,8 +3012,8 @@ const genRouteHandler = (opts) => {
                     }
                     : {
                         type: LogType$1.Action,
-                        target: (_m = opts.target) !== null && _m !== void 0 ? _m : 'Unknown',
-                        action: (_o = opts.action) !== null && _o !== void 0 ? _o : 'Unknown'
+                        target: ((_m = opts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoSpecificTarget),
+                        action: ((_o = opts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
                     });
                 // Source-specific info
                 const sourceSpecificInfo = (opts.overrideAsClientEvent
@@ -3030,8 +3076,8 @@ const genRouteHandler = (opts) => {
                     timestamp: Date.now(),
                     tags: [],
                     metadata: {},
-                    category: LogBuiltInCategory$1.Uncategorized,
-                    subcategory: LogBuiltInCategory$1.Uncategorized,
+                    category: LogBuiltInMetadata.Category.Uncategorized,
+                    subcategory: LogBuiltInMetadata.Category.Uncategorized,
                 };
                 const dummyTypeSpecificInfo = {
                     type: LogType$1.Error,
@@ -3090,7 +3136,7 @@ const genRouteHandler = (opts) => {
             send(html, (_a = opts.status) !== null && _a !== void 0 ? _a : 500);
             // Log
             logServerEvent({
-                category: LogBuiltInCategory$1.ServerRenderedErrorPage,
+                category: LogBuiltInMetadata.Category.ServerRenderedErrorPage,
                 error: {
                     message: `${opts.title}: ${opts.description}`,
                     code: opts.code,
@@ -3129,7 +3175,7 @@ const genRouteHandler = (opts) => {
                 handleError(res, err);
                 // Log server-side error
                 logServerEvent({
-                    category: LogBuiltInCategory$1.ServerEndpointError,
+                    category: LogBuiltInMetadata.Category.ServerEndpointError,
                     error: err,
                 });
                 return;
@@ -3331,17 +3377,17 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
  * @author Gabe Abrams
  */
 const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     return visitServerEndpoint({
         path: LOG_ROUTE_PATH,
         method: 'POST',
         params: {
             category: (typeof opts.category === 'string'
                 ? opts.category
-                : ((_b = ((_a = opts.category) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInCategory$1.Uncategorized)),
+                : ((_b = ((_a = opts.category) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInMetadata.Category.Uncategorized)),
             subcategory: (typeof opts.category === 'string'
                 ? opts.subcategory
-                : ((_d = ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInCategory$1.Uncategorized)),
+                : ((_d = ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Category.Uncategorized)),
             tags: JSON.stringify((_e = opts.tags) !== null && _e !== void 0 ? _e : []),
             metadata: JSON.stringify((_f = opts.metadata) !== null && _f !== void 0 ? _f : {}),
             errorMessage: (opts.error
@@ -3353,8 +3399,8 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
             errorStack: (opts.error
                 ? opts.error.stack
                 : undefined),
-            target: (opts.target
-                ? opts.target
+            target: (opts.action
+                ? ((_g = opts.target) !== null && _g !== void 0 ? _g : LogBuiltInMetadata.Target.NoSpecificTarget)
                 : undefined),
             action: (opts.action
                 ? opts.action
@@ -3397,47 +3443,6 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-/**
- * Types of actions
- * @author Gabe Abrams
- */
-var LogAction;
-(function (LogAction) {
-    // Target was opened by the user (it was not on screen, but now it is)
-    LogAction["Open"] = "open";
-    // Target was closed by the user (it was on screen, but now it is not)
-    LogAction["Close"] = "close";
-    // Target was cancelled by the user (it was on closed without saving)
-    LogAction["Cancel"] = "cancel";
-    // Target was expanded by the user (it always remains on screen, but size was changed)
-    LogAction["Expand"] = "expand";
-    // Target was collapsed by the user (it always remains on screen, but size was changed)
-    LogAction["Collapse"] = "collapse";
-    // Target was viewed by the user (only for items that are not opened or closed, those must use Open/Close actions)
-    LogAction["View"] = "view";
-    // Target interrupted the user (popup, dialog, validation message, etc. appeared without user prompting)
-    LogAction["Interrupt"] = "interrupt";
-    // Target was created by the user (it did not exist before)
-    LogAction["Create"] = "create";
-    // Target was edited by the user (it existed and was changed)
-    LogAction["Edit"] = "edit";
-    // Target was deleted by the user (it existed and now it doesn't)
-    LogAction["Delete"] = "delete";
-    // Target was added by the user (it already existed and was added to another place)
-    LogAction["Add"] = "add";
-    // Target was removed by the user (it was removed from something but still exists)
-    LogAction["Remove"] = "remove";
-    // Target was activated by the user (click, check, tap, keypress, etc.)
-    LogAction["Activate"] = "activate";
-    // Target was deactivated by the user (click away, uncheck, tap outside of, tab away, etc.)
-    LogAction["Deactivate"] = "deactivate";
-    // User showed interest in a target (hover, peek, etc.)
-    LogAction["Peek"] = "peek";
-    // Unknown action
-    LogAction["Unknown"] = "unknown";
-})(LogAction || (LogAction = {}));
-var LogAction$1 = LogAction;
-
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CheckboxButton = CheckboxButton;
@@ -3451,7 +3456,7 @@ exports.HOUR_IN_MS = HOUR_IN_MS;
 exports.ItemPicker = ItemPicker;
 exports.LoadingSpinner = LoadingSpinner;
 exports.LogAction = LogAction$1;
-exports.LogBuiltInCategory = LogBuiltInCategory$1;
+exports.LogBuiltInCategory = LogBuiltInMetadata;
 exports.LogSource = LogSource$1;
 exports.LogType = LogType$1;
 exports.MINUTE_IN_MS = MINUTE_IN_MS;

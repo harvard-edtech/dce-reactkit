@@ -54,6 +54,6 @@ import Log from './types/Log';
 import LogType from './types/LogType';
 import LogSource from './types/LogSource';
 import LogAction from './types/LogAction';
-import LogBuiltInCategory from './types/LogBuiltInCategory';
+import LogBuiltInCategory from './types/LogBuiltInMetadata';
 import PickableItem from './components/ItemPicker/types/PickableItem';
 export { AppWrapper, LoadingSpinner, ErrorBox, Modal, TabBox, RadioButton, CheckboxButton, ButtonInputGroup, SimpleDateChooser, Drawer, PopSuccessMark, PopFailureMark, PopPendingMark, CopiableBox, ItemPicker, alert, confirm, showFatalError, ErrorWithCode, MINUTE_IN_MS, HOUR_IN_MS, DAY_IN_MS, abbreviate, avg, ceilToNumDecimals, floorToNumDecimals, forceNumIntoBounds, padDecimalZeros, padZerosLeft, roundToNumDecimals, sum, waitMs, getOrdinal, getTimeInfoInET, stubServerEndpoint, startMinWait, getHumanReadableDate, getPartOfDay, stringsToHumanReadableList, onlyKeepLetters, parallelLimit, visitServerEndpoint, logClientEvent, initServer, genRouteHandler, handleError, handleSuccess, initLogCollection, ModalButtonType, ModalSize, ModalType, ReactKitErrorCode, Variant, DayOfWeek, Log, LogType, LogSource, LogAction, LogBuiltInCategory, PickableItem, ParamType, };

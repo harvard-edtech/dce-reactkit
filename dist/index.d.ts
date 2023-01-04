@@ -645,8 +645,8 @@ declare type LogFunction = (opts: ({
 } & ({
     error: any;
 } | {
-    target: string;
     action: LogAction;
+    target?: string;
 }))) => Promise<Log>;
 
 /**
@@ -886,10 +886,15 @@ declare enum DayOfWeek {
  * Built-in categories for logs
  * @author Gabe Abrams
  */
-declare enum LogBuiltInCategory {
-    Uncategorized = "n/a",
-    ServerRenderedErrorPage = "_server-rendered-error-page",
-    ServerEndpointError = "_server-endpoint-error"
-}
+declare const LogBuiltInMetadata: {
+    Category: {
+        Uncategorized: string;
+        ServerRenderedErrorPage: string;
+        ServerEndpointError: string;
+    };
+    Target: {
+        NoSpecificTarget: string;
+    };
+};
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInCategory, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata as LogBuiltInCategory, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
