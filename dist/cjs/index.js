@@ -2963,7 +2963,7 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+            var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
@@ -2996,24 +2996,22 @@ const genRouteHandler = (opts) => {
                     context: (typeof opts.context === 'string'
                         ? opts.context
                         : ((_d = ((_c = opts.context) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
-                    subcontext: (typeof opts.context === 'string'
-                        ? opts.subcontext
-                        : ((_f = ((_e = opts.subcontext) !== null && _e !== void 0 ? _e : {})._) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Context.Uncategorized)),
-                    tags: (_g = opts.tags) !== null && _g !== void 0 ? _g : [],
-                    metadata: (_h = opts.metadata) !== null && _h !== void 0 ? _h : {},
+                    subcontext: ((_e = opts.subcontext) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized),
+                    tags: (_f = opts.tags) !== null && _f !== void 0 ? _f : [],
+                    metadata: (_g = opts.metadata) !== null && _g !== void 0 ? _g : {},
                 };
                 // Type-specific info
                 const typeSpecificInfo = (('error' in opts && opts.error)
                     ? {
                         type: LogType$1.Error,
-                        errorMessage: (_j = opts.error.message) !== null && _j !== void 0 ? _j : 'Unknown message',
-                        errorCode: (_k = opts.error.code) !== null && _k !== void 0 ? _k : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_l = opts.error.stack) !== null && _l !== void 0 ? _l : 'No stack',
+                        errorMessage: (_h = opts.error.message) !== null && _h !== void 0 ? _h : 'Unknown message',
+                        errorCode: (_j = opts.error.code) !== null && _j !== void 0 ? _j : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_k = opts.error.stack) !== null && _k !== void 0 ? _k : 'No stack',
                     }
                     : {
                         type: LogType$1.Action,
-                        target: ((_m = opts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoSpecificTarget),
-                        action: ((_o = opts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
+                        target: ((_l = opts.target) !== null && _l !== void 0 ? _l : LogBuiltInMetadata.Target.NoSpecificTarget),
+                        action: ((_m = opts.action) !== null && _m !== void 0 ? _m : LogAction$1.Unknown),
                     });
                 // Source-specific info
                 const sourceSpecificInfo = (opts.overrideAsClientEvent
@@ -3377,7 +3375,7 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
  * @author Gabe Abrams
  */
 const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f;
     return visitServerEndpoint({
         path: LOG_ROUTE_PATH,
         method: 'POST',
@@ -3385,11 +3383,9 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
             context: (typeof opts.context === 'string'
                 ? opts.context
                 : ((_b = ((_a = opts.context) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInMetadata.Context.Uncategorized)),
-            subcontext: (typeof opts.context === 'string'
-                ? opts.subcontext
-                : ((_d = ((_c = opts.subcontext) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
-            tags: JSON.stringify((_e = opts.tags) !== null && _e !== void 0 ? _e : []),
-            metadata: JSON.stringify((_f = opts.metadata) !== null && _f !== void 0 ? _f : {}),
+            subcontext: ((_c = opts.subcontext) !== null && _c !== void 0 ? _c : LogBuiltInMetadata.Context.Uncategorized),
+            tags: JSON.stringify((_d = opts.tags) !== null && _d !== void 0 ? _d : []),
+            metadata: JSON.stringify((_e = opts.metadata) !== null && _e !== void 0 ? _e : {}),
             errorMessage: (opts.error
                 ? opts.error.message
                 : undefined),
@@ -3400,7 +3396,7 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
                 ? opts.error.stack
                 : undefined),
             target: (opts.action
-                ? ((_g = opts.target) !== null && _g !== void 0 ? _g : LogBuiltInMetadata.Target.NoSpecificTarget)
+                ? ((_f = opts.target) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Target.NoSpecificTarget)
                 : undefined),
             action: (opts.action
                 ? opts.action

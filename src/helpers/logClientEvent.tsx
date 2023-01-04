@@ -24,12 +24,8 @@ const logClientEvent: LogFunction = async (opts) => {
           )
       ),
       subcontext: (
-        typeof opts.context === 'string'
-          ? opts.subcontext
-          : (
-            ((opts.subcontext as any) ?? {})._
-            ?? LogBuiltInMetadata.Context.Uncategorized
-          )
+        opts.subcontext
+        ?? LogBuiltInMetadata.Context.Uncategorized
       ),
       tags: JSON.stringify(opts.tags ?? []),
       metadata: JSON.stringify(opts.metadata ?? {}),

@@ -13,7 +13,7 @@ type LogFunction = (
       // Context of the event (each app determines how to organize contexts)
       context: string | { _: string },
       // Subcontext of the event (each app determines how to organize subcontexts)
-      subcontext?: string | { _: string },
+      subcontext?: string,
       // List of tags that apply to this action (each app determines tag usage)
       tags?: string[],
       // Additional optional custom metadata

@@ -635,9 +635,7 @@ declare type LogFunction = (opts: ({
     context: string | {
         _: string;
     };
-    subcontext?: string | {
-        _: string;
-    };
+    subcontext?: string;
     tags?: string[];
     metadata?: {
         [k: string]: any;
