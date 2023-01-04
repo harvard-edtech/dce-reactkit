@@ -632,10 +632,10 @@ declare type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
  */
 declare type LogFunction = (opts: ({
     category: string | {
-        name: string;
+        _: string;
     };
     subcategory?: string | {
-        name: string;
+        _: string;
     };
     tags?: string[];
     metadata?: {

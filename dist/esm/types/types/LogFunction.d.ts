@@ -6,10 +6,10 @@ import LogAction from './LogAction';
  */
 declare type LogFunction = (opts: ({
     category: string | {
-        name: string;
+        _: string;
     };
     subcategory?: string | {
-        name: string;
+        _: string;
     };
     tags?: string[];
     metadata?: {
