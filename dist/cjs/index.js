@@ -2917,7 +2917,7 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _c, _d, _e, _f, _g, _h, _j, _k;
+            var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
@@ -2949,25 +2949,25 @@ const genRouteHandler = (opts) => {
                     timestamp,
                     category: (typeof opts.category === 'string'
                         ? opts.category
-                        : opts.category.name),
+                        : ((_d = ((_c = opts.category) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInCategory$1.Uncategorized)),
                     subcategory: (typeof opts.category === 'string'
                         ? opts.subcategory
-                        : ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : {}).name),
-                    tags: (_d = opts.tags) !== null && _d !== void 0 ? _d : [],
-                    metadata: (_e = opts.metadata) !== null && _e !== void 0 ? _e : {},
+                        : ((_f = ((_e = opts.subcategory) !== null && _e !== void 0 ? _e : {})._) !== null && _f !== void 0 ? _f : LogBuiltInCategory$1.Uncategorized)),
+                    tags: (_g = opts.tags) !== null && _g !== void 0 ? _g : [],
+                    metadata: (_h = opts.metadata) !== null && _h !== void 0 ? _h : {},
                 };
                 // Type-specific info
                 const typeSpecificInfo = (('error' in opts && opts.error)
                     ? {
                         type: LogType$1.Error,
-                        errorMessage: (_f = opts.error.message) !== null && _f !== void 0 ? _f : 'Unknown message',
-                        errorCode: (_g = opts.error.code) !== null && _g !== void 0 ? _g : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_h = opts.error.stack) !== null && _h !== void 0 ? _h : 'No stack',
+                        errorMessage: (_j = opts.error.message) !== null && _j !== void 0 ? _j : 'Unknown message',
+                        errorCode: (_k = opts.error.code) !== null && _k !== void 0 ? _k : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_l = opts.error.stack) !== null && _l !== void 0 ? _l : 'No stack',
                     }
                     : {
                         type: LogType$1.Action,
-                        target: (_j = opts.target) !== null && _j !== void 0 ? _j : 'Unknown',
-                        action: (_k = opts.action) !== null && _k !== void 0 ? _k : 'Unknown'
+                        target: (_m = opts.target) !== null && _m !== void 0 ? _m : 'Unknown',
+                        action: (_o = opts.action) !== null && _o !== void 0 ? _o : 'Unknown'
                     });
                 // Source-specific info
                 const sourceSpecificInfo = (opts.overrideAsClientEvent
@@ -3331,19 +3331,19 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
  * @author Gabe Abrams
  */
 const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c, _d, _e;
     return visitServerEndpoint({
         path: LOG_ROUTE_PATH,
         method: 'POST',
         params: {
             category: (typeof opts.category === 'string'
                 ? opts.category
-                : opts.category.name),
+                : ((_b = ((_a = opts.category) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInCategory$1.Uncategorized)),
             subcategory: (typeof opts.category === 'string'
                 ? opts.subcategory
-                : ((_a = opts.subcategory) !== null && _a !== void 0 ? _a : { name: 'none' }).name),
+                : ((_d = ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInCategory$1.Uncategorized)),
             tags: JSON.stringify(opts.tags),
-            metadata: JSON.stringify((_b = opts.metadata) !== null && _b !== void 0 ? _b : {}),
+            metadata: JSON.stringify((_e = opts.metadata) !== null && _e !== void 0 ? _e : {}),
             errorMessage: (opts.error
                 ? opts.error.message
                 : undefined),

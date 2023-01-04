@@ -510,12 +510,18 @@ const genRouteHandler = (
           category: (
             typeof opts.category === 'string'
               ? opts.category
-              : opts.category.name
+              : (
+                ((opts.category as any) ?? {})._
+                ?? LogBuiltInCategory.Uncategorized
+              )
           ),
           subcategory: (
             typeof opts.category === 'string'
               ? opts.subcategory
-              : ((opts.subcategory as any) ?? {}).name
+              : (
+                ((opts.subcategory as any) ?? {})._
+                ?? LogBuiltInCategory.Uncategorized
+              )
           ),
           tags: opts.tags ?? [],
           metadata: opts.metadata ?? {},
