@@ -3407,6 +3407,8 @@ var LogAction;
     LogAction["Open"] = "open";
     // Target was closed by the user (it was on screen, but now it is not)
     LogAction["Close"] = "close";
+    // Target was cancelled by the user (it was on closed without saving)
+    LogAction["Cancel"] = "cancel";
     // Target was expanded by the user (it always remains on screen, but size was changed)
     LogAction["Expand"] = "expand";
     // Target was collapsed by the user (it always remains on screen, but size was changed)

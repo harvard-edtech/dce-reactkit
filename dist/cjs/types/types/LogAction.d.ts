@@ -5,6 +5,7 @@
 declare enum LogAction {
     Open = "open",
     Close = "close",
+    Cancel = "cancel",
     Expand = "expand",
     Collapse = "collapse",
     View = "view",

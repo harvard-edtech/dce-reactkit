@@ -7,6 +7,8 @@ enum LogAction {
   Open = 'open',
   // Target was closed by the user (it was on screen, but now it is not)
   Close = 'close',
+  // Target was cancelled by the user (it was on closed without saving)
+  Cancel = 'cancel',
   // Target was expanded by the user (it always remains on screen, but size was changed)
   Expand = 'expand',
   // Target was collapsed by the user (it always remains on screen, but size was changed)
