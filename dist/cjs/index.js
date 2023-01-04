@@ -3331,7 +3331,7 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
  * @author Gabe Abrams
  */
 const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     return visitServerEndpoint({
         path: LOG_ROUTE_PATH,
         method: 'POST',
@@ -3342,8 +3342,8 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
             subcategory: (typeof opts.category === 'string'
                 ? opts.subcategory
                 : ((_d = ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInCategory$1.Uncategorized)),
-            tags: JSON.stringify(opts.tags),
-            metadata: JSON.stringify((_e = opts.metadata) !== null && _e !== void 0 ? _e : {}),
+            tags: JSON.stringify((_e = opts.tags) !== null && _e !== void 0 ? _e : []),
+            metadata: JSON.stringify((_f = opts.metadata) !== null && _f !== void 0 ? _f : {}),
             errorMessage: (opts.error
                 ? opts.error.message
                 : undefined),

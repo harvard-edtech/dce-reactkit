@@ -31,7 +31,7 @@ const logClientEvent: LogFunction = async (opts) => {
             ?? LogBuiltInCategory.Uncategorized
           )
       ),
-      tags: JSON.stringify(opts.tags),
+      tags: JSON.stringify(opts.tags ?? []),
       metadata: JSON.stringify(opts.metadata ?? {}),
       errorMessage: (
         (opts as any).error
