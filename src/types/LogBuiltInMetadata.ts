@@ -1,10 +1,10 @@
 /**
- * Built-in categories for logs
+ * Built-in metadata for logs
  * @author Gabe Abrams
  */
 const LogBuiltInMetadata = {
-  // Categories
-  Category: {
+  // Contexts
+  Context: {
     Uncategorized: 'n/a',
     ServerRenderedErrorPage: '_server-rendered-error-page',
     ServerEndpointError: '_server-endpoint-error',

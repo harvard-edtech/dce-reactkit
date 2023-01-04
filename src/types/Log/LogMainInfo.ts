@@ -49,10 +49,10 @@ type LogMainInfo = {
   minute: number,
   // Timestamp of event (ms since epoch)
   timestamp: number,
-  // Category of the event (each app determines how to categorize its events)
-  category: string,
-  // Subcategory of the event (each app determines how to categorize its events)
-  subcategory: string,
+  // Context of the event (each app determines how to organize contexts)
+  context: string,
+  // Subcontext of the event (each app determines how to organize subcontexts)
+  subcontext: string,
   // List of tags that apply to this action (each app determines tag usage)
   tags: string[],
   // Additional optional custom metadata

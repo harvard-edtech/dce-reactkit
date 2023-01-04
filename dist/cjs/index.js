@@ -2203,10 +2203,10 @@ const initServer = (opts) => {
     /**
      * Log an event
      * @author Gabe Abrams
-     * @param {string} category Category of the event (each app determines how to
-     *   categorize its events)
-     * @param {string} subcategory Subcategory of the event (each app determines
-     *   how to categorize its events)
+     * @param {string} context Context of the event (each app determines how to
+     *   organize its contexts)
+     * @param {string} subcontext Subcontext of the event (each app determines
+     *   how to organize its subcontexts)
      * @param {string} tags stringified list of tags that apply to this action
      *   (each app determines tag usage)
      * @param {string} metadata stringified object containing optional custom metadata
@@ -2220,8 +2220,8 @@ const initServer = (opts) => {
      */
     opts.app.post(LOG_ROUTE_PATH, genRouteHandler({
         paramTypes: {
-            category: ParamType$1.String,
-            subcategory: ParamType$1.String,
+            context: ParamType$1.String,
+            subcontext: ParamType$1.String,
             tags: ParamType$1.JSON,
             metadata: ParamType$1.JSON,
             errorMessage: ParamType$1.StringOptional,
@@ -2234,8 +2234,8 @@ const initServer = (opts) => {
             const log = logServerEvent((params.errorMessage || params.errorCode || params.errorStack)
                 // Error
                 ? {
-                    category: params.category,
-                    subcategory: params.subcategory,
+                    context: params.context,
+                    subcontext: params.subcontext,
                     tags: params.tags,
                     metadata: params.metadata,
                     error: {
@@ -2246,8 +2246,8 @@ const initServer = (opts) => {
                 }
                 // Action
                 : {
-                    category: params.category,
-                    subcategory: params.subcategory,
+                    context: params.context,
+                    subcontext: params.subcontext,
                     tags: params.tags,
                     metadata: params.metadata,
                     target: params.target,
@@ -2582,12 +2582,12 @@ var LogSource;
 var LogSource$1 = LogSource;
 
 /**
- * Built-in categories for logs
+ * Built-in metadata for logs
  * @author Gabe Abrams
  */
 const LogBuiltInMetadata = {
-    // Categories
-    Category: {
+    // Contexts
+    Context: {
         Uncategorized: 'n/a',
         ServerRenderedErrorPage: '_server-rendered-error-page',
         ServerEndpointError: '_server-endpoint-error',
@@ -2993,12 +2993,12 @@ const genRouteHandler = (opts) => {
                     hour,
                     minute,
                     timestamp,
-                    category: (typeof opts.category === 'string'
-                        ? opts.category
-                        : ((_d = ((_c = opts.category) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Category.Uncategorized)),
-                    subcategory: (typeof opts.category === 'string'
-                        ? opts.subcategory
-                        : ((_f = ((_e = opts.subcategory) !== null && _e !== void 0 ? _e : {})._) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Category.Uncategorized)),
+                    context: (typeof opts.context === 'string'
+                        ? opts.context
+                        : ((_d = ((_c = opts.context) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
+                    subcontext: (typeof opts.context === 'string'
+                        ? opts.subcontext
+                        : ((_f = ((_e = opts.subcontext) !== null && _e !== void 0 ? _e : {})._) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Context.Uncategorized)),
                     tags: (_g = opts.tags) !== null && _g !== void 0 ? _g : [],
                     metadata: (_h = opts.metadata) !== null && _h !== void 0 ? _h : {},
                 };
@@ -3076,8 +3076,8 @@ const genRouteHandler = (opts) => {
                     timestamp: Date.now(),
                     tags: [],
                     metadata: {},
-                    category: LogBuiltInMetadata.Category.Uncategorized,
-                    subcategory: LogBuiltInMetadata.Category.Uncategorized,
+                    context: LogBuiltInMetadata.Context.Uncategorized,
+                    subcontext: LogBuiltInMetadata.Context.Uncategorized,
                 };
                 const dummyTypeSpecificInfo = {
                     type: LogType$1.Error,
@@ -3136,7 +3136,7 @@ const genRouteHandler = (opts) => {
             send(html, (_a = opts.status) !== null && _a !== void 0 ? _a : 500);
             // Log
             logServerEvent({
-                category: LogBuiltInMetadata.Category.ServerRenderedErrorPage,
+                context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
                 error: {
                     message: `${opts.title}: ${opts.description}`,
                     code: opts.code,
@@ -3175,7 +3175,7 @@ const genRouteHandler = (opts) => {
                 handleError(res, err);
                 // Log server-side error
                 logServerEvent({
-                    category: LogBuiltInMetadata.Category.ServerEndpointError,
+                    context: LogBuiltInMetadata.Context.ServerEndpointError,
                     error: err,
                 });
                 return;
@@ -3382,12 +3382,12 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
         path: LOG_ROUTE_PATH,
         method: 'POST',
         params: {
-            category: (typeof opts.category === 'string'
-                ? opts.category
-                : ((_b = ((_a = opts.category) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInMetadata.Category.Uncategorized)),
-            subcategory: (typeof opts.category === 'string'
-                ? opts.subcategory
-                : ((_d = ((_c = opts.subcategory) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Category.Uncategorized)),
+            context: (typeof opts.context === 'string'
+                ? opts.context
+                : ((_b = ((_a = opts.context) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInMetadata.Context.Uncategorized)),
+            subcontext: (typeof opts.context === 'string'
+                ? opts.subcontext
+                : ((_d = ((_c = opts.subcontext) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
             tags: JSON.stringify((_e = opts.tags) !== null && _e !== void 0 ? _e : []),
             metadata: JSON.stringify((_f = opts.metadata) !== null && _f !== void 0 ? _f : {}),
             errorMessage: (opts.error
@@ -3420,8 +3420,8 @@ const initLogCollection = (Collection) => {
         uniqueIndexKey: 'id',
         indexKeys: [
             'courseId',
-            'category',
-            'subcategory',
+            'context',
+            'subcontext',
             'tags',
         ],
     });
@@ -3456,7 +3456,7 @@ exports.HOUR_IN_MS = HOUR_IN_MS;
 exports.ItemPicker = ItemPicker;
 exports.LoadingSpinner = LoadingSpinner;
 exports.LogAction = LogAction$1;
-exports.LogBuiltInCategory = LogBuiltInMetadata;
+exports.LogBuiltInMetadata = LogBuiltInMetadata;
 exports.LogSource = LogSource$1;
 exports.LogType = LogType$1;
 exports.MINUTE_IN_MS = MINUTE_IN_MS;

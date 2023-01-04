@@ -15,20 +15,20 @@ const logClientEvent: LogFunction = async (opts) => {
     path: LOG_ROUTE_PATH,
     method: 'POST',
     params: {
-      category: (
-        typeof opts.category === 'string'
-          ? opts.category
+      context: (
+        typeof opts.context === 'string'
+          ? opts.context
           : (
-            ((opts.category as any) ?? {})._
-            ?? LogBuiltInMetadata.Category.Uncategorized
+            ((opts.context as any) ?? {})._
+            ?? LogBuiltInMetadata.Context.Uncategorized
           )
       ),
-      subcategory: (
-        typeof opts.category === 'string'
-          ? opts.subcategory
+      subcontext: (
+        typeof opts.context === 'string'
+          ? opts.subcontext
           : (
-            ((opts.subcategory as any) ?? {})._
-            ?? LogBuiltInMetadata.Category.Uncategorized
+            ((opts.subcontext as any) ?? {})._
+            ?? LogBuiltInMetadata.Context.Uncategorized
           )
       ),
       tags: JSON.stringify(opts.tags ?? []),

@@ -79,10 +79,10 @@ const initServer = (
   /**
    * Log an event
    * @author Gabe Abrams
-   * @param {string} category Category of the event (each app determines how to
-   *   categorize its events)
-   * @param {string} subcategory Subcategory of the event (each app determines
-   *   how to categorize its events)
+   * @param {string} context Context of the event (each app determines how to
+   *   organize its contexts)
+   * @param {string} subcontext Subcontext of the event (each app determines
+   *   how to organize its subcontexts)
    * @param {string} tags stringified list of tags that apply to this action
    *   (each app determines tag usage)
    * @param {string} metadata stringified object containing optional custom metadata
@@ -98,8 +98,8 @@ const initServer = (
     LOG_ROUTE_PATH,
     genRouteHandler({
       paramTypes: {
-        category: ParamType.String,
-        subcategory: ParamType.String,
+        context: ParamType.String,
+        subcontext: ParamType.String,
         tags: ParamType.JSON,
         metadata: ParamType.JSON,
         errorMessage: ParamType.StringOptional,
@@ -113,8 +113,8 @@ const initServer = (
           (params.errorMessage || params.errorCode || params.errorStack)
             // Error
             ? {
-              category: params.category,
-              subcategory: params.subcategory,
+              context: params.context,
+              subcontext: params.subcontext,
               tags: params.tags,
               metadata: params.metadata,
               error: {
@@ -125,8 +125,8 @@ const initServer = (
             }
             // Action
             : {
-              category: params.category,
-              subcategory: params.subcategory,
+              context: params.context,
+              subcontext: params.subcontext,
               tags: params.tags,
               metadata: params.metadata,
               target: params.target,

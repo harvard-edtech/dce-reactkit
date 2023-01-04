@@ -1,9 +1,9 @@
 /**
- * Built-in categories for logs
+ * Built-in metadata for logs
  * @author Gabe Abrams
  */
 declare const LogBuiltInMetadata: {
-    Category: {
+    Context: {
         Uncategorized: string;
         ServerRenderedErrorPage: string;
         ServerEndpointError: string;

@@ -10,10 +10,10 @@ type LogFunction = (
   opts: (
     // Shared info
     {
-      // Category of the event (each app determines how to categorize its events)
-      category: string | { _: string },
-      // Subcategory of the event (each app determines how to categorize its events)
-      subcategory?: string | { _: string },
+      // Context of the event (each app determines how to organize contexts)
+      context: string | { _: string },
+      // Subcontext of the event (each app determines how to organize subcontexts)
+      subcontext?: string | { _: string },
       // List of tags that apply to this action (each app determines tag usage)
       tags?: string[],
       // Additional optional custom metadata

@@ -544,8 +544,8 @@ declare type LogMainInfo = {
     hour: number;
     minute: number;
     timestamp: number;
-    category: string;
-    subcategory: string;
+    context: string;
+    subcontext: string;
     tags: string[];
     metadata?: {
         [k: string]: any;
@@ -632,10 +632,10 @@ declare type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
  * @author Gabe Abrams
  */
 declare type LogFunction = (opts: ({
-    category: string | {
+    context: string | {
         _: string;
     };
-    subcategory?: string | {
+    subcontext?: string | {
         _: string;
     };
     tags?: string[];
@@ -883,11 +883,11 @@ declare enum DayOfWeek {
 }
 
 /**
- * Built-in categories for logs
+ * Built-in metadata for logs
  * @author Gabe Abrams
  */
 declare const LogBuiltInMetadata: {
-    Category: {
+    Context: {
         Uncategorized: string;
         ServerRenderedErrorPage: string;
         ServerEndpointError: string;
@@ -897,4 +897,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata as LogBuiltInCategory, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

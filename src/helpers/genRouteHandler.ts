@@ -508,20 +508,20 @@ const genRouteHandler = (
           hour,
           minute,
           timestamp,
-          category: (
-            typeof opts.category === 'string'
-              ? opts.category
+          context: (
+            typeof opts.context === 'string'
+              ? opts.context
               : (
-                ((opts.category as any) ?? {})._
-                ?? LogBuiltInMetadata.Category.Uncategorized
+                ((opts.context as any) ?? {})._
+                ?? LogBuiltInMetadata.Context.Uncategorized
               )
           ),
-          subcategory: (
-            typeof opts.category === 'string'
-              ? opts.subcategory
+          subcontext: (
+            typeof opts.context === 'string'
+              ? opts.subcontext
               : (
-                ((opts.subcategory as any) ?? {})._
-                ?? LogBuiltInMetadata.Category.Uncategorized
+                ((opts.subcontext as any) ?? {})._
+                ?? LogBuiltInMetadata.Context.Uncategorized
               )
           ),
           tags: opts.tags ?? [],
@@ -618,8 +618,8 @@ const genRouteHandler = (
           timestamp: Date.now(),
           tags: [],
           metadata: {},
-          category: LogBuiltInMetadata.Category.Uncategorized,
-          subcategory: LogBuiltInMetadata.Category.Uncategorized,
+          context: LogBuiltInMetadata.Context.Uncategorized,
+          subcontext: LogBuiltInMetadata.Context.Uncategorized,
         };
         
         const dummyTypeSpecificInfo: LogTypeSpecificInfo = {
@@ -699,7 +699,7 @@ const genRouteHandler = (
 
       // Log
       logServerEvent({
-        category: LogBuiltInMetadata.Category.ServerRenderedErrorPage,
+        context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
         error: {
           message: `${opts.title}: ${opts.description}`,
           code: opts.code,
@@ -740,7 +740,7 @@ const genRouteHandler = (
 
         // Log server-side error
         logServerEvent({
-          category: LogBuiltInMetadata.Category.ServerEndpointError,
+          context: LogBuiltInMetadata.Context.ServerEndpointError,
           error: err,
         });
 

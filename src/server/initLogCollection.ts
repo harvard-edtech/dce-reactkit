@@ -11,8 +11,8 @@ const initLogCollection = (Collection: any) => {
       uniqueIndexKey: 'id',
       indexKeys: [
         'courseId',
-        'category',
-        'subcategory',
+        'context',
+        'subcontext',
         'tags',
       ],
     },

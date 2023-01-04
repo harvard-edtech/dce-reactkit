@@ -5,10 +5,10 @@ import LogAction from './LogAction';
  * @author Gabe Abrams
  */
 declare type LogFunction = (opts: ({
-    category: string | {
+    context: string | {
         _: string;
     };
-    subcategory?: string | {
+    subcontext?: string | {
         _: string;
     };
     tags?: string[];

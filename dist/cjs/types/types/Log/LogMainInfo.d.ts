@@ -27,8 +27,8 @@ declare type LogMainInfo = {
     hour: number;
     minute: number;
     timestamp: number;
-    category: string;
-    subcategory: string;
+    context: string;
+    subcontext: string;
     tags: string[];
     metadata?: {
         [k: string]: any;
