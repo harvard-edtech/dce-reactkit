@@ -1,5 +1,6 @@
 import Log from './Log';
 import LogAction from './LogAction';
+import LogLevel from './LogLevel';
 /**
  * Type of a log action function
  * @author Gabe Abrams
@@ -13,6 +14,7 @@ declare type LogFunction = (opts: ({
     metadata?: {
         [k: string]: any;
     };
+    level?: LogLevel;
 } & ({
     error: any;
 } | {

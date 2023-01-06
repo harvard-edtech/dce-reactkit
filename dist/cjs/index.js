@@ -2210,6 +2210,7 @@ const initServer = (opts) => {
      * @param {string} tags stringified list of tags that apply to this action
      *   (each app determines tag usage)
      * @param {string} metadata stringified object containing optional custom metadata
+     * @param {string} level log level
      * @param {string} [errorMessage] error message if type is an error
      * @param {string} [errorCode] error code if type is an error
      * @param {string} [errorStack] error stack if type is an error
@@ -2223,6 +2224,7 @@ const initServer = (opts) => {
             context: ParamType$1.String,
             subcontext: ParamType$1.String,
             tags: ParamType$1.JSON,
+            level: ParamType$1.String,
             metadata: ParamType$1.JSON,
             errorMessage: ParamType$1.StringOptional,
             errorCode: ParamType$1.StringOptional,
@@ -2231,12 +2233,14 @@ const initServer = (opts) => {
             action: ParamType$1.StringOptional,
         },
         handler: ({ params, logServerEvent }) => {
-            const log = logServerEvent((params.errorMessage || params.errorCode || params.errorStack)
+            // Create log info
+            const logInfo = ((params.errorMessage || params.errorCode || params.errorStack)
                 // Error
                 ? {
                     context: params.context,
                     subcontext: params.subcontext,
                     tags: params.tags,
+                    level: params.level,
                     metadata: params.metadata,
                     error: {
                         message: params.errorMessage,
@@ -2249,10 +2253,16 @@ const initServer = (opts) => {
                     context: params.context,
                     subcontext: params.subcontext,
                     tags: params.tags,
+                    level: params.level,
                     metadata: params.metadata,
                     target: params.target,
                     action: params.action,
                 });
+            // Add hidden boolean to change source to "client"
+            const logInfoForcedFromClient = Object.assign(Object.assign({}, logInfo), { overrideAsClientEvent: true });
+            // Write the log
+            const log = logServerEvent(logInfoForcedFromClient);
+            // Return
             return log;
         },
     }));
@@ -2640,6 +2650,18 @@ var LogAction;
 var LogAction$1 = LogAction;
 
 /**
+ * Allowed log levels
+ * @author Gabe Abrams
+ */
+var LogLevel;
+(function (LogLevel) {
+    LogLevel["Warn"] = "Warn";
+    LogLevel["Info"] = "Info";
+    LogLevel["Debug"] = "Debug";
+})(LogLevel || (LogLevel = {}));
+var LogLevel$1 = LogLevel;
+
+/**
  * Generate an express API route handler
  * @author Gabe Abrams
  * @param opts object containing all arguments
@@ -2963,7 +2985,7 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+            var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
@@ -2997,21 +3019,22 @@ const genRouteHandler = (opts) => {
                         ? opts.context
                         : ((_d = ((_c = opts.context) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
                     subcontext: ((_e = opts.subcontext) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized),
-                    tags: (_f = opts.tags) !== null && _f !== void 0 ? _f : [],
-                    metadata: (_g = opts.metadata) !== null && _g !== void 0 ? _g : {},
+                    tags: ((_f = opts.tags) !== null && _f !== void 0 ? _f : []),
+                    level: ((_g = opts.level) !== null && _g !== void 0 ? _g : LogLevel$1.Info),
+                    metadata: ((_h = opts.metadata) !== null && _h !== void 0 ? _h : {}),
                 };
                 // Type-specific info
                 const typeSpecificInfo = (('error' in opts && opts.error)
                     ? {
                         type: LogType$1.Error,
-                        errorMessage: (_h = opts.error.message) !== null && _h !== void 0 ? _h : 'Unknown message',
-                        errorCode: (_j = opts.error.code) !== null && _j !== void 0 ? _j : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_k = opts.error.stack) !== null && _k !== void 0 ? _k : 'No stack',
+                        errorMessage: (_j = opts.error.message) !== null && _j !== void 0 ? _j : 'Unknown message',
+                        errorCode: (_k = opts.error.code) !== null && _k !== void 0 ? _k : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_l = opts.error.stack) !== null && _l !== void 0 ? _l : 'No stack',
                     }
                     : {
                         type: LogType$1.Action,
-                        target: ((_l = opts.target) !== null && _l !== void 0 ? _l : LogBuiltInMetadata.Target.NoSpecificTarget),
-                        action: ((_m = opts.action) !== null && _m !== void 0 ? _m : LogAction$1.Unknown),
+                        target: ((_m = opts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoSpecificTarget),
+                        action: ((_o = opts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
                     });
                 // Source-specific info
                 const sourceSpecificInfo = (opts.overrideAsClientEvent
@@ -3073,6 +3096,7 @@ const genRouteHandler = (opts) => {
                     minute: 1,
                     timestamp: Date.now(),
                     tags: [],
+                    level: LogLevel$1.Warn,
                     metadata: {},
                     context: LogBuiltInMetadata.Context.Uncategorized,
                     subcontext: LogBuiltInMetadata.Context.Uncategorized,

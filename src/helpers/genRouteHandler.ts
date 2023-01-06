@@ -25,6 +25,7 @@ import LogMainInfo from '../types/Log/LogMainInfo';
 import LogSourceSpecificInfo from '../types/Log/LogSourceSpecificInfo';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 import LogAction from '../types/LogAction';
+import LogLevel from '../types/LogLevel';
 
 /**
  * Generate an express API route handler
@@ -520,8 +521,9 @@ const genRouteHandler = (
             opts.subcontext
             ?? LogBuiltInMetadata.Context.Uncategorized
           ),
-          tags: opts.tags ?? [],
-          metadata: opts.metadata ?? {},
+          tags: (opts.tags ?? []),
+          level: (opts.level ?? LogLevel.Info),
+          metadata: (opts.metadata ?? {}),
         };
 
         // Type-specific info
@@ -613,6 +615,7 @@ const genRouteHandler = (
           minute: 1,
           timestamp: Date.now(),
           tags: [],
+          level: LogLevel.Warn,
           metadata: {},
           context: LogBuiltInMetadata.Context.Uncategorized,
           subcontext: LogBuiltInMetadata.Context.Uncategorized,

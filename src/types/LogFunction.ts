@@ -1,6 +1,7 @@
 // Import shared types
 import Log from './Log';
 import LogAction from './LogAction';
+import LogLevel from './LogLevel';
 
 /**
  * Type of a log action function
@@ -20,6 +21,8 @@ type LogFunction = (
       metadata?: {
         [k: string]: any,
       },
+      // Log level (default is info)
+      level?: LogLevel,
     } & (
       // Error
       | {

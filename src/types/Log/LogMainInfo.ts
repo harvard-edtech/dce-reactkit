@@ -1,3 +1,6 @@
+// Import shared types
+import LogLevel from '../LogLevel';
+
 /**
  * Main information in a log event
  * @author Gabe Abrams
@@ -55,6 +58,8 @@ type LogMainInfo = {
   subcontext: string,
   // List of tags that apply to this action (each app determines tag usage)
   tags: string[],
+  // Log level
+  level: LogLevel,
   // Additional optional custom metadata
   metadata?: {
     [k: string]: any,

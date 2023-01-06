@@ -4,6 +4,7 @@ import ErrorWithCode from '../errors/ErrorWithCode';
 
 // Import shared helpers
 import genRouteHandler from '../helpers/genRouteHandler';
+import LogFunction from '../types/LogFunction';
 import ParamType from '../types/ParamType';
 
 // Import shared types
@@ -86,6 +87,7 @@ const initServer = (
    * @param {string} tags stringified list of tags that apply to this action
    *   (each app determines tag usage)
    * @param {string} metadata stringified object containing optional custom metadata
+   * @param {string} level log level
    * @param {string} [errorMessage] error message if type is an error
    * @param {string} [errorCode] error code if type is an error
    * @param {string} [errorStack] error stack if type is an error
@@ -101,6 +103,7 @@ const initServer = (
         context: ParamType.String,
         subcontext: ParamType.String,
         tags: ParamType.JSON,
+        level: ParamType.String,
         metadata: ParamType.JSON,
         errorMessage: ParamType.StringOptional,
         errorCode: ParamType.StringOptional,
@@ -109,13 +112,15 @@ const initServer = (
         action: ParamType.StringOptional,
       },
       handler: ({ params, logServerEvent }) => {
-        const log = logServerEvent(
+        // Create log info
+        const logInfo: Parameters<LogFunction>[0] = (
           (params.errorMessage || params.errorCode || params.errorStack)
             // Error
             ? {
               context: params.context,
               subcontext: params.subcontext,
               tags: params.tags,
+              level: params.level,
               metadata: params.metadata,
               error: {
                 message: params.errorMessage,
@@ -128,12 +133,23 @@ const initServer = (
               context: params.context,
               subcontext: params.subcontext,
               tags: params.tags,
+              level: params.level,
               metadata: params.metadata,
               target: params.target,
               action: params.action,
             }
         );
 
+        // Add hidden boolean to change source to "client"
+        const logInfoForcedFromClient = {
+          ...logInfo,
+          overrideAsClientEvent: true,
+        };
+
+        // Write the log
+        const log = logServerEvent(logInfoForcedFromClient);
+
+        // Return
         return log;
       },
     }),

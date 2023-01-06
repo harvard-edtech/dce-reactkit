@@ -1,3 +1,4 @@
+import LogLevel from '../LogLevel';
 /**
  * Main information in a log event
  * @author Gabe Abrams
@@ -30,6 +31,7 @@ declare type LogMainInfo = {
     context: string;
     subcontext: string;
     tags: string[];
+    level: LogLevel;
     metadata?: {
         [k: string]: any;
     };

@@ -516,6 +516,16 @@ declare enum ParamType {
 }
 
 /**
+ * Allowed log levels
+ * @author Gabe Abrams
+ */
+declare enum LogLevel {
+    Warn = "Warn",
+    Info = "Info",
+    Debug = "Debug"
+}
+
+/**
  * Main information in a log event
  * @author Gabe Abrams
  */
@@ -547,6 +557,7 @@ declare type LogMainInfo = {
     context: string;
     subcontext: string;
     tags: string[];
+    level: LogLevel;
     metadata?: {
         [k: string]: any;
     };
@@ -640,6 +651,7 @@ declare type LogFunction = (opts: ({
     metadata?: {
         [k: string]: any;
     };
+    level?: LogLevel;
 } & ({
     error: any;
 } | {
