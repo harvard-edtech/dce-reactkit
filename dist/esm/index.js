@@ -492,6 +492,184 @@ class ErrorWithCode extends Error {
 }
 
 /**
+ * Path that all routes start with
+ * @author Gabe Abrams
+ */
+const ROUTE_PATH_PREFIX = '/dce-reactkit';
+
+/**
+ * Path of the route for storing client-side logs
+ * @author Gabe Abrams
+ */
+const LOG_ROUTE_PATH = `${ROUTE_PATH_PREFIX}/log`;
+
+/**
+ * Built-in metadata for logs
+ * @author Gabe Abrams
+ */
+const LogBuiltInMetadata = {
+    // Contexts
+    Context: {
+        Uncategorized: 'n/a',
+        ServerRenderedErrorPage: '_server-rendered-error-page',
+        ServerEndpointError: '_server-endpoint-error',
+        ClientFatalError: '_client-fatal-error',
+    },
+    // Targets
+    Target: {
+        NoSpecificTarget: 'n/a',
+    },
+};
+
+// Keep track of whether or not session expiry has already been handled
+let sessionAlreadyExpired = false;
+/*------------------------------------------------------------------------*/
+/*                               Stub Logic                               */
+/*------------------------------------------------------------------------*/
+// Stored stub responses
+const stubResponses = {};
+/**
+ * Add a stub response
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param [opts.method=GET] http request method
+ * @param opts.path pathname of the request
+ * @param [opts.body] body of the response if successful
+ * @param [opts.errorMessage] error message if not successful
+ * @param [opts.errorCode] error code if not successful
+ */
+const _setStubResponse = (opts) => {
+    var _a, _b, _c;
+    const { path, body, } = opts;
+    const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET').toUpperCase();
+    const errorMessage = ((_b = opts.errorMessage) !== null && _b !== void 0 ? _b : 'An unknown error has occurred.');
+    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode);
+    // Store to stub responses
+    if (!stubResponses[method]) {
+        stubResponses[method] = {};
+    }
+    stubResponses[method][path] = ((opts.errorMessage || opts.errorCode)
+        ? {
+            success: false,
+            errorMessage,
+            errorCode,
+        }
+        : {
+            success: true,
+            body: body !== null && body !== void 0 ? body : undefined,
+        });
+};
+/*------------------------------------------------------------------------*/
+/*                                  Main                                  */
+/*------------------------------------------------------------------------*/
+/**
+ * Visit an endpoint on the server [for client only]
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.path - the path of the server endpoint
+ * @param [opts.method=GET] - the method of the endpoint
+ * @param [opts.params] - query/body parameters to include
+ * @returns response from server
+ */
+const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
+    const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET');
+    // Handle stubs
+    const stubResponse = (_b = stubResponses[method]) === null || _b === void 0 ? void 0 : _b[opts.path];
+    if (stubResponse) {
+        // Remove from list
+        try {
+            stubResponses[method][opts.path] = undefined;
+        }
+        catch (err) {
+            // Ignore
+        }
+        // Success
+        if (stubResponse.success) {
+            return stubResponse.body;
+        }
+        // Error
+        throw new ErrorWithCode(stubResponse.errorMessage, stubResponse.errorCode);
+    }
+    // Send the request
+    const response = yield cacclSendRequest({
+        path: opts.path,
+        method: (_c = opts.method) !== null && _c !== void 0 ? _c : 'GET',
+        params: opts.params,
+    });
+    // Check for failure
+    if (!response || !response.body) {
+        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+    }
+    if (!response.body.success) {
+        // Session expired
+        if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
+            // Skip notice if session was already expired
+            if (sessionAlreadyExpired) {
+                // Never return (browser is already reloading)
+                yield new Promise(() => {
+                    // Promise that never returns
+                });
+            }
+            sessionAlreadyExpired = true;
+            // Show session expiration message
+            {
+                // Fallback to alert
+                // eslint-disable-next-line no-alert
+                alert('Your session has expired. Please start over.');
+            }
+            // Never return (don't continue execution)
+            yield new Promise(() => {
+                // Promise that never returns
+            });
+        }
+        // Other errors
+        throw new ErrorWithCode((response.body.message
+            || 'An unknown error occurred. Please contact an admin.'), (response.body.code
+            || ReactKitErrorCode$1.NoCode));
+    }
+    // Success! Extract the body
+    const { body } = response.body;
+    // Return
+    return body;
+});
+
+/**
+ * Log a user action on the client (cannot be used on the server)
+ * @author Gabe Abrams
+ */
+const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d, _e, _f;
+    return visitServerEndpoint({
+        path: LOG_ROUTE_PATH,
+        method: 'POST',
+        params: {
+            context: (typeof opts.context === 'string'
+                ? opts.context
+                : ((_b = ((_a = opts.context) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInMetadata.Context.Uncategorized)),
+            subcontext: ((_c = opts.subcontext) !== null && _c !== void 0 ? _c : LogBuiltInMetadata.Context.Uncategorized),
+            tags: JSON.stringify((_d = opts.tags) !== null && _d !== void 0 ? _d : []),
+            metadata: JSON.stringify((_e = opts.metadata) !== null && _e !== void 0 ? _e : {}),
+            errorMessage: (opts.error
+                ? opts.error.message
+                : undefined),
+            errorCode: (opts.error
+                ? opts.error.code
+                : undefined),
+            errorStack: (opts.error
+                ? opts.error.stack
+                : undefined),
+            target: (opts.action
+                ? ((_f = opts.target) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Target.NoSpecificTarget)
+                : undefined),
+            action: (opts.action
+                ? opts.action
+                : undefined),
+        },
+    });
+});
+
+/**
  * A wrapper for the entire React app that adds global functionality like
  *   handling for fatal error messages, adds bootstrap support
  * @author Gabe Abrams
@@ -610,6 +788,14 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
     const code = (typeof error === 'string'
         ? ReactKitErrorCode$1.NoCode
         : String((_b = error.code) !== null && _b !== void 0 ? _b : ReactKitErrorCode$1.NoCode));
+    // Add log
+    logClientEvent({
+        context: LogBuiltInMetadata.Context.ClientFatalError,
+        error,
+        metadata: {
+            errorTitle,
+        },
+    });
     // Handle case where app hasn't loaded
     if (!setFatalErrorMessage || !setFatalErrorCode) {
         alert$1(errorTitle, `${message} (code: ${code}). Please contact support.`);
@@ -2003,131 +2189,6 @@ const roundToNumDecimals = (num, numDecimals) => {
     return (Math.round(num * rounder) / rounder);
 };
 
-// Keep track of whether or not session expiry has already been handled
-let sessionAlreadyExpired = false;
-/*------------------------------------------------------------------------*/
-/*                               Stub Logic                               */
-/*------------------------------------------------------------------------*/
-// Stored stub responses
-const stubResponses = {};
-/**
- * Add a stub response
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param [opts.method=GET] http request method
- * @param opts.path pathname of the request
- * @param [opts.body] body of the response if successful
- * @param [opts.errorMessage] error message if not successful
- * @param [opts.errorCode] error code if not successful
- */
-const _setStubResponse = (opts) => {
-    var _a, _b, _c;
-    const { path, body, } = opts;
-    const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET').toUpperCase();
-    const errorMessage = ((_b = opts.errorMessage) !== null && _b !== void 0 ? _b : 'An unknown error has occurred.');
-    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode);
-    // Store to stub responses
-    if (!stubResponses[method]) {
-        stubResponses[method] = {};
-    }
-    stubResponses[method][path] = ((opts.errorMessage || opts.errorCode)
-        ? {
-            success: false,
-            errorMessage,
-            errorCode,
-        }
-        : {
-            success: true,
-            body: body !== null && body !== void 0 ? body : undefined,
-        });
-};
-/*------------------------------------------------------------------------*/
-/*                                  Main                                  */
-/*------------------------------------------------------------------------*/
-/**
- * Visit an endpoint on the server [for client only]
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.path - the path of the server endpoint
- * @param [opts.method=GET] - the method of the endpoint
- * @param [opts.params] - query/body parameters to include
- * @returns response from server
- */
-const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
-    const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET');
-    // Handle stubs
-    const stubResponse = (_b = stubResponses[method]) === null || _b === void 0 ? void 0 : _b[opts.path];
-    if (stubResponse) {
-        // Remove from list
-        try {
-            stubResponses[method][opts.path] = undefined;
-        }
-        catch (err) {
-            // Ignore
-        }
-        // Success
-        if (stubResponse.success) {
-            return stubResponse.body;
-        }
-        // Error
-        throw new ErrorWithCode(stubResponse.errorMessage, stubResponse.errorCode);
-    }
-    // Send the request
-    const response = yield cacclSendRequest({
-        path: opts.path,
-        method: (_c = opts.method) !== null && _c !== void 0 ? _c : 'GET',
-        params: opts.params,
-    });
-    // Check for failure
-    if (!response || !response.body) {
-        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
-    }
-    if (!response.body.success) {
-        // Session expired
-        if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
-            // Skip notice if session was already expired
-            if (sessionAlreadyExpired) {
-                // Never return (browser is already reloading)
-                yield new Promise(() => {
-                    // Promise that never returns
-                });
-            }
-            sessionAlreadyExpired = true;
-            // Show session expiration message
-            {
-                // Fallback to alert
-                // eslint-disable-next-line no-alert
-                alert('Your session has expired. Please start over.');
-            }
-            // Never return (don't continue execution)
-            yield new Promise(() => {
-                // Promise that never returns
-            });
-        }
-        // Other errors
-        throw new ErrorWithCode((response.body.message
-            || 'An unknown error occurred. Please contact an admin.'), (response.body.code
-            || ReactKitErrorCode$1.NoCode));
-    }
-    // Success! Extract the body
-    const { body } = response.body;
-    // Return
-    return body;
-});
-
-/**
- * Path that all routes start with
- * @author Gabe Abrams
- */
-const ROUTE_PATH_PREFIX = '/dce-reactkit';
-
-/**
- * Path of the route for storing client-side logs
- * @author Gabe Abrams
- */
-const LOG_ROUTE_PATH = `${ROUTE_PATH_PREFIX}/log`;
-
 /**
  * Server-side API param types
  * @author Gabe Abrams
@@ -2582,23 +2643,6 @@ var LogSource;
     LogSource["Server"] = "server";
 })(LogSource || (LogSource = {}));
 var LogSource$1 = LogSource;
-
-/**
- * Built-in metadata for logs
- * @author Gabe Abrams
- */
-const LogBuiltInMetadata = {
-    // Contexts
-    Context: {
-        Uncategorized: 'n/a',
-        ServerRenderedErrorPage: '_server-rendered-error-page',
-        ServerEndpointError: '_server-endpoint-error',
-    },
-    // Targets
-    Target: {
-        NoSpecificTarget: 'n/a',
-    },
-};
 
 /**
  * Types of actions
@@ -3384,41 +3428,6 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
         }
     });
     return results;
-});
-
-/**
- * Log a user action on the client (cannot be used on the server)
- * @author Gabe Abrams
- */
-const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
-    return visitServerEndpoint({
-        path: LOG_ROUTE_PATH,
-        method: 'POST',
-        params: {
-            context: (typeof opts.context === 'string'
-                ? opts.context
-                : ((_b = ((_a = opts.context) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInMetadata.Context.Uncategorized)),
-            subcontext: ((_c = opts.subcontext) !== null && _c !== void 0 ? _c : LogBuiltInMetadata.Context.Uncategorized),
-            tags: JSON.stringify((_d = opts.tags) !== null && _d !== void 0 ? _d : []),
-            metadata: JSON.stringify((_e = opts.metadata) !== null && _e !== void 0 ? _e : {}),
-            errorMessage: (opts.error
-                ? opts.error.message
-                : undefined),
-            errorCode: (opts.error
-                ? opts.error.code
-                : undefined),
-            errorStack: (opts.error
-                ? opts.error.stack
-                : undefined),
-            target: (opts.action
-                ? ((_f = opts.target) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Target.NoSpecificTarget)
-                : undefined),
-            action: (opts.action
-                ? opts.action
-                : undefined),
-        },
-    });
 });
 
 /**

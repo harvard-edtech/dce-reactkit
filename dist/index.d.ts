@@ -901,6 +901,7 @@ declare const LogBuiltInMetadata: {
         Uncategorized: string;
         ServerRenderedErrorPage: string;
         ServerEndpointError: string;
+        ClientFatalError: string;
     };
     Target: {
         NoSpecificTarget: string;

@@ -21,6 +21,8 @@ import Modal from './Modal';
 
 // Import custom errors
 import ErrorWithCode from '../errors/ErrorWithCode';
+import logClientEvent from '../helpers/logClientEvent';
+import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 
 /*------------------------------------------------------------------------*/
 /*                                  Props                                 */
@@ -221,6 +223,15 @@ export const showFatalError = (
       ? ReactKitErrorCode.NoCode
       : String(error.code ?? ReactKitErrorCode.NoCode)
   );
+
+  // Add log
+  logClientEvent({
+    context: LogBuiltInMetadata.Context.ClientFatalError,
+    error,
+    metadata: {
+      errorTitle,
+    },
+  });
 
   // Handle case where app hasn't loaded
   if (!setFatalErrorMessage || !setFatalErrorCode) {
