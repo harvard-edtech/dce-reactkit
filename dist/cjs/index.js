@@ -5132,6 +5132,31 @@ const initLogCollection = (Collection) => {
     });
 };
 
+// Cache user's ability
+let canReview = undefined;
+/**
+ * Check if the current user can review logs
+ * @author Gabe Abrams
+ * @returns true if current user can review logs
+ */
+const canReviewLogs = () => __awaiter(void 0, void 0, void 0, function* () {
+    // If cached, use that value
+    if (canReview !== undefined) {
+        return canReview;
+    }
+    // Ask on server
+    try {
+        canReview = !!(yield visitServerEndpoint({
+            path: LOG_REVIEW_STATUS_ROUTE,
+            method: 'GET',
+        }));
+    }
+    catch (err) {
+        canReview = false;
+    }
+    return canReview;
+});
+
 /**
  * Days of the week
  * @author Gabe Abrams
@@ -5184,6 +5209,7 @@ exports.Variant = Variant$1;
 exports.abbreviate = abbreviate;
 exports.alert = alert$1;
 exports.avg = avg;
+exports.canReviewLogs = canReviewLogs;
 exports.ceilToNumDecimals = ceilToNumDecimals;
 exports.confirm = confirm;
 exports.floorToNumDecimals = floorToNumDecimals;

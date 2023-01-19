@@ -55,6 +55,7 @@ import logClientEvent from './helpers/logClientEvent';
 import initLogCollection from './server/initLogCollection';
 import getMonthName from './helpers/getMonthName';
 import genCSV from './helpers/genCSV';
+import canReviewLogs from './helpers/canReviewLogs';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -128,6 +129,7 @@ export {
   parallelLimit,
   getMonthName,
   genCSV,
+  canReviewLogs,
   // Client helpers
   visitServerEndpoint,
   logClientEvent,
