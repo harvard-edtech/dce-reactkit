@@ -1188,14 +1188,14 @@ const ButtonInputGroup = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { label, minLabelWidth, children, } = props;
+    const { label, minLabelWidth, children, className, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /*                 Main UI                */
     /*----------------------------------------*/
-    return (React__default["default"].createElement("div", { className: "input-group" },
+    return (React__default["default"].createElement("div", { className: `input-group ${className !== null && className !== void 0 ? className : ''}` },
         React__default["default"].createElement("div", { className: "input-group-prepend d-flex w-100" },
             React__default["default"].createElement("span", { className: "input-group-text", style: {
                     minWidth: (minLabelWidth !== null && minLabelWidth !== void 0 ? minLabelWidth : undefined),
@@ -2397,9 +2397,9 @@ const IntelliTable = (props) => {
         // Create the cell UI
         return (React__default["default"].createElement("th", { key: column.param, scope: "col", id: `IntelliTable-${id}-header-${column.param}` },
             React__default["default"].createElement("div", { className: "d-flex align-items-center justify-content-center flex-row h-100" },
-                React__default["default"].createElement("h4", { className: "m-0" }, column.title),
+                React__default["default"].createElement("span", { className: "text-nowrap" }, column.title),
                 React__default["default"].createElement("div", null,
-                    React__default["default"].createElement("button", { type: "button", className: "btn btn-light", "aria-label": sortButtonAriaLabel, onClick: () => {
+                    React__default["default"].createElement("button", { type: "button", className: "btn btn-light btn-sm ms-1", "aria-label": sortButtonAriaLabel, onClick: () => {
                             dispatch({
                                 type: ActionType$1.ToggleSortColumn,
                                 param: column.param,
@@ -2547,7 +2547,7 @@ const IntelliTable = (props) => {
             React__default["default"].createElement("h3", { className: "m-0" }, title),
             React__default["default"].createElement("div", { className: "flex-grow-1 text-end" },
                 React__default["default"].createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: `${title}.csv`, csv: csv }),
-                React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
+                React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary ms-2", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
                         dispatch({
                             type: ActionType$1.ToggleColVisCusModalVisibility,
                         });
@@ -2612,6 +2612,10 @@ const style = `
     border-radius: 0.5rem;
     overflow: hidden;
 
+    /* Solid background */
+    background-color: white;
+    color: black;
+
     /* Place contents in flex column */
     flex-direction: column;
 
@@ -2656,7 +2660,7 @@ const genHumanReadableName = (machineReadableName) => {
             // Uppercase! Add a space before
             humanReadableName += ' ';
         }
-        humanReadableName += chars;
+        humanReadableName += char;
     });
     // Trim and return
     return humanReadableName.trim();
@@ -2738,7 +2742,7 @@ const LogReviewer = (props) => {
     /*------------------------------------------------------------------------*/
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     /* -------------- Props ------------- */
     // Destructure props
     const { LogMetadata, onClose, } = props;
@@ -2941,7 +2945,7 @@ const LogReviewer = (props) => {
         /*                 Filters                */
         /*----------------------------------------*/
         // Filter toggle
-        const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles d-flex align-items-center justify-content-center" },
+        const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles mb-2" },
             React__default["default"].createElement("h3", { className: "m-0" }, "Filters:"),
             React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons" },
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
@@ -2960,14 +2964,14 @@ const LogReviewer = (props) => {
                     } },
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "me-2" }),
                     "Context"),
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
+                (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
                         dispatch({
                             type: ActionType.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Tag,
                         });
                     } },
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTag, className: "me-2" }),
-                    "Tag"),
+                    "Tag")),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
                         dispatch({
                             type: ActionType.ToggleFilterDrawer,
@@ -3100,7 +3104,7 @@ const LogReviewer = (props) => {
                             }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
                     (actionErrorFilterState.type === undefined
                         || actionErrorFilterState.type === LogType$1.Action) && (React__default["default"].createElement(TabBox, { title: "Action Log Details" },
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Action" }, Object.keys(LogAction$1)
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Action", className: "mb-2" }, Object.keys(LogAction$1)
                             .map((action, i) => {
                             const description = genHumanReadableName(action);
                             return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: i === Object.keys(LogAction$1).length - 1, onChanged: (checked) => {
@@ -3111,18 +3115,20 @@ const LogReviewer = (props) => {
                                     });
                                 } }));
                         })),
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Target" }, Object.keys((_e = LogMetadata.Target) !== null && _e !== void 0 ? _e : {})
-                            .map((target, i) => {
-                            var _a;
-                            const description = genHumanReadableName(target);
-                            return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, onChanged: (checked) => {
-                                    actionErrorFilterState.target[target] = checked;
-                                    dispatch({
-                                        type: ActionType.UpdateActionErrorFilterState,
-                                        actionErrorFilterState,
-                                    });
-                                }, noMarginOnRight: i === Object.keys((_a = LogMetadata.Target) !== null && _a !== void 0 ? _a : {}).length - 1 }));
-                        })))),
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Target" },
+                            (Object.keys((_e = LogMetadata.Target) !== null && _e !== void 0 ? _e : {})) && (React__default["default"].createElement("div", null, "This app does not have any targets yet.")),
+                            Object.keys((_f = LogMetadata.Target) !== null && _f !== void 0 ? _f : {})
+                                .map((target, i) => {
+                                var _a;
+                                const description = genHumanReadableName(target);
+                                return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, onChanged: (checked) => {
+                                        actionErrorFilterState.target[target] = checked;
+                                        dispatch({
+                                            type: ActionType.UpdateActionErrorFilterState,
+                                            actionErrorFilterState,
+                                        });
+                                    }, noMarginOnRight: i === Object.keys((_a = LogMetadata.Target) !== null && _a !== void 0 ? _a : {}).length - 1 }));
+                            })))),
                     (actionErrorFilterState.type === undefined
                         || actionErrorFilterState.type === LogType$1.Error) && (React__default["default"].createElement(TabBox, { title: "Error Log Details" },
                         React__default["default"].createElement("div", { className: "input-group mb-2" },
@@ -3740,7 +3746,11 @@ const LogReviewer = (props) => {
             },
         ];
         // Create intelliTable
-        const dataTable = (React__default["default"].createElement(IntelliTable, { title: "Matching Logs", id: "logs", data: logs, columns: columns }));
+        const dataTable = (logs.length === 0
+            ? (React__default["default"].createElement("div", { className: "alert alert-warning" },
+                React__default["default"].createElement("h4", { className: "m-1" }, "No Logs to Show"),
+                React__default["default"].createElement("div", null, "Either your filters are too strict or no matching logs have been created yet.")))
+            : (React__default["default"].createElement(IntelliTable, { title: "Matching Logs", id: "logs", data: logs, columns: columns })));
         // Main body
         body = (React__default["default"].createElement(React__default["default"].Fragment, null,
             filters,
@@ -3752,8 +3762,8 @@ const LogReviewer = (props) => {
         React__default["default"].createElement("div", { className: "LogReviewer-inner-container" },
             React__default["default"].createElement("div", { className: "LogReviewer-header" },
                 React__default["default"].createElement("div", { className: "LogReviewer-header-title" },
-                    React__default["default"].createElement("h1", { className: "m-0" }, "Log Review Dashboard")),
-                React__default["default"].createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-lg", "aria-label": "close log reviewer panel", onClick: onClose, style: {
+                    React__default["default"].createElement("h3", { className: "m-0" }, "Log Review Dashboard")),
+                React__default["default"].createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-dark btn-lg", "aria-label": "close log reviewer panel", onClick: onClose, style: {
                         border: 0,
                         backgroundColor: 'transparent',
                         padding: 0,

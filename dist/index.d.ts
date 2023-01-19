@@ -242,6 +242,7 @@ declare type Props$a = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;
+    className?: string;
 };
 declare const ButtonInputGroup: React.FC<Props$a>;
 

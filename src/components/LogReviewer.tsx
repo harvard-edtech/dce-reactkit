@@ -207,6 +207,10 @@ const style = `
     border-radius: 0.5rem;
     overflow: hidden;
 
+    /* Solid background */
+    background-color: white;
+    color: black;
+
     /* Place contents in flex column */
     flex-direction: column;
 
@@ -254,7 +258,7 @@ const genHumanReadableName = (machineReadableName: string) => {
       // Uppercase! Add a space before
       humanReadableName += ' ';
     }
-    humanReadableName += chars;
+    humanReadableName += char;
   });
 
   // Trim and return
@@ -727,7 +731,7 @@ const LogReviewer: React.FC<Props> = (props) => {
 
     // Filter toggle
     const filterToggles = (
-      <div className="LogReviewer-filter-toggles d-flex align-items-center justify-content-center">
+      <div className="LogReviewer-filter-toggles mb-2">
         <h3 className="m-0">
           Filters:
         </h3>
@@ -771,24 +775,27 @@ const LogReviewer: React.FC<Props> = (props) => {
             Context
           </button>
           {/* Tag */}
-          <button
-            type="button"
-            id="LogReviewer-toggle-tag-filter-drawer"
-            className={`btn btn-${FilterDrawer.Tag === expandedFilterDrawer} me-2`}
-            aria-label="toggle tag filter drawer"
-            onClick={() => {
-              dispatch({
-                type: ActionType.ToggleFilterDrawer,
-                filterDrawer: FilterDrawer.Tag,
-              });
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faTag}
-              className="me-2"
-            />
-            Tag
-          </button>
+          {/* Skip if no tags are used */}
+          {(LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (
+            <button
+              type="button"
+              id="LogReviewer-toggle-tag-filter-drawer"
+              className={`btn btn-${FilterDrawer.Tag === expandedFilterDrawer} me-2`}
+              aria-label="toggle tag filter drawer"
+              onClick={() => {
+                dispatch({
+                  type: ActionType.ToggleFilterDrawer,
+                  filterDrawer: FilterDrawer.Tag,
+                });
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faTag}
+                className="me-2"
+              />
+              Tag
+            </button>
+          )}
           {/* Action */}
           <button
             type="button"
@@ -1023,7 +1030,10 @@ const LogReviewer: React.FC<Props> = (props) => {
               ) && (
                 <TabBox title="Action Log Details">
                   {/* Action */}
-                  <ButtonInputGroup label="Action">
+                  <ButtonInputGroup
+                    label="Action"
+                    className="mb-2"
+                  >
                     {
                       Object.keys(LogAction)
                         .map((action, i) => {
@@ -1048,6 +1058,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                   </ButtonInputGroup>
                   {/* Target */}
                   <ButtonInputGroup label="Target">
+                    {/* Nothing here */}
+                    {(Object.keys(LogMetadata.Target ?? {})) && (
+                      <div>
+                        This app does not have any targets yet.
+                      </div>
+                    )}
+                    {/* List of targets */}
                     {
                       Object.keys(LogMetadata.Target ?? {})
                         .map((target, i) => {
@@ -1974,12 +1991,26 @@ const LogReviewer: React.FC<Props> = (props) => {
 
     // Create intelliTable
     const dataTable = (
-      <IntelliTable
-        title="Matching Logs"
-        id="logs"
-        data={logs}
-        columns={columns}
-      />
+      logs.length === 0
+        ? (
+          <div className="alert alert-warning">
+            <h4 className="m-1">
+              No Logs to Show
+            </h4>
+            <div>
+              Either your filters are too strict or no matching logs have been
+              created yet.
+            </div>
+          </div>
+        )
+        : (
+          <IntelliTable
+            title="Matching Logs"
+            id="logs"
+            data={logs}
+            columns={columns}
+          />
+        )
     );
 
     // Main body
@@ -2001,13 +2032,13 @@ const LogReviewer: React.FC<Props> = (props) => {
       <div className="LogReviewer-inner-container">
         <div className="LogReviewer-header">
           <div className="LogReviewer-header-title">
-            <h1 className="m-0">
+            <h3 className="m-0">
               Log Review Dashboard
-            </h1>
+            </h3>
           </div>
           <button
             type="button"
-            className="LogReviewer-header-close-button btn btn-lg"
+            className="LogReviewer-header-close-button btn btn-dark btn-lg"
             aria-label="close log reviewer panel"
             onClick={onClose}
             style={{

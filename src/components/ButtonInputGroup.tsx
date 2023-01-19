@@ -18,6 +18,8 @@ type Props = {
   minLabelWidth?: string,
   // Buttons
   children: React.ReactNode,
+  // Additional class names to add to the outer container
+  className?: string,
 };
 
 /*------------------------------------------------------------------------*/
@@ -36,6 +38,7 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
     label,
     minLabelWidth,
     children,
+    className,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -47,7 +50,7 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
   /*----------------------------------------*/
 
   return (
-    <div className="input-group">
+    <div className={`input-group ${className ?? ''}`}>
       <div className="input-group-prepend d-flex w-100">
         {/* Label */}
         <span

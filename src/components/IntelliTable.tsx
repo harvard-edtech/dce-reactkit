@@ -302,14 +302,14 @@ const IntelliTable: React.FC<Props> = (props) => {
           >
             <div className="d-flex align-items-center justify-content-center flex-row h-100">
               {/* Title */}
-              <h4 className="m-0">
+              <span className="text-nowrap">
                 {column.title}
-              </h4>
+              </span>
               {/* Buttons */}
               <div>
                 <button
                   type="button"
-                  className="btn btn-light"
+                  className="btn btn-light btn-sm ms-1"
                   aria-label={sortButtonAriaLabel}
                   onClick={() => {
                     dispatch({
@@ -567,7 +567,7 @@ const IntelliTable: React.FC<Props> = (props) => {
           {/* Show/Hide Columns */}
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-secondary ms-2"
             aria-label={`show panel for customizing which columns show in table ${title}`}
             id={`IntelliTable-${id}-show-column-customization-modal`}
             onClick={() => {
