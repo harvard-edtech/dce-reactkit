@@ -2611,6 +2611,7 @@ const style = `
     border: 0.05rem solid black;
     border-radius: 0.5rem;
     overflow: hidden;
+    padding: 0.7rem;
 
     /* Solid background */
     background-color: white;
@@ -2640,6 +2641,18 @@ const style = `
 
     /* Vertical scroll */
     overflow-y: auto;
+  }
+
+  .LogReviewer-header-close-button {
+    border: 0 !important;
+    background-color: transparent !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+    color: #333 !important;
+  }
+  .LogReviewer-header-close-button:hover {
+    color: #000 !important;
   }
 `;
 /*------------------------------------------------------------------------*/
@@ -2948,7 +2961,7 @@ const LogReviewer = (props) => {
         const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles mb-2" },
             React__default["default"].createElement("h3", { className: "m-0" }, "Filters:"),
             React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons" },
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
                         dispatch({
                             type: ActionType.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Date,
@@ -2956,7 +2969,7 @@ const LogReviewer = (props) => {
                     } },
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCalendar, className: "me-2" }),
                     "Date"),
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
                         dispatch({
                             type: ActionType.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Context,
@@ -2964,7 +2977,7 @@ const LogReviewer = (props) => {
                     } },
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "me-2" }),
                     "Context"),
-                (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
+                (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
                         dispatch({
                             type: ActionType.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Tag,
@@ -2972,7 +2985,7 @@ const LogReviewer = (props) => {
                     } },
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTag, className: "me-2" }),
                     "Tag")),
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
                         dispatch({
                             type: ActionType.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Action,
@@ -2980,7 +2993,7 @@ const LogReviewer = (props) => {
                     } },
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faHammer, className: "me-2" }),
                     "Action"),
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer}`, "aria-label": "toggle advanced filter drawer", onClick: () => {
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'secondary'}`, "aria-label": "toggle advanced filter drawer", onClick: () => {
                         dispatch({
                             type: ActionType.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Advanced,
@@ -3763,12 +3776,7 @@ const LogReviewer = (props) => {
             React__default["default"].createElement("div", { className: "LogReviewer-header" },
                 React__default["default"].createElement("div", { className: "LogReviewer-header-title" },
                     React__default["default"].createElement("h3", { className: "m-0" }, "Log Review Dashboard")),
-                React__default["default"].createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-dark btn-lg", "aria-label": "close log reviewer panel", onClick: onClose, style: {
-                        border: 0,
-                        backgroundColor: 'transparent',
-                        padding: 0,
-                        margin: 0,
-                    } },
+                React__default["default"].createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-dark btn-lg", "aria-label": "close log reviewer panel", onClick: onClose },
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTimes }))),
             React__default["default"].createElement("div", { className: "LogReviewer-contents" }, body))));
 };

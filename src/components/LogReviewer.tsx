@@ -206,6 +206,7 @@ const style = `
     border: 0.05rem solid black;
     border-radius: 0.5rem;
     overflow: hidden;
+    padding: 0.7rem;
 
     /* Solid background */
     background-color: white;
@@ -235,6 +236,18 @@ const style = `
 
     /* Vertical scroll */
     overflow-y: auto;
+  }
+
+  .LogReviewer-header-close-button {
+    border: 0 !important;
+    background-color: transparent !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+    color: #333 !important;
+  }
+  .LogReviewer-header-close-button:hover {
+    color: #000 !important;
   }
 `;
 
@@ -740,7 +753,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           <button
             type="button"
             id="LogReviewer-toggle-date-filter-drawer"
-            className={`btn btn-${FilterDrawer.Date === expandedFilterDrawer} me-2`}
+            className={`btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`}
             aria-label="toggle date filter drawer"
             onClick={() => {
               dispatch({
@@ -759,7 +772,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           <button
             type="button"
             id="LogReviewer-toggle-context-filter-drawer"
-            className={`btn btn-${FilterDrawer.Context === expandedFilterDrawer} me-2`}
+            className={`btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`}
             aria-label="toggle context filter drawer"
             onClick={() => {
               dispatch({
@@ -780,7 +793,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             <button
               type="button"
               id="LogReviewer-toggle-tag-filter-drawer"
-              className={`btn btn-${FilterDrawer.Tag === expandedFilterDrawer} me-2`}
+              className={`btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`}
               aria-label="toggle tag filter drawer"
               onClick={() => {
                 dispatch({
@@ -800,7 +813,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           <button
             type="button"
             id="LogReviewer-toggle-action-filter-drawer"
-            className={`btn btn-${FilterDrawer.Action === expandedFilterDrawer} me-2`}
+            className={`btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`}
             aria-label="toggle action and error filter drawer"
             onClick={() => {
               dispatch({
@@ -819,7 +832,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           <button
             type="button"
             id="LogReviewer-toggle-advanced-filter-drawer"
-            className={`btn btn-${FilterDrawer.Advanced === expandedFilterDrawer}`}
+            className={`btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'secondary'}`}
             aria-label="toggle advanced filter drawer"
             onClick={() => {
               dispatch({
@@ -2041,12 +2054,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             className="LogReviewer-header-close-button btn btn-dark btn-lg"
             aria-label="close log reviewer panel"
             onClick={onClose}
-            style={{
-              border: 0,
-              backgroundColor: 'transparent',
-              padding: 0,
-              margin: 0,
-            }}
           >
             <FontAwesomeIcon
               icon={faTimes}
