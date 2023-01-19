@@ -240,7 +240,7 @@ const initServer = (
    * @param {number} month the month to query (e.g. 1 = January)
    * @returns {Log[]} list of logs from the given month
    */
-  opts.app.post(
+  opts.app.get(
     `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`,
     genRouteHandler({
       paramTypes: {

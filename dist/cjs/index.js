@@ -530,6 +530,18 @@ const LogBuiltInMetadata = {
     },
 };
 
+/**
+ * Allowed log levels
+ * @author Gabe Abrams
+ */
+var LogLevel;
+(function (LogLevel) {
+    LogLevel["Warn"] = "Warn";
+    LogLevel["Info"] = "Info";
+    LogLevel["Debug"] = "Debug";
+})(LogLevel || (LogLevel = {}));
+var LogLevel$1 = LogLevel;
+
 // Keep track of whether or not session expiry has already been handled
 let sessionAlreadyExpired = false;
 /*------------------------------------------------------------------------*/
@@ -648,7 +660,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
  * @author Gabe Abrams
  */
 const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     return visitServerEndpoint({
         path: LOG_ROUTE_PATH,
         method: 'POST',
@@ -657,8 +669,9 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
                 ? opts.context
                 : ((_b = ((_a = opts.context) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInMetadata.Context.Uncategorized)),
             subcontext: ((_c = opts.subcontext) !== null && _c !== void 0 ? _c : LogBuiltInMetadata.Context.Uncategorized),
-            tags: JSON.stringify((_d = opts.tags) !== null && _d !== void 0 ? _d : []),
-            metadata: JSON.stringify((_e = opts.metadata) !== null && _e !== void 0 ? _e : {}),
+            level: ((_d = opts.level) !== null && _d !== void 0 ? _d : LogLevel$1.Info),
+            tags: JSON.stringify((_e = opts.tags) !== null && _e !== void 0 ? _e : []),
+            metadata: JSON.stringify((_f = opts.metadata) !== null && _f !== void 0 ? _f : {}),
             errorMessage: (opts.error
                 ? opts.error.message
                 : undefined),
@@ -669,7 +682,7 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
                 ? opts.error.stack
                 : undefined),
             target: (opts.action
-                ? ((_f = opts.target) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Target.NoSpecificTarget)
+                ? ((_g = opts.target) !== null && _g !== void 0 ? _g : LogBuiltInMetadata.Target.NoSpecificTarget)
                 : undefined),
             action: (opts.action
                 ? opts.action
@@ -4070,7 +4083,7 @@ const initServer = (opts) => {
      * @param {number} month the month to query (e.g. 1 = January)
      * @returns {Log[]} list of logs from the given month
      */
-    opts.app.post(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler({
+    opts.app.get(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler({
         paramTypes: {
             year: ParamType$1.Int,
             month: ParamType$1.Int,
@@ -4388,18 +4401,6 @@ const parseUserAgent = (userAgent) => {
         device,
     };
 };
-
-/**
- * Allowed log levels
- * @author Gabe Abrams
- */
-var LogLevel;
-(function (LogLevel) {
-    LogLevel["Warn"] = "Warn";
-    LogLevel["Info"] = "Info";
-    LogLevel["Debug"] = "Debug";
-})(LogLevel || (LogLevel = {}));
-var LogLevel$1 = LogLevel;
 
 /**
  * Generate an express API route handler

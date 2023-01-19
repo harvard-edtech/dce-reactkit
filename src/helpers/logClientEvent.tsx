@@ -2,6 +2,7 @@
 import LOG_ROUTE_PATH from '../constants/LOG_ROUTE_PATH';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 import LogFunction from '../types/LogFunction';
+import LogLevel from '../types/LogLevel';
 
 // Import shared functions
 import visitServerEndpoint from './visitServerEndpoint';
@@ -26,6 +27,10 @@ const logClientEvent: LogFunction = async (opts) => {
       subcontext: (
         opts.subcontext
         ?? LogBuiltInMetadata.Context.Uncategorized
+      ),
+      level: (
+        opts.level
+        ?? LogLevel.Info
       ),
       tags: JSON.stringify(opts.tags ?? []),
       metadata: JSON.stringify(opts.metadata ?? {}),
