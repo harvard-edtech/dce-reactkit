@@ -71,7 +71,7 @@ export const internalGetLogCollection = () => {
  * @param opts.getLaunchInfo CACCL LTI's get launch info function
  * @param [opts.logCollection] mongo collection from dce-mango to use for
  *   storing logs. If none is included, logs are written to the console
- * @param [opts.logReviewAdmins=all admins] info on which admins can review
+ * @param [opts.logReviewAdmins=all] info on which admins can review
  *   logs from the client. If not included, all Canvas admins are allowed to
  *   review logs. If null, no Canvas admins are allowed to review logs.
  *   If an array of Canvas userIds (numbers), only Canvas admins with those
@@ -176,86 +176,99 @@ const initServer = (
   /*              Log Reviewer              */
   /*----------------------------------------*/
 
-  if (opts.logReviewAdmins !== null) {
-    /**
-     * Check if a given user is allowed to review logs
-     * @author Gabe Abrams
-     * @param userId the id of the user
-     * @returns true if the user can review logs
-     */
-    const canReviewLogs = async (userId: number): Promise<boolean> => {
-      try {
-        // Array of userIds
-        if (Array.isArray(opts.logReviewAdmins)) {
-          return opts.logReviewAdmins.some((allowedId) => {
-            return (userId === allowedId);
-          });
+  /**
+   * Check if a given user is allowed to review logs
+   * @author Gabe Abrams
+   * @param userId the id of the user
+   * @param isAdmin if true, the user is an admin
+   * @returns true if the user can review logs
+   */
+  const canReviewLogs = async (
+    userId: number,
+    isAdmin: boolean,
+  ): Promise<boolean> => {
+    // Immediately deny access if user is not an admin
+    if (!isAdmin) {
+      return false;
+    }
+
+    // If all admins are allowed, we're done
+    if (!opts.logReviewAdmins) {
+      return true;
+    }
+
+    // Do a dynamic check
+    try {
+      // Array of userIds
+      if (Array.isArray(opts.logReviewAdmins)) {
+        return opts.logReviewAdmins.some((allowedId) => {
+          return (userId === allowedId);
+        });
+      }
+
+      // Must be a collection
+      const matches = await opts.logReviewAdmins.find({ userId });
+
+      // Make sure at least one entry matches
+      return matches.length > 0;
+    } catch (err) {
+      // If an error occurred, simply return false
+      return false;
+    }
+  };
+
+  /**
+   * Check if the current user has access to logs
+   * @author Gabe Abrams
+   * @returns {boolean} true if user has access
+   */
+  opts.app.get(
+    LOG_REVIEW_STATUS_ROUTE,
+    genRouteHandler({
+      handler: async ({ params }) => {
+        const { userId, isAdmin } = params;
+        const canReview = await canReviewLogs(userId, isAdmin);
+        return canReview;
+      },
+    }),
+  );
+
+  /**
+   * Get all logs for a certain month
+   * @author Gabe Abrams
+   * @param {number} year the year to query (e.g. 2022)
+   * @param {number} month the month to query (e.g. 1 = January)
+   * @returns {Log[]} list of logs from the given month
+   */
+  opts.app.post(
+    `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`,
+    genRouteHandler({
+      paramTypes: {
+        year: ParamType.Int,
+        month: ParamType.Int,
+      },
+      handler: async ({ params }) => {
+        // Get user info
+        const { userId, isAdmin } = params;
+
+        // Validate user
+        // isAdmin is already checked because path starts with '/admin'
+        const canReview = await canReviewLogs(userId, isAdmin);
+        if (!canReview) {
+          throw new ErrorWithCode(
+            'You cannot access this resource because you do not have the appropriate permissions.',
+            ReactKitErrorCode.NotAllowedToReviewLogs,
+          );
         }
 
-        // Must be a collection
-        const matches = await opts.logReviewAdmins.find({ userId });
+        // Query for logs
+        const logs: Log[] = await _logCollection.find({ userId });
 
-        // Make sure at least one entry matches
-        return matches.length > 0;
-      } catch (err) {
-        // If an error occurred, simply return false
-        return false;
-      }
-    };
-
-    /**
-     * Check if the current user has access to logs
-     * @author Gabe Abrams
-     * @returns {boolean} true if user has access
-     */
-    opts.app.get(
-      LOG_REVIEW_STATUS_ROUTE,
-      genRouteHandler({
-        handler: async ({ params }) => {
-          const { userId } = params;
-          const canReview = await canReviewLogs(userId);
-          return canReview;
-        },
-      }),
-    );
-
-    /**
-     * Get all logs for a certain month
-     * @author Gabe Abrams
-     * @param {number} year the year to query (e.g. 2022)
-     * @param {number} month the month to query (e.g. 1 = January)
-     * @returns {Log[]} list of logs from the given month
-     */
-    opts.app.post(
-      `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`,
-      genRouteHandler({
-        paramTypes: {
-          year: ParamType.Int,
-          month: ParamType.Int,
-        },
-        handler: async ({ params }) => {
-          // Get user info
-          const { userId } = params;
-
-          // Validate user
-          // isAdmin is already checked because path starts with '/admin'
-          const canReview = await canReviewLogs(userId);
-          if (!canReview) {
-            throw new ErrorWithCode(
-              'You cannot access this resource because you do not have the appropriate permissions.',
-              ReactKitErrorCode.NotAllowedToReviewLogs,
-            );
-          }
-
-          // Query for logs
-          const logs: Log[] = await _logCollection.find({ userId });
-
-          // Return logs
-          return logs;
-        },
-      }),
-    );
-  }
+        // Return logs
+        return logs;
+      },
+    }),
+  );
 };
 
 export default initServer;

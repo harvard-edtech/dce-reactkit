@@ -25,7 +25,7 @@ export declare const internalGetLogCollection: () => any;
  * @param opts.getLaunchInfo CACCL LTI's get launch info function
  * @param [opts.logCollection] mongo collection from dce-mango to use for
  *   storing logs. If none is included, logs are written to the console
- * @param [opts.logReviewAdmins=all admins] info on which admins can review
+ * @param [opts.logReviewAdmins=all] info on which admins can review
  *   logs from the client. If not included, all Canvas admins are allowed to
  *   review logs. If null, no Canvas admins are allowed to review logs.
  *   If an array of Canvas userIds (numbers), only Canvas admins with those
