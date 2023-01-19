@@ -1,4 +1,4 @@
-// Highest error code = DRK10
+// Highest error code = DRK11
 
 /**
  * List of error codes built into the react kit
@@ -15,6 +15,7 @@ enum ReactKitErrorCode {
   NoCACCLGetLaunchInfoFunction = 'DRK8',
   NotTTM = 'DRK9',
   NotAdmin = 'DRK10',
+  NotAllowedToReviewLogs = 'DRK11',
 }
 
 export default ReactKitErrorCode;

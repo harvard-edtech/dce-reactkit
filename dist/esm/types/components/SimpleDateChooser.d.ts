@@ -17,6 +17,7 @@ declare type Props = {
      */
     onChange: (month: number, day: number, year: number) => void;
     numMonthsToShow?: number;
+    chooseFromPast?: boolean;
 };
 declare const SimpleDateChooser: React.FC<Props>;
 export default SimpleDateChooser;

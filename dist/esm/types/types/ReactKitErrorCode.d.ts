@@ -12,6 +12,7 @@ declare enum ReactKitErrorCode {
     NoCACCLSendRequestFunction = "DRK7",
     NoCACCLGetLaunchInfoFunction = "DRK8",
     NotTTM = "DRK9",
-    NotAdmin = "DRK10"
+    NotAdmin = "DRK10",
+    NotAllowedToReviewLogs = "DRK11"
 }
 export default ReactKitErrorCode;

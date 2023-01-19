@@ -22,7 +22,7 @@ declare enum Variant {
  * @author Gabe Abrams
  */
 
-declare type Props$d = {
+declare type Props$g = {
     children: React.ReactNode;
     sendRequest: SendRequestFunction;
     dark?: boolean;
@@ -80,7 +80,7 @@ declare const confirm: (title: string, text: string, opts?: {
  * @param [errorTitle] title of the error box
  */
 declare const showFatalError: (error: any, errorTitle?: string) => undefined;
-declare const AppWrapper: React.FC<Props$d>;
+declare const AppWrapper: React.FC<Props$g>;
 
 /**
  * Loading spinner/indicator
@@ -93,12 +93,12 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-declare type Props$c = {
+declare type Props$f = {
     error: any;
     title?: string;
     onClose?: () => void;
 };
-declare const ErrorBox: React.FC<Props$c>;
+declare const ErrorBox: React.FC<Props$f>;
 
 /**
  * Types of buttons in the modal
@@ -149,7 +149,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-declare type Props$b = {
+declare type Props$e = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -178,27 +178,27 @@ declare type Props$b = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props$b>;
+declare const Modal: React.FC<Props$e>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
  * @author Gabe Abrams
  */
 
-declare type Props$a = {
+declare type Props$d = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props$a>;
+declare const TabBox: React.FC<Props$d>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-declare type Props$9 = {
+declare type Props$c = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;
@@ -210,14 +210,14 @@ declare type Props$9 = {
     unselectedVariant?: Variant;
     small?: boolean;
 };
-declare const RadioButton: React.FC<Props$9>;
+declare const RadioButton: React.FC<Props$c>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-declare type Props$8 = {
+declare type Props$b = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -231,26 +231,26 @@ declare type Props$8 = {
     small?: boolean;
     dashed?: boolean;
 };
-declare const CheckboxButton: React.FC<Props$8>;
+declare const CheckboxButton: React.FC<Props$b>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-declare type Props$7 = {
+declare type Props$a = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;
 };
-declare const ButtonInputGroup: React.FC<Props$7>;
+declare const ButtonInputGroup: React.FC<Props$a>;
 
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
  */
 
-declare type Props$6 = {
+declare type Props$9 = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -264,61 +264,62 @@ declare type Props$6 = {
      */
     onChange: (month: number, day: number, year: number) => void;
     numMonthsToShow?: number;
+    chooseFromPast?: boolean;
 };
-declare const SimpleDateChooser: React.FC<Props$6>;
+declare const SimpleDateChooser: React.FC<Props$9>;
 
 /**
  * Drawer container
  * @author Gabe Abrams
  */
 
-declare type Props$5 = {
+declare type Props$8 = {
     children: React.ReactNode;
 };
-declare const Drawer: React.FC<Props$5>;
+declare const Drawer: React.FC<Props$8>;
 
 /**
  * Success checkmark that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$4 = {
+declare type Props$7 = {
     sizeRem?: number;
     circleVariant?: string;
     checkVariant?: string;
 };
-declare const PopSuccessMark: React.FC<Props$4>;
+declare const PopSuccessMark: React.FC<Props$7>;
 
 /**
  * Failure x mark that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$3 = {
+declare type Props$6 = {
     sizeRem?: number;
     circleVariant?: string;
     xVariant?: string;
 };
-declare const PopFailureMark: React.FC<Props$3>;
+declare const PopFailureMark: React.FC<Props$6>;
 
 /**
  * Failure pending that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$2 = {
+declare type Props$5 = {
     sizeRem?: number;
     circleVariant?: string;
     hourglassVariant?: string;
 };
-declare const PopPendingMark: React.FC<Props$2>;
+declare const PopPendingMark: React.FC<Props$5>;
 
 /**
  * Copiable text box
  * @author Gabe Abrams
  */
 
-declare type Props$1 = {
+declare type Props$4 = {
     text: string;
     maxTextWidthRem?: number;
     label?: string;
@@ -330,7 +331,7 @@ declare type Props$1 = {
     textAreaId?: string;
     copyButtonId?: string;
 };
-declare const CopiableBox: React.FC<Props$1>;
+declare const CopiableBox: React.FC<Props$4>;
 
 /**
  * An item that can be chosen (for use within ItemPicker)
@@ -353,7 +354,7 @@ declare type PickableItem = ({
  * @author Yuen Ler Chow
  */
 
-declare type Props = {
+declare type Props$3 = {
     title: string;
     items: PickableItem[];
     /**
@@ -363,7 +364,101 @@ declare type Props = {
      */
     onChanged: (updatedItems: PickableItem[]) => void;
 };
-declare const ItemPicker: React.FC<Props>;
+declare const ItemPicker: React.FC<Props$3>;
+
+/**
+ * Type of a LogMetadata file
+ * @author Gabe Abrams
+ */
+declare type LogMetadataType = {
+    Context?: {
+        [k: string]: (string | {
+            _: string;
+            [k: string]: string;
+        });
+    };
+    Tag?: {
+        [k: string]: string;
+    };
+    Target?: {
+        [k: string]: string;
+    };
+};
+
+/**
+ * Log reviewer panel that allows users (must be approved admins) to
+ *   review logs written by dce-reactkit
+ * @author Gabe Abrams
+ */
+
+declare type Props$2 = {
+    LogMetadata: LogMetadataType;
+    onClose: () => void;
+};
+declare const LogReviewer: React.FC<Props$2>;
+
+/**
+ * Server-side API param types
+ * @author Gabe Abrams
+ */
+declare enum ParamType {
+    Boolean = "boolean",
+    BooleanOptional = "boolean-optional",
+    Float = "float",
+    FloatOptional = "float-optional",
+    Int = "int",
+    IntOptional = "int-optional",
+    JSON = "json",
+    JSONOptional = "json-optional",
+    String = "string",
+    StringOptional = "string-optional"
+}
+
+/**
+ * Column description for a column in the IntelliTable
+ * @author Gabe Abrams
+ */
+declare type IntelliTableColumn = {
+    title: string;
+    param: string;
+    type: (ParamType.Boolean | ParamType.Float | ParamType.Int | ParamType.String | ParamType.JSON);
+    startsHidden?: boolean;
+};
+
+/**
+ * Intelligent table
+ * @author Gabe Abrams
+ */
+
+declare type Props$1 = {
+    title: string;
+    id: string;
+    data: {
+        id: string | number;
+        [k: string]: any;
+    }[];
+    columns: IntelliTableColumn[];
+};
+declare const IntelliTable: React.FC<Props$1>;
+
+/**
+ * Button for downloading a csv file
+ * @author Gabe Abrams
+ */
+
+declare type Props = {
+    filename: string;
+    csv: string;
+    id?: string;
+    className?: string;
+    ariaLabel?: string;
+    style?: {
+        [k: string]: any;
+    };
+    onClick?: () => void;
+    children?: React.ReactNode;
+};
+declare const CSVDownloadButton: React.FC<Props>;
 
 /**
  * An error with a code
@@ -497,23 +592,6 @@ declare const visitServerEndpoint: (opts: {
         [x: string]: any;
     } | undefined;
 }) => Promise<any>;
-
-/**
- * Server-side API param types
- * @author Gabe Abrams
- */
-declare enum ParamType {
-    Boolean = "boolean",
-    BooleanOptional = "boolean-optional",
-    Float = "float",
-    FloatOptional = "float-optional",
-    Int = "int",
-    IntOptional = "int-optional",
-    JSON = "json",
-    JSONOptional = "json-optional",
-    String = "string",
-    StringOptional = "string-optional"
-}
 
 /**
  * Allowed log levels
@@ -744,11 +822,19 @@ declare type GetLaunchInfoFunction = (req: any) => {
  * @param opts.getLaunchInfo CACCL LTI's get launch info function
  * @param [opts.logCollection] mongo collection from dce-mango to use for
  *   storing logs. If none is included, logs are written to the console
+ * @param [opts.logReviewAdmins=all admins] info on which admins can review
+ *   logs from the client. If not included, all Canvas admins are allowed to
+ *   review logs. If null, no Canvas admins are allowed to review logs.
+ *   If an array of Canvas userIds (numbers), only Canvas admins with those
+ *   userIds are allowed to review logs. If a dce-mango collection, only
+ *   Canvas admins with entries in that collection ({ userId, ...}) are allowed
+ *   to review logs
  */
 declare const initServer: (opts: {
     app: any;
     getLaunchInfo: GetLaunchInfoFunction;
     logCollection?: any;
+    logReviewAdmins?: (number[] | any);
 }) => void;
 
 /**
@@ -862,6 +948,34 @@ declare const logClientEvent: LogFunction;
 declare const initLogCollection: (Collection: any) => any;
 
 /**
+ * Get the name of a month given the month number (1 = January, etc.)
+ *   If an invalid number is provided, we will treat it like January
+ * @author Gabe Abrams
+ * @param month the number of the month
+ * @returns object containing multiple month name formats:
+ *   { short, full } where short will look like "Jan" and full will look like
+ *   "January"
+ */
+declare const getMonthName: (month: number) => {
+    short: string;
+    full: string;
+};
+
+/**
+ * Generate a CSV file
+ * @author Gabe Abrams
+ * @param data list of row data in the form of json objects
+ * @param columns list of columns to include in the csv
+ * @returns multiline csv string
+ */
+declare const genCSV: (data: {
+    [k: string]: any;
+}[], columns: {
+    title: string;
+    param: string;
+}[]) => string;
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -875,7 +989,8 @@ declare enum ReactKitErrorCode {
     NoCACCLSendRequestFunction = "DRK7",
     NoCACCLGetLaunchInfoFunction = "DRK8",
     NotTTM = "DRK9",
-    NotAdmin = "DRK10"
+    NotAdmin = "DRK10",
+    NotAllowedToReviewLogs = "DRK11"
 }
 
 /**
@@ -908,4 +1023,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genRouteHandler, getHumanReadableDate, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

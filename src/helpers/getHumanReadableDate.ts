@@ -1,21 +1,7 @@
+// Import shared helpers
 import getTimeInfoInET from './getTimeInfoInET';
 import getOrdinal from './getOrdinal';
-
-// Map of month to three letter description
-const monthMap = {
-  1: 'Jan',
-  2: 'Feb',
-  3: 'Mar',
-  4: 'Apr',
-  5: 'May',
-  6: 'Jun',
-  7: 'Jul',
-  8: 'Aug',
-  9: 'Sep',
-  10: 'Oct',
-  11: 'Nov',
-  12: 'Dec',
-};
+import getMonthName from './getMonthName';
 
 /**
  * Get a human-readable description of a date (all in ET)
@@ -32,8 +18,11 @@ const getHumanReadableDate = (dateOrTimestamp?: Date | number) => {
   } = getTimeInfoInET(dateOrTimestamp);
   const currYear = getTimeInfoInET().year;
 
+  // Get the short month description
+  const monthName = getMonthName(month).short;
+
   // Create start of description
-  let description = `${monthMap[month as keyof typeof monthMap]} ${day}${getOrdinal(day)}`;
+  let description = `${monthName} ${day}${getOrdinal(day)}`;
 
   // Add on year if it's different
   if (year !== currYear) {

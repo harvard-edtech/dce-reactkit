@@ -5,10 +5,12 @@
 
 // Import React
 import React from 'react';
+import getMonthName from '../helpers/getMonthName';
 
 // Import helpers
 import getOrdinal from '../helpers/getOrdinal';
 import getTimeInfoInET from '../helpers/getTimeInfoInET';
+import forceNumIntoBounds from '../helpers/forceNumIntoBounds';
 
 /*------------------------------------------------------------------------*/
 /*                                  Types                                 */
@@ -32,30 +34,13 @@ type Props = {
    * @param year new full year number
    */
   onChange: (month: number, day: number, year: number) => void,
-  // Number of months in the future to allow the user to schedule into
-  // (max is 12)
+  // Number of months to allow the user to choose from
+  // (max is 12, default is 6)
   numMonthsToShow?: number,
+  // If true, instead of showing numMonthsToShow months into the future,
+  // show numMonthsToShow months into the past
+  chooseFromPast?: boolean,
 };
-
-/*------------------------------------------------------------------------*/
-/*                                Constants                               */
-/*------------------------------------------------------------------------*/
-
-// Constants
-const MONTH_NAMES = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
 
 /*------------------------------------------------------------------------*/
 /*                                Component                               */
@@ -75,8 +60,13 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     day,
     year,
     onChange,
+    chooseFromPast,
   } = props;
-  const numMonthsToShow = Math.min(props.numMonthsToShow ?? 6, 12);
+  let numMonthsToShow = forceNumIntoBounds(
+    (props.numMonthsToShow ?? 6),
+    1,
+    12,
+  );
 
   /*------------------------------------------------------------------------*/
   /*                                 Render                                 */
@@ -94,19 +84,28 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     days: number[],
     year: number,
   }[] = [];
+  let startYear = today.year;
+  let startMonth = today.month;
+  if (chooseFromPast) {
+    startMonth -= Math.max(0, numMonthsToShow - 1);
+    if (startMonth <= 0) {
+      startMonth += 12;
+      startYear -= 1;
+    }
+  }
   for (let i = 0; i < numMonthsToShow; i++) {
     // Get month and year info
-    const unmoddedMonth = (today.month + i);
+    const unmoddedMonth = (startMonth + i);
     const month = (
       unmoddedMonth > 12
         ? unmoddedMonth - 12
         : unmoddedMonth
     );
-    const monthName = MONTH_NAMES[month - 1];
+    const monthName = getMonthName(month).full;
     const year = (
       unmoddedMonth > 12
-        ? today.year + 1
-        : today.year
+        ? startYear + 1
+        : startYear
     );
 
     // Figure out which days are allowed

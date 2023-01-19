@@ -36,7 +36,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK10
+// Highest error code = DRK11
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -53,6 +53,7 @@ var ReactKitErrorCode;
     ReactKitErrorCode["NoCACCLGetLaunchInfoFunction"] = "DRK8";
     ReactKitErrorCode["NotTTM"] = "DRK9";
     ReactKitErrorCode["NotAdmin"] = "DRK10";
+    ReactKitErrorCode["NotAllowedToReviewLogs"] = "DRK11";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -279,7 +280,7 @@ const ModalButtonTypeToLabelAndVariant = {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$6 = `
+const style$7 = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -453,7 +454,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default["default"].createElement("style", null, style$6),
+        React__default["default"].createElement("style", null, style$7),
         React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -799,7 +800,11 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
     // Add log
     logClientEvent({
         context: LogBuiltInMetadata.Context.ClientFatalError,
-        error,
+        error: {
+            message,
+            code,
+            stack: (error !== null && error !== void 0 ? error : {}).stack,
+        },
         metadata: {
             errorTitle,
         },
@@ -913,7 +918,7 @@ const AppWrapper = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$5 = `
+const style$6 = `
 /* Container fades in */
 .LoadingSpinner-container {
   animation-name: LoadingSpinner-container-fade-in;
@@ -991,7 +996,7 @@ const LoadingSpinner = () => {
     /*------------------------------------------------------------------------*/
     // Add all four blips to a container
     return (React__default["default"].createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default["default"].createElement("style", null, style$5),
+        React__default["default"].createElement("style", null, style$6),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-1 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-2 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-3 me-1" }),
@@ -1005,7 +1010,7 @@ const LoadingSpinner = () => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$4 = `
+const style$5 = `
   /* Tab Box */
   .TabBox-box {
     /* Light Border */
@@ -1085,7 +1090,7 @@ const TabBox = (props) => {
     /*----------------------------------------*/
     // Full UI
     return (React__default["default"].createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
-        React__default["default"].createElement("style", null, style$4),
+        React__default["default"].createElement("style", null, style$5),
         React__default["default"].createElement("div", { className: "TabBox-title-container" },
             React__default["default"].createElement("div", { className: "TabBox-title" }, title)),
         React__default["default"].createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },
@@ -1192,6 +1197,34 @@ const ButtonInputGroup = (props) => {
                 } }, children))));
 };
 
+const monthNames = [
+    { short: 'Jan', full: 'January' },
+    { short: 'Feb', full: 'February' },
+    { short: 'Mar', full: 'March' },
+    { short: 'Apr', full: 'April' },
+    { short: 'May', full: 'May' },
+    { short: 'Jun', full: 'June' },
+    { short: 'Jul', full: 'July' },
+    { short: 'Aug', full: 'August' },
+    { short: 'Sep', full: 'September' },
+    { short: 'Oct', full: 'October' },
+    { short: 'Nov', full: 'November' },
+    { short: 'Dec', full: 'December' },
+];
+/**
+ * Get the name of a month given the month number (1 = January, etc.)
+ *   If an invalid number is provided, we will treat it like January
+ * @author Gabe Abrams
+ * @param month the number of the month
+ * @returns object containing multiple month name formats:
+ *   { short, full } where short will look like "Jan" and full will look like
+ *   "January"
+ */
+const getMonthName = (month) => {
+    var _a;
+    return ((_a = monthNames[month - 1]) !== null && _a !== void 0 ? _a : monthNames[0]);
+};
+
 const ORDINALS = ['th', 'st', 'nd', 'rd'];
 /**
  * Get a number's ordinal
@@ -1262,27 +1295,21 @@ const getTimeInfoInET = (dateOrTimestamp) => {
 };
 
 /**
+ * Force a number to stay within specific bounds
+ * @author Gabe Abrams
+ * @param num the number to move into the bounds
+ * @param min the minimum number in the bound
+ * @param max the maximum number in the bound
+ * @returns bounded number
+ */
+const forceNumIntoBounds = (num, min, max) => {
+    return Math.max(min, Math.min(max, num));
+};
+
+/**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
  */
-/*------------------------------------------------------------------------*/
-/*                                Constants                               */
-/*------------------------------------------------------------------------*/
-// Constants
-const MONTH_NAMES = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-];
 /*------------------------------------------------------------------------*/
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
@@ -1292,8 +1319,8 @@ const SimpleDateChooser = (props) => {
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
-    const { ariaLabel, name, month, day, year, onChange, } = props;
-    const numMonthsToShow = Math.min((_a = props.numMonthsToShow) !== null && _a !== void 0 ? _a : 6, 12);
+    const { ariaLabel, name, month, day, year, onChange, chooseFromPast, } = props;
+    let numMonthsToShow = forceNumIntoBounds(((_a = props.numMonthsToShow) !== null && _a !== void 0 ? _a : 6), 1, 12);
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -1303,16 +1330,25 @@ const SimpleDateChooser = (props) => {
     // Determine the set of choices allowed
     const today = getTimeInfoInET();
     const choices = [];
+    let startYear = today.year;
+    let startMonth = today.month;
+    if (chooseFromPast) {
+        startMonth -= Math.max(0, numMonthsToShow - 1);
+        if (startMonth <= 0) {
+            startMonth += 12;
+            startYear -= 1;
+        }
+    }
     for (let i = 0; i < numMonthsToShow; i++) {
         // Get month and year info
-        const unmoddedMonth = (today.month + i);
+        const unmoddedMonth = (startMonth + i);
         const month = (unmoddedMonth > 12
             ? unmoddedMonth - 12
             : unmoddedMonth);
-        const monthName = MONTH_NAMES[month - 1];
+        const monthName = getMonthName(month).full;
         const year = (unmoddedMonth > 12
-            ? today.year + 1
-            : today.year);
+            ? startYear + 1
+            : startYear);
         // Figure out which days are allowed
         const days = [];
         const numDaysInMonth = (new Date(year, month, 0)).getDate();
@@ -1368,7 +1404,7 @@ const SimpleDateChooser = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$3 = `
+const style$4 = `
   .Drawer-container {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -1400,7 +1436,7 @@ const Drawer = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     return (React__default["default"].createElement("div", { className: "Drawer-container" },
-        React__default["default"].createElement("style", null, style$3),
+        React__default["default"].createElement("style", null, style$4),
         children));
 };
 
@@ -1411,7 +1447,7 @@ const Drawer = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$2 = `
+const style$3 = `
   .PopSuccessMark-outer-container {
     position: relative;
     display: inline-block;
@@ -1516,7 +1552,7 @@ const PopSuccessMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "checkmark indicating success" },
-        React__default["default"].createElement("style", null, style$2),
+        React__default["default"].createElement("style", null, style$3),
         React__default["default"].createElement("div", { className: `PopSuccessMark-check-stroke-1 bg-${checkVariant}`, style: {
                 borderRadius: `${sizeRem / 5}rem`,
             } }),
@@ -1532,7 +1568,7 @@ const PopSuccessMark = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$1 = `
+const style$2 = `
   .PopFailureMark-outer-container {
     position: relative;
     display: inline-block;
@@ -1636,7 +1672,7 @@ const PopFailureMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "mark indicating failure" },
-        React__default["default"].createElement("style", null, style$1),
+        React__default["default"].createElement("style", null, style$2),
         React__default["default"].createElement("div", { className: `PopFailureMark-x-stroke-1 bg-${xVariant}`, style: {
                 borderRadius: `${sizeRem / 5}rem`,
             } }),
@@ -1652,7 +1688,7 @@ const PopFailureMark = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style = `
+const style$1 = `
   .PopPendingMark-outer-container {
     position: relative;
     display: inline-block;
@@ -1725,7 +1761,7 @@ const PopPendingMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "mark indicating that the item is pending" },
-        React__default["default"].createElement("style", null, style),
+        React__default["default"].createElement("style", null, style$1),
         React__default["default"].createElement("div", null,
             React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faHourglass, className: `PopPendingMark-hourglass text-${hourglassVariant}`, style: {
                     fontSize: `${sizeRem * 0.6}rem`,
@@ -1738,27 +1774,27 @@ const PopPendingMark = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$1;
+var ActionType$3;
 (function (ActionType) {
     // Indicate that the text was recently copied
     ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
     // Clear the status
     ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType$1 || (ActionType$1 = {}));
+})(ActionType$3 || (ActionType$3 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$1 = (state, action) => {
+const reducer$3 = (state, action) => {
     switch (action.type) {
-        case ActionType$1.IndicateRecentlyCopied: {
+        case ActionType$3.IndicateRecentlyCopied: {
             return {
                 recentlyCopied: true,
             };
         }
-        case ActionType$1.ClearRecentlyCopiedStatus: {
+        case ActionType$3.ClearRecentlyCopiedStatus: {
             return {
                 recentlyCopied: false,
             };
@@ -1784,7 +1820,7 @@ const CopiableBox = (props) => {
         recentlyCopied: false,
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$1, initialState);
+    const [state, dispatch] = React.useReducer(reducer$3, initialState);
     // Destructure common state
     const { recentlyCopied, } = state;
     /*------------------------------------------------------------------------*/
@@ -1804,13 +1840,13 @@ const CopiableBox = (props) => {
         }
         // Show copied notice
         dispatch({
-            type: ActionType$1.IndicateRecentlyCopied,
+            type: ActionType$3.IndicateRecentlyCopied,
         });
         // Wait a moment
         yield waitMs(4000);
         // Hide copied notice
         dispatch({
-            type: ActionType$1.ClearRecentlyCopiedStatus,
+            type: ActionType$3.ClearRecentlyCopiedStatus,
         });
     });
     /*------------------------------------------------------------------------*/
@@ -1865,20 +1901,20 @@ const CopiableBox = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType;
+var ActionType$2;
 (function (ActionType) {
     // Toggle whether the children are being shown
     ActionType["ToggleItems"] = "toggle-items";
-})(ActionType || (ActionType = {}));
+})(ActionType$2 || (ActionType$2 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
  * @param state current state
  * @param action action to execute
  */
-const reducer = (state, action) => {
+const reducer$2 = (state, action) => {
     switch (action.type) {
-        case ActionType.ToggleItems: {
+        case ActionType$2.ToggleItems: {
             return { isShowingItems: !state.isShowingItems };
         }
         default: {
@@ -1902,7 +1938,7 @@ const NestableItemList = (props) => {
         isShowingItems: false,
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer, initialState);
+    const [state, dispatch] = React.useReducer(reducer$2, initialState);
     // Destructure common state
     const { isShowingItems, } = state;
     /*------------------------------------------------------------------------*/
@@ -1992,7 +2028,7 @@ const NestableItemList = (props) => {
                     backgroundColor: 'transparent',
                 }, type: "button", onClick: () => {
                     dispatch({
-                        type: ActionType.ToggleItems,
+                        type: ActionType$2.ToggleItems,
                     });
                 }, "aria-label": `${isShowingItems ? 'Hide' : 'Show'} items in ${item.name}` },
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: isShowingItems ? freeSolidSvgIcons.faChevronDown : freeSolidSvgIcons.faChevronRight })))),
@@ -2034,6 +2070,1684 @@ const ItemPicker = (props) => {
     return (React__default["default"].createElement(TabBox, { title: title },
         React__default["default"].createElement("div", { style: { overflowX: 'auto' } },
             React__default["default"].createElement(NestableItemList, { items: items, onChanged: onChanged }))));
+};
+
+/**
+ * Path of the route for storing client-side logs
+ * @author Gabe Abrams
+ */
+const LOG_REVIEW_ROUTE_PATH_PREFIX = `/admin${ROUTE_PATH_PREFIX}/logs`;
+
+/**
+ * Source of a log event
+ * @author Gabe Abrams
+ */
+var LogSource;
+(function (LogSource) {
+    // Client
+    LogSource["Client"] = "client";
+    // Server
+    LogSource["Server"] = "server";
+})(LogSource || (LogSource = {}));
+var LogSource$1 = LogSource;
+
+/**
+ * Type of a log event
+ * @author Gabe Abrams
+ */
+var LogType;
+(function (LogType) {
+    // User action
+    LogType["Action"] = "action";
+    // Error
+    LogType["Error"] = "error";
+})(LogType || (LogType = {}));
+var LogType$1 = LogType;
+
+/**
+ * Types of actions
+ * @author Gabe Abrams
+ */
+var LogAction;
+(function (LogAction) {
+    // Target was opened by the user (it was not on screen, but now it is)
+    LogAction["Open"] = "open";
+    // Target was closed by the user (it was on screen, but now it is not)
+    LogAction["Close"] = "close";
+    // Target was cancelled by the user (it was on closed without saving)
+    LogAction["Cancel"] = "cancel";
+    // Target was expanded by the user (it always remains on screen, but size was changed)
+    LogAction["Expand"] = "expand";
+    // Target was collapsed by the user (it always remains on screen, but size was changed)
+    LogAction["Collapse"] = "collapse";
+    // Target was viewed by the user (only for items that are not opened or closed, those must use Open/Close actions)
+    LogAction["View"] = "view";
+    // Target interrupted the user (popup, dialog, validation message, etc. appeared without user prompting)
+    LogAction["Interrupt"] = "interrupt";
+    // Target was created by the user (it did not exist before)
+    LogAction["Create"] = "create";
+    // Target was edited by the user (it existed and was changed)
+    LogAction["Edit"] = "edit";
+    // Target was deleted by the user (it existed and now it doesn't)
+    LogAction["Delete"] = "delete";
+    // Target was added by the user (it already existed and was added to another place)
+    LogAction["Add"] = "add";
+    // Target was removed by the user (it was removed from something but still exists)
+    LogAction["Remove"] = "remove";
+    // Target was activated by the user (click, check, tap, keypress, etc.)
+    LogAction["Activate"] = "activate";
+    // Target was deactivated by the user (click away, uncheck, tap outside of, tab away, etc.)
+    LogAction["Deactivate"] = "deactivate";
+    // User showed interest in a target (hover, peek, etc.)
+    LogAction["Peek"] = "peek";
+    // Unknown action
+    LogAction["Unknown"] = "unknown";
+})(LogAction || (LogAction = {}));
+var LogAction$1 = LogAction;
+
+/**
+ * Server-side API param types
+ * @author Gabe Abrams
+ */
+var ParamType;
+(function (ParamType) {
+    ParamType["Boolean"] = "boolean";
+    ParamType["BooleanOptional"] = "boolean-optional";
+    ParamType["Float"] = "float";
+    ParamType["FloatOptional"] = "float-optional";
+    ParamType["Int"] = "int";
+    ParamType["IntOptional"] = "int-optional";
+    ParamType["JSON"] = "json";
+    ParamType["JSONOptional"] = "json-optional";
+    ParamType["String"] = "string";
+    ParamType["StringOptional"] = "string-optional";
+})(ParamType || (ParamType = {}));
+var ParamType$1 = ParamType;
+
+/**
+ * Round a number to a certain number of decimals
+ * @author Gabe Abrams
+ * @param num the number to round
+ * @param numDecimals the number of decimals to round to
+ * @returns rounded number
+ */
+const roundToNumDecimals = (num, numDecimals) => {
+    const rounder = 10 ** numDecimals;
+    return (Math.round(num * rounder) / rounder);
+};
+
+/**
+ * Escape a CSV cell if needed
+ * @author Gabe Abrams
+ * @param text the cell contents
+ * @returns escaped cell text
+ */
+const escapeCellText = (text) => {
+    if (!text.includes(',')) {
+        // No need to escape
+        return text;
+    }
+    // Perform escape
+    return `"${text.replace(/"/g, '""')}`;
+};
+/**
+ * Generate a CSV file
+ * @author Gabe Abrams
+ * @param data list of row data in the form of json objects
+ * @param columns list of columns to include in the csv
+ * @returns multiline csv string
+ */
+const genCSV = (data, columns) => {
+    let csv = '';
+    // Add header
+    csv += (columns
+        .map((column) => {
+        return escapeCellText(column.title);
+    })
+        .join(','));
+    // Add each row
+    data.forEach((datum) => {
+        csv += (columns
+            .map((column) => {
+            return escapeCellText(datum[column.param]);
+        })
+            .join(','));
+    });
+    // Return
+    return csv;
+};
+
+/**
+ * Button for downloading a csv file
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const CSVDownloadButton = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { filename, csv, id, className, ariaLabel, style, onClick, children, } = props;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    // Render the button
+    return (React__default["default"].createElement("a", { id: id, download: filename, href: `data:application/octet-stream,${csv}`, className: `CSVDownloadButton-button ${className !== null && className !== void 0 ? className : 'btn btn-secondary'}`, "aria-label": (ariaLabel
+            ? `Click to download ${filename}`
+            : ariaLabel), style: style, onClick: onClick },
+        !children && (React__default["default"].createElement(React__default["default"].Fragment, null,
+            React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCloudDownloadAlt, className: "mr-2" }),
+            "Download CSV")),
+        children));
+};
+
+/**
+ * Intelligent table
+ * @author Gabe Abrams
+ */
+// Sort types
+var SortType;
+(function (SortType) {
+    // Ascending
+    SortType["Ascending"] = "ascending";
+    // Descending
+    SortType["Descending"] = "descending";
+})(SortType || (SortType = {}));
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType$1;
+(function (ActionType) {
+    // Toggle sort column param
+    ActionType["ToggleSortColumn"] = "toggle-sort-column";
+    // Toggle the visibility of a column
+    ActionType["ToggleColumnVisibility"] = "toggle-column-visibility";
+    // Toggle the column visibility customization modal
+    ActionType["ToggleColVisCusModalVisibility"] = "toggle-col-vis-cus-modal-visibility";
+})(ActionType$1 || (ActionType$1 = {}));
+/**
+ * Reducer that executes actions
+ * @author Gabe Abrams
+ * @param state current state
+ * @param action action to execute
+ */
+const reducer$1 = (state, action) => {
+    switch (action.type) {
+        case ActionType$1.ToggleSortColumn: {
+            if (action.param !== state.sortColumnParam) {
+                // Different column param
+                return Object.assign(Object.assign({}, state), { sortColumnParam: action.param, sortType: SortType.Ascending });
+            }
+            if (state.sortType === SortType.Ascending) {
+                // Switch to descending
+                return Object.assign(Object.assign({}, state), { sortType: SortType.Descending });
+            }
+            // Stop sorting by column
+            return Object.assign(Object.assign({}, state), { sortColumnParam: undefined, sortType: SortType.Ascending });
+        }
+        case ActionType$1.ToggleColumnVisibility: {
+            const { columnVisibilityMap } = state;
+            columnVisibilityMap[action.param] = !columnVisibilityMap[action.param];
+            return Object.assign(Object.assign({}, state), { columnVisibilityMap });
+        }
+        case ActionType$1.ToggleColVisCusModalVisibility: {
+            return Object.assign(Object.assign({}, state), { columnVisibilityCustomizationModalVisible: !state.columnVisibilityCustomizationModalVisible });
+        }
+        default: {
+            return state;
+        }
+    }
+};
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const IntelliTable = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    var _a;
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { title, id, data, columns, } = props;
+    /* -------------- State ------------- */
+    // Initial state
+    const initColumnVisibilityMap = {};
+    columns.forEach((column) => {
+        initColumnVisibilityMap[column.param] = !column.startsHidden;
+    });
+    const initialState = {
+        sortColumnParam: undefined,
+        sortType: SortType.Descending,
+        columnVisibilityMap: initColumnVisibilityMap,
+        columnVisibilityCustomizationModalVisible: false,
+    };
+    // Initialize state
+    const [state, dispatch] = React.useReducer(reducer$1, initialState);
+    // Destructure common state
+    const { sortColumnParam, sortType, columnVisibilityMap, columnVisibilityCustomizationModalVisible, } = state;
+    /* ------- Col Vis Customization Modal ------ */
+    if (columnVisibilityCustomizationModalVisible) {
+        // Create modal
+        (React__default["default"].createElement(Modal, { type: ModalType$1.Okay, title: "Choose columns to show:", onClose: () => {
+                dispatch({
+                    type: ActionType$1.ToggleColVisCusModalVisibility,
+                });
+            } }, columns.map((column) => {
+            return (React__default["default"].createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, text: column.title, onChanged: () => {
+                    dispatch({
+                        type: ActionType$1.ToggleColumnVisibility,
+                        param: column.param,
+                    });
+                }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column` }));
+        })));
+    }
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    // Table header
+    const headerCells = (columns
+        .filter((column) => {
+        return columnVisibilityMap[column.param];
+    })
+        .map((column) => {
+        // Custom info based on current sort type
+        let sortButtonAriaLabel;
+        let sortIcon = freeSolidSvgIcons.faSort;
+        if (!sortColumnParam) {
+            // Not being sorted yet
+            sortButtonAriaLabel = `sort ascending by ${column.title}`;
+            sortIcon = freeSolidSvgIcons.faSort;
+        }
+        else if (column.param === sortColumnParam) {
+            // Already sorted by this column
+            if (sortType === SortType.Ascending) {
+                // Sorted ascending
+                sortButtonAriaLabel = `sort descending by ${column.title}`;
+                sortIcon = freeSolidSvgIcons.faSortDown;
+            }
+            else {
+                // Sorted descending
+                sortButtonAriaLabel = `stop sorting by ${column.title}`;
+                sortIcon = freeSolidSvgIcons.faSortUp;
+            }
+        }
+        else {
+            // Sorted by a different column
+            sortButtonAriaLabel = `sort ascending by ${column.title}`;
+            sortIcon = freeSolidSvgIcons.faSort;
+        }
+        // Create the cell UI
+        return (React__default["default"].createElement("th", { key: column.param, scope: "col", id: `IntelliTable-${id}-header-${column.param}` },
+            React__default["default"].createElement("div", { className: "d-flex align-items-center justify-content-center flex-row h-100" },
+                React__default["default"].createElement("h4", { className: "m-0" }, column.title),
+                React__default["default"].createElement("div", null,
+                    React__default["default"].createElement("button", { type: "button", className: "btn btn-light", "aria-label": sortButtonAriaLabel, onClick: () => {
+                            dispatch({
+                                type: ActionType$1.ToggleSortColumn,
+                                param: column.param,
+                            });
+                        } },
+                        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: sortIcon }))))));
+    }));
+    const tableHeader = (React__default["default"].createElement("thead", null,
+        React__default["default"].createElement("tr", null, headerCells)));
+    // Sort data
+    let sortedData = [...data];
+    const paramType = (_a = columns.find((column) => {
+        return (column.param === sortColumnParam);
+    })) === null || _a === void 0 ? void 0 : _a.type;
+    const descending = (sortType === SortType.Descending);
+    if (sortColumnParam) {
+        sortedData.sort((a, b) => {
+            const aVal = a[sortColumnParam];
+            const bVal = b[sortColumnParam];
+            // Sort differently based on the data type
+            // > Boolean
+            if (paramType === ParamType$1.Boolean) {
+                if (aVal && !bVal) {
+                    return (descending ? -1 : 1);
+                }
+                if (!aVal && bVal) {
+                    return (descending ? 1 : -1);
+                }
+                return 0;
+            }
+            // > Number
+            if (paramType === ParamType$1.Int
+                || paramType === ParamType$1.Float) {
+                return (descending
+                    ? (bVal - aVal)
+                    : (aVal - bVal));
+            }
+            // > String
+            if (paramType === ParamType$1.String) {
+                if (aVal < bVal) {
+                    return (descending ? -1 : 1);
+                }
+                if (aVal > bVal) {
+                    return (descending ? 1 : -1);
+                }
+                return 0;
+            }
+            // > JSON
+            if (paramType === ParamType$1.JSON) {
+                const aSize = (Array.isArray(aVal)
+                    ? aVal.length
+                    : Object.keys(aVal).length);
+                const bSize = (Array.isArray(bVal)
+                    ? bVal.length
+                    : Object.keys(bVal).length);
+                return (descending
+                    ? (bSize - aSize)
+                    : (aSize - bSize));
+            }
+            // No sort
+            return 0;
+        });
+    }
+    // Table body
+    const rows = sortedData.map((datum) => {
+        // Build cells
+        const cells = (columns
+            .filter((column) => {
+            return columnVisibilityMap[column.param];
+        })
+            .map((column) => {
+            // Get value
+            let value = datum;
+            const paramParts = column.param.split('.');
+            paramParts.forEach((paramPart) => {
+                value = (value !== null && value !== void 0 ? value : {})[paramPart];
+            });
+            let fullValue;
+            let visibleValue;
+            let title = '';
+            if (column.type === ParamType$1.Boolean) {
+                fullValue = !!(value);
+                const noValue = (value === undefined
+                    || value === null);
+                visibleValue = (noValue
+                    ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCheckCircle }))
+                    : (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faXmarkCircle })));
+                title = (fullValue ? 'True' : 'False');
+            }
+            else if (column.type === ParamType$1.Int) {
+                fullValue = Number.parseInt(value, 10);
+                const noValue = Number.isNaN(fullValue);
+                visibleValue = (noValue
+                    ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
+                    : fullValue);
+                title = String(fullValue);
+            }
+            else if (column.type === ParamType$1.Float) {
+                fullValue = Number.parseFloat(value);
+                const noValue = Number.isNaN(fullValue);
+                visibleValue = (noValue
+                    ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
+                    : roundToNumDecimals(fullValue, 2));
+                title = String(fullValue);
+            }
+            else if (column.type === ParamType$1.String) {
+                fullValue = String(value).trim();
+                const noValue = (value.trim().length) === 0;
+                visibleValue = (noValue
+                    ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
+                    : fullValue);
+                title = `"${value}"`;
+            }
+            else if (column.type === ParamType$1.JSON) {
+                fullValue = JSON.stringify(value);
+                const noValue = (Array.isArray(value)
+                    ? (!value || value.length === 0)
+                    : Object.keys(value !== null && value !== void 0 ? value : {}).length === 0);
+                visibleValue = (noValue
+                    ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
+                    : fullValue);
+            }
+            // Create UI
+            return (React__default["default"].createElement("td", { key: `${datum.id}-${column.param}`, title: title }, visibleValue));
+        }));
+        // Add cells to a row
+        return (React__default["default"].createElement("tr", { key: datum.id }, cells));
+    });
+    const tableBody = (React__default["default"].createElement("tbody", null, rows));
+    // Build table
+    const table = (React__default["default"].createElement("table", { className: "table table-dark table-striped" },
+        tableHeader,
+        tableBody));
+    // Count the number of hidden columns
+    const numHiddenCols = (Object.values(columnVisibilityMap)
+        .filter((isVisible) => {
+        return !isVisible;
+    })
+        .length);
+    // Build CSV
+    const csv = genCSV(data, columns);
+    // Build main UI
+    return (React__default["default"].createElement("div", { className: `IntelliTable-container-${id}` },
+        React__default["default"].createElement("div", { className: "d-flex align-items-center justify-content-center" },
+            React__default["default"].createElement("h3", { className: "m-0" }, title),
+            React__default["default"].createElement("div", { className: "flex-grow-1 text-end" },
+                React__default["default"].createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: `${title}.csv`, csv: csv }),
+                React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
+                        dispatch({
+                            type: ActionType$1.ToggleColVisCusModalVisibility,
+                        });
+                    } },
+                    "Show/Hide Cols",
+                    numHiddenCols > 0 && (React__default["default"].createElement(React__default["default"].Fragment, null,
+                        ' ',
+                        "(",
+                        numHiddenCols,
+                        ' ',
+                        "hidden)"))))),
+        React__default["default"].createElement("div", { className: `IntelliTable-table-${id}`, style: {
+                overflowX: 'auto',
+            } }, table)));
+};
+
+/**
+ * Log reviewer panel that allows users (must be approved admins) to
+ *   review logs written by dce-reactkit
+ * @author Gabe Abrams
+ */
+// Types of filter drawers
+var FilterDrawer;
+(function (FilterDrawer) {
+    FilterDrawer["Date"] = "date";
+    FilterDrawer["Context"] = "context";
+    FilterDrawer["Tag"] = "tag";
+    FilterDrawer["Action"] = "action";
+    FilterDrawer["Advanced"] = "advanced";
+})(FilterDrawer || (FilterDrawer = {}));
+/*------------------------------------------------------------------------*/
+/*                                  Style                                 */
+/*------------------------------------------------------------------------*/
+const style = `
+  .LogReviewer-outer-container {
+    /* Full Screen */
+    display: inline-block;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    
+    /* On Top and Fixed */
+    position: fixed;
+    z-index: 90000;
+
+    /* Space around contents */
+    padding: 0.5rem;
+
+    /* Dark Background */
+    background-color: rgba(0, 0, 0, 0.7);
+
+    /* No Clickthrough */
+    pointer-events: none;
+  }
+  
+  .LogReviewer-inner-container {
+    /* Full screen, rounded modal-like look */
+    display: flex;
+    height: 100%;
+    border: 0.05rem solid black;
+    border-radius: 0.5rem;
+    overflow: hidden;
+
+    /* Place contents in flex column */
+    flex-direction: column;
+
+    /* Re-allow interaction */
+    pointer-events: all;
+  }
+
+  .LogReviewer-header {
+    /* Elements in flex row */
+    display: flex;
+    flex-direction: row;
+  }
+
+  .LogReviewer-header-title {
+    /* Take up remaining width */
+    flex-grow: 1;
+  }
+
+  .LogReviewer-contents {
+    /* Take up remaining height */
+    flex-grow: 1;
+
+    /* Vertical scroll */
+    overflow-y: auto;
+  }
+`;
+/*------------------------------------------------------------------------*/
+/*                            Static Functions                            */
+/*------------------------------------------------------------------------*/
+/**
+ * Turn a machine-readable name into a human-readable name
+ * @author Gabe Abrams
+ * @param name machine-readable name
+ * @returns human-readable name
+ */
+const genHumanReadableName = (machineReadableName) => {
+    let humanReadableName = '';
+    // Add chars and spaces
+    const chars = machineReadableName.split('');
+    chars.forEach((char) => {
+        if (/[A-Z]/.test(char)) {
+            // Uppercase! Add a space before
+            humanReadableName += ' ';
+        }
+        humanReadableName += chars;
+    });
+    // Trim and return
+    return humanReadableName.trim();
+};
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType;
+(function (ActionType) {
+    // Show the loading bar
+    ActionType["StartLoading"] = "start-loading";
+    // Finish loading one or more months of logs
+    ActionType["FinishLoading"] = "finish-loading";
+    // Reset filters to initial values
+    ActionType["ResetFilters"] = "reset-filters";
+    // Choose a filter drawer to toggle
+    ActionType["ToggleFilterDrawer"] = "toggle-filter-drawer";
+    // Hide filter drawer
+    ActionType["HideFilterDrawer"] = "hide-filter-drawer";
+    // Handle the date filter state
+    ActionType["UpdateDateFilterState"] = "update-date-filter-state";
+    // Update the context filter state
+    ActionType["UpdateContextFilterState"] = "update-context-filter-state";
+    // Update the tag filter state
+    ActionType["UpdateTagFilterState"] = "update-tag-filter-state";
+    // Update the action and error filter state
+    ActionType["UpdateActionErrorFilterState"] = "update-action-error-filter-state";
+    // Update the advanced filter state
+    ActionType["UpdateAdvancedFilterState"] = "update-advanced-filter-state";
+})(ActionType || (ActionType = {}));
+/**
+ * Reducer that executes actions
+ * @author Gabe Abrams
+ * @param state current state
+ * @param action action to execute
+ */
+const reducer = (state, action) => {
+    switch (action.type) {
+        case ActionType.StartLoading: {
+            return Object.assign(Object.assign({}, state), { loading: true });
+        }
+        case ActionType.FinishLoading: {
+            return Object.assign(Object.assign({}, state), { loading: false, logMap: action.logMap });
+        }
+        case ActionType.ToggleFilterDrawer: {
+            return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
+                    ? undefined // hide
+                    : action.filterDrawer) });
+        }
+        case ActionType.HideFilterDrawer: {
+            return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
+        }
+        case ActionType.ResetFilters: {
+            return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState });
+        }
+        case ActionType.UpdateDateFilterState: {
+            return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
+        }
+        case ActionType.UpdateContextFilterState: {
+            return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
+        }
+        case ActionType.UpdateTagFilterState: {
+            return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
+        }
+        case ActionType.UpdateActionErrorFilterState: {
+            return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
+        }
+        case ActionType.UpdateAdvancedFilterState: {
+            return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
+        }
+        default: {
+            return state;
+        }
+    }
+};
+/*------------------------------------------------------------------------*/
+/*                                Component                               */
+/*------------------------------------------------------------------------*/
+const LogReviewer = (props) => {
+    /*------------------------------------------------------------------------*/
+    /*                                  Setup                                 */
+    /*------------------------------------------------------------------------*/
+    var _a, _b, _c, _d, _e;
+    /* -------------- Props ------------- */
+    // Destructure props
+    const { LogMetadata, onClose, } = props;
+    /* -------------- State ------------- */
+    // Create initial date filter state
+    const today = getTimeInfoInET();
+    const initStartDate = {
+        year: today.year,
+        month: today.month,
+        day: 1,
+    };
+    const initEndDate = {
+        year: today.year,
+        month: today.month,
+        day: today.day,
+    };
+    const initDateFilterState = {
+        startDate: initStartDate,
+        endDate: initEndDate,
+    };
+    // Create initial context filter state
+    const initContextFilterState = {};
+    Object.keys((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {}).forEach((context) => {
+        var _a, _b;
+        const contextValue = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
+        if (typeof contextValue === 'string') {
+            // Case: no subcontexts
+            initContextFilterState[contextValue] = true;
+        }
+        else {
+            // Case: subcontexts exist
+            initContextFilterState[contextValue._] = {};
+            Object.values(((_b = LogMetadata.Context) !== null && _b !== void 0 ? _b : {})[context]).forEach((subcontext) => {
+                const subcontextValue = contextValue[subcontext];
+                initContextFilterState[contextValue._][subcontextValue] = true;
+            });
+        }
+    });
+    // Create initial tag filter state
+    const initTagFilterState = {};
+    Object.values((_b = LogMetadata.Tag) !== null && _b !== void 0 ? _b : {}).forEach((tagValue) => {
+        initTagFilterState[tagValue] = true;
+    });
+    // Create advanced filter state
+    const initAdvancedFilterState = {
+        userFirstName: '',
+        userLastName: '',
+        userEmail: '',
+        userId: '',
+        includeLearners: true,
+        includeTTMs: true,
+        includeAdmins: true,
+        courseId: '',
+        courseName: '',
+        isMobile: undefined,
+        source: undefined,
+        routePath: '',
+        routeTemplate: '',
+    };
+    // Create action and error filter state
+    const initActionErrorFilterState = {
+        type: undefined,
+        errorMessage: '',
+        errorCode: '',
+        target: {},
+        action: {},
+    };
+    Object.values((_c = LogMetadata.Target) !== null && _c !== void 0 ? _c : {}).forEach((target) => {
+        initActionErrorFilterState.target[target] = true;
+    });
+    Object.values(LogAction$1).forEach((action) => {
+        initActionErrorFilterState.action[action] = true;
+    });
+    // Initial state
+    const initialState = {
+        loading: true,
+        logMap: {},
+        expandedFilterDrawer: undefined,
+        dateFilterState: initDateFilterState,
+        contextFilterState: initContextFilterState,
+        tagFilterState: initTagFilterState,
+        actionErrorFilterState: initActionErrorFilterState,
+        advancedFilterState: initAdvancedFilterState,
+    };
+    // Initialize state
+    const [state, dispatch] = React.useReducer(reducer, initialState);
+    // Destructure common state
+    const { loading, logMap, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = state;
+    /*------------------------------------------------------------------------*/
+    /*                           Component Functions                          */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Get the list of year/month combos that need to be loaded given a new
+     *   start or end date and the existing logMap
+     * @author Gabe Abrams
+     * @param newDateFilterState the new date filter state
+     * @returns list of year/month combos that need to be loaded
+     */
+    const listMonthsToLoad = (newDateFilterState) => {
+        // List of year/month combos that need to be loaded
+        const toLoad = [];
+        // Loop through dates
+        let year = newDateFilterState.startDate.year;
+        let month = newDateFilterState.startDate.month;
+        while (
+        // Earlier year
+        (year <= newDateFilterState.endDate.year)
+            // Current year but included month
+            || (year === newDateFilterState.endDate.year
+                && month <= newDateFilterState.endDate.month)) {
+            // Add to list
+            toLoad.push({
+                year,
+                month,
+            });
+            // Increment
+            month += 1;
+            if (month > 12) {
+                month -= 12;
+                year += 1;
+            }
+        }
+        // Return
+        return toLoad;
+    };
+    /**
+     * Handle updated start/end dates (updates state, loads if necessary)
+     * @author Gabe Abrams
+     * @param newDateFilterState the new date filter state
+     */
+    const handleDateRangeUpdated = (newDateFilterState) => __awaiter(void 0, void 0, void 0, function* () {
+        // Update state
+        dispatch({
+            type: ActionType.UpdateDateFilterState,
+            dateFilterState: newDateFilterState,
+        });
+        // Check which year/month combos we need to load
+        const toLoad = listMonthsToLoad(newDateFilterState);
+        // If nothing to load, finished
+        if (toLoad.length === 0) {
+            return;
+        }
+        // Start loading
+        dispatch({
+            type: ActionType.StartLoading,
+        });
+        // Load required months
+        try {
+            for (let i = 0; i < toLoad.length; i++) {
+                // Destructure
+                const { year, month } = toLoad[i];
+                // Load
+                const logs = yield visitServerEndpoint({
+                    path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/${year}/months/${month}`,
+                    method: 'GET',
+                });
+                // Add to map
+                if (!logMap[year]) {
+                    logMap[year] = {};
+                }
+                logMap[year][month] = logs;
+            }
+        }
+        catch (err) {
+            return showFatalError(err);
+        }
+        // Finish loading
+        dispatch({
+            type: ActionType.FinishLoading,
+            logMap,
+        });
+    });
+    /*------------------------------------------------------------------------*/
+    /*                           Lifecycle Functions                          */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Mount
+     * @author Gabe Abrams
+     */
+    React.useEffect(() => {
+        // Perform initial load
+        handleDateRangeUpdated(dateFilterState);
+    }, []);
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                 Main UI                */
+    /*----------------------------------------*/
+    // Body that will be filled with the contents of the panel
+    let body;
+    /* ------------- Loading ------------ */
+    if (loading) {
+        body = (React__default["default"].createElement("div", { className: "text-center p-5" },
+            React__default["default"].createElement(LoadingSpinner, null)));
+    }
+    /* ------------ Review UI ----------- */
+    if (!loading) {
+        /*----------------------------------------*/
+        /*                 Filters                */
+        /*----------------------------------------*/
+        // Filter toggle
+        const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles d-flex align-items-center justify-content-center" },
+            React__default["default"].createElement("h3", { className: "m-0" }, "Filters:"),
+            React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons" },
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
+                        dispatch({
+                            type: ActionType.ToggleFilterDrawer,
+                            filterDrawer: FilterDrawer.Date,
+                        });
+                    } },
+                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCalendar, className: "me-2" }),
+                    "Date"),
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
+                        dispatch({
+                            type: ActionType.ToggleFilterDrawer,
+                            filterDrawer: FilterDrawer.Context,
+                        });
+                    } },
+                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "me-2" }),
+                    "Context"),
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
+                        dispatch({
+                            type: ActionType.ToggleFilterDrawer,
+                            filterDrawer: FilterDrawer.Tag,
+                        });
+                    } },
+                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTag, className: "me-2" }),
+                    "Tag"),
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
+                        dispatch({
+                            type: ActionType.ToggleFilterDrawer,
+                            filterDrawer: FilterDrawer.Action,
+                        });
+                    } },
+                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faHammer, className: "me-2" }),
+                    "Action"),
+                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer}`, "aria-label": "toggle advanced filter drawer", onClick: () => {
+                        dispatch({
+                            type: ActionType.ToggleFilterDrawer,
+                            filterDrawer: FilterDrawer.Advanced,
+                        });
+                    } },
+                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faList, className: "me-2" }),
+                    "Advanced"))));
+        // Filter drawer
+        let filterDrawer;
+        if (expandedFilterDrawer) {
+            if (expandedFilterDrawer === FilterDrawer.Date) {
+                filterDrawer = (React__default["default"].createElement(TabBox, { title: "Date" },
+                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, onChange: (month, day, year) => {
+                            dispatch({
+                                type: ActionType.UpdateDateFilterState,
+                                dateFilterState: Object.assign(Object.assign({}, dateFilterState), { startDate: { month, day, year } }),
+                            });
+                        } }),
+                    ' ',
+                    "to",
+                    ' ',
+                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, onChange: (month, day, year) => {
+                            dispatch({
+                                type: ActionType.UpdateDateFilterState,
+                                dateFilterState: Object.assign(Object.assign({}, dateFilterState), { endDate: { month, day, year } }),
+                            });
+                        } })));
+            }
+            else if (expandedFilterDrawer === FilterDrawer.Context) {
+                // Create item picker items
+                const pickableItems = (Object.keys((_d = LogMetadata.Context) !== null && _d !== void 0 ? _d : {})
+                    .map((context) => {
+                    var _a;
+                    const value = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
+                    if (typeof value === 'string') {
+                        // No subcategories
+                        const item = {
+                            id: context,
+                            name: genHumanReadableName(context),
+                            isGroup: false,
+                            checked: !!contextFilterState[context],
+                        };
+                        return item;
+                    }
+                    // Has subcategories
+                    const children = (Object.keys(value)
+                        .filter((subcontext) => {
+                        return subcontext !== '_';
+                    })
+                        .map((subcontext) => {
+                        return {
+                            id: `${context}-${subcontext}`,
+                            name: genHumanReadableName(subcontext),
+                            isGroup: false,
+                            checked: !!value[subcontext],
+                        };
+                    }));
+                    const item = {
+                        id: context,
+                        name: context,
+                        isGroup: true,
+                        children,
+                    };
+                    return item;
+                }));
+                // Create filter UI
+                filterDrawer = (React__default["default"].createElement(ItemPicker, { title: "Context", items: pickableItems, onChanged: (updatedItems) => {
+                        // Update our state
+                        updatedItems.forEach((pickableItem) => {
+                            if (pickableItem.isGroup) {
+                                // Has subcontexts
+                                pickableItem.children.forEach((subcontextItem) => {
+                                    contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
+                                });
+                            }
+                            else {
+                                // No subcontexts
+                                contextFilterState[pickableItem.id] = (pickableItem.checked);
+                            }
+                        });
+                        dispatch({
+                            type: ActionType.UpdateContextFilterState,
+                            contextFilterState,
+                        });
+                    } }));
+            }
+            else if (expandedFilterDrawer === FilterDrawer.Tag) {
+                // Create filter UI
+                filterDrawer = (React__default["default"].createElement(TabBox, { title: "Tags" }, Object.keys(tagFilterState)
+                    .map((tag, i) => {
+                    const description = genHumanReadableName(tag);
+                    return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `include logs tagged with "${description}" in results`, noMarginOnRight: i === Object.keys(tagFilterState).length - 1, onChanged: (checked) => {
+                            tagFilterState[tag] = checked;
+                        } }));
+                })));
+            }
+            else if (expandedFilterDrawer === FilterDrawer.Action) {
+                // Create filter UI
+                filterDrawer = (React__default["default"].createElement(React__default["default"].Fragment, null,
+                    React__default["default"].createElement(TabBox, { title: "Log Type" },
+                        React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
+                                actionErrorFilterState.type = undefined;
+                                dispatch({
+                                    type: ActionType.UpdateActionErrorFilterState,
+                                    actionErrorFilterState,
+                                });
+                            }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
+                        React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
+                                actionErrorFilterState.type = LogType$1.Action;
+                                dispatch({
+                                    type: ActionType.UpdateActionErrorFilterState,
+                                    actionErrorFilterState,
+                                });
+                            }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
+                        React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
+                                actionErrorFilterState.type = LogType$1.Error;
+                                dispatch({
+                                    type: ActionType.UpdateActionErrorFilterState,
+                                    actionErrorFilterState,
+                                });
+                            }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
+                    (actionErrorFilterState.type === undefined
+                        || actionErrorFilterState.type === LogType$1.Action) && (React__default["default"].createElement(TabBox, { title: "Action Log Details" },
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Action" }, Object.keys(LogAction$1)
+                            .map((action, i) => {
+                            const description = genHumanReadableName(action);
+                            return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: i === Object.keys(LogAction$1).length - 1, onChanged: (checked) => {
+                                    actionErrorFilterState.action[action] = checked;
+                                    dispatch({
+                                        type: ActionType.UpdateActionErrorFilterState,
+                                        actionErrorFilterState,
+                                    });
+                                } }));
+                        })),
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Target" }, Object.keys((_e = LogMetadata.Target) !== null && _e !== void 0 ? _e : {})
+                            .map((target, i) => {
+                            var _a;
+                            const description = genHumanReadableName(target);
+                            return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, onChanged: (checked) => {
+                                    actionErrorFilterState.target[target] = checked;
+                                    dispatch({
+                                        type: ActionType.UpdateActionErrorFilterState,
+                                        actionErrorFilterState,
+                                    });
+                                }, noMarginOnRight: i === Object.keys((_a = LogMetadata.Target) !== null && _a !== void 0 ? _a : {}).length - 1 }));
+                        })))),
+                    (actionErrorFilterState.type === undefined
+                        || actionErrorFilterState.type === LogType$1.Error) && (React__default["default"].createElement(TabBox, { title: "Error Log Details" },
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "Error Message"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, onChange: (e) => {
+                                    actionErrorFilterState.errorMessage = e.target.value;
+                                    dispatch({
+                                        type: ActionType.UpdateActionErrorFilterState,
+                                        actionErrorFilterState,
+                                    });
+                                } })),
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "Error Code"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error code", value: actionErrorFilterState.errorMessage, onChange: (e) => {
+                                    actionErrorFilterState.errorCode = ((e.target.value)
+                                        .trim()
+                                        .toUpperCase());
+                                    dispatch({
+                                        type: ActionType.UpdateActionErrorFilterState,
+                                        actionErrorFilterState,
+                                    });
+                                } }))))));
+            }
+            else if (expandedFilterDrawer === FilterDrawer.Advanced) {
+                // Create advanced filter ui
+                filterDrawer = (React__default["default"].createElement(React__default["default"].Fragment, null,
+                    React__default["default"].createElement(TabBox, { title: "User Info" },
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "User First Name"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, onChange: (e) => {
+                                    advancedFilterState.userFirstName = e.target.value;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } })),
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "User Last Name"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, onChange: (e) => {
+                                    advancedFilterState.userLastName = e.target.value;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } })),
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "User Email"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user email", value: advancedFilterState.userEmail, onChange: (e) => {
+                                    advancedFilterState.userEmail = ((e.target.value)
+                                        .trim());
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } })),
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "User Canvas Id"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user canvas id", value: advancedFilterState.userId, onChange: (e) => {
+                                    const { value } = e.target;
+                                    // Only update if value contains only numbers  
+                                    if (/^\d+$/.test(value)) {
+                                        advancedFilterState.userId = ((e.target.value)
+                                            .trim());
+                                    }
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } })),
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Role" },
+                            React__default["default"].createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
+                                    advancedFilterState.includeLearners = checked;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
+                            React__default["default"].createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
+                                    advancedFilterState.includeTTMs = checked;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
+                            React__default["default"].createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
+                                    advancedFilterState.includeAdmins = checked;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
+                    React__default["default"].createElement(TabBox, { title: "Course Info" },
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "Course Name"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, onChange: (e) => {
+                                    advancedFilterState.courseName = e.target.value;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } })),
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "Course Canvas Id"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course canvas id", value: advancedFilterState.courseId, onChange: (e) => {
+                                    const { value } = e.target;
+                                    // Only update if value contains only numbers  
+                                    if (/^\d+$/.test(value)) {
+                                        advancedFilterState.courseId = ((e.target.value)
+                                            .trim());
+                                    }
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } }))),
+                    React__default["default"].createElement(TabBox, { title: "Device Info" },
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Device Type" },
+                            React__default["default"].createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
+                                    advancedFilterState.isMobile = undefined;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } }),
+                            React__default["default"].createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
+                                    advancedFilterState.isMobile = true;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } }),
+                            React__default["default"].createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
+                                    advancedFilterState.isMobile = false;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                }, noMarginOnRight: true }))),
+                    React__default["default"].createElement(TabBox, { title: "Source" },
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Source Type" },
+                            React__default["default"].createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
+                                    advancedFilterState.source = undefined;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } }),
+                            React__default["default"].createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
+                                    advancedFilterState.source = LogSource$1.Client;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } }),
+                            React__default["default"].createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
+                                    advancedFilterState.source = LogSource$1.Server;
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                }, noMarginOnRight: true })),
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Path"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route path", placeholder: "e.g. /api/ttm/courses/12345", value: advancedFilterState.routePath, onChange: (e) => {
+                                    advancedFilterState.courseName = ((e.target.value)
+                                        .trim());
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } })),
+                        React__default["default"].createElement("div", { className: "input-group mb-2" },
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Template"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route template", value: advancedFilterState.routeTemplate, placeholder: "e.g. /api/ttm/courses/:courseId", onChange: (e) => {
+                                    advancedFilterState.courseName = ((e.target.value)
+                                        .trim());
+                                    dispatch({
+                                        type: ActionType.UpdateAdvancedFilterState,
+                                        advancedFilterState,
+                                    });
+                                } })))));
+            }
+        }
+        // Filters UI
+        const filters = (React__default["default"].createElement(React__default["default"].Fragment, null,
+            filterToggles,
+            filterDrawer && (React__default["default"].createElement(Drawer, null, filterDrawer))));
+        // Actually filter the logs
+        // > Perform filters
+        const logs = [];
+        Object.keys(logMap).forEach((year) => {
+            Object.keys(logMap).forEach((month) => {
+                logMap[year][month].forEach((log) => {
+                    /* ----------- Date Filter ---------- */
+                    var _a;
+                    // Before start date
+                    if (
+                    // Previous year
+                    log.year < dateFilterState.startDate.year
+                        // Same year, earlier month
+                        || ((log.year === dateFilterState.startDate.year)
+                            && (log.month < dateFilterState.startDate.month))
+                        // Same year, same month, earlier day
+                        || ((log.year === dateFilterState.startDate.year)
+                            && (log.month === dateFilterState.startDate.month)
+                            && (log.day < dateFilterState.startDate.day))) {
+                        return;
+                    }
+                    // After end date
+                    if (
+                    // Later year
+                    log.year > dateFilterState.endDate.year
+                        // Same year, later month
+                        || ((log.year === dateFilterState.endDate.year)
+                            && (log.month > dateFilterState.endDate.month))
+                        // Same year, same month, later day
+                        || ((log.year === dateFilterState.endDate.year)
+                            && (log.month === dateFilterState.endDate.month)
+                            && (log.day > dateFilterState.endDate.day))) {
+                        return;
+                    }
+                    /* --------- Context Filter --------- */
+                    // Context doesn't match
+                    if (
+                    // Whole context is deselected
+                    contextFilterState[log.context] === false
+                        // None of the subcontexts are selected
+                        || (Object.values((_a = contextFilterState[log.context]) !== null && _a !== void 0 ? _a : {})
+                            .every((isSelected) => {
+                            return !isSelected;
+                        }))) {
+                        return;
+                    }
+                    // Subcontext doesn't match
+                    if (
+                    // Log has a subcontext
+                    log.subcontext
+                        // Context has subcontexts
+                        && (contextFilterState[log.context]
+                            && contextFilterState[log.context] !== false
+                            && contextFilterState[log.context] !== true)
+                        // Subcontext is not selected
+                        && !contextFilterState[log.context][log.subcontext]) {
+                        return;
+                    }
+                    /* -------------- Tags -------------- */
+                    // No tags match
+                    if (
+                    // Log has at least one tag
+                    log.tags.length > 0
+                        // No tags match
+                        && (log.tags.every((tag) => {
+                            return !tagFilterState[tag];
+                        }))) {
+                        return;
+                    }
+                    /* ------- Actions and Errors ------- */
+                    // Log type doesn't match
+                    if (
+                    // Filter won't allow all types
+                    actionErrorFilterState.type !== undefined
+                        // Log type doesn't match
+                        && actionErrorFilterState.type !== log.type) {
+                        return;
+                    }
+                    // Filter errors
+                    if (log.type === LogType$1.Error) {
+                        // Message doesn't match
+                        if (
+                        // Message exists
+                        log.errorMessage
+                            // Message filter exists
+                            && actionErrorFilterState.errorMessage.trim().length > 0
+                            // Message doesn't match
+                            && log.errorMessage.toLowerCase().includes(actionErrorFilterState.errorMessage.trim().toLowerCase())) {
+                            return;
+                        }
+                        // Code doesn't match
+                        if (
+                        // Code exists
+                        log.errorCode
+                            // Code filter exists
+                            && actionErrorFilterState.errorCode.trim().length > 0
+                            // Code doesn't match
+                            && log.errorCode.toUpperCase().includes(actionErrorFilterState.errorCode.trim().toUpperCase())) {
+                            return;
+                        }
+                    }
+                    // Filter actions
+                    if (log.type === LogType$1.Action) {
+                        // Target isn't selected
+                        if (
+                        // Target exists
+                        log.target
+                            // Target isn't selected
+                            && !actionErrorFilterState.target[log.target]) {
+                            return;
+                        }
+                        // Action
+                        if (
+                        // Action exists
+                        log.action
+                            // Action isn't selected
+                            && !actionErrorFilterState.action[log.action]) {
+                            return;
+                        }
+                    }
+                    /* --------- Advanced Filter -------- */
+                    // First name doesn't match
+                    if (
+                    // First name exists
+                    log.userFirstName
+                        // First name query doesn't match
+                        && !log.userFirstName.toLowerCase().includes(advancedFilterState.userFirstName.toLowerCase().trim())) {
+                        return;
+                    }
+                    // Last name doesn't match
+                    if (
+                    // Last name exists
+                    log.userLastName
+                        // Last name query doesn't match
+                        && !log.userLastName.toLowerCase().includes(advancedFilterState.userLastName.toLowerCase().trim())) {
+                        return;
+                    }
+                    // Email doesn't match
+                    if (
+                    // Email exists
+                    log.userEmail
+                        // Email query doesn't match
+                        && !log.userEmail.toLowerCase().includes(advancedFilterState.userEmail.toLowerCase().trim())) {
+                        return;
+                    }
+                    // User id doesn't match
+                    if (
+                    // User id exists
+                    log.userId
+                        // User id doesn't match
+                        && !String(log.userId).includes(advancedFilterState.userId.trim())) {
+                        return;
+                    }
+                    // Learner not allowed
+                    if (
+                    // User is a learner
+                    log.isLearner
+                        // Learners aren't included
+                        && !advancedFilterState.includeLearners) {
+                        return;
+                    }
+                    // TTM not allowed
+                    if (
+                    // User is a ttm
+                    log.isTTM
+                        // TTMs aren't included
+                        && !advancedFilterState.includeTTMs) {
+                        return;
+                    }
+                    // Admin not allowed
+                    if (
+                    // User is an admin
+                    log.isAdmin
+                        // Admins aren't included
+                        && !advancedFilterState.includeAdmins) {
+                        return;
+                    }
+                    // Course Id doesn't match
+                    if (
+                    // Course Id exists
+                    log.courseId
+                        // Course Id doesn't match
+                        && !String(log.courseId).includes(advancedFilterState.courseId.trim())) {
+                        return;
+                    }
+                    // Course name doesn't match
+                    if (
+                    // Course name exists
+                    log.courseName
+                        // Course name doesn't match
+                        && !String(log.courseName).includes(advancedFilterState.courseName.trim())) {
+                        return;
+                    }
+                    // Mobile filter doesn't match
+                    if (
+                    // Mobile filter exists
+                    advancedFilterState.isMobile !== undefined
+                        // Device info exists
+                        && log.device
+                        // Mobile filter doesn't match
+                        && (advancedFilterState.isMobile === log.device.isMobile)) {
+                        return;
+                    }
+                    // Log source doesn't match
+                    if (
+                    // Source filter exists
+                    advancedFilterState.source !== undefined
+                        // Source info exists
+                        && log.source
+                        // Source filter doesn't match
+                        && (advancedFilterState.source !== log.source)) {
+                        return;
+                    }
+                    // Route path doesn't match (Only for server source)
+                    if (
+                    // Source is server
+                    (log.source === LogSource$1.Server)
+                        // Route path is being filtered
+                        && (advancedFilterState.routePath.trim().length)
+                        // Route path doesn't match
+                        && !(log.routePath.includes(advancedFilterState.routePath.trim()))) {
+                        return;
+                    }
+                    // Route template doesn't match (Only for server source)
+                    if (
+                    // Source is server
+                    (log.source === LogSource$1.Server)
+                        // Route template is being filtered
+                        && (advancedFilterState.routeTemplate.trim().length)
+                        // Route template doesn't match
+                        && !(log.routeTemplate.includes(advancedFilterState.routeTemplate.trim()))) {
+                        return;
+                    }
+                    /* -------------- Done -------------- */
+                    // Made it past all filters. Add to the list
+                    logs.push(log);
+                });
+            });
+        });
+        /*----------------------------------------*/
+        /*                  Data                  */
+        /*----------------------------------------*/
+        // Create data table
+        const columns = [
+            {
+                title: 'First Name',
+                param: 'userFirstName',
+                type: ParamType$1.String,
+            },
+            {
+                title: 'Last Name',
+                param: 'userLastName',
+                type: ParamType$1.String,
+            },
+            {
+                title: 'Email',
+                param: 'userEmail',
+                type: ParamType$1.String,
+            },
+            {
+                title: 'Canvas Id',
+                param: 'userId',
+                type: ParamType$1.Int,
+            },
+            {
+                title: 'Student',
+                param: 'isLearner',
+                type: ParamType$1.Boolean,
+            },
+            {
+                title: 'Teaching Staff',
+                param: 'isTTM',
+                type: ParamType$1.Boolean,
+                startsHidden: true,
+            },
+            {
+                title: 'Admin',
+                param: 'isAdmin',
+                type: ParamType$1.Boolean,
+                startsHidden: true,
+            },
+            {
+                title: 'Course Canvas Id',
+                param: 'courseId',
+                type: ParamType$1.Int,
+                startsHidden: true,
+            },
+            {
+                title: 'Course Name',
+                param: 'courseName',
+                type: ParamType$1.String,
+            },
+            {
+                title: 'Browser Name',
+                param: 'browser.name',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Browser Version',
+                param: 'browser.version',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'OS',
+                param: 'device.os',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Mobile',
+                param: 'device.isMobile',
+                type: ParamType$1.Boolean,
+                startsHidden: true,
+            },
+            {
+                title: 'Year',
+                param: 'year',
+                type: ParamType$1.Int,
+            },
+            {
+                title: 'Month',
+                param: 'month',
+                type: ParamType$1.Int,
+            },
+            {
+                title: 'Day',
+                param: 'day',
+                type: ParamType$1.Int,
+            },
+            {
+                title: 'Hour',
+                param: 'hour',
+                type: ParamType$1.Int,
+            },
+            {
+                title: 'Minute',
+                param: 'minute',
+                type: ParamType$1.Int,
+                startsHidden: true,
+            },
+            {
+                title: 'Timestamp',
+                param: 'timestamp',
+                type: ParamType$1.Int,
+                startsHidden: true,
+            },
+            {
+                title: 'Context',
+                param: 'context',
+                type: ParamType$1.String,
+            },
+            {
+                title: 'Subcontext',
+                param: 'subcontext',
+                type: ParamType$1.String,
+            },
+            {
+                title: 'Tags',
+                param: 'tags',
+                type: ParamType$1.JSON,
+                startsHidden: true,
+            },
+            {
+                title: 'Log Level',
+                param: 'level',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Metadata',
+                param: 'metadata',
+                type: ParamType$1.JSON,
+                startsHidden: true,
+            },
+            {
+                title: 'Source',
+                param: 'source',
+                type: ParamType$1.String,
+            },
+            {
+                title: 'Server Route Path',
+                param: 'routePath',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Server Route Template',
+                param: 'routeTemplate',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Type',
+                param: 'type',
+                type: ParamType$1.String,
+            },
+            {
+                title: 'Error Message',
+                param: 'errorMessage',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Error Code',
+                param: 'errorCode',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Error Stack',
+                param: 'errorStack',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Action Target',
+                param: 'target',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+            {
+                title: 'Action Type',
+                param: 'action',
+                type: ParamType$1.String,
+                startsHidden: true,
+            },
+        ];
+        // Create intelliTable
+        const dataTable = (React__default["default"].createElement(IntelliTable, { title: "Matching Logs", id: "logs", data: logs, columns: columns }));
+        // Main body
+        body = (React__default["default"].createElement(React__default["default"].Fragment, null,
+            filters,
+            dataTable));
+    }
+    /* ---------- Wrap in Modal --------- */
+    return (React__default["default"].createElement("div", { className: "LogReviewer-outer-container" },
+        React__default["default"].createElement("style", null, style),
+        React__default["default"].createElement("div", { className: "LogReviewer-inner-container" },
+            React__default["default"].createElement("div", { className: "LogReviewer-header" },
+                React__default["default"].createElement("div", { className: "LogReviewer-header-title" },
+                    React__default["default"].createElement("h1", { className: "m-0" }, "Log Review Dashboard")),
+                React__default["default"].createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-lg", "aria-label": "close log reviewer panel", onClick: onClose, style: {
+                        border: 0,
+                        backgroundColor: 'transparent',
+                        padding: 0,
+                        margin: 0,
+                    } },
+                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTimes }))),
+            React__default["default"].createElement("div", { className: "LogReviewer-contents" }, body))));
 };
 
 /**
@@ -2129,18 +3843,6 @@ const floorToNumDecimals = (num, numDecimals) => {
 };
 
 /**
- * Force a number to stay within specific bounds
- * @author Gabe Abrams
- * @param num the number to move into the bounds
- * @param min the minimum number in the bound
- * @param max the maximum number in the bound
- * @returns bounded number
- */
-const forceNumIntoBounds = (num, min, max) => {
-    return Math.max(min, Math.min(max, num));
-};
-
-/**
  * Pad a number's decimal with zeros on the right
  *   (e.g. 5.2 becomes 5.20 with 2 digit padding)
  * @author Gabe Abrams
@@ -2186,37 +3888,12 @@ const padZerosLeft = (num, numDigits) => {
 };
 
 /**
- * Round a number to a certain number of decimals
- * @author Gabe Abrams
- * @param num the number to round
- * @param numDecimals the number of decimals to round to
- * @returns rounded number
- */
-const roundToNumDecimals = (num, numDecimals) => {
-    const rounder = 10 ** numDecimals;
-    return (Math.round(num * rounder) / rounder);
-};
-
-/**
- * Server-side API param types
+ * Route for checking the status of the current user's
+ *   access to log review
  * @author Gabe Abrams
  */
-var ParamType;
-(function (ParamType) {
-    ParamType["Boolean"] = "boolean";
-    ParamType["BooleanOptional"] = "boolean-optional";
-    ParamType["Float"] = "float";
-    ParamType["FloatOptional"] = "float-optional";
-    ParamType["Int"] = "int";
-    ParamType["IntOptional"] = "int-optional";
-    ParamType["JSON"] = "json";
-    ParamType["JSONOptional"] = "json-optional";
-    ParamType["String"] = "string";
-    ParamType["StringOptional"] = "string-optional";
-})(ParamType || (ParamType = {}));
-var ParamType$1 = ParamType;
+const LOG_REVIEW_STATUS_ROUTE = `/admin${ROUTE_PATH_PREFIX}/logs/access`;
 
-// Import custom error
 // Stored copy of caccl functions
 let _cacclGetLaunchInfo;
 // Stored copy of dce-mango log collection
@@ -2257,10 +3934,20 @@ const internalGetLogCollection = () => {
  * @param opts.getLaunchInfo CACCL LTI's get launch info function
  * @param [opts.logCollection] mongo collection from dce-mango to use for
  *   storing logs. If none is included, logs are written to the console
+ * @param [opts.logReviewAdmins=all admins] info on which admins can review
+ *   logs from the client. If not included, all Canvas admins are allowed to
+ *   review logs. If null, no Canvas admins are allowed to review logs.
+ *   If an array of Canvas userIds (numbers), only Canvas admins with those
+ *   userIds are allowed to review logs. If a dce-mango collection, only
+ *   Canvas admins with entries in that collection ({ userId, ...}) are allowed
+ *   to review logs
  */
 const initServer = (opts) => {
     _cacclGetLaunchInfo = opts.getLaunchInfo;
     _logCollection = opts.logCollection;
+    /*----------------------------------------*/
+    /*                Logging                 */
+    /*----------------------------------------*/
     /**
      * Log an event
      * @author Gabe Abrams
@@ -2327,6 +4014,74 @@ const initServer = (opts) => {
             return log;
         },
     }));
+    /*----------------------------------------*/
+    /*              Log Reviewer              */
+    /*----------------------------------------*/
+    if (opts.logReviewAdmins !== null) {
+        /**
+         * Check if a given user is allowed to review logs
+         * @author Gabe Abrams
+         * @param userId the id of the user
+         * @returns true if the user can review logs
+         */
+        const canReviewLogs = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                // Array of userIds
+                if (Array.isArray(opts.logReviewAdmins)) {
+                    return opts.logReviewAdmins.some((allowedId) => {
+                        return (userId === allowedId);
+                    });
+                }
+                // Must be a collection
+                const matches = yield opts.logReviewAdmins.find({ userId });
+                // Make sure at least one entry matches
+                return matches.length > 0;
+            }
+            catch (err) {
+                // If an error occurred, simply return false
+                return false;
+            }
+        });
+        /**
+         * Check if the current user has access to logs
+         * @author Gabe Abrams
+         * @returns {boolean} true if user has access
+         */
+        opts.app.get(LOG_REVIEW_STATUS_ROUTE, genRouteHandler({
+            handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
+                const { userId } = params;
+                const canReview = yield canReviewLogs(userId);
+                return canReview;
+            }),
+        }));
+        /**
+         * Get all logs for a certain month
+         * @author Gabe Abrams
+         * @param {number} year the year to query (e.g. 2022)
+         * @param {number} month the month to query (e.g. 1 = January)
+         * @returns {Log[]} list of logs from the given month
+         */
+        opts.app.post(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler({
+            paramTypes: {
+                year: ParamType$1.Int,
+                month: ParamType$1.Int,
+            },
+            handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
+                // Get user info
+                const { userId } = params;
+                // Validate user
+                // isAdmin is already checked because path starts with '/admin'
+                const canReview = yield canReviewLogs(userId);
+                if (!canReview) {
+                    throw new ErrorWithCode('You cannot access this resource because you do not have the appropriate permissions.', ReactKitErrorCode$1.NotAllowedToReviewLogs);
+                }
+                // Query for logs
+                const logs = yield _logCollection.find({ userId });
+                // Return logs
+                return logs;
+            }),
+        }));
+    }
 };
 
 // Import shared types
@@ -2625,73 +4380,6 @@ const parseUserAgent = (userAgent) => {
         device,
     };
 };
-
-/**
- * Type of a log event
- * @author Gabe Abrams
- */
-var LogType;
-(function (LogType) {
-    // User action
-    LogType["Action"] = "action";
-    // Error
-    LogType["Error"] = "error";
-})(LogType || (LogType = {}));
-var LogType$1 = LogType;
-
-/**
- * Source of a log event
- * @author Gabe Abrams
- */
-var LogSource;
-(function (LogSource) {
-    // Client
-    LogSource["Client"] = "client";
-    // Server
-    LogSource["Server"] = "server";
-})(LogSource || (LogSource = {}));
-var LogSource$1 = LogSource;
-
-/**
- * Types of actions
- * @author Gabe Abrams
- */
-var LogAction;
-(function (LogAction) {
-    // Target was opened by the user (it was not on screen, but now it is)
-    LogAction["Open"] = "open";
-    // Target was closed by the user (it was on screen, but now it is not)
-    LogAction["Close"] = "close";
-    // Target was cancelled by the user (it was on closed without saving)
-    LogAction["Cancel"] = "cancel";
-    // Target was expanded by the user (it always remains on screen, but size was changed)
-    LogAction["Expand"] = "expand";
-    // Target was collapsed by the user (it always remains on screen, but size was changed)
-    LogAction["Collapse"] = "collapse";
-    // Target was viewed by the user (only for items that are not opened or closed, those must use Open/Close actions)
-    LogAction["View"] = "view";
-    // Target interrupted the user (popup, dialog, validation message, etc. appeared without user prompting)
-    LogAction["Interrupt"] = "interrupt";
-    // Target was created by the user (it did not exist before)
-    LogAction["Create"] = "create";
-    // Target was edited by the user (it existed and was changed)
-    LogAction["Edit"] = "edit";
-    // Target was deleted by the user (it existed and now it doesn't)
-    LogAction["Delete"] = "delete";
-    // Target was added by the user (it already existed and was added to another place)
-    LogAction["Add"] = "add";
-    // Target was removed by the user (it was removed from something but still exists)
-    LogAction["Remove"] = "remove";
-    // Target was activated by the user (click, check, tap, keypress, etc.)
-    LogAction["Activate"] = "activate";
-    // Target was deactivated by the user (click away, uncheck, tap outside of, tab away, etc.)
-    LogAction["Deactivate"] = "deactivate";
-    // User showed interest in a target (hover, peek, etc.)
-    LogAction["Peek"] = "peek";
-    // Unknown action
-    LogAction["Unknown"] = "unknown";
-})(LogAction || (LogAction = {}));
-var LogAction$1 = LogAction;
 
 /**
  * Allowed log levels
@@ -3290,21 +4978,7 @@ const startMinWait = (minWaitMs) => {
     });
 };
 
-// Map of month to three letter description
-const monthMap = {
-    1: 'Jan',
-    2: 'Feb',
-    3: 'Mar',
-    4: 'Apr',
-    5: 'May',
-    6: 'Jun',
-    7: 'Jul',
-    8: 'Aug',
-    9: 'Sep',
-    10: 'Oct',
-    11: 'Nov',
-    12: 'Dec',
-};
+// Import shared helpers
 /**
  * Get a human-readable description of a date (all in ET)
  * @author Gabe Abrams
@@ -3315,8 +4989,10 @@ const getHumanReadableDate = (dateOrTimestamp) => {
     // Get the date info
     const { month, day, year, } = getTimeInfoInET(dateOrTimestamp);
     const currYear = getTimeInfoInET().year;
+    // Get the short month description
+    const monthName = getMonthName(month).short;
     // Create start of description
-    let description = `${monthMap[month]} ${day}${getOrdinal(day)}`;
+    let description = `${monthName} ${day}${getOrdinal(day)}`;
     // Add on year if it's different
     if (year !== currYear) {
         description += ` ${year}`;
@@ -3474,6 +5150,7 @@ var DayOfWeek$1 = DayOfWeek;
 
 exports.AppWrapper = AppWrapper;
 exports.ButtonInputGroup = ButtonInputGroup;
+exports.CSVDownloadButton = CSVDownloadButton;
 exports.CheckboxButton = CheckboxButton;
 exports.CopiableBox = CopiableBox;
 exports.DAY_IN_MS = DAY_IN_MS;
@@ -3482,10 +5159,12 @@ exports.Drawer = Drawer;
 exports.ErrorBox = ErrorBox;
 exports.ErrorWithCode = ErrorWithCode;
 exports.HOUR_IN_MS = HOUR_IN_MS;
+exports.IntelliTable = IntelliTable;
 exports.ItemPicker = ItemPicker;
 exports.LoadingSpinner = LoadingSpinner;
 exports.LogAction = LogAction$1;
 exports.LogBuiltInMetadata = LogBuiltInMetadata;
+exports.LogReviewer = LogReviewer;
 exports.LogSource = LogSource$1;
 exports.LogType = LogType$1;
 exports.MINUTE_IN_MS = MINUTE_IN_MS;
@@ -3509,8 +5188,10 @@ exports.ceilToNumDecimals = ceilToNumDecimals;
 exports.confirm = confirm;
 exports.floorToNumDecimals = floorToNumDecimals;
 exports.forceNumIntoBounds = forceNumIntoBounds;
+exports.genCSV = genCSV;
 exports.genRouteHandler = genRouteHandler;
 exports.getHumanReadableDate = getHumanReadableDate;
+exports.getMonthName = getMonthName;
 exports.getOrdinal = getOrdinal;
 exports.getPartOfDay = getPartOfDay;
 exports.getTimeInfoInET = getTimeInfoInET;

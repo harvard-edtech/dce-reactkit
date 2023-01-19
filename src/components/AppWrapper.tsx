@@ -227,7 +227,11 @@ export const showFatalError = (
   // Add log
   logClientEvent({
     context: LogBuiltInMetadata.Context.ClientFatalError,
-    error,
+    error: {
+      message,
+      code,
+      stack: (error ?? {}).stack,
+    },
     metadata: {
       errorTitle,
     },

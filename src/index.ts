@@ -14,6 +14,9 @@ import PopFailureMark from './components/PopFailureMark';
 import PopPendingMark from './components/PopPendingMark';
 import CopiableBox from './components/CopiableBox';
 import ItemPicker from './components/ItemPicker';
+import LogReviewer from './components/LogReviewer';
+import IntelliTable from './components/IntelliTable';
+import CSVDownloadButton from './components/CSVDownloadButton';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -50,6 +53,8 @@ import onlyKeepLetters from './helpers/onlyKeepLetters';
 import parallelLimit from './helpers/parallelLimit';
 import logClientEvent from './helpers/logClientEvent';
 import initLogCollection from './server/initLogCollection';
+import getMonthName from './helpers/getMonthName';
+import genCSV from './helpers/genCSV';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -64,6 +69,8 @@ import LogType from './types/LogType';
 import LogSource from './types/LogSource';
 import LogAction from './types/LogAction';
 import LogBuiltInMetadata from './types/LogBuiltInMetadata';
+import LogMetadataType from './types/LogMetadataType';
+import IntelliTableColumn from './types/IntelliTableColumn';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -86,6 +93,9 @@ export {
   PopPendingMark,
   CopiableBox,
   ItemPicker,
+  LogReviewer,
+  IntelliTable,
+  CSVDownloadButton,
   // Global functions
   alert,
   confirm,
@@ -116,6 +126,8 @@ export {
   stringsToHumanReadableList,
   onlyKeepLetters,
   parallelLimit,
+  getMonthName,
+  genCSV,
   // Client helpers
   visitServerEndpoint,
   logClientEvent,
@@ -137,6 +149,8 @@ export {
   LogSource,
   LogAction,
   LogBuiltInMetadata,
+  LogMetadataType,
+  IntelliTableColumn,
   // Component-specific-types
   PickableItem,
   // Server types
