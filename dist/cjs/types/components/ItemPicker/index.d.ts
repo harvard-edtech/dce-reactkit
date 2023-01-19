@@ -13,6 +13,7 @@ declare type Props = {
      *   values updated
      */
     onChanged: (updatedItems: PickableItem[]) => void;
+    noBottomMargin?: boolean;
 };
 declare const ItemPicker: React.FC<Props>;
 export default ItemPicker;

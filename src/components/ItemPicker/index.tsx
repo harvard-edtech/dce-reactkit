@@ -31,6 +31,8 @@ type Props = {
    *   values updated
    */
   onChanged: (updatedItems: PickableItem[]) => void,
+  // If true, don't add margin to bottom of item picker
+  noBottomMargin?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -49,6 +51,7 @@ const ItemPicker: React.FC<Props> = (props) => {
     title,
     items,
     onChanged,
+    noBottomMargin,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -66,6 +69,7 @@ const ItemPicker: React.FC<Props> = (props) => {
   return (
     <TabBox
       title={title}
+      noBottomMargin={noBottomMargin}
     >
       <div style={{ overflowX: 'auto' }}>
         <NestableItemList

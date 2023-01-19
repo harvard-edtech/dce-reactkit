@@ -247,6 +247,11 @@ const style = `
     color: #333 !important;
   }
   .LogReviewer-header-close-button:hover {
+    border: 0 !important;
+    background-color: transparent !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
     color: #000 !important;
   }
 `;
@@ -748,12 +753,12 @@ const LogReviewer: React.FC<Props> = (props) => {
         <h3 className="m-0">
           Filters:
         </h3>
-        <div className="LogReviewer-filter-toggle-buttons">
+        <div className="LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0">
           {/* Date */}
           <button
             type="button"
             id="LogReviewer-toggle-date-filter-drawer"
-            className={`btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`}
+            className={`btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
             aria-label="toggle date filter drawer"
             onClick={() => {
               dispatch({
@@ -772,7 +777,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           <button
             type="button"
             id="LogReviewer-toggle-context-filter-drawer"
-            className={`btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`}
+            className={`btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
             aria-label="toggle context filter drawer"
             onClick={() => {
               dispatch({
@@ -793,7 +798,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             <button
               type="button"
               id="LogReviewer-toggle-tag-filter-drawer"
-              className={`btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`}
+              className={`btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
               aria-label="toggle tag filter drawer"
               onClick={() => {
                 dispatch({
@@ -813,7 +818,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           <button
             type="button"
             id="LogReviewer-toggle-action-filter-drawer"
-            className={`btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'secondary'} me-2`}
+            className={`btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
             aria-label="toggle action and error filter drawer"
             onClick={() => {
               dispatch({
@@ -832,7 +837,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           <button
             type="button"
             id="LogReviewer-toggle-advanced-filter-drawer"
-            className={`btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'secondary'}`}
+            className={`btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'}`}
             aria-label="toggle advanced filter drawer"
             onClick={() => {
               dispatch({
@@ -2006,19 +2011,24 @@ const LogReviewer: React.FC<Props> = (props) => {
     const dataTable = (
       logs.length === 0
         ? (
-          <div className="alert alert-warning">
-            <h4 className="m-1">
-              No Logs to Show
-            </h4>
-            <div>
-              Either your filters are too strict or no matching logs have been
-              created yet.
+          <>
+            <h3 className="m-0">
+              Matching Logs:
+            </h3>
+            <div className="alert alert-warning text-center">
+              <h4 className="m-1">
+                No Logs to Show
+              </h4>
+              <div>
+                Either your filters are too strict or no matching logs have been
+                created yet.
+              </div>
             </div>
-          </div>
+          </>
         )
         : (
           <IntelliTable
-            title="Matching Logs"
+            title="Matching Logs:"
             id="logs"
             data={logs}
             columns={columns}
@@ -2045,7 +2055,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       <div className="LogReviewer-inner-container">
         <div className="LogReviewer-header">
           <div className="LogReviewer-header-title">
-            <h3 className="m-0">
+            <h3 className="text-center m-0">
               Log Review Dashboard
             </h3>
           </div>
