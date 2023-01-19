@@ -3306,7 +3306,7 @@ const LogReviewer = (props) => {
         // > Perform filters
         const logs = [];
         Object.keys(logMap).forEach((year) => {
-            Object.keys(logMap).forEach((month) => {
+            Object.keys(logMap[year]).forEach((month) => {
                 logMap[year][month].forEach((log) => {
                     /* ----------- Date Filter ---------- */
                     var _a;

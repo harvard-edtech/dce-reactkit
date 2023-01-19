@@ -1463,7 +1463,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     // > Perform filters
     const logs: Log[] = [];
     Object.keys(logMap).forEach((year) => {
-      Object.keys(logMap).forEach((month) => {
+      Object.keys(logMap[year]).forEach((month) => {
         logMap[year][month].forEach((log) => {
           /* ----------- Date Filter ---------- */
           
