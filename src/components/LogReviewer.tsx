@@ -629,11 +629,16 @@ const LogReviewer: React.FC<Props> = (props) => {
         && month <= newDateFilterState.endDate.month
       )
     ) {
-      // Add to list
-      toLoad.push({
-        year,
-        month,
-      });
+      // Add to list if not already loaded
+      if (
+        !logMap[year]
+        || !logMap[year][month]
+      ) {
+        toLoad.push({
+          year,
+          month,
+        });
+      }
       
       // Increment
       month += 1;
@@ -663,6 +668,7 @@ const LogReviewer: React.FC<Props> = (props) => {
 
     // Check which year/month combos we need to load
     const toLoad = listMonthsToLoad(newDateFilterState);
+    console.log('Filter update:', newDateFilterState, toLoad, logMap);
 
     // If nothing to load, finished
     if (toLoad.length === 0) {
