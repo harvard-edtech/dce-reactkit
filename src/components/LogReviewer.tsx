@@ -34,6 +34,7 @@ import LogType from '../types/LogType';
 import LogAction from '../types/LogAction';
 import ParamType from '../types/ParamType';
 import IntelliTableColumn from '../types/IntelliTableColumn';
+import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 
 // Import shared components
 import SimpleDateChooser from './SimpleDateChooser';
@@ -548,8 +549,12 @@ const LogReviewer: React.FC<Props> = (props) => {
         const subcontextValue = contextValue[subcontext];
         (initContextFilterState[contextValue._] as { [k: string]: boolean })[subcontextValue] = true;
       });
+      // Add uncategorized subcontext
+      (initContextFilterState[contextValue._] as { [k: string]: boolean })[LogBuiltInMetadata.Context.Uncategorized] = true;
     }
   });
+  // Add uncategorized context
+  initContextFilterState[LogBuiltInMetadata.Context.Uncategorized] = true;
 
   // Create initial tag filter state
   const initTagFilterState: TagFilterState = {};
@@ -966,7 +971,11 @@ const LogReviewer: React.FC<Props> = (props) => {
               );
               const item: PickableItem = {
                 id: context,
-                name: context,
+                name: (
+                  (context === LogBuiltInMetadata.Context.Uncategorized)
+                    ? 'Uncategorized'
+                    : context
+                ),
                 isGroup: true,
                 children,
               };
@@ -1601,8 +1610,10 @@ const LogReviewer: React.FC<Props> = (props) => {
 
           // Subcontext doesn't match
           if (
+            // Log context is not "uncategorized" (no point in further filters)
+            log.context !== LogBuiltInMetadata.Context.Uncategorized
             // Log has a subcontext
-            log.subcontext
+            && log.subcontext
             // Context has subcontexts
             && (
               contextFilterState[log.context]

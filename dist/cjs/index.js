@@ -2822,8 +2822,12 @@ const LogReviewer = (props) => {
                 const subcontextValue = contextValue[subcontext];
                 initContextFilterState[contextValue._][subcontextValue] = true;
             });
+            // Add uncategorized subcontext
+            initContextFilterState[contextValue._][LogBuiltInMetadata.Context.Uncategorized] = true;
         }
     });
+    // Add uncategorized context
+    initContextFilterState[LogBuiltInMetadata.Context.Uncategorized] = true;
     // Create initial tag filter state
     const initTagFilterState = {};
     Object.values((_b = LogMetadata.Tag) !== null && _b !== void 0 ? _b : {}).forEach((tagValue) => {
@@ -3091,7 +3095,9 @@ const LogReviewer = (props) => {
                     }));
                     const item = {
                         id: context,
-                        name: context,
+                        name: ((context === LogBuiltInMetadata.Context.Uncategorized)
+                            ? 'Uncategorized'
+                            : context),
                         isGroup: true,
                         children,
                     };
@@ -3420,8 +3426,10 @@ const LogReviewer = (props) => {
                     }
                     // Subcontext doesn't match
                     if (
-                    // Log has a subcontext
-                    log.subcontext
+                    // Log context is not "uncategorized" (no point in further filters)
+                    log.context !== LogBuiltInMetadata.Context.Uncategorized
+                        // Log has a subcontext
+                        && log.subcontext
                         // Context has subcontexts
                         && (contextFilterState[log.context]
                             && contextFilterState[log.context] !== false
