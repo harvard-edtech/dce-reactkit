@@ -3003,7 +3003,7 @@ const LogReviewer = (props) => {
         if (expandedFilterDrawer) {
             if (expandedFilterDrawer === FilterDrawer.Date) {
                 filterDrawer = (React.createElement(TabBox, { title: "Date" },
-                    React.createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, onChange: (month, day, year) => {
+                    React.createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, onChange: (month, day, year) => {
                             dispatch({
                                 type: ActionType.UpdateDateFilterState,
                                 dateFilterState: Object.assign(Object.assign({}, dateFilterState), { startDate: { month, day, year } }),
@@ -3012,7 +3012,7 @@ const LogReviewer = (props) => {
                     ' ',
                     "to",
                     ' ',
-                    React.createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, onChange: (month, day, year) => {
+                    React.createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, onChange: (month, day, year) => {
                             dispatch({
                                 type: ActionType.UpdateDateFilterState,
                                 dateFilterState: Object.assign(Object.assign({}, dateFilterState), { endDate: { month, day, year } }),
@@ -3767,7 +3767,7 @@ const LogReviewer = (props) => {
         // Main body
         body = (React.createElement(React.Fragment, null,
             filters,
-            dataTable));
+            React.createElement("div", { className: "mt-2" }, dataTable)));
     }
     /* ---------- Wrap in Modal --------- */
     return (React.createElement("div", { className: "LogReviewer-outer-container" },
@@ -3776,8 +3776,9 @@ const LogReviewer = (props) => {
             React.createElement("div", { className: "LogReviewer-header" },
                 React.createElement("div", { className: "LogReviewer-header-title" },
                     React.createElement("h3", { className: "text-center m-0" }, "Log Review Dashboard")),
-                React.createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-dark btn-lg", "aria-label": "close log reviewer panel", onClick: onClose },
-                    React.createElement(FontAwesomeIcon, { icon: faTimes }))),
+                React.createElement("div", { style: { width: 0 } },
+                    React.createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-dark btn-lg pe-0", "aria-label": "close log reviewer panel", onClick: onClose },
+                        React.createElement(FontAwesomeIcon, { icon: faTimes })))),
             React.createElement("div", { className: "LogReviewer-contents" }, body))));
 };
 

@@ -868,6 +868,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               year={dateFilterState.startDate.year}
               month={dateFilterState.startDate.month}
               day={dateFilterState.startDate.day}
+              chooseFromPast
               onChange={(month, day, year) => {
                 dispatch({
                   type: ActionType.UpdateDateFilterState,
@@ -887,6 +888,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               year={dateFilterState.endDate.year}
               month={dateFilterState.endDate.month}
               day={dateFilterState.endDate.day}
+              chooseFromPast
               onChange={(month, day, year) => {
                 dispatch({
                   type: ActionType.UpdateDateFilterState,
@@ -2045,7 +2047,9 @@ const LogReviewer: React.FC<Props> = (props) => {
     body = (
       <>
         {filters}
-        {dataTable}
+        <div className="mt-2">
+          {dataTable}
+        </div>
       </>
     );
   }
@@ -2064,16 +2068,18 @@ const LogReviewer: React.FC<Props> = (props) => {
               Log Review Dashboard
             </h3>
           </div>
-          <button
-            type="button"
-            className="LogReviewer-header-close-button btn btn-dark btn-lg"
-            aria-label="close log reviewer panel"
-            onClick={onClose}
-          >
-            <FontAwesomeIcon
-              icon={faTimes}
-            />
-          </button>
+          <div style={{ width: 0 }}>
+            <button
+              type="button"
+              className="LogReviewer-header-close-button btn btn-dark btn-lg pe-0"
+              aria-label="close log reviewer panel"
+              onClick={onClose}
+            >
+              <FontAwesomeIcon
+                icon={faTimes}
+              />
+            </button>
+          </div>
         </div>
         <div className="LogReviewer-contents">
           {body}

@@ -3011,7 +3011,7 @@ const LogReviewer = (props) => {
         if (expandedFilterDrawer) {
             if (expandedFilterDrawer === FilterDrawer.Date) {
                 filterDrawer = (React__default["default"].createElement(TabBox, { title: "Date" },
-                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, onChange: (month, day, year) => {
+                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, onChange: (month, day, year) => {
                             dispatch({
                                 type: ActionType.UpdateDateFilterState,
                                 dateFilterState: Object.assign(Object.assign({}, dateFilterState), { startDate: { month, day, year } }),
@@ -3020,7 +3020,7 @@ const LogReviewer = (props) => {
                     ' ',
                     "to",
                     ' ',
-                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, onChange: (month, day, year) => {
+                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, onChange: (month, day, year) => {
                             dispatch({
                                 type: ActionType.UpdateDateFilterState,
                                 dateFilterState: Object.assign(Object.assign({}, dateFilterState), { endDate: { month, day, year } }),
@@ -3775,7 +3775,7 @@ const LogReviewer = (props) => {
         // Main body
         body = (React__default["default"].createElement(React__default["default"].Fragment, null,
             filters,
-            dataTable));
+            React__default["default"].createElement("div", { className: "mt-2" }, dataTable)));
     }
     /* ---------- Wrap in Modal --------- */
     return (React__default["default"].createElement("div", { className: "LogReviewer-outer-container" },
@@ -3784,8 +3784,9 @@ const LogReviewer = (props) => {
             React__default["default"].createElement("div", { className: "LogReviewer-header" },
                 React__default["default"].createElement("div", { className: "LogReviewer-header-title" },
                     React__default["default"].createElement("h3", { className: "text-center m-0" }, "Log Review Dashboard")),
-                React__default["default"].createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-dark btn-lg", "aria-label": "close log reviewer panel", onClick: onClose },
-                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTimes }))),
+                React__default["default"].createElement("div", { style: { width: 0 } },
+                    React__default["default"].createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-dark btn-lg pe-0", "aria-label": "close log reviewer panel", onClick: onClose },
+                        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTimes })))),
             React__default["default"].createElement("div", { className: "LogReviewer-contents" }, body))));
 };
 
