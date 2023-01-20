@@ -2795,7 +2795,9 @@ const LogReviewer = (props) => {
     // Add built-in LogMetadata
     // > Add "uncategorized" subcontext to each context
     Object.keys((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {}).forEach((context) => {
-        if (LogMetadata.Context
+        if (
+        // Context exists
+        LogMetadata.Context
             // Context has children already
             && typeof LogMetadata.Context[context] !== 'string') {
             LogMetadata.Context[context][LogBuiltInMetadata.Context.Uncategorized] = (LogBuiltInMetadata.Context.Uncategorized);
@@ -2845,8 +2847,10 @@ const LogReviewer = (props) => {
             // Case: subcontexts exist
             initContextFilterState[contextValue._] = {};
             Object.values(((_b = LogMetadata.Context) !== null && _b !== void 0 ? _b : {})[context]).forEach((subcontext) => {
-                const subcontextValue = contextValue[subcontext];
-                initContextFilterState[contextValue._][subcontextValue] = true;
+                if (subcontext) {
+                    const subcontextValue = contextValue[subcontext];
+                    initContextFilterState[contextValue._][subcontextValue] = true;
+                }
             });
         }
     });
@@ -3129,18 +3133,13 @@ const LogReviewer = (props) => {
                 }));
                 // Create filter UI
                 filterDrawer = (React.createElement(ItemPicker, { title: "Context", items: pickableItems, onChanged: (updatedItems) => {
-                        console.log('Items before:', pickableItems);
-                        console.log('Updated Items:', updatedItems);
                         // Update our state
                         updatedItems.forEach((pickableItem) => {
                             if (pickableItem.isGroup) {
                                 // Has subcontexts
                                 pickableItem.children.forEach((subcontextItem) => {
                                     if (!subcontextItem.isGroup) {
-                                        console.log('Update child:', pickableItem.id, subcontextItem.id, subcontextItem.checked);
-                                        console.log(contextFilterState);
                                         contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
-                                        console.log(contextFilterState);
                                     }
                                 });
                             }
@@ -3149,6 +3148,7 @@ const LogReviewer = (props) => {
                                 contextFilterState[pickableItem.id] = (pickableItem.checked);
                             }
                         });
+                        console.log('New context filter state:', contextFilterState);
                         dispatch({
                             type: ActionType.UpdateContextFilterState,
                             contextFilterState,

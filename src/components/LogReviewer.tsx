@@ -524,6 +524,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   // > Add "uncategorized" subcontext to each context
   Object.keys(LogMetadata.Context ?? {}).forEach((context) => {
     if (
+      // Context exists
       LogMetadata.Context
       // Context has children already
       && typeof LogMetadata.Context[context] !== 'string'
@@ -578,8 +579,10 @@ const LogReviewer: React.FC<Props> = (props) => {
       // Case: subcontexts exist
       initContextFilterState[contextValue._] = {};
       Object.values((LogMetadata.Context ?? {})[context]).forEach((subcontext) => {
-        const subcontextValue = contextValue[subcontext];
-        (initContextFilterState[contextValue._] as { [k: string]: boolean })[subcontextValue] = true;
+        if (subcontext) {
+          const subcontextValue = contextValue[subcontext];
+          (initContextFilterState[contextValue._] as { [k: string]: boolean })[subcontextValue] = true;
+        }
       });
     }
   });
@@ -1017,22 +1020,17 @@ const LogReviewer: React.FC<Props> = (props) => {
             title="Context"
             items={pickableItems}
             onChanged={(updatedItems) => {
-              console.log('Items before:', pickableItems);
-              console.log('Updated Items:', updatedItems);
               // Update our state
               updatedItems.forEach((pickableItem) => {
                 if (pickableItem.isGroup) {
                   // Has subcontexts
                   pickableItem.children.forEach((subcontextItem) => {
                     if (!subcontextItem.isGroup) {
-                      console.log('Update child:', pickableItem.id, subcontextItem.id, subcontextItem.checked);
-                      console.log(contextFilterState);
                       (
                         contextFilterState[pickableItem.id] as { [k: string]: boolean }
                       )[subcontextItem.id] = (
                         subcontextItem.checked
                       );
-                      console.log(contextFilterState);
                     }
                   });
                 } else {
@@ -1042,6 +1040,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   );
                 }
               });
+              console.log('New context filter state:', contextFilterState);
               dispatch({
                 type: ActionType.UpdateContextFilterState,
                 contextFilterState,
