@@ -2753,7 +2753,19 @@ const reducer = (state, action) => {
             return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
         }
         case ActionType.UpdateTagFilterState: {
-            return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
+            const { tagFilterState } = action;
+            // Select all if every tag is deselected
+            const numTagsSelected = (Object.values(tagFilterState)
+                .filter((isSelected) => {
+                return isSelected;
+            })
+                .length);
+            if (numTagsSelected === 0) {
+                Object.keys(tagFilterState).forEach((tag) => {
+                    tagFilterState[tag] = true;
+                });
+            }
+            return Object.assign(Object.assign({}, state), { tagFilterState });
         }
         case ActionType.UpdateActionErrorFilterState: {
             return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
@@ -3028,14 +3040,22 @@ const LogReviewer = (props) => {
         if (expandedFilterDrawer) {
             if (expandedFilterDrawer === FilterDrawer.Date) {
                 filterDrawer = (React__default["default"].createElement(TabBox, { title: "Date" },
-                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, onChange: (month, day, year) => {
+                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, numMonthsToShow: 12, onChange: (month, day, year) => {
                             dateFilterState.startDate = { month, day, year };
                             handleDateRangeUpdated(dateFilterState);
                         } }),
                     ' ',
                     "to",
                     ' ',
-                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, onChange: (month, day, year) => {
+                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, numMonthsToShow: 12, onChange: (month, day, year) => {
+                            if (year < dateFilterState.startDate.year
+                                || (year === dateFilterState.startDate.year
+                                    && month < dateFilterState.startDate.month)
+                                || (year === dateFilterState.startDate.year
+                                    && month === dateFilterState.startDate.month
+                                    && day < dateFilterState.startDate.day)) {
+                                return alert$1('Invalid Start Date', 'The start date cannot be before the end date.');
+                            }
                             dateFilterState.endDate = { month, day, year };
                             handleDateRangeUpdated(dateFilterState);
                         } })));
@@ -3354,8 +3374,9 @@ const LogReviewer = (props) => {
         Object.keys(logMap).forEach((year) => {
             Object.keys(logMap[year]).forEach((month) => {
                 logMap[year][month].forEach((log) => {
-                    /* ----------- Date Filter ---------- */
                     var _a;
+                    /* ----------- Date Filter ---------- */
+                    console.log('Log:', log);
                     // Before start date
                     if (
                     // Previous year
@@ -3367,6 +3388,7 @@ const LogReviewer = (props) => {
                         || ((log.year === dateFilterState.startDate.year)
                             && (log.month === dateFilterState.startDate.month)
                             && (log.day < dateFilterState.startDate.day))) {
+                        console.log('RULED OUT: START');
                         return;
                     }
                     // After end date
@@ -3380,6 +3402,7 @@ const LogReviewer = (props) => {
                         || ((log.year === dateFilterState.endDate.year)
                             && (log.month === dateFilterState.endDate.month)
                             && (log.day > dateFilterState.endDate.day))) {
+                        console.log('RULED OUT: END');
                         return;
                     }
                     /* --------- Context Filter --------- */
@@ -3392,6 +3415,7 @@ const LogReviewer = (props) => {
                             .every((isSelected) => {
                             return !isSelected;
                         }))) {
+                        console.log('RULED OUT: CONTEXT');
                         return;
                     }
                     // Subcontext doesn't match
@@ -3404,17 +3428,15 @@ const LogReviewer = (props) => {
                             && contextFilterState[log.context] !== true)
                         // Subcontext is not selected
                         && !contextFilterState[log.context][log.subcontext]) {
+                        console.log('RULED OUT: SUBCONTEXT');
                         return;
                     }
                     /* -------------- Tags -------------- */
                     // No tags match
-                    if (
-                    // Log has at least one tag
-                    log.tags.length > 0
-                        // No tags match
-                        && (log.tags.every((tag) => {
-                            return !tagFilterState[tag];
-                        }))) {
+                    if (log.tags.every((tag) => {
+                        return !tagFilterState[tag];
+                    })) {
+                        console.log('RULED OUT: TAGS');
                         return;
                     }
                     /* ------- Actions and Errors ------- */
@@ -3424,6 +3446,7 @@ const LogReviewer = (props) => {
                     actionErrorFilterState.type !== undefined
                         // Log type doesn't match
                         && actionErrorFilterState.type !== log.type) {
+                        console.log('RULED OUT: TYPE');
                         return;
                     }
                     // Filter errors
@@ -3436,6 +3459,7 @@ const LogReviewer = (props) => {
                             && actionErrorFilterState.errorMessage.trim().length > 0
                             // Message doesn't match
                             && log.errorMessage.toLowerCase().includes(actionErrorFilterState.errorMessage.trim().toLowerCase())) {
+                            console.log('RULED OUT: ERROR MESSAGE');
                             return;
                         }
                         // Code doesn't match
@@ -3446,6 +3470,7 @@ const LogReviewer = (props) => {
                             && actionErrorFilterState.errorCode.trim().length > 0
                             // Code doesn't match
                             && log.errorCode.toUpperCase().includes(actionErrorFilterState.errorCode.trim().toUpperCase())) {
+                            console.log('RULED OUT: ERROR CODE');
                             return;
                         }
                     }
@@ -3457,6 +3482,7 @@ const LogReviewer = (props) => {
                         log.target
                             // Target isn't selected
                             && !actionErrorFilterState.target[log.target]) {
+                            console.log('RULED OUT: TARGET');
                             return;
                         }
                         // Action
@@ -3465,6 +3491,7 @@ const LogReviewer = (props) => {
                         log.action
                             // Action isn't selected
                             && !actionErrorFilterState.action[log.action]) {
+                            console.log('RULED OUT: ACTION');
                             return;
                         }
                     }
@@ -3475,6 +3502,7 @@ const LogReviewer = (props) => {
                     log.userFirstName
                         // First name query doesn't match
                         && !log.userFirstName.toLowerCase().includes(advancedFilterState.userFirstName.toLowerCase().trim())) {
+                        console.log('RULED OUT: FIRST');
                         return;
                     }
                     // Last name doesn't match
@@ -3483,6 +3511,7 @@ const LogReviewer = (props) => {
                     log.userLastName
                         // Last name query doesn't match
                         && !log.userLastName.toLowerCase().includes(advancedFilterState.userLastName.toLowerCase().trim())) {
+                        console.log('RULED OUT: LAST');
                         return;
                     }
                     // Email doesn't match
@@ -3491,6 +3520,7 @@ const LogReviewer = (props) => {
                     log.userEmail
                         // Email query doesn't match
                         && !log.userEmail.toLowerCase().includes(advancedFilterState.userEmail.toLowerCase().trim())) {
+                        console.log('RULED OUT: EMAIL');
                         return;
                     }
                     // User id doesn't match
@@ -3499,6 +3529,7 @@ const LogReviewer = (props) => {
                     log.userId
                         // User id doesn't match
                         && !String(log.userId).includes(advancedFilterState.userId.trim())) {
+                        console.log('RULED OUT: USER ID');
                         return;
                     }
                     // Learner not allowed
@@ -3507,6 +3538,7 @@ const LogReviewer = (props) => {
                     log.isLearner
                         // Learners aren't included
                         && !advancedFilterState.includeLearners) {
+                        console.log('RULED OUT: LEARNER');
                         return;
                     }
                     // TTM not allowed
@@ -3515,6 +3547,7 @@ const LogReviewer = (props) => {
                     log.isTTM
                         // TTMs aren't included
                         && !advancedFilterState.includeTTMs) {
+                        console.log('RULED OUT: TTM');
                         return;
                     }
                     // Admin not allowed
@@ -3523,6 +3556,7 @@ const LogReviewer = (props) => {
                     log.isAdmin
                         // Admins aren't included
                         && !advancedFilterState.includeAdmins) {
+                        console.log('RULED OUT: ADMIN');
                         return;
                     }
                     // Course Id doesn't match
@@ -3531,6 +3565,7 @@ const LogReviewer = (props) => {
                     log.courseId
                         // Course Id doesn't match
                         && !String(log.courseId).includes(advancedFilterState.courseId.trim())) {
+                        console.log('RULED OUT: COURSE ID');
                         return;
                     }
                     // Course name doesn't match
@@ -3539,6 +3574,7 @@ const LogReviewer = (props) => {
                     log.courseName
                         // Course name doesn't match
                         && !String(log.courseName).includes(advancedFilterState.courseName.trim())) {
+                        console.log('RULED OUT: COURSE NAME');
                         return;
                     }
                     // Mobile filter doesn't match
@@ -3549,6 +3585,7 @@ const LogReviewer = (props) => {
                         && log.device
                         // Mobile filter doesn't match
                         && (advancedFilterState.isMobile === log.device.isMobile)) {
+                        console.log('RULED OUT: MOBILE');
                         return;
                     }
                     // Log source doesn't match
@@ -3559,6 +3596,7 @@ const LogReviewer = (props) => {
                         && log.source
                         // Source filter doesn't match
                         && (advancedFilterState.source !== log.source)) {
+                        console.log('RULED OUT: SOURCE');
                         return;
                     }
                     // Route path doesn't match (Only for server source)
@@ -3569,6 +3607,7 @@ const LogReviewer = (props) => {
                         && (advancedFilterState.routePath.trim().length)
                         // Route path doesn't match
                         && !(log.routePath.includes(advancedFilterState.routePath.trim()))) {
+                        console.log('RULED OUT: PATH');
                         return;
                     }
                     // Route template doesn't match (Only for server source)
@@ -3579,6 +3618,7 @@ const LogReviewer = (props) => {
                         && (advancedFilterState.routeTemplate.trim().length)
                         // Route template doesn't match
                         && !(log.routeTemplate.includes(advancedFilterState.routeTemplate.trim()))) {
+                        console.log('RULED OUT: TEMPLATE');
                         return;
                     }
                     /* -------------- Done -------------- */

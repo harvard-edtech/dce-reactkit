@@ -21,7 +21,7 @@ import {
 // Import shared helpers
 import visitServerEndpoint from '../helpers/visitServerEndpoint';
 import getTimeInfoInET from '../helpers/getTimeInfoInET';
-import { showFatalError } from './AppWrapper';
+import { alert, showFatalError } from './AppWrapper';
 
 // Import shared constants
 import LOG_REVIEW_ROUTE_PATH_PREFIX from '../constants/LOG_REVIEW_ROUTE_PATH_PREFIX';
@@ -459,9 +459,25 @@ const reducer = (state: State, action: Action): State => {
       };
     }
     case ActionType.UpdateTagFilterState: {
+      const { tagFilterState } = action;
+
+      // Select all if every tag is deselected
+      const numTagsSelected = (
+        Object.values(tagFilterState)
+          .filter((isSelected) => {
+            return isSelected;
+          })
+          .length
+      );
+      if (numTagsSelected === 0) {
+        Object.keys(tagFilterState).forEach((tag) => {
+          tagFilterState[tag] = true;
+        });
+      }
+
       return {
         ...state,
-        tagFilterState: action.tagFilterState,
+        tagFilterState,
       };
     }
     case ActionType.UpdateActionErrorFilterState: {
@@ -875,6 +891,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               month={dateFilterState.startDate.month}
               day={dateFilterState.startDate.day}
               chooseFromPast
+              numMonthsToShow={12}
               onChange={(month, day, year) => {
                 dateFilterState.startDate = { month, day, year };
                 handleDateRangeUpdated(dateFilterState);
@@ -890,7 +907,25 @@ const LogReviewer: React.FC<Props> = (props) => {
               month={dateFilterState.endDate.month}
               day={dateFilterState.endDate.day}
               chooseFromPast
+              numMonthsToShow={12}
               onChange={(month, day, year) => {
+                if (
+                  year < dateFilterState.startDate.year
+                  || (
+                    year === dateFilterState.startDate.year
+                    && month < dateFilterState.startDate.month
+                  )
+                  || (
+                    year === dateFilterState.startDate.year
+                    && month === dateFilterState.startDate.month
+                    && day < dateFilterState.startDate.day
+                  )
+                ) {
+                  return alert(
+                    'Invalid Start Date',
+                    'The start date cannot be before the end date.',
+                  );
+                }
                 dateFilterState.endDate = { month, day, year };
                 handleDateRangeUpdated(dateFilterState);
               }}
@@ -1504,6 +1539,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       Object.keys(logMap[year]).forEach((month) => {
         logMap[year][month].forEach((log) => {
           /* ----------- Date Filter ---------- */
+          console.log('Log:', log);
           
           // Before start date
           if (
@@ -1521,6 +1557,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               && (log.day < dateFilterState.startDate.day)
             )
           ) {
+            console.log('RULED OUT: START');
             return;
           }
 
@@ -1540,6 +1577,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               && (log.day > dateFilterState.endDate.day)
             )
           ) {
+            console.log('RULED OUT: END');
             return;
           }
 
@@ -1557,6 +1595,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                 })
             )
           ) {
+            console.log('RULED OUT: CONTEXT');
             return;
           }
 
@@ -1573,6 +1612,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Subcontext is not selected
             && !(contextFilterState as any)[log.context][log.subcontext]
           ) {
+            console.log('RULED OUT: SUBCONTEXT');
             return;
           }
 
@@ -1580,15 +1620,11 @@ const LogReviewer: React.FC<Props> = (props) => {
 
           // No tags match
           if (
-            // Log has at least one tag
-            log.tags.length > 0
-            // No tags match
-            && (
-              log.tags.every((tag) => {
-                return !tagFilterState[tag];
-              })
-            )
+            log.tags.every((tag) => {
+              return !tagFilterState[tag];
+            })
           ) {
+            console.log('RULED OUT: TAGS');
             return;
           }
 
@@ -1601,6 +1637,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Log type doesn't match
             && actionErrorFilterState.type !== log.type
           ) {
+            console.log('RULED OUT: TYPE');
             return;
           }
 
@@ -1617,6 +1654,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                 actionErrorFilterState.errorMessage.trim().toLowerCase(),
               )
             ) {
+              console.log('RULED OUT: ERROR MESSAGE');
               return;
             }
 
@@ -1631,6 +1669,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                 actionErrorFilterState.errorCode.trim().toUpperCase(),
               )
             ) {
+              console.log('RULED OUT: ERROR CODE');
               return;
             }
           }
@@ -1644,6 +1683,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               // Target isn't selected
               && !actionErrorFilterState.target[log.target]
             ) {
+              console.log('RULED OUT: TARGET');
               return;
             }
 
@@ -1654,6 +1694,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               // Action isn't selected
               && !actionErrorFilterState.action[log.action]
             ) {
+              console.log('RULED OUT: ACTION');
               return;
             }
           }
@@ -1669,6 +1710,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.userFirstName.toLowerCase().trim(),
             )
           ) {
+            console.log('RULED OUT: FIRST');
             return;
           }
 
@@ -1681,6 +1723,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.userLastName.toLowerCase().trim(),
             )
           ) {
+            console.log('RULED OUT: LAST');
             return;
           }
 
@@ -1693,6 +1736,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.userEmail.toLowerCase().trim(),
             )
           ) {
+            console.log('RULED OUT: EMAIL');
             return;
           }
 
@@ -1705,6 +1749,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.userId.trim(),
             )
           ) {
+            console.log('RULED OUT: USER ID');
             return;
           }
 
@@ -1715,6 +1760,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Learners aren't included
             && !advancedFilterState.includeLearners
           ) {
+            console.log('RULED OUT: LEARNER');
             return;
           }
 
@@ -1725,6 +1771,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // TTMs aren't included
             && !advancedFilterState.includeTTMs
           ) {
+            console.log('RULED OUT: TTM');
             return;
           }
 
@@ -1735,6 +1782,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Admins aren't included
             && !advancedFilterState.includeAdmins
           ) {
+            console.log('RULED OUT: ADMIN');
             return;
           }
 
@@ -1747,6 +1795,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.courseId.trim(),
             )
           ) {
+            console.log('RULED OUT: COURSE ID');
             return;
           }
 
@@ -1759,6 +1808,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.courseName.trim(),
             )
           ) {
+            console.log('RULED OUT: COURSE NAME');
             return;
           }
 
@@ -1771,6 +1821,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Mobile filter doesn't match
             && (advancedFilterState.isMobile === log.device.isMobile)
           ) {
+            console.log('RULED OUT: MOBILE');
             return;
           }
 
@@ -1783,6 +1834,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Source filter doesn't match
             && (advancedFilterState.source !== log.source)
           ) {
+            console.log('RULED OUT: SOURCE');
             return;
           }
 
@@ -1795,6 +1847,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Route path doesn't match
             && !(log.routePath.includes(advancedFilterState.routePath.trim()))
           ) {
+            console.log('RULED OUT: PATH');
             return;
           }
 
@@ -1807,6 +1860,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Route template doesn't match
             && !(log.routeTemplate.includes(advancedFilterState.routeTemplate.trim()))
           ) {
+            console.log('RULED OUT: TEMPLATE');
             return;
           }
 
