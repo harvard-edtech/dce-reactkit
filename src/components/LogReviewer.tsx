@@ -527,7 +527,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       // Context exists
       LogMetadata.Context
       // Context has children already
-      && typeof LogMetadata.Context[context] !== 'string'
+      && LogMetadata.Context[context] !== 'string'
     ) {
       (LogMetadata.Context as any)[context][LogBuiltInMetadata.Context.Uncategorized] = (
         LogBuiltInMetadata.Context.Uncategorized
@@ -548,6 +548,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       LogMetadata.Target[target] = target;
     }
   });
+  console.log(LogMetadata);
 
   /* -------------- State ------------- */
 
@@ -993,14 +994,14 @@ const LogReviewer: React.FC<Props> = (props) => {
               const children: PickableItem[] = (
                 Object.keys(value)
                   .filter((subcontext) => {
-                    return subcontext !== '_'
+                    return subcontext !== '_';
                   })
                   .map((subcontext) => {
                     return {
                       id: subcontext,
                       name: genHumanReadableName(subcontext),
                       isGroup: false,
-                      checked: !!value[subcontext],
+                      checked: (contextFilterState[context] as any)[subcontext],
                     };
                   })
               );

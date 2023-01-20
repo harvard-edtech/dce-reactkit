@@ -2799,7 +2799,7 @@ const LogReviewer = (props) => {
         // Context exists
         LogMetadata.Context
             // Context has children already
-            && typeof LogMetadata.Context[context] !== 'string') {
+            && LogMetadata.Context[context] !== 'string') {
             LogMetadata.Context[context][LogBuiltInMetadata.Context.Uncategorized] = (LogBuiltInMetadata.Context.Uncategorized);
         }
     });
@@ -2817,6 +2817,7 @@ const LogReviewer = (props) => {
             LogMetadata.Target[target] = target;
         }
     });
+    console.log(LogMetadata);
     /* -------------- State ------------- */
     // Create initial date filter state
     const today = getTimeInfoInET();
@@ -3120,7 +3121,7 @@ const LogReviewer = (props) => {
                             id: subcontext,
                             name: genHumanReadableName(subcontext),
                             isGroup: false,
-                            checked: !!value[subcontext],
+                            checked: contextFilterState[context][subcontext],
                         };
                     }));
                     const item = {
