@@ -876,13 +876,8 @@ const LogReviewer: React.FC<Props> = (props) => {
               day={dateFilterState.startDate.day}
               chooseFromPast
               onChange={(month, day, year) => {
-                dispatch({
-                  type: ActionType.UpdateDateFilterState,
-                  dateFilterState: {
-                    ...dateFilterState,
-                    startDate: { month, day, year },
-                  },
-                });
+                dateFilterState.startDate = { month, day, year };
+                handleDateRangeUpdated(dateFilterState);
               }}
             />
             {' '}
@@ -896,13 +891,8 @@ const LogReviewer: React.FC<Props> = (props) => {
               day={dateFilterState.endDate.day}
               chooseFromPast
               onChange={(month, day, year) => {
-                dispatch({
-                  type: ActionType.UpdateDateFilterState,
-                  dateFilterState: {
-                    ...dateFilterState,
-                    endDate: { month, day, year },
-                  },
-                });
+                dateFilterState.endDate = { month, day, year };
+                handleDateRangeUpdated(dateFilterState);
               }}
             />
           </TabBox>

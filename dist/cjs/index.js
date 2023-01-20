@@ -3016,19 +3016,15 @@ const LogReviewer = (props) => {
             if (expandedFilterDrawer === FilterDrawer.Date) {
                 filterDrawer = (React__default["default"].createElement(TabBox, { title: "Date" },
                     React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, onChange: (month, day, year) => {
-                            dispatch({
-                                type: ActionType.UpdateDateFilterState,
-                                dateFilterState: Object.assign(Object.assign({}, dateFilterState), { startDate: { month, day, year } }),
-                            });
+                            dateFilterState.startDate = { month, day, year };
+                            handleDateRangeUpdated(dateFilterState);
                         } }),
                     ' ',
                     "to",
                     ' ',
                     React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, onChange: (month, day, year) => {
-                            dispatch({
-                                type: ActionType.UpdateDateFilterState,
-                                dateFilterState: Object.assign(Object.assign({}, dateFilterState), { endDate: { month, day, year } }),
-                            });
+                            dateFilterState.endDate = { month, day, year };
+                            handleDateRangeUpdated(dateFilterState);
                         } })));
             }
             else if (expandedFilterDrawer === FilterDrawer.Context) {
