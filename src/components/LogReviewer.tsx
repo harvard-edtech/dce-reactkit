@@ -749,7 +749,7 @@ const LogReviewer: React.FC<Props> = (props) => {
 
     // Filter toggle
     const filterToggles = (
-      <div className="LogReviewer-filter-toggles mb-2">
+      <div className="LogReviewer-filter-toggles">
         <h3 className="m-0">
           Filters:
         </h3>
@@ -1077,7 +1077,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   {/* Target */}
                   <ButtonInputGroup label="Target">
                     {/* Nothing here */}
-                    {(Object.keys(LogMetadata.Target ?? {})) && (
+                    {(Object.keys(LogMetadata.Target ?? {}).length === 0) && (
                       <div>
                         This app does not have any targets yet.
                       </div>
@@ -1429,53 +1429,58 @@ const LogReviewer: React.FC<Props> = (props) => {
                 />
               </ButtonInputGroup>
 
-              {/* Route path */}
-              <div className="input-group mb-2">
-                <span className="input-group-text">
-                  Server Route Path
-                </span>
-                <input
-                  type="text"
-                  className="form-control"
-                  aria-label="query for server route path"
-                  placeholder="e.g. /api/ttm/courses/12345"
-                  value={advancedFilterState.routePath}
-                  onChange={(e) => {
-                    advancedFilterState.courseName = (
-                      (e.target.value)
-                        .trim()
-                    );
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-              </div>
+              {/* Server filters */}
+              {advancedFilterState.source !== LogSource.Client && (
+                <div className="mt-2">
+                  {/* Route path */}
+                  <div className="input-group mb-2">
+                    <span className="input-group-text">
+                      Server Route Path
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control"
+                      aria-label="query for server route path"
+                      placeholder="e.g. /api/ttm/courses/12345"
+                      value={advancedFilterState.routePath}
+                      onChange={(e) => {
+                        advancedFilterState.courseName = (
+                          (e.target.value)
+                            .trim()
+                        );
+                        dispatch({
+                          type: ActionType.UpdateAdvancedFilterState,
+                          advancedFilterState,
+                        });
+                      }}
+                    />
+                  </div>
 
-              {/* Route template */}
-              <div className="input-group mb-2">
-                <span className="input-group-text">
-                  Server Route Template
-                </span>
-                <input
-                  type="text"
-                  className="form-control"
-                  aria-label="query for server route template"
-                  value={advancedFilterState.routeTemplate}
-                  placeholder="e.g. /api/ttm/courses/:courseId"
-                  onChange={(e) => {
-                    advancedFilterState.courseName = (
-                      (e.target.value)
-                        .trim()
-                    );
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-              </div>
+                  {/* Route template */}
+                  <div className="input-group mb-2">
+                    <span className="input-group-text">
+                      Server Route Template
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control"
+                      aria-label="query for server route template"
+                      value={advancedFilterState.routeTemplate}
+                      placeholder="e.g. /api/ttm/courses/:courseId"
+                      onChange={(e) => {
+                        advancedFilterState.courseName = (
+                          (e.target.value)
+                            .trim()
+                        );
+                        dispatch({
+                          type: ActionType.UpdateAdvancedFilterState,
+                          advancedFilterState,
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </TabBox>
           </>
         );

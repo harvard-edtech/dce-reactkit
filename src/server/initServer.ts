@@ -249,10 +249,14 @@ const initServer = (
       },
       handler: async ({ params }) => {
         // Get user info
-        const { userId, isAdmin } = params;
+        const {
+          year,
+          month,
+          userId,
+          isAdmin,
+        } = params;
 
         // Validate user
-        // isAdmin is already checked because path starts with '/admin'
         const canReview = await canReviewLogs(userId, isAdmin);
         if (!canReview) {
           throw new ErrorWithCode(
@@ -262,7 +266,10 @@ const initServer = (
         }
 
         // Query for logs
-        const logs: Log[] = await _logCollection.find({ userId });
+        const logs: Log[] = await _logCollection.find({
+          year,
+          month,
+        });
 
         // Return logs
         return logs;

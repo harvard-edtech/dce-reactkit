@@ -2963,7 +2963,7 @@ const LogReviewer = (props) => {
         /*                 Filters                */
         /*----------------------------------------*/
         // Filter toggle
-        const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles mb-2" },
+        const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles" },
             React__default["default"].createElement("h3", { className: "m-0" }, "Filters:"),
             React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
@@ -3134,7 +3134,7 @@ const LogReviewer = (props) => {
                                 } }));
                         })),
                         React__default["default"].createElement(ButtonInputGroup, { label: "Target" },
-                            (Object.keys((_e = LogMetadata.Target) !== null && _e !== void 0 ? _e : {})) && (React__default["default"].createElement("div", null, "This app does not have any targets yet.")),
+                            (Object.keys((_e = LogMetadata.Target) !== null && _e !== void 0 ? _e : {}).length === 0) && (React__default["default"].createElement("div", null, "This app does not have any targets yet.")),
                             Object.keys((_f = LogMetadata.Target) !== null && _f !== void 0 ? _f : {})
                                 .map((target, i) => {
                                 var _a;
@@ -3308,26 +3308,27 @@ const LogReviewer = (props) => {
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true })),
-                        React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Path"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route path", placeholder: "e.g. /api/ttm/courses/12345", value: advancedFilterState.routePath, onChange: (e) => {
-                                    advancedFilterState.courseName = ((e.target.value)
-                                        .trim());
-                                    dispatch({
-                                        type: ActionType.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } })),
-                        React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Template"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route template", value: advancedFilterState.routeTemplate, placeholder: "e.g. /api/ttm/courses/:courseId", onChange: (e) => {
-                                    advancedFilterState.courseName = ((e.target.value)
-                                        .trim());
-                                    dispatch({
-                                        type: ActionType.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } })))));
+                        advancedFilterState.source !== LogSource$1.Client && (React__default["default"].createElement("div", { className: "mt-2" },
+                            React__default["default"].createElement("div", { className: "input-group mb-2" },
+                                React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Path"),
+                                React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route path", placeholder: "e.g. /api/ttm/courses/12345", value: advancedFilterState.routePath, onChange: (e) => {
+                                        advancedFilterState.courseName = ((e.target.value)
+                                            .trim());
+                                        dispatch({
+                                            type: ActionType.UpdateAdvancedFilterState,
+                                            advancedFilterState,
+                                        });
+                                    } })),
+                            React__default["default"].createElement("div", { className: "input-group mb-2" },
+                                React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Template"),
+                                React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route template", value: advancedFilterState.routeTemplate, placeholder: "e.g. /api/ttm/courses/:courseId", onChange: (e) => {
+                                        advancedFilterState.courseName = ((e.target.value)
+                                            .trim());
+                                        dispatch({
+                                            type: ActionType.UpdateAdvancedFilterState,
+                                            advancedFilterState,
+                                        });
+                                    } })))))));
             }
         }
         // Filters UI
@@ -4115,15 +4116,17 @@ const initServer = (opts) => {
         },
         handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
             // Get user info
-            const { userId, isAdmin } = params;
+            const { year, month, userId, isAdmin, } = params;
             // Validate user
-            // isAdmin is already checked because path starts with '/admin'
             const canReview = yield canReviewLogs(userId, isAdmin);
             if (!canReview) {
                 throw new ErrorWithCode('You cannot access this resource because you do not have the appropriate permissions.', ReactKitErrorCode$1.NotAllowedToReviewLogs);
             }
             // Query for logs
-            const logs = yield _logCollection.find({ userId });
+            const logs = yield _logCollection.find({
+                year,
+                month,
+            });
             // Return logs
             return logs;
         }),
