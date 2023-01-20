@@ -111,13 +111,26 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     // Figure out which days are allowed
     const days = [];
     const numDaysInMonth = (new Date(year, month, 0)).getDate();
-    const firstDay = (
-      month === today.month
-        ? today.day // Current month: start at current date
-        : 1 // Future month: start at beginning of month
-    );
-    for (let day = firstDay; day <= numDaysInMonth; day++) {
-      days.push(day);
+    if (chooseFromPast) {
+      // Past selection
+      const numDaysToAdd = (
+        (month === today.month)
+          ? today.day // Current month, only add up to today
+          : numDaysInMonth // Past month, add all days
+      );
+      for (let day = 1; day <= numDaysToAdd; day++) {
+        days.push(day);
+      }
+    } else {
+      // Future selection: add all remaining days of the month
+      const firstDay = (
+        month === today.month
+          ? today.day // Current month: start at current date
+          : 1 // Future month: start at beginning of month
+      );
+      for (let day = firstDay; day <= numDaysInMonth; day++) {
+        days.push(day);
+      }
     }
 
     choices.push({
