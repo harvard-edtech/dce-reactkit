@@ -548,7 +548,6 @@ const LogReviewer: React.FC<Props> = (props) => {
       LogMetadata.Target[target] = target;
     }
   });
-  console.log(LogMetadata);
 
   /* -------------- State ------------- */
 
@@ -574,16 +573,19 @@ const LogReviewer: React.FC<Props> = (props) => {
   Object.keys(LogMetadata.Context ?? {}).forEach((context) => {
     const contextValue = (LogMetadata.Context ?? {})[context];
     if (typeof contextValue === 'string') {
-      // Case: no subcontexts
+      // Case: no subcontexts, init as checked
       initContextFilterState[contextValue] = true;
     } else {
       // Case: subcontexts exist
-      initContextFilterState[contextValue._] = {};
+      initContextFilterState[context] = {};
       Object.values((LogMetadata.Context ?? {})[context]).forEach((subcontext) => {
-        if (subcontext) {
-          const subcontextValue = contextValue[subcontext];
-          (initContextFilterState[contextValue._] as { [k: string]: boolean })[subcontextValue] = true;
+        // Skip self ("_")
+        if (subcontext === '_') {
+          return;
         }
+
+        // Initialize as checked
+        (initContextFilterState[context] as any)[subcontext] = true;
       });
     }
   });

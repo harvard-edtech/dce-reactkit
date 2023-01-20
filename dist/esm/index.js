@@ -2817,7 +2817,6 @@ const LogReviewer = (props) => {
             LogMetadata.Target[target] = target;
         }
     });
-    console.log(LogMetadata);
     /* -------------- State ------------- */
     // Create initial date filter state
     const today = getTimeInfoInET();
@@ -2841,17 +2840,19 @@ const LogReviewer = (props) => {
         var _a, _b;
         const contextValue = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
         if (typeof contextValue === 'string') {
-            // Case: no subcontexts
+            // Case: no subcontexts, init as checked
             initContextFilterState[contextValue] = true;
         }
         else {
             // Case: subcontexts exist
-            initContextFilterState[contextValue._] = {};
+            initContextFilterState[context] = {};
             Object.values(((_b = LogMetadata.Context) !== null && _b !== void 0 ? _b : {})[context]).forEach((subcontext) => {
-                if (subcontext) {
-                    const subcontextValue = contextValue[subcontext];
-                    initContextFilterState[contextValue._][subcontextValue] = true;
+                // Skip self ("_")
+                if (subcontext === '_') {
+                    return;
                 }
+                // Initialize as checked
+                initContextFilterState[context][subcontext] = true;
             });
         }
     });
