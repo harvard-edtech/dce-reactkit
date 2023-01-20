@@ -1024,9 +1024,14 @@ const LogReviewer: React.FC<Props> = (props) => {
                 if (pickableItem.isGroup) {
                   // Has subcontexts
                   pickableItem.children.forEach((subcontextItem) => {
-                    (contextFilterState as any)[pickableItem.id][subcontextItem.id] = (
-                      (subcontextItem as any).checked
-                    );
+                    if (!subcontextItem.isGroup) {
+                      (
+                        contextFilterState[pickableItem.id] as { [k: string]: boolean }
+                      )[subcontextItem.id] = (
+                        subcontextItem.checked
+                      );
+                      console.log('Update child:', pickableItem.id, subcontextItem.id, subcontextItem.checked);
+                    }
                   });
                 } else {
                   // No subcontexts

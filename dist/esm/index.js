@@ -3136,7 +3136,10 @@ const LogReviewer = (props) => {
                             if (pickableItem.isGroup) {
                                 // Has subcontexts
                                 pickableItem.children.forEach((subcontextItem) => {
-                                    contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
+                                    if (!subcontextItem.isGroup) {
+                                        contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
+                                        console.log('Update child:', pickableItem.id, subcontextItem.id, subcontextItem.checked);
+                                    }
                                 });
                             }
                             else {
