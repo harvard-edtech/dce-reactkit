@@ -1,6 +1,7 @@
 /**
  * Reusable nested item picker
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 import React from 'react';
 import PickableItem from './types/PickableItem';

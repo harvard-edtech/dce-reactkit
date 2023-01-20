@@ -1916,24 +1916,25 @@ const CopiableBox = (props) => {
 /**
  * Reusable nested item picker
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 /* ------------- Actions ------------ */
 // Types of actions
 var ActionType$2;
 (function (ActionType) {
-    // Toggle whether the children are being shown
-    ActionType["ToggleItems"] = "toggle-items";
+    // Toggle whether a child are being shown
+    ActionType["ToggleChild"] = "toggle-child";
 })(ActionType$2 || (ActionType$2 = {}));
 /**
  * Reducer that executes actions
- * @author Yuen Ler Chow
+ * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
 const reducer$2 = (state, action) => {
     switch (action.type) {
-        case ActionType$2.ToggleItems: {
-            return { isShowingItems: !state.isShowingItems };
+        case ActionType$2.ToggleChild: {
+            return Object.assign(Object.assign({}, state), { childExpanded: Object.assign(Object.assign({}, state.childExpanded), { [String(action.id)]: !state.childExpanded[String(action.id)] }) });
         }
         default: {
             return state;
@@ -1951,14 +1952,19 @@ const NestableItemList = (props) => {
     // Destructure all props
     const { items, onChanged, } = props;
     /* -------------- State ------------- */
+    // Create initial map of child expanded booleans
+    const initChildExpanded = {};
+    items.forEach((item) => {
+        initChildExpanded[String(item.id)] = false;
+    });
     // Initial state
     const initialState = {
-        isShowingItems: false,
+        childExpanded: initChildExpanded,
     };
     // Initialize state
     const [state, dispatch] = useReducer(reducer$2, initialState);
     // Destructure common state
-    const { isShowingItems, } = state;
+    const { childExpanded, } = state;
     /*------------------------------------------------------------------------*/
     /*                           Component Functions                          */
     /*------------------------------------------------------------------------*/
@@ -2046,14 +2052,15 @@ const NestableItemList = (props) => {
                     backgroundColor: 'transparent',
                 }, type: "button", onClick: () => {
                     dispatch({
-                        type: ActionType$2.ToggleItems,
+                        type: ActionType$2.ToggleChild,
+                        id: item.id,
                     });
-                }, "aria-label": `${isShowingItems ? 'Hide' : 'Show'} items in ${item.name}` },
-                React.createElement(FontAwesomeIcon, { icon: isShowingItems ? faChevronDown : faChevronRight })))),
+                }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}` },
+                React.createElement(FontAwesomeIcon, { icon: childExpanded[item.id] ? faChevronDown : faChevronRight })))),
             React.createElement(CheckboxButton, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
                     onChanged(changeChecked(item.id, checked, items));
                 }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$1.Light }),
-            item.isGroup && isShowingItems && (React.createElement("div", { className: "NestableItemList-children-container", style: {
+            (item.isGroup && childExpanded[item.id]) && (React.createElement("div", { className: "NestableItemList-children-container", style: {
                     paddingLeft: '2.2rem',
                 } },
                 React.createElement(NestableItemList, { items: item.children, onChanged: (updatedItems) => {
@@ -3106,7 +3113,7 @@ const LogReviewer = (props) => {
                     })
                         .map((subcontext) => {
                         return {
-                            id: `${context}-${subcontext}`,
+                            id: subcontext,
                             name: genHumanReadableName(subcontext),
                             isGroup: false,
                             checked: !!value[subcontext],

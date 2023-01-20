@@ -994,7 +994,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   })
                   .map((subcontext) => {
                     return {
-                      id: `${context}-${subcontext}`,
+                      id: subcontext,
                       name: genHumanReadableName(subcontext),
                       isGroup: false,
                       checked: !!value[subcontext],

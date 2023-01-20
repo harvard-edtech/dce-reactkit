@@ -1,6 +1,7 @@
 /**
  * Reusable nested item picker
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 
 // Import React
@@ -43,36 +44,46 @@ type Props = {
 /* -------- State Definition -------- */
 
 type State = {
-  // True if children are being shown
-  isShowingItems: boolean,
+  // Map of children that are expanded
+  childExpanded: {
+    [k: string]: boolean
+  },
 };
 
 /* ------------- Actions ------------ */
 
 // Types of actions
 enum ActionType {
-  // Toggle whether the children are being shown
-  ToggleItems = 'toggle-items',
+  // Toggle whether a child are being shown
+  ToggleChild = 'toggle-child',
 }
 
 // Action definitions
 type Action = (
   | {
     // Action type
-    type: ActionType.ToggleItems,
+    type: ActionType.ToggleChild,
+    // Id of the child to show
+    id: (string | number),
   }
 );
 
 /**
  * Reducer that executes actions
- * @author Yuen Ler Chow
+ * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case ActionType.ToggleItems: {
-      return { isShowingItems: !state.isShowingItems };
+    case ActionType.ToggleChild: {
+      return {
+        ...state,
+        childExpanded: {
+          ...state.childExpanded,
+          [String(action.id)]: !state.childExpanded[String(action.id)],
+        },
+      };
     }
     default: {
       return state;
@@ -99,9 +110,15 @@ const NestableItemList: React.FC<Props> = (props) => {
 
   /* -------------- State ------------- */
 
+  // Create initial map of child expanded booleans
+  const initChildExpanded: { [k: string]: boolean } = {};
+  items.forEach((item) => {
+    initChildExpanded[String(item.id)] = false;
+  });
+
   // Initial state
   const initialState: State = {
-    isShowingItems: false,
+    childExpanded: initChildExpanded,
   };
 
   // Initialize state
@@ -109,7 +126,7 @@ const NestableItemList: React.FC<Props> = (props) => {
 
   // Destructure common state
   const {
-    isShowingItems,
+    childExpanded,
   } = state;
 
   /*------------------------------------------------------------------------*/
@@ -231,13 +248,14 @@ const NestableItemList: React.FC<Props> = (props) => {
                     type="button"
                     onClick={() => {
                       dispatch({
-                        type: ActionType.ToggleItems,
+                        type: ActionType.ToggleChild,
+                        id: item.id,
                       });
                     }}
-                    aria-label={`${isShowingItems ? 'Hide' : 'Show'} items in ${item.name}`}
+                    aria-label={`${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}`}
                   >
                     <FontAwesomeIcon
-                      icon={isShowingItems ? faChevronDown : faChevronRight}
+                      icon={childExpanded[item.id] ? faChevronDown : faChevronRight}
                     />
                   </button>
                 )}
@@ -257,7 +275,7 @@ const NestableItemList: React.FC<Props> = (props) => {
               />
 
               {/* Children */}
-              {item.isGroup && isShowingItems && (
+              {(item.isGroup && childExpanded[item.id]) && (
                 <div
                   className="NestableItemList-children-container"
                   style={{
