@@ -2799,7 +2799,7 @@ const LogReviewer = (props) => {
         // Context exists
         LogMetadata.Context
             // Context has children already
-            && LogMetadata.Context[context] !== 'string') {
+            && typeof LogMetadata.Context[context] !== 'string') {
             LogMetadata.Context[context][LogBuiltInMetadata.Context.Uncategorized] = (LogBuiltInMetadata.Context.Uncategorized);
         }
     });
