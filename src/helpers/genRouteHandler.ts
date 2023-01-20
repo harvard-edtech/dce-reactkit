@@ -539,7 +539,7 @@ const genRouteHandler = (
               type: LogType.Action,
               target: (
                 (opts as any).target
-                ?? LogBuiltInMetadata.Target.NoSpecificTarget
+                ?? LogBuiltInMetadata.Target.NoTarget
               ),
               action: (
                 (opts as any).action

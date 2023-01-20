@@ -519,14 +519,14 @@ const LOG_ROUTE_PATH = `${ROUTE_PATH_PREFIX}/log`;
 const LogBuiltInMetadata = {
     // Contexts
     Context: {
-        Uncategorized: 'n/a',
-        ServerRenderedErrorPage: '_server-rendered-error-page',
-        ServerEndpointError: '_server-endpoint-error',
-        ClientFatalError: '_client-fatal-error',
+        Uncategorized: 'Uncategorized',
+        ServerRenderedErrorPage: 'ServerRenderedErrorPage',
+        ServerEndpointError: 'ServerEndpointError',
+        ClientFatalError: 'ClientFatalError',
     },
     // Targets
     Target: {
-        NoSpecificTarget: 'n/a',
+        NoTarget: 'NoTarget',
     },
 };
 
@@ -682,7 +682,7 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
                 ? opts.error.stack
                 : undefined),
             target: (opts.action
-                ? ((_g = opts.target) !== null && _g !== void 0 ? _g : LogBuiltInMetadata.Target.NoSpecificTarget)
+                ? ((_g = opts.target) !== null && _g !== void 0 ? _g : LogBuiltInMetadata.Target.NoTarget)
                 : undefined),
             action: (opts.action
                 ? opts.action
@@ -2674,15 +2674,6 @@ const style = `
   }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Constants                               */
-/*------------------------------------------------------------------------*/
-const builtInContextToName = {
-    [LogBuiltInMetadata.Context.Uncategorized]: 'Uncategorized',
-    [LogBuiltInMetadata.Context.ServerRenderedErrorPage]: 'Server Rendered Error Page',
-    [LogBuiltInMetadata.Context.ServerEndpointError]: 'Server Endpoint Error',
-    [LogBuiltInMetadata.Context.ClientFatalError]: 'Client Fatal Error',
-};
-/*------------------------------------------------------------------------*/
 /*                            Static Functions                            */
 /*------------------------------------------------------------------------*/
 /**
@@ -2835,8 +2826,10 @@ const LogReviewer = (props) => {
             initContextFilterState[contextValue._][LogBuiltInMetadata.Context.Uncategorized] = true;
         }
     });
-    // Add uncategorized context
-    initContextFilterState[LogBuiltInMetadata.Context.Uncategorized] = true;
+    // Add built-in contexts
+    Object.values(LogBuiltInMetadata.Context).forEach((context) => {
+        initContextFilterState[context] = true;
+    });
     // Create initial tag filter state
     const initTagFilterState = {};
     Object.values((_b = LogMetadata.Tag) !== null && _b !== void 0 ? _b : {}).forEach((tagValue) => {
@@ -2871,6 +2864,10 @@ const LogReviewer = (props) => {
     });
     Object.values(LogAction$1).forEach((action) => {
         initActionErrorFilterState.action[action] = true;
+    });
+    // Add built-in targets
+    Object.values(LogBuiltInMetadata.Target).forEach((target) => {
+        initActionErrorFilterState.target[target] = true;
     });
     // Initial state
     const initialState = {
@@ -3077,7 +3074,7 @@ const LogReviewer = (props) => {
                 // Create item picker items
                 const pickableItems = (Object.keys((_d = LogMetadata.Context) !== null && _d !== void 0 ? _d : {})
                     .map((context) => {
-                    var _a, _b;
+                    var _a;
                     const value = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
                     if (typeof value === 'string') {
                         // No subcategories
@@ -3104,7 +3101,7 @@ const LogReviewer = (props) => {
                     }));
                     const item = {
                         id: context,
-                        name: ((_b = builtInContextToName[context]) !== null && _b !== void 0 ? _b : genHumanReadableName(context)),
+                        name: genHumanReadableName(context),
                         isGroup: true,
                         children,
                     };
@@ -4873,7 +4870,7 @@ const genRouteHandler = (opts) => {
                     }
                     : {
                         type: LogType$1.Action,
-                        target: ((_m = opts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoSpecificTarget),
+                        target: ((_m = opts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoTarget),
                         action: ((_o = opts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
                     });
                 // Source-specific info

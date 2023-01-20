@@ -53,7 +53,7 @@ const logClientEvent: LogFunction = async (opts) => {
         (opts as any).action
           ? (
             (opts as any).target
-            ?? LogBuiltInMetadata.Target.NoSpecificTarget
+            ?? LogBuiltInMetadata.Target.NoTarget
           )
           : undefined
       ),

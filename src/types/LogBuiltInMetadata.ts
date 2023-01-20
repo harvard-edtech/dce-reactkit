@@ -5,14 +5,14 @@
 const LogBuiltInMetadata = {
   // Contexts
   Context: {
-    Uncategorized: 'n/a',
-    ServerRenderedErrorPage: '_server-rendered-error-page',
-    ServerEndpointError: '_server-endpoint-error',
-    ClientFatalError: '_client-fatal-error',
+    Uncategorized: 'Uncategorized',
+    ServerRenderedErrorPage: 'ServerRenderedErrorPage',
+    ServerEndpointError: 'ServerEndpointError',
+    ClientFatalError: 'ClientFatalError',
   },
   // Targets
   Target: {
-    NoSpecificTarget: 'n/a',
+    NoTarget: 'NoTarget',
   },
 };
 

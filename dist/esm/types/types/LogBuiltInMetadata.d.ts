@@ -10,7 +10,7 @@ declare const LogBuiltInMetadata: {
         ClientFatalError: string;
     };
     Target: {
-        NoSpecificTarget: string;
+        NoTarget: string;
     };
 };
 export default LogBuiltInMetadata;

@@ -258,17 +258,6 @@ const style = `
 `;
 
 /*------------------------------------------------------------------------*/
-/*                                Constants                               */
-/*------------------------------------------------------------------------*/
-
-const builtInContextToName = {
-  [LogBuiltInMetadata.Context.Uncategorized]: 'Uncategorized',
-  [LogBuiltInMetadata.Context.ServerRenderedErrorPage]: 'Server Rendered Error Page',
-  [LogBuiltInMetadata.Context.ServerEndpointError]: 'Server Endpoint Error',
-  [LogBuiltInMetadata.Context.ClientFatalError]: 'Client Fatal Error',
-};
-
-/*------------------------------------------------------------------------*/
 /*                            Static Functions                            */
 /*------------------------------------------------------------------------*/
 
@@ -564,8 +553,10 @@ const LogReviewer: React.FC<Props> = (props) => {
       (initContextFilterState[contextValue._] as { [k: string]: boolean })[LogBuiltInMetadata.Context.Uncategorized] = true;
     }
   });
-  // Add uncategorized context
-  initContextFilterState[LogBuiltInMetadata.Context.Uncategorized] = true;
+  // Add built-in contexts
+  Object.values(LogBuiltInMetadata.Context).forEach((context) => {
+    initContextFilterState[context] = true;
+  });
 
   // Create initial tag filter state
   const initTagFilterState: TagFilterState = {};
@@ -603,6 +594,10 @@ const LogReviewer: React.FC<Props> = (props) => {
   });
   Object.values(LogAction).forEach((action) => {
     initActionErrorFilterState.action[action] = true;
+  });
+  // Add built-in targets
+  Object.values(LogBuiltInMetadata.Target).forEach((target) => {
+    initActionErrorFilterState.target[target] = true;
   });
 
   // Initial state
@@ -982,10 +977,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               );
               const item: PickableItem = {
                 id: context,
-                name: (
-                  builtInContextToName[context]
-                  ?? genHumanReadableName(context)
-                ),
+                name: genHumanReadableName(context),
                 isGroup: true,
                 children,
               };
