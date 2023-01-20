@@ -2867,7 +2867,7 @@ const LogReviewer = (props) => {
         let month = newDateFilterState.startDate.month;
         while (
         // Earlier year
-        (year <= newDateFilterState.endDate.year)
+        (year < newDateFilterState.endDate.year)
             // Current year but included month
             || (year === newDateFilterState.endDate.year
                 && month <= newDateFilterState.endDate.month)) {
