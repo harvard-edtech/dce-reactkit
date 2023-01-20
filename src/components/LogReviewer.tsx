@@ -258,6 +258,17 @@ const style = `
 `;
 
 /*------------------------------------------------------------------------*/
+/*                                Constants                               */
+/*------------------------------------------------------------------------*/
+
+const builtInContextToName = {
+  [LogBuiltInMetadata.Context.Uncategorized]: 'Uncategorized',
+  [LogBuiltInMetadata.Context.ServerRenderedErrorPage]: 'Server Rendered Error Page',
+  [LogBuiltInMetadata.Context.ServerEndpointError]: 'Server Endpoint Error',
+  [LogBuiltInMetadata.Context.ClientFatalError]: 'Client Fatal Error',
+};
+
+/*------------------------------------------------------------------------*/
 /*                            Static Functions                            */
 /*------------------------------------------------------------------------*/
 
@@ -972,9 +983,8 @@ const LogReviewer: React.FC<Props> = (props) => {
               const item: PickableItem = {
                 id: context,
                 name: (
-                  (context === LogBuiltInMetadata.Context.Uncategorized)
-                    ? 'Uncategorized'
-                    : context
+                  builtInContextToName[context]
+                  ?? genHumanReadableName(context)
                 ),
                 isGroup: true,
                 children,
@@ -989,6 +999,8 @@ const LogReviewer: React.FC<Props> = (props) => {
             title="Context"
             items={pickableItems}
             onChanged={(updatedItems) => {
+              console.log('Items before:', pickableItems);
+              console.log('Updated Items:', updatedItems);
               // Update our state
               updatedItems.forEach((pickableItem) => {
                 if (pickableItem.isGroup) {

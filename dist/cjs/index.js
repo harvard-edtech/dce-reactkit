@@ -2674,6 +2674,15 @@ const style = `
   }
 `;
 /*------------------------------------------------------------------------*/
+/*                                Constants                               */
+/*------------------------------------------------------------------------*/
+const builtInContextToName = {
+    [LogBuiltInMetadata.Context.Uncategorized]: 'Uncategorized',
+    [LogBuiltInMetadata.Context.ServerRenderedErrorPage]: 'Server Rendered Error Page',
+    [LogBuiltInMetadata.Context.ServerEndpointError]: 'Server Endpoint Error',
+    [LogBuiltInMetadata.Context.ClientFatalError]: 'Client Fatal Error',
+};
+/*------------------------------------------------------------------------*/
 /*                            Static Functions                            */
 /*------------------------------------------------------------------------*/
 /**
@@ -3068,7 +3077,7 @@ const LogReviewer = (props) => {
                 // Create item picker items
                 const pickableItems = (Object.keys((_d = LogMetadata.Context) !== null && _d !== void 0 ? _d : {})
                     .map((context) => {
-                    var _a;
+                    var _a, _b;
                     const value = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
                     if (typeof value === 'string') {
                         // No subcategories
@@ -3095,9 +3104,7 @@ const LogReviewer = (props) => {
                     }));
                     const item = {
                         id: context,
-                        name: ((context === LogBuiltInMetadata.Context.Uncategorized)
-                            ? 'Uncategorized'
-                            : context),
+                        name: ((_b = builtInContextToName[context]) !== null && _b !== void 0 ? _b : genHumanReadableName(context)),
                         isGroup: true,
                         children,
                     };
@@ -3105,6 +3112,8 @@ const LogReviewer = (props) => {
                 }));
                 // Create filter UI
                 filterDrawer = (React__default["default"].createElement(ItemPicker, { title: "Context", items: pickableItems, onChanged: (updatedItems) => {
+                        console.log('Items before:', pickableItems);
+                        console.log('Updated Items:', updatedItems);
                         // Update our state
                         updatedItems.forEach((pickableItem) => {
                             if (pickableItem.isGroup) {
