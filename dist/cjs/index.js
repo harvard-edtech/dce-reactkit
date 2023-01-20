@@ -2661,8 +2661,12 @@ const style = `
     background-color: transparent !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    padding-right: 1em !important;
     margin: 0 !important;
-    color: #333 !important;
+    color: #444 !important;
+
+    right: 0 !important;
+    position: absolute !important;
   }
   .LogReviewer-header-close-button:hover {
     border: 0 !important;
@@ -2785,10 +2789,33 @@ const LogReviewer = (props) => {
     /*------------------------------------------------------------------------*/
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     /* -------------- Props ------------- */
     // Destructure props
     const { LogMetadata, onClose, } = props;
+    // Add built-in LogMetadata
+    // > Add "uncategorized" subcontext to each context
+    Object.keys((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {}).forEach((context) => {
+        if (LogMetadata.Context
+            // Context has children already
+            && typeof LogMetadata.Context[context] !== 'string') {
+            LogMetadata.Context[context][LogBuiltInMetadata.Context.Uncategorized] = (LogBuiltInMetadata.Context.Uncategorized);
+        }
+    });
+    // > Add built-in contexts
+    LogMetadata.Context = ((_b = LogMetadata.Context) !== null && _b !== void 0 ? _b : {});
+    Object.keys(LogBuiltInMetadata.Context).forEach((context) => {
+        if (LogMetadata.Context) {
+            LogMetadata.Context[context] = context;
+        }
+    });
+    // > Add built-in targets
+    LogMetadata.Target = ((_c = LogMetadata.Target) !== null && _c !== void 0 ? _c : {});
+    Object.keys(LogBuiltInMetadata.Target).forEach((target) => {
+        if (LogMetadata.Target) {
+            LogMetadata.Target[target] = target;
+        }
+    });
     /* -------------- State ------------- */
     // Create initial date filter state
     const today = getTimeInfoInET();
@@ -2808,7 +2835,7 @@ const LogReviewer = (props) => {
     };
     // Create initial context filter state
     const initContextFilterState = {};
-    Object.keys((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {}).forEach((context) => {
+    Object.keys((_d = LogMetadata.Context) !== null && _d !== void 0 ? _d : {}).forEach((context) => {
         var _a, _b;
         const contextValue = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
         if (typeof contextValue === 'string') {
@@ -2822,17 +2849,11 @@ const LogReviewer = (props) => {
                 const subcontextValue = contextValue[subcontext];
                 initContextFilterState[contextValue._][subcontextValue] = true;
             });
-            // Add uncategorized subcontext
-            initContextFilterState[contextValue._][LogBuiltInMetadata.Context.Uncategorized] = true;
         }
-    });
-    // Add built-in contexts
-    Object.values(LogBuiltInMetadata.Context).forEach((context) => {
-        initContextFilterState[context] = true;
     });
     // Create initial tag filter state
     const initTagFilterState = {};
-    Object.values((_b = LogMetadata.Tag) !== null && _b !== void 0 ? _b : {}).forEach((tagValue) => {
+    Object.values((_e = LogMetadata.Tag) !== null && _e !== void 0 ? _e : {}).forEach((tagValue) => {
         initTagFilterState[tagValue] = true;
     });
     // Create advanced filter state
@@ -2859,7 +2880,7 @@ const LogReviewer = (props) => {
         target: {},
         action: {},
     };
-    Object.values((_c = LogMetadata.Target) !== null && _c !== void 0 ? _c : {}).forEach((target) => {
+    Object.values((_f = LogMetadata.Target) !== null && _f !== void 0 ? _f : {}).forEach((target) => {
         initActionErrorFilterState.target[target] = true;
     });
     Object.values(LogAction$1).forEach((action) => {
@@ -3072,7 +3093,7 @@ const LogReviewer = (props) => {
             }
             else if (expandedFilterDrawer === FilterDrawer.Context) {
                 // Create item picker items
-                const pickableItems = (Object.keys((_d = LogMetadata.Context) !== null && _d !== void 0 ? _d : {})
+                const pickableItems = (Object.keys((_g = LogMetadata.Context) !== null && _g !== void 0 ? _g : {})
                     .map((context) => {
                     var _a;
                     const value = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
@@ -3179,8 +3200,8 @@ const LogReviewer = (props) => {
                                 } }));
                         })),
                         React__default["default"].createElement(ButtonInputGroup, { label: "Target" },
-                            (Object.keys((_e = LogMetadata.Target) !== null && _e !== void 0 ? _e : {}).length === 0) && (React__default["default"].createElement("div", null, "This app does not have any targets yet.")),
-                            Object.keys((_f = LogMetadata.Target) !== null && _f !== void 0 ? _f : {})
+                            (Object.keys((_h = LogMetadata.Target) !== null && _h !== void 0 ? _h : {}).length === 0) && (React__default["default"].createElement("div", null, "This app does not have any targets yet.")),
+                            Object.keys((_j = LogMetadata.Target) !== null && _j !== void 0 ? _j : {})
                                 .map((target, i) => {
                                 var _a;
                                 const description = genHumanReadableName(target);

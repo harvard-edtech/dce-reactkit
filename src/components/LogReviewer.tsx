@@ -244,8 +244,12 @@ const style = `
     background-color: transparent !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    padding-right: 1em !important;
     margin: 0 !important;
-    color: #333 !important;
+    color: #444 !important;
+
+    right: 0 !important;
+    position: absolute !important;
   }
   .LogReviewer-header-close-button:hover {
     border: 0 !important;
@@ -516,6 +520,34 @@ const LogReviewer: React.FC<Props> = (props) => {
     onClose,
   } = props;
 
+  // Add built-in LogMetadata
+  // > Add "uncategorized" subcontext to each context
+  Object.keys(LogMetadata.Context ?? {}).forEach((context) => {
+    if (
+      LogMetadata.Context
+      // Context has children already
+      && typeof LogMetadata.Context[context] !== 'string'
+    ) {
+      (LogMetadata.Context as any)[context][LogBuiltInMetadata.Context.Uncategorized] = (
+        LogBuiltInMetadata.Context.Uncategorized
+      );
+    }
+  })
+  // > Add built-in contexts
+  LogMetadata.Context = (LogMetadata.Context ?? {});
+  Object.keys(LogBuiltInMetadata.Context).forEach((context) => {
+    if (LogMetadata.Context) {
+      LogMetadata.Context[context] = context;
+    }
+  });
+  // > Add built-in targets
+  LogMetadata.Target = (LogMetadata.Target ?? {});
+  Object.keys(LogBuiltInMetadata.Target).forEach((target) => {
+    if (LogMetadata.Target) {
+      LogMetadata.Target[target] = target;
+    }
+  });
+
   /* -------------- State ------------- */
 
   // Create initial date filter state
@@ -549,13 +581,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         const subcontextValue = contextValue[subcontext];
         (initContextFilterState[contextValue._] as { [k: string]: boolean })[subcontextValue] = true;
       });
-      // Add uncategorized subcontext
-      (initContextFilterState[contextValue._] as { [k: string]: boolean })[LogBuiltInMetadata.Context.Uncategorized] = true;
     }
-  });
-  // Add built-in contexts
-  Object.values(LogBuiltInMetadata.Context).forEach((context) => {
-    initContextFilterState[context] = true;
   });
 
   // Create initial tag filter state
