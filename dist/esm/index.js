@@ -2305,7 +2305,7 @@ const CSVDownloadButton = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     // Render the button
-    return (React.createElement("a", { id: id, download: filename, href: `data:application/octet-stream,${csv}`, className: `CSVDownloadButton-button ${className !== null && className !== void 0 ? className : 'btn btn-secondary'}`, "aria-label": (ariaLabel
+    return (React.createElement("a", { id: id, download: filename, href: `data:application/octet-stream,${encodeURIComponent(csv)}`, className: `CSVDownloadButton-button ${className !== null && className !== void 0 ? className : 'btn btn-secondary'}`, "aria-label": (ariaLabel
             ? `Click to download ${filename}`
             : ariaLabel), style: style, onClick: onClick },
         !children && (React.createElement(React.Fragment, null,
@@ -2386,8 +2386,10 @@ const IntelliTable = (props) => {
     const data = ((props.data && props.data.length > 0)
         ? props.data
         : [{ id: 'empty-row' }]);
+    // Get CSV filename
+    let filename = `${title}.csv`;
     if (props.csvName) {
-        (props.csvName.endsWith('.csv')
+        filename = (props.csvName.endsWith('.csv')
             ? props.csvName
             : `${props.csvName}.csv`);
     }
@@ -2663,7 +2665,7 @@ const IntelliTable = (props) => {
         React.createElement("div", { className: "d-flex align-items-center justify-content-start" },
             React.createElement("h3", { className: "m-0" }, title),
             React.createElement("div", { className: "flex-grow-1 text-end" },
-                React.createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: `${title}.csv`, csv: csv }),
+                React.createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: filename, csv: csv }),
                 React.createElement("button", { type: "button", className: "btn btn-secondary ms-2", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
                         dispatch({
                             type: ActionType$1.ToggleColVisCusModalVisibility,

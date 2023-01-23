@@ -645,7 +645,7 @@ const IntelliTable: React.FC<Props> = (props) => {
           <CSVDownloadButton
             aria-label={`download data as csv for ${title}`}
             id={`IntelliTable-${id}-download-as-csv`}
-            filename={`${title}.csv`}
+            filename={filename}
             csv={csv}
           />
           {/* Show/Hide Columns */}

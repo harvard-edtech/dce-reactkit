@@ -70,7 +70,7 @@ const CSVDownloadButton: React.FC<Props> = (props) => {
     <a
       id={id}
       download={filename}
-      href={`data:application/octet-stream,${csv}`}
+      href={`data:application/octet-stream,${encodeURIComponent(csv)}`}
       className={`CSVDownloadButton-button ${className ?? 'btn btn-secondary'}`}
       aria-label={(
         ariaLabel
