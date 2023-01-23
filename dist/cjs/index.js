@@ -1202,7 +1202,7 @@ const ButtonInputGroup = (props) => {
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                 } }, label),
-            React__default["default"].createElement("span", { className: "input-group-text flex-grow-1 rounded-right", style: {
+            React__default["default"].createElement("span", { className: "input-group-text flex-grow-1 rounded-right d-flex flex-wrap", style: {
                     backgroundColor: 'white',
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
@@ -2316,7 +2316,7 @@ var ActionType$1;
     // Toggle sort column param
     ActionType["ToggleSortColumn"] = "toggle-sort-column";
     // Toggle the visibility of a column
-    ActionType["ToggleColumnVisibility"] = "toggle-column-visibility";
+    ActionType["UpdateColumnVisibility"] = "update-column-visibility";
     // Toggle the column visibility customization modal
     ActionType["ToggleColVisCusModalVisibility"] = "toggle-col-vis-cus-modal-visibility";
 })(ActionType$1 || (ActionType$1 = {}));
@@ -2340,9 +2340,9 @@ const reducer$1 = (state, action) => {
             // Stop sorting by column
             return Object.assign(Object.assign({}, state), { sortColumnParam: undefined, sortType: SortType.Ascending });
         }
-        case ActionType$1.ToggleColumnVisibility: {
+        case ActionType$1.UpdateColumnVisibility: {
             const { columnVisibilityMap } = state;
-            columnVisibilityMap[action.param] = !columnVisibilityMap[action.param];
+            columnVisibilityMap[action.param] = action.visible;
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
         case ActionType$1.ToggleColVisCusModalVisibility: {
@@ -2396,10 +2396,11 @@ const IntelliTable = (props) => {
                     type: ActionType$1.ToggleColVisCusModalVisibility,
                 });
             }, okayVariant: Variant$1.Light }, columns.map((column) => {
-            return (React__default["default"].createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: () => {
+            return (React__default["default"].createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
                     dispatch({
-                        type: ActionType$1.ToggleColumnVisibility,
+                        type: ActionType$1.UpdateColumnVisibility,
                         param: column.param,
+                        visible: checked,
                     });
                 }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Secondary }));
         })));
@@ -2467,8 +2468,12 @@ const IntelliTable = (props) => {
     const descending = (sortType === SortType.Descending);
     if (sortColumnParam) {
         sortedData.sort((a, b) => {
+            var _a, _b;
             const aVal = a[sortColumnParam];
             const bVal = b[sortColumnParam];
+            // Tiebreaker sort by timestamp, most recent first (used if tied)
+            const tiebreaker = (((_a = b.timestamp) !== null && _a !== void 0 ? _a : 0)
+                - ((_b = a.timestamp) !== null && _b !== void 0 ? _b : 0));
             // Auto-sort undefined and null to end of list
             if ((aVal === undefined || aVal === null)
                 || (bVal === undefined || bVal === null)) {
@@ -2476,7 +2481,7 @@ const IntelliTable = (props) => {
                 if ((aVal === undefined || aVal === null)
                     && (bVal === undefined || bVal === null)) {
                     // Both undefined
-                    return 0;
+                    return tiebreaker;
                 }
                 if (aVal === undefined || aVal === null) {
                     // First was undefined
@@ -2494,7 +2499,7 @@ const IntelliTable = (props) => {
                 if (!aVal && bVal) {
                     return (descending ? 1 : -1);
                 }
-                return 0;
+                return tiebreaker;
             }
             // > Number
             if (paramType === ParamType$1.Int
@@ -2511,7 +2516,7 @@ const IntelliTable = (props) => {
                 if (aVal > bVal) {
                     return (descending ? -1 : 1);
                 }
-                return 0;
+                return tiebreaker;
             }
             // > JSON
             if (paramType === ParamType$1.JSON) {
@@ -2526,7 +2531,7 @@ const IntelliTable = (props) => {
                     : (aSize - bSize));
             }
             // No sort
-            return 0;
+            return tiebreaker;
         });
     }
     // Table body
@@ -3023,7 +3028,6 @@ const LogReviewer = (props) => {
         });
         // Check which year/month combos we need to load
         const toLoad = listMonthsToLoad(newDateFilterState);
-        console.log('Filter update:', newDateFilterState, toLoad, logMap);
         // If nothing to load, finished
         if (toLoad.length === 0) {
             return;
@@ -3223,6 +3227,10 @@ const LogReviewer = (props) => {
                     const description = genHumanReadableName(tag);
                     return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, noMarginOnRight: i === Object.keys(tagFilterState).length - 1, checked: tagFilterState[tag], onChanged: (checked) => {
                             tagFilterState[tag] = checked;
+                            dispatch({
+                                type: ActionType.UpdateTagFilterState,
+                                tagFilterState,
+                            });
                         } }));
                 })));
             }
@@ -3256,7 +3264,7 @@ const LogReviewer = (props) => {
                         React__default["default"].createElement(ButtonInputGroup, { label: "Action", className: "mb-2" }, Object.keys(LogAction$1)
                             .map((action, i) => {
                             const description = genHumanReadableName(action);
-                            return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: i === Object.keys(LogAction$1).length - 1, onChanged: (checked) => {
+                            return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: i === Object.keys(LogAction$1).length - 1, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
                                     dispatch({
                                         type: ActionType.UpdateActionErrorFilterState,
@@ -3270,7 +3278,7 @@ const LogReviewer = (props) => {
                                 .map((target, i) => {
                                 var _a;
                                 const description = genHumanReadableName(target);
-                                return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, onChanged: (checked) => {
+                                return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], onChanged: (checked) => {
                                         actionErrorFilterState.target[target] = checked;
                                         dispatch({
                                             type: ActionType.UpdateActionErrorFilterState,

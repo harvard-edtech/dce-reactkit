@@ -69,7 +69,7 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
 
         {/* Contents */}
         <span
-          className="input-group-text flex-grow-1 rounded-right"
+          className="input-group-text flex-grow-1 rounded-right d-flex flex-wrap"
           style={{
             backgroundColor: 'white',
             borderTopLeftRadius: 0,

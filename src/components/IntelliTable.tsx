@@ -87,7 +87,7 @@ enum ActionType {
   // Toggle sort column param
   ToggleSortColumn = 'toggle-sort-column',
   // Toggle the visibility of a column
-  ToggleColumnVisibility = 'toggle-column-visibility',
+  UpdateColumnVisibility = 'update-column-visibility',
   // Toggle the column visibility customization modal
   ToggleColVisCusModalVisibility = 'toggle-col-vis-cus-modal-visibility',
 }
@@ -102,9 +102,11 @@ type Action = (
   }
   | {
     // Action type
-    type: ActionType.ToggleColumnVisibility,
-    // Param for the column to toggle
+    type: ActionType.UpdateColumnVisibility,
+    // Param for the column to update
     param: string,
+    // If true, make the column visible
+    visible: boolean,
   }
   | {
     // Action type
@@ -145,9 +147,9 @@ const reducer = (state: State, action: Action): State => {
         sortType: SortType.Ascending,
       };
     }
-    case ActionType.ToggleColumnVisibility: {
+    case ActionType.UpdateColumnVisibility: {
       const { columnVisibilityMap } = state;
-      columnVisibilityMap[action.param] = !columnVisibilityMap[action.param];
+      columnVisibilityMap[action.param] = action.visible;
       return {
         ...state,
         columnVisibilityMap,
@@ -245,10 +247,11 @@ const IntelliTable: React.FC<Props> = (props) => {
                 id={`IntelliTable-${id}-toggle-visibility-${column.param}`}
                 className="mb-2"
                 text={column.title}
-                onChanged={() => {
+                onChanged={(checked) => {
                   dispatch({
-                    type: ActionType.ToggleColumnVisibility,
+                    type: ActionType.UpdateColumnVisibility,
                     param: column.param,
+                    visible: checked,
                   });
                 }}
                 checked={columnVisibilityMap[column.param]}
@@ -360,6 +363,12 @@ const IntelliTable: React.FC<Props> = (props) => {
       const aVal = a[sortColumnParam];
       const bVal = b[sortColumnParam];
 
+      // Tiebreaker sort by timestamp, most recent first (used if tied)
+      const tiebreaker = (
+        (b.timestamp ?? 0)
+        - (a.timestamp ?? 0)
+      );
+
       // Auto-sort undefined and null to end of list
       if (
         (aVal === undefined || aVal === null)
@@ -371,7 +380,7 @@ const IntelliTable: React.FC<Props> = (props) => {
           && (bVal === undefined || bVal === null)
         ) {
           // Both undefined
-          return 0;
+          return tiebreaker;
         }
         if (aVal === undefined || aVal === null) {
           // First was undefined
@@ -390,7 +399,7 @@ const IntelliTable: React.FC<Props> = (props) => {
         if (!aVal && bVal) {
           return (descending ? 1 : -1);
         }
-        return 0;
+        return tiebreaker;
       }
       // > Number
       if (
@@ -411,7 +420,7 @@ const IntelliTable: React.FC<Props> = (props) => {
         if (aVal > bVal) {
           return (descending ? -1 : 1);
         }
-        return 0;
+        return tiebreaker;
       }
       // > JSON
       if (paramType === ParamType.JSON) {
@@ -433,7 +442,7 @@ const IntelliTable: React.FC<Props> = (props) => {
       }
 
       // No sort
-      return 0;
+      return tiebreaker;
     });
   }
 

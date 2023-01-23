@@ -727,7 +727,6 @@ const LogReviewer: React.FC<Props> = (props) => {
 
     // Check which year/month combos we need to load
     const toLoad = listMonthsToLoad(newDateFilterState);
-    console.log('Filter update:', newDateFilterState, toLoad, logMap);
 
     // If nothing to load, finished
     if (toLoad.length === 0) {
@@ -1067,6 +1066,10 @@ const LogReviewer: React.FC<Props> = (props) => {
                       checked={tagFilterState[tag]}
                       onChanged={(checked) => {
                         tagFilterState[tag] = checked;
+                        dispatch({
+                          type: ActionType.UpdateTagFilterState,
+                          tagFilterState,
+                        });
                       }}
                     />
                   );
@@ -1143,6 +1146,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                               text={description}
                               ariaLabel={`include logs with action type "${description}" in results`}
                               noMarginOnRight={i === Object.keys(LogAction).length - 1}
+                              checked={actionErrorFilterState.action[action]}
                               onChanged={(checked) => {
                                 actionErrorFilterState.action[action] = checked;
                                 dispatch({
@@ -1173,6 +1177,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                               id={`LogReviewer-target-${target}-checkbox`}
                               text={description}
                               ariaLabel={`include logs with target "${description}" in results`}
+                              checked={actionErrorFilterState.target[target]}
                               onChanged={(checked) => {
                                 actionErrorFilterState.target[target] = checked;
                                 dispatch({
