@@ -2345,6 +2345,10 @@ var ActionType$1;
     ActionType["UpdateColumnVisibility"] = "update-column-visibility";
     // Toggle the column visibility customization modal
     ActionType["ToggleColVisCusModalVisibility"] = "toggle-col-vis-cus-modal-visibility";
+    // Show all columns
+    ActionType["ShowAllColumns"] = "show-all-columns";
+    // Hide all columns
+    ActionType["HideAllColumns"] = "hide-all-columns";
 })(ActionType$1 || (ActionType$1 = {}));
 /**
  * Reducer that executes actions
@@ -2373,6 +2377,20 @@ const reducer$1 = (state, action) => {
         }
         case ActionType$1.ToggleColVisCusModalVisibility: {
             return Object.assign(Object.assign({}, state), { columnVisibilityCustomizationModalVisible: !state.columnVisibilityCustomizationModalVisible });
+        }
+        case ActionType$1.ShowAllColumns: {
+            const { columnVisibilityMap } = state;
+            Object.keys(columnVisibilityMap).forEach((param) => {
+                columnVisibilityMap[param] = true;
+            });
+            return Object.assign(Object.assign({}, state), { columnVisibilityMap });
+        }
+        case ActionType$1.HideAllColumns: {
+            const { columnVisibilityMap } = state;
+            Object.keys(columnVisibilityMap).forEach((param) => {
+                columnVisibilityMap[param] = false;
+            });
+            return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
         default: {
             return state;
@@ -2429,18 +2447,37 @@ const IntelliTable = (props) => {
     if (columnVisibilityCustomizationModalVisible) {
         // Create modal
         modal = (React__default["default"].createElement(Modal, { type: ModalType$1.Okay, title: "Choose columns to show:", onClose: () => {
+                const noColumnsSelected = (Object.values(columnVisibilityMap)
+                    .every((isSelected) => {
+                    return !isSelected;
+                }));
+                if (noColumnsSelected) {
+                    return alert$1('Choose at least one column', 'To continue, you have to choose at least one column to show');
+                }
                 dispatch({
                     type: ActionType$1.ToggleColVisCusModalVisibility,
                 });
-            }, okayVariant: Variant$1.Light }, columns.map((column) => {
-            return (React__default["default"].createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
+            }, okayVariant: Variant$1.Light },
+            columns.map((column) => {
+                return (React__default["default"].createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
+                        dispatch({
+                            type: ActionType$1.UpdateColumnVisibility,
+                            param: column.param,
+                            visible: checked,
+                        });
+                    }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column in the ${title} table`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Secondary }));
+            }),
+            React__default["default"].createElement("div", { className: "mt-3" }, "Or you can:"),
+            React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-select-all-columns`, className: "btn btn-secondary me-2", "aria-label": `show all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$1.UpdateColumnVisibility,
-                        param: column.param,
-                        visible: checked,
+                        type: ActionType$1.ShowAllColumns,
                     });
-                }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Secondary }));
-        })));
+                } }, "Select All"),
+            React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-select-none-columns`, className: "btn btn-secondary", "aria-label": `hide all columns in the ${title} table`, onClick: () => {
+                    dispatch({
+                        type: ActionType$1.HideAllColumns,
+                    });
+                } }, "Deselect All")));
     }
     /*----------------------------------------*/
     /*                 Main UI                */
@@ -2666,7 +2703,9 @@ const IntelliTable = (props) => {
     })
         .length);
     // Build CSV
-    const csv = genCSV(data, columns);
+    const csv = genCSV(data, columns.filter((column) => {
+        return columnVisibilityMap[column.param];
+    }));
     // Build main UI
     return (React__default["default"].createElement("div", { className: `IntelliTable-container-${id}` },
         modal,
@@ -2791,6 +2830,195 @@ const style = `
     color: #000 !important;
   }
 `;
+/*------------------------------------------------------------------------*/
+/*                                Constants                               */
+/*------------------------------------------------------------------------*/
+const columns = [
+    {
+        title: 'First Name',
+        param: 'userFirstName',
+        type: ParamType$1.String,
+    },
+    {
+        title: 'Last Name',
+        param: 'userLastName',
+        type: ParamType$1.String,
+    },
+    {
+        title: 'Email',
+        param: 'userEmail',
+        type: ParamType$1.String,
+    },
+    {
+        title: 'Canvas Id',
+        param: 'userId',
+        type: ParamType$1.Int,
+    },
+    {
+        title: 'Student?',
+        param: 'isLearner',
+        type: ParamType$1.Boolean,
+    },
+    {
+        title: 'Teaching Staff?',
+        param: 'isTTM',
+        type: ParamType$1.Boolean,
+        startsHidden: true,
+    },
+    {
+        title: 'Admin?',
+        param: 'isAdmin',
+        type: ParamType$1.Boolean,
+        startsHidden: true,
+    },
+    {
+        title: 'Course Canvas Id',
+        param: 'courseId',
+        type: ParamType$1.Int,
+        startsHidden: true,
+    },
+    {
+        title: 'Course Name',
+        param: 'courseName',
+        type: ParamType$1.String,
+    },
+    {
+        title: 'Browser Name',
+        param: 'browser.name',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Browser Version',
+        param: 'browser.version',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'OS',
+        param: 'device.os',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Mobile?',
+        param: 'device.isMobile',
+        type: ParamType$1.Boolean,
+        startsHidden: true,
+    },
+    {
+        title: 'Year',
+        param: 'year',
+        type: ParamType$1.Int,
+    },
+    {
+        title: 'Month',
+        param: 'month',
+        type: ParamType$1.Int,
+    },
+    {
+        title: 'Day',
+        param: 'day',
+        type: ParamType$1.Int,
+    },
+    {
+        title: 'Hour',
+        param: 'hour',
+        type: ParamType$1.Int,
+    },
+    {
+        title: 'Minute',
+        param: 'minute',
+        type: ParamType$1.Int,
+        startsHidden: true,
+    },
+    {
+        title: 'Timestamp',
+        param: 'timestamp',
+        type: ParamType$1.Int,
+        startsHidden: true,
+    },
+    {
+        title: 'Context',
+        param: 'context',
+        type: ParamType$1.String,
+    },
+    {
+        title: 'Subcontext',
+        param: 'subcontext',
+        type: ParamType$1.String,
+    },
+    {
+        title: 'Tags',
+        param: 'tags',
+        type: ParamType$1.JSON,
+        startsHidden: true,
+    },
+    {
+        title: 'Log Level',
+        param: 'level',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Metadata',
+        param: 'metadata',
+        type: ParamType$1.JSON,
+        startsHidden: true,
+    },
+    {
+        title: 'Source',
+        param: 'source',
+        type: ParamType$1.String,
+    },
+    {
+        title: 'Server Route Path',
+        param: 'routePath',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Server Route Template',
+        param: 'routeTemplate',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Type',
+        param: 'type',
+        type: ParamType$1.String,
+    },
+    {
+        title: 'Error Message',
+        param: 'errorMessage',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Error Code',
+        param: 'errorCode',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Error Stack',
+        param: 'errorStack',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Action Target',
+        param: 'target',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+    {
+        title: 'Action Type',
+        param: 'action',
+        type: ParamType$1.String,
+        startsHidden: true,
+    },
+];
 /*------------------------------------------------------------------------*/
 /*                            Static Functions                            */
 /*------------------------------------------------------------------------*/
@@ -3789,193 +4017,6 @@ const LogReviewer = (props) => {
         /*----------------------------------------*/
         /*                  Data                  */
         /*----------------------------------------*/
-        // Create data table
-        const columns = [
-            {
-                title: 'First Name',
-                param: 'userFirstName',
-                type: ParamType$1.String,
-            },
-            {
-                title: 'Last Name',
-                param: 'userLastName',
-                type: ParamType$1.String,
-            },
-            {
-                title: 'Email',
-                param: 'userEmail',
-                type: ParamType$1.String,
-            },
-            {
-                title: 'Canvas Id',
-                param: 'userId',
-                type: ParamType$1.Int,
-            },
-            {
-                title: 'Student?',
-                param: 'isLearner',
-                type: ParamType$1.Boolean,
-            },
-            {
-                title: 'Teaching Staff?',
-                param: 'isTTM',
-                type: ParamType$1.Boolean,
-                startsHidden: true,
-            },
-            {
-                title: 'Admin?',
-                param: 'isAdmin',
-                type: ParamType$1.Boolean,
-                startsHidden: true,
-            },
-            {
-                title: 'Course Canvas Id',
-                param: 'courseId',
-                type: ParamType$1.Int,
-                startsHidden: true,
-            },
-            {
-                title: 'Course Name',
-                param: 'courseName',
-                type: ParamType$1.String,
-            },
-            {
-                title: 'Browser Name',
-                param: 'browser.name',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Browser Version',
-                param: 'browser.version',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'OS',
-                param: 'device.os',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Mobile?',
-                param: 'device.isMobile',
-                type: ParamType$1.Boolean,
-                startsHidden: true,
-            },
-            {
-                title: 'Year',
-                param: 'year',
-                type: ParamType$1.Int,
-            },
-            {
-                title: 'Month',
-                param: 'month',
-                type: ParamType$1.Int,
-            },
-            {
-                title: 'Day',
-                param: 'day',
-                type: ParamType$1.Int,
-            },
-            {
-                title: 'Hour',
-                param: 'hour',
-                type: ParamType$1.Int,
-            },
-            {
-                title: 'Minute',
-                param: 'minute',
-                type: ParamType$1.Int,
-                startsHidden: true,
-            },
-            {
-                title: 'Timestamp',
-                param: 'timestamp',
-                type: ParamType$1.Int,
-                startsHidden: true,
-            },
-            {
-                title: 'Context',
-                param: 'context',
-                type: ParamType$1.String,
-            },
-            {
-                title: 'Subcontext',
-                param: 'subcontext',
-                type: ParamType$1.String,
-            },
-            {
-                title: 'Tags',
-                param: 'tags',
-                type: ParamType$1.JSON,
-                startsHidden: true,
-            },
-            {
-                title: 'Log Level',
-                param: 'level',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Metadata',
-                param: 'metadata',
-                type: ParamType$1.JSON,
-                startsHidden: true,
-            },
-            {
-                title: 'Source',
-                param: 'source',
-                type: ParamType$1.String,
-            },
-            {
-                title: 'Server Route Path',
-                param: 'routePath',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Server Route Template',
-                param: 'routeTemplate',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Type',
-                param: 'type',
-                type: ParamType$1.String,
-            },
-            {
-                title: 'Error Message',
-                param: 'errorMessage',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Error Code',
-                param: 'errorCode',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Error Stack',
-                param: 'errorStack',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Action Target',
-                param: 'target',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-            {
-                title: 'Action Type',
-                param: 'action',
-                type: ParamType$1.String,
-                startsHidden: true,
-            },
-        ];
         // Nothing to show notice
         const noLogsNotice = (logs.length === 0
             ? (React__default["default"].createElement("div", { className: "alert alert-warning text-center mt-2" },

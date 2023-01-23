@@ -263,6 +263,197 @@ const style = `
 `;
 
 /*------------------------------------------------------------------------*/
+/*                                Constants                               */
+/*------------------------------------------------------------------------*/
+
+const columns: IntelliTableColumn[] = [
+  {
+    title: 'First Name',
+    param: 'userFirstName',
+    type: ParamType.String,
+  },
+  {
+    title: 'Last Name',
+    param: 'userLastName',
+    type: ParamType.String,
+  },
+  {
+    title: 'Email',
+    param: 'userEmail',
+    type: ParamType.String,
+  },
+  {
+    title: 'Canvas Id',
+    param: 'userId',
+    type: ParamType.Int,
+  },
+  {
+    title: 'Student?',
+    param: 'isLearner',
+    type: ParamType.Boolean,
+  },
+  {
+    title: 'Teaching Staff?',
+    param: 'isTTM',
+    type: ParamType.Boolean,
+    startsHidden: true,
+  },
+  {
+    title: 'Admin?',
+    param: 'isAdmin',
+    type: ParamType.Boolean,
+    startsHidden: true,
+  },
+  {
+    title: 'Course Canvas Id',
+    param: 'courseId',
+    type: ParamType.Int,
+    startsHidden: true,
+  },
+  {
+    title: 'Course Name',
+    param: 'courseName',
+    type: ParamType.String,
+  },
+  {
+    title: 'Browser Name',
+    param: 'browser.name',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Browser Version',
+    param: 'browser.version',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'OS',
+    param: 'device.os',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Mobile?',
+    param: 'device.isMobile',
+    type: ParamType.Boolean,
+    startsHidden: true,
+  },
+  {
+    title: 'Year',
+    param: 'year',
+    type: ParamType.Int,
+  },
+  {
+    title: 'Month',
+    param: 'month',
+    type: ParamType.Int,
+  },
+  {
+    title: 'Day',
+    param: 'day',
+    type: ParamType.Int,
+  },
+  {
+    title: 'Hour',
+    param: 'hour',
+    type: ParamType.Int,
+  },
+  {
+    title: 'Minute',
+    param: 'minute',
+    type: ParamType.Int,
+    startsHidden: true,
+  },
+  {
+    title: 'Timestamp',
+    param: 'timestamp',
+    type: ParamType.Int,
+    startsHidden: true,
+  },
+  {
+    title: 'Context',
+    param: 'context',
+    type: ParamType.String,
+  },
+  {
+    title: 'Subcontext',
+    param: 'subcontext',
+    type: ParamType.String,
+  },
+  {
+    title: 'Tags',
+    param: 'tags',
+    type: ParamType.JSON,
+    startsHidden: true,
+  },
+  {
+    title: 'Log Level',
+    param: 'level',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Metadata',
+    param: 'metadata',
+    type: ParamType.JSON,
+    startsHidden: true,
+  },
+  {
+    title: 'Source',
+    param: 'source',
+    type: ParamType.String,
+  },
+  {
+    title: 'Server Route Path',
+    param: 'routePath',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Server Route Template',
+    param: 'routeTemplate',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Type',
+    param: 'type',
+    type: ParamType.String,
+  },
+  {
+    title: 'Error Message',
+    param: 'errorMessage',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Error Code',
+    param: 'errorCode',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Error Stack',
+    param: 'errorStack',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Action Target',
+    param: 'target',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+  {
+    title: 'Action Type',
+    param: 'action',
+    type: ParamType.String,
+    startsHidden: true,
+  },
+];
+
+/*------------------------------------------------------------------------*/
 /*                            Static Functions                            */
 /*------------------------------------------------------------------------*/
 
@@ -1941,194 +2132,6 @@ const LogReviewer: React.FC<Props> = (props) => {
     /*----------------------------------------*/
     /*                  Data                  */
     /*----------------------------------------*/
-
-    // Create data table
-    const columns: IntelliTableColumn[] = [
-      {
-        title: 'First Name',
-        param: 'userFirstName',
-        type: ParamType.String,
-      },
-      {
-        title: 'Last Name',
-        param: 'userLastName',
-        type: ParamType.String,
-      },
-      {
-        title: 'Email',
-        param: 'userEmail',
-        type: ParamType.String,
-      },
-      {
-        title: 'Canvas Id',
-        param: 'userId',
-        type: ParamType.Int,
-      },
-      {
-        title: 'Student?',
-        param: 'isLearner',
-        type: ParamType.Boolean,
-      },
-      {
-        title: 'Teaching Staff?',
-        param: 'isTTM',
-        type: ParamType.Boolean,
-        startsHidden: true,
-      },
-      {
-        title: 'Admin?',
-        param: 'isAdmin',
-        type: ParamType.Boolean,
-        startsHidden: true,
-      },
-      {
-        title: 'Course Canvas Id',
-        param: 'courseId',
-        type: ParamType.Int,
-        startsHidden: true,
-      },
-      {
-        title: 'Course Name',
-        param: 'courseName',
-        type: ParamType.String,
-      },
-      {
-        title: 'Browser Name',
-        param: 'browser.name',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Browser Version',
-        param: 'browser.version',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'OS',
-        param: 'device.os',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Mobile?',
-        param: 'device.isMobile',
-        type: ParamType.Boolean,
-        startsHidden: true,
-      },
-      {
-        title: 'Year',
-        param: 'year',
-        type: ParamType.Int,
-      },
-      {
-        title: 'Month',
-        param: 'month',
-        type: ParamType.Int,
-      },
-      {
-        title: 'Day',
-        param: 'day',
-        type: ParamType.Int,
-      },
-      {
-        title: 'Hour',
-        param: 'hour',
-        type: ParamType.Int,
-      },
-      {
-        title: 'Minute',
-        param: 'minute',
-        type: ParamType.Int,
-        startsHidden: true,
-      },
-      {
-        title: 'Timestamp',
-        param: 'timestamp',
-        type: ParamType.Int,
-        startsHidden: true,
-      },
-      {
-        title: 'Context',
-        param: 'context',
-        type: ParamType.String,
-      },
-      {
-        title: 'Subcontext',
-        param: 'subcontext',
-        type: ParamType.String,
-      },
-      {
-        title: 'Tags',
-        param: 'tags',
-        type: ParamType.JSON,
-        startsHidden: true,
-      },
-      {
-        title: 'Log Level',
-        param: 'level',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Metadata',
-        param: 'metadata',
-        type: ParamType.JSON,
-        startsHidden: true,
-      },
-      {
-        title: 'Source',
-        param: 'source',
-        type: ParamType.String,
-      },
-      {
-        title: 'Server Route Path',
-        param: 'routePath',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Server Route Template',
-        param: 'routeTemplate',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Type',
-        param: 'type',
-        type: ParamType.String,
-      },
-      {
-        title: 'Error Message',
-        param: 'errorMessage',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Error Code',
-        param: 'errorCode',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Error Stack',
-        param: 'errorStack',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Action Target',
-        param: 'target',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-      {
-        title: 'Action Type',
-        param: 'action',
-        type: ParamType.String,
-        startsHidden: true,
-      },
-    ];
 
     // Nothing to show notice
     const noLogsNotice = (

@@ -31,6 +31,7 @@ import ModalType from '../types/ModalType';
 import CheckboxButton from './CheckboxButton';
 import CSVDownloadButton from './CSVDownloadButton';
 import Variant from '../types/Variant';
+import { alert } from './AppWrapper';
 
 /*------------------------------------------------------------------------*/
 /*                                  Types                                 */
@@ -92,6 +93,10 @@ enum ActionType {
   UpdateColumnVisibility = 'update-column-visibility',
   // Toggle the column visibility customization modal
   ToggleColVisCusModalVisibility = 'toggle-col-vis-cus-modal-visibility',
+  // Show all columns
+  ShowAllColumns = 'show-all-columns',
+  // Hide all columns
+  HideAllColumns = 'hide-all-columns',
 }
 
 // Action definitions
@@ -114,6 +119,8 @@ type Action = (
     // Action type
     type: (
       | ActionType.ToggleColVisCusModalVisibility
+      | ActionType.ShowAllColumns
+      | ActionType.HideAllColumns
     ),
   }
 );
@@ -161,6 +168,26 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         columnVisibilityCustomizationModalVisible: !state.columnVisibilityCustomizationModalVisible,
+      };
+    }
+    case ActionType.ShowAllColumns: {
+      const { columnVisibilityMap } = state;
+      Object.keys(columnVisibilityMap).forEach((param) => {
+        columnVisibilityMap[param] = true;
+      });
+      return {
+        ...state,
+        columnVisibilityMap,
+      };
+    }
+    case ActionType.HideAllColumns: {
+      const { columnVisibilityMap } = state;
+      Object.keys(columnVisibilityMap).forEach((param) => {
+        columnVisibilityMap[param] = false;
+      });
+      return {
+        ...state,
+        columnVisibilityMap,
       };
     }
     default: {
@@ -251,12 +278,25 @@ const IntelliTable: React.FC<Props> = (props) => {
         type={ModalType.Okay}
         title="Choose columns to show:"
         onClose={() => {
+          const noColumnsSelected = (
+            Object.values(columnVisibilityMap)
+              .every((isSelected) => {
+                return !isSelected;
+              })
+          );
+          if (noColumnsSelected) {
+            return alert(
+              'Choose at least one column',
+              'To continue, you have to choose at least one column to show'
+            );
+          }
           dispatch({
             type: ActionType.ToggleColVisCusModalVisibility,
           });
         }}
         okayVariant={Variant.Light}
       >
+        {/* Columns */}
         {
           columns.map((column) => {
             return (
@@ -273,13 +313,42 @@ const IntelliTable: React.FC<Props> = (props) => {
                   });
                 }}
                 checked={columnVisibilityMap[column.param]}
-                ariaLabel={`show "${column.title}" column`}
+                ariaLabel={`show "${column.title}" column in the ${title} table`}
                 checkedVariant={Variant.Light}
                 uncheckedVariant={Variant.Secondary}
               />
             );
           })
         }
+        <div className="mt-3">
+          Or you can:
+        </div>
+        <button
+          type="button"
+          id={`IntelliTable-${id}-select-all-columns`}
+          className="btn btn-secondary me-2"
+          aria-label={`show all columns in the ${title} table`}
+          onClick={() => {
+            dispatch({
+              type: ActionType.ShowAllColumns,
+            });
+          }}
+        >
+          Select All
+        </button>
+        <button
+          type="button"
+          id={`IntelliTable-${id}-select-none-columns`}
+          className="btn btn-secondary"
+          aria-label={`hide all columns in the ${title} table`}
+          onClick={() => {
+            dispatch({
+              type: ActionType.HideAllColumns,
+            });
+          }}
+        >
+          Deselect All
+        </button >
       </Modal>
     );
   }
@@ -625,7 +694,9 @@ const IntelliTable: React.FC<Props> = (props) => {
   // Build CSV
   const csv = genCSV(
     data,
-    columns,
+    columns.filter((column) => {
+      return columnVisibilityMap[column.param];
+    }),
   );
 
   // Build main UI
