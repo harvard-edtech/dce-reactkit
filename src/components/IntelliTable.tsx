@@ -469,7 +469,7 @@ const IntelliTable: React.FC<Props> = (props) => {
           title = String(fullValue);
         } else if (column.type === ParamType.String) {
           fullValue = String(value).trim();
-          const noValue = (value.trim().length) === 0;
+          const noValue = (String(fullValue).trim().length === 0);
           visibleValue = (
             noValue
               ? (

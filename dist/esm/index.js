@@ -2519,7 +2519,7 @@ const IntelliTable = (props) => {
             }
             else if (column.type === ParamType$1.String) {
                 fullValue = String(value).trim();
-                const noValue = (value.trim().length) === 0;
+                const noValue = (String(fullValue).trim().length === 0);
                 visibleValue = (noValue
                     ? (React.createElement(FontAwesomeIcon, { icon: faMinus }))
                     : fullValue);
