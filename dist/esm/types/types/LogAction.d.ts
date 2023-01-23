@@ -3,21 +3,21 @@
  * @author Gabe Abrams
  */
 declare enum LogAction {
-    Open = "open",
-    Close = "close",
-    Cancel = "cancel",
-    Expand = "expand",
-    Collapse = "collapse",
-    View = "view",
-    Interrupt = "interrupt",
-    Create = "create",
-    Edit = "edit",
-    Delete = "delete",
-    Add = "add",
-    Remove = "remove",
-    Activate = "activate",
-    Deactivate = "deactivate",
-    Peek = "peek",
-    Unknown = "unknown"
+    Open = "Open",
+    Close = "Close",
+    Cancel = "Cancel",
+    Expand = "Expand",
+    Collapse = "Collapse",
+    View = "View",
+    Interrupt = "Interrupt",
+    Create = "Create",
+    Edit = "Edit",
+    Delete = "Delete",
+    Add = "Add",
+    Remove = "Remove",
+    Activate = "Activate",
+    Deactivate = "Deactivate",
+    Peek = "Peek",
+    Unknown = "Unknown"
 }
 export default LogAction;

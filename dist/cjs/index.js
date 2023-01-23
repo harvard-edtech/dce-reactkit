@@ -2144,37 +2144,37 @@ var LogType$1 = LogType;
 var LogAction;
 (function (LogAction) {
     // Target was opened by the user (it was not on screen, but now it is)
-    LogAction["Open"] = "open";
+    LogAction["Open"] = "Open";
     // Target was closed by the user (it was on screen, but now it is not)
-    LogAction["Close"] = "close";
+    LogAction["Close"] = "Close";
     // Target was cancelled by the user (it was on closed without saving)
-    LogAction["Cancel"] = "cancel";
+    LogAction["Cancel"] = "Cancel";
     // Target was expanded by the user (it always remains on screen, but size was changed)
-    LogAction["Expand"] = "expand";
+    LogAction["Expand"] = "Expand";
     // Target was collapsed by the user (it always remains on screen, but size was changed)
-    LogAction["Collapse"] = "collapse";
+    LogAction["Collapse"] = "Collapse";
     // Target was viewed by the user (only for items that are not opened or closed, those must use Open/Close actions)
-    LogAction["View"] = "view";
+    LogAction["View"] = "View";
     // Target interrupted the user (popup, dialog, validation message, etc. appeared without user prompting)
-    LogAction["Interrupt"] = "interrupt";
+    LogAction["Interrupt"] = "Interrupt";
     // Target was created by the user (it did not exist before)
-    LogAction["Create"] = "create";
+    LogAction["Create"] = "Create";
     // Target was edited by the user (it existed and was changed)
-    LogAction["Edit"] = "edit";
+    LogAction["Edit"] = "Edit";
     // Target was deleted by the user (it existed and now it doesn't)
-    LogAction["Delete"] = "delete";
+    LogAction["Delete"] = "Delete";
     // Target was added by the user (it already existed and was added to another place)
-    LogAction["Add"] = "add";
+    LogAction["Add"] = "Add";
     // Target was removed by the user (it was removed from something but still exists)
-    LogAction["Remove"] = "remove";
+    LogAction["Remove"] = "Remove";
     // Target was activated by the user (click, check, tap, keypress, etc.)
-    LogAction["Activate"] = "activate";
+    LogAction["Activate"] = "Activate";
     // Target was deactivated by the user (click away, uncheck, tap outside of, tab away, etc.)
-    LogAction["Deactivate"] = "deactivate";
+    LogAction["Deactivate"] = "Deactivate";
     // User showed interest in a target (hover, peek, etc.)
-    LogAction["Peek"] = "peek";
+    LogAction["Peek"] = "Peek";
     // Unknown action
-    LogAction["Unknown"] = "unknown";
+    LogAction["Unknown"] = "Unknown";
 })(LogAction || (LogAction = {}));
 var LogAction$1 = LogAction;
 
@@ -3264,7 +3264,7 @@ const LogReviewer = (props) => {
                         React__default["default"].createElement(ButtonInputGroup, { label: "Action", className: "mb-2" }, Object.keys(LogAction$1)
                             .map((action, i) => {
                             const description = genHumanReadableName(action);
-                            return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: i === Object.keys(LogAction$1).length - 1, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
+                            return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: i === Object.keys(LogAction$1).length - 1, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
                                     console.log(actionErrorFilterState, action, checked);
                                     dispatch({
@@ -3279,7 +3279,7 @@ const LogReviewer = (props) => {
                                 .map((target, i) => {
                                 var _a;
                                 const description = genHumanReadableName(target);
-                                return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], onChanged: (checked) => {
+                                return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], onChanged: (checked) => {
                                         actionErrorFilterState.target[target] = checked;
                                         console.log(actionErrorFilterState, target, checked);
                                         dispatch({
@@ -3527,7 +3527,6 @@ const LogReviewer = (props) => {
                                 .every((isSelected) => {
                                 return !isSelected;
                             }))) {
-                        // TODO: figure out why context filter is still not working, why actions and targets filter UI sucks and doesn't wrap and doesn't select
                         console.log('RULED OUT: CONTEXT');
                         console.log(log.context, contextFilterState);
                         return;

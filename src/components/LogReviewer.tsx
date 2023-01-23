@@ -1142,6 +1142,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                           const description = genHumanReadableName(action);
                           return (
                             <CheckboxButton
+                              key={action}
                               id={`LogReviewer-action-${action}-checkbox`}
                               text={description}
                               ariaLabel={`include logs with action type "${description}" in results`}
@@ -1175,6 +1176,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                           const description = genHumanReadableName(target);
                           return (
                             <CheckboxButton
+                              key={target}
                               id={`LogReviewer-target-${target}-checkbox`}
                               text={description}
                               ariaLabel={`include logs with target "${description}" in results`}
@@ -1653,7 +1655,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                 })
             )
           ) {
-            // TODO: figure out why context filter is still not working, why actions and targets filter UI sucks and doesn't wrap and doesn't select
             console.log('RULED OUT: CONTEXT');
             console.log(log.context, contextFilterState);
             return;
