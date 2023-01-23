@@ -302,6 +302,10 @@ const IntelliTable: React.FC<Props> = (props) => {
             scope="col"
             id={`IntelliTable-${id}-header-${column.param}`}
             className="text-start"
+            style={{
+              borderRight: '0.05rem solid #555',
+              borderLeft: '0.05rem solid #555',
+            }}
           >
             <div className="d-flex align-items-center justify-content-center flex-row h-100">
               {/* Title */}
@@ -376,10 +380,10 @@ const IntelliTable: React.FC<Props> = (props) => {
       // > String
       if (paramType === ParamType.String) {
         if (aVal < bVal) {
-          return (descending ? -1 : 1);
+          return (descending ? 1 : -1);
         }
         if (aVal > bVal) {
-          return (descending ? 1 : -1);
+          return (descending ? -1 : 1);
         }
         return 0;
       }
@@ -473,7 +477,11 @@ const IntelliTable: React.FC<Props> = (props) => {
           title = String(fullValue);
         } else if (column.type === ParamType.String) {
           fullValue = String(value).trim();
-          const noValue = (String(fullValue).trim().length === 0);
+          const noValue = (
+            value === undefined
+            || value === null
+            || String(fullValue).trim().length === 0
+          );
           visibleValue = (
             noValue
               ? (
@@ -507,6 +515,10 @@ const IntelliTable: React.FC<Props> = (props) => {
           <td
             key={`${datum.id}-${column.param}`}
             title={title}
+            style={{
+              borderRight: '0.05rem solid #555',
+              borderLeft: '0.05rem solid #555',
+            }}
           >
             {visibleValue}
           </td>
@@ -553,8 +565,10 @@ const IntelliTable: React.FC<Props> = (props) => {
   // Build main UI
   return (
     <div className={`IntelliTable-container-${id}`}>
+      {/* Modal */}
+      {modal}
       {/* Header */}
-      <div className="d-flex align-items-center justify-content-center">
+      <div className="d-flex align-items-center justify-content-start">
         {/* Title */}
         <h3 className="m-0">
           {title}
@@ -595,7 +609,7 @@ const IntelliTable: React.FC<Props> = (props) => {
       </div>
       {/* Table */}
       <div
-        className={`IntelliTable-table-${id}`}
+        className={`IntelliTable-table-${id} mt-2`}
         style={{
           overflowX: 'auto',
         }}

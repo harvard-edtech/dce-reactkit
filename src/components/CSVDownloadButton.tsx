@@ -84,8 +84,8 @@ const CSVDownloadButton: React.FC<Props> = (props) => {
         <>
           <FontAwesomeIcon
             icon={faCloudDownloadAlt}
-            className="mr-2"
           />
+          {' '}
           Download CSV
         </>
       )}

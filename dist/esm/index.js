@@ -2283,7 +2283,8 @@ const CSVDownloadButton = (props) => {
             ? `Click to download ${filename}`
             : ariaLabel), style: style, onClick: onClick },
         !children && (React.createElement(React.Fragment, null,
-            React.createElement(FontAwesomeIcon, { icon: faCloudDownloadAlt, className: "mr-2" }),
+            React.createElement(FontAwesomeIcon, { icon: faCloudDownloadAlt }),
+            ' ',
             "Download CSV")),
         children));
 };
@@ -2371,10 +2372,18 @@ const IntelliTable = (props) => {
     const [state, dispatch] = useReducer(reducer$1, initialState);
     // Destructure common state
     const { sortColumnParam, sortType, columnVisibilityMap, columnVisibilityCustomizationModalVisible, } = state;
+    /*------------------------------------------------------------------------*/
+    /*                                 Render                                 */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /*                  Modal                 */
+    /*----------------------------------------*/
+    // Modal that may be defined
+    let modal;
     /* ------- Col Vis Customization Modal ------ */
     if (columnVisibilityCustomizationModalVisible) {
         // Create modal
-        (React.createElement(Modal, { type: ModalType$1.Okay, title: "Choose columns to show:", onClose: () => {
+        modal = (React.createElement(Modal, { type: ModalType$1.Okay, title: "Choose columns to show:", onClose: () => {
                 dispatch({
                     type: ActionType$1.ToggleColVisCusModalVisibility,
                 });
@@ -2425,7 +2434,10 @@ const IntelliTable = (props) => {
             sortIcon = faSort;
         }
         // Create the cell UI
-        return (React.createElement("th", { key: column.param, scope: "col", id: `IntelliTable-${id}-header-${column.param}`, className: "text-start" },
+        return (React.createElement("th", { key: column.param, scope: "col", id: `IntelliTable-${id}-header-${column.param}`, className: "text-start", style: {
+                borderRight: '0.05rem solid #555',
+                borderLeft: '0.05rem solid #555',
+            } },
             React.createElement("div", { className: "d-flex align-items-center justify-content-center flex-row h-100" },
                 React.createElement("span", { className: "text-nowrap" }, column.title),
                 React.createElement("div", null,
@@ -2470,10 +2482,10 @@ const IntelliTable = (props) => {
             // > String
             if (paramType === ParamType$1.String) {
                 if (aVal < bVal) {
-                    return (descending ? -1 : 1);
+                    return (descending ? 1 : -1);
                 }
                 if (aVal > bVal) {
-                    return (descending ? 1 : -1);
+                    return (descending ? -1 : 1);
                 }
                 return 0;
             }
@@ -2537,7 +2549,9 @@ const IntelliTable = (props) => {
             }
             else if (column.type === ParamType$1.String) {
                 fullValue = String(value).trim();
-                const noValue = (String(fullValue).trim().length === 0);
+                const noValue = (value === undefined
+                    || value === null
+                    || String(fullValue).trim().length === 0);
                 visibleValue = (noValue
                     ? (React.createElement(FontAwesomeIcon, { icon: faMinus }))
                     : fullValue);
@@ -2553,7 +2567,10 @@ const IntelliTable = (props) => {
                     : fullValue);
             }
             // Create UI
-            return (React.createElement("td", { key: `${datum.id}-${column.param}`, title: title }, visibleValue));
+            return (React.createElement("td", { key: `${datum.id}-${column.param}`, title: title, style: {
+                    borderRight: '0.05rem solid #555',
+                    borderLeft: '0.05rem solid #555',
+                } }, visibleValue));
         }));
         // Add cells to a row
         return (React.createElement("tr", { key: datum.id }, cells));
@@ -2573,7 +2590,8 @@ const IntelliTable = (props) => {
     const csv = genCSV(data, columns);
     // Build main UI
     return (React.createElement("div", { className: `IntelliTable-container-${id}` },
-        React.createElement("div", { className: "d-flex align-items-center justify-content-center" },
+        modal,
+        React.createElement("div", { className: "d-flex align-items-center justify-content-start" },
             React.createElement("h3", { className: "m-0" }, title),
             React.createElement("div", { className: "flex-grow-1 text-end" },
                 React.createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: `${title}.csv`, csv: csv }),
@@ -2589,7 +2607,7 @@ const IntelliTable = (props) => {
                         numHiddenCols,
                         ' ',
                         "hidden)"))))),
-        React.createElement("div", { className: `IntelliTable-table-${id}`, style: {
+        React.createElement("div", { className: `IntelliTable-table-${id} mt-2`, style: {
                 overflowX: 'auto',
             } }, table)));
 };
@@ -2806,7 +2824,7 @@ const LogReviewer = (props) => {
     /*------------------------------------------------------------------------*/
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     /* -------------- Props ------------- */
     // Destructure props
     const { LogMetadata, onClose, } = props;
@@ -2876,8 +2894,8 @@ const LogReviewer = (props) => {
     });
     // Create initial tag filter state
     const initTagFilterState = {};
-    Object.values((_e = LogMetadata.Tag) !== null && _e !== void 0 ? _e : {}).forEach((tagValue) => {
-        initTagFilterState[tagValue] = false;
+    Object.keys((_e = LogMetadata.Tag) !== null && _e !== void 0 ? _e : {}).forEach((tag) => {
+        initTagFilterState[tag] = false;
     });
     // Create advanced filter state
     const initAdvancedFilterState = {
@@ -3176,7 +3194,7 @@ const LogReviewer = (props) => {
             }
             else if (expandedFilterDrawer === FilterDrawer.Tag) {
                 // Create filter UI
-                filterDrawer = (React.createElement(TabBox, { title: "Tags" }, Object.keys(tagFilterState)
+                filterDrawer = (React.createElement(TabBox, { title: "Tags" }, Object.keys((_h = LogMetadata.Tag) !== null && _h !== void 0 ? _h : {})
                     .map((tag, i) => {
                     const description = genHumanReadableName(tag);
                     return (React.createElement(CheckboxButton, { id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, noMarginOnRight: i === Object.keys(tagFilterState).length - 1, checked: tagFilterState[tag], onChanged: (checked) => {
@@ -3223,8 +3241,8 @@ const LogReviewer = (props) => {
                                 } }));
                         })),
                         React.createElement(ButtonInputGroup, { label: "Target" },
-                            (Object.keys((_h = LogMetadata.Target) !== null && _h !== void 0 ? _h : {}).length === 0) && (React.createElement("div", null, "This app does not have any targets yet.")),
-                            Object.keys((_j = LogMetadata.Target) !== null && _j !== void 0 ? _j : {})
+                            (Object.keys((_j = LogMetadata.Target) !== null && _j !== void 0 ? _j : {}).length === 0) && (React.createElement("div", null, "This app does not have any targets yet.")),
+                            Object.keys((_k = LogMetadata.Target) !== null && _k !== void 0 ? _k : {})
                                 .map((target, i) => {
                                 var _a;
                                 const description = genHumanReadableName(target);
@@ -3730,13 +3748,13 @@ const LogReviewer = (props) => {
                 type: ParamType$1.Boolean,
             },
             {
-                title: 'Teaching Staff',
+                title: 'Teaching Staff?',
                 param: 'isTTM',
                 type: ParamType$1.Boolean,
                 startsHidden: true,
             },
             {
-                title: 'Admin',
+                title: 'Admin?',
                 param: 'isAdmin',
                 type: ParamType$1.Boolean,
                 startsHidden: true,
@@ -3771,7 +3789,7 @@ const LogReviewer = (props) => {
                 startsHidden: true,
             },
             {
-                title: 'Mobile',
+                title: 'Mobile?',
                 param: 'device.isMobile',
                 type: ParamType$1.Boolean,
                 startsHidden: true,

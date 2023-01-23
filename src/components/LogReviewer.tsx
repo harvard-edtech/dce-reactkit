@@ -592,8 +592,8 @@ const LogReviewer: React.FC<Props> = (props) => {
 
   // Create initial tag filter state
   const initTagFilterState: TagFilterState = {};
-  Object.values(LogMetadata.Tag ?? {}).forEach((tagValue) => {
-    initTagFilterState[tagValue] = false;
+  Object.keys(LogMetadata.Tag ?? {}).forEach((tag) => {
+    initTagFilterState[tag] = false;
   });
 
   // Create advanced filter state
@@ -1055,7 +1055,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         filterDrawer = (
           <TabBox title="Tags">
             {
-              Object.keys(tagFilterState)
+              Object.keys(LogMetadata.Tag ?? {})
                 .map((tag, i) => {
                   const description = genHumanReadableName(tag);
                   return (
@@ -1966,13 +1966,13 @@ const LogReviewer: React.FC<Props> = (props) => {
         type: ParamType.Boolean,
       },
       {
-        title: 'Teaching Staff',
+        title: 'Teaching Staff?',
         param: 'isTTM',
         type: ParamType.Boolean,
         startsHidden: true,
       },
       {
-        title: 'Admin',
+        title: 'Admin?',
         param: 'isAdmin',
         type: ParamType.Boolean,
         startsHidden: true,
@@ -2007,7 +2007,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         startsHidden: true,
       },
       {
-        title: 'Mobile',
+        title: 'Mobile?',
         param: 'device.isMobile',
         type: ParamType.Boolean,
         startsHidden: true,
