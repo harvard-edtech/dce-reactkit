@@ -122,7 +122,7 @@ type ContextFilterState = {
 
 // Tag filter state
 type TagFilterState = {
-  [k: string]: boolean
+  [k: string]: boolean // tag => true if in the list of tags to show
 };
 
 // Action filter state (only relevant for action logs)
@@ -593,7 +593,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Create initial tag filter state
   const initTagFilterState: TagFilterState = {};
   Object.values(LogMetadata.Tag ?? {}).forEach((tagValue) => {
-    initTagFilterState[tagValue] = true;
+    initTagFilterState[tagValue] = false;
   });
 
   // Create advanced filter state
@@ -1043,7 +1043,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                   );
                 }
               });
-              console.log('New context filter state:', contextFilterState);
               dispatch({
                 type: ActionType.UpdateContextFilterState,
                 contextFilterState,
@@ -1063,8 +1062,9 @@ const LogReviewer: React.FC<Props> = (props) => {
                     <CheckboxButton
                       id={`LogReviewer-tag-${tag}-checkbox`}
                       text={description}
-                      ariaLabel={`include logs tagged with "${description}" in results`}
+                      ariaLabel={`require that logs be tagged with "${description}" or any other selected tag`}
                       noMarginOnRight={i === Object.keys(tagFilterState).length - 1}
+                      checked={tagFilterState[tag]}
                       onChanged={(checked) => {
                         tagFilterState[tag] = checked;
                       }}
@@ -1675,7 +1675,14 @@ const LogReviewer: React.FC<Props> = (props) => {
 
           // No tags match
           if (
-            log.tags.every((tag) => {
+            // At least one tag is required
+            Object.values(tagFilterState)
+              .filter((isSelected) => {
+                return isSelected;
+              })
+              .length > 0
+            // No tags match
+            && log.tags.every((tag) => {
               return !tagFilterState[tag];
             })
           ) {

@@ -2867,7 +2867,7 @@ const LogReviewer = (props) => {
     // Create initial tag filter state
     const initTagFilterState = {};
     Object.values((_e = LogMetadata.Tag) !== null && _e !== void 0 ? _e : {}).forEach((tagValue) => {
-        initTagFilterState[tagValue] = true;
+        initTagFilterState[tagValue] = false;
     });
     // Create advanced filter state
     const initAdvancedFilterState = {
@@ -3158,7 +3158,6 @@ const LogReviewer = (props) => {
                                 contextFilterState[pickableItem.id] = (pickableItem.checked);
                             }
                         });
-                        console.log('New context filter state:', contextFilterState);
                         dispatch({
                             type: ActionType.UpdateContextFilterState,
                             contextFilterState,
@@ -3170,7 +3169,7 @@ const LogReviewer = (props) => {
                 filterDrawer = (React__default["default"].createElement(TabBox, { title: "Tags" }, Object.keys(tagFilterState)
                     .map((tag, i) => {
                     const description = genHumanReadableName(tag);
-                    return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `include logs tagged with "${description}" in results`, noMarginOnRight: i === Object.keys(tagFilterState).length - 1, onChanged: (checked) => {
+                    return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, noMarginOnRight: i === Object.keys(tagFilterState).length - 1, checked: tagFilterState[tag], onChanged: (checked) => {
                             tagFilterState[tag] = checked;
                         } }));
                 })));
@@ -3488,9 +3487,17 @@ const LogReviewer = (props) => {
                     }
                     /* -------------- Tags -------------- */
                     // No tags match
-                    if (log.tags.every((tag) => {
-                        return !tagFilterState[tag];
-                    })) {
+                    if (
+                    // At least one tag is required
+                    Object.values(tagFilterState)
+                        .filter((isSelected) => {
+                        return isSelected;
+                    })
+                        .length > 0
+                        // No tags match
+                        && log.tags.every((tag) => {
+                            return !tagFilterState[tag];
+                        })) {
                         console.log('RULED OUT: TAGS');
                         return;
                     }
