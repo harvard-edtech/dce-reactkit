@@ -272,12 +272,14 @@ const IntelliTable: React.FC<Props> = (props) => {
         // Custom info based on current sort type
         let sortButtonAriaLabel;
         let sortIcon = faSort;
+        let sortingByThisColumn = false;
         if (!sortColumnParam) {
           // Not being sorted yet
           sortButtonAriaLabel = `sort ascending by ${column.title}`;
           sortIcon = faSort;
         } else if (column.param === sortColumnParam) {
           // Already sorted by this column
+          sortingByThisColumn = true;
           if (sortType === SortType.Ascending) {
             // Sorted ascending
             sortButtonAriaLabel = `sort descending by ${column.title}`;
@@ -299,6 +301,7 @@ const IntelliTable: React.FC<Props> = (props) => {
             key={column.param}
             scope="col"
             id={`IntelliTable-${id}-header-${column.param}`}
+            className="text-start"
           >
             <div className="d-flex align-items-center justify-content-center flex-row h-100">
               {/* Title */}
@@ -309,7 +312,8 @@ const IntelliTable: React.FC<Props> = (props) => {
               <div>
                 <button
                   type="button"
-                  className="btn btn-light btn-sm ms-1"
+                  id={`IntelliTable-${id}-sort-by-${column.param}-button`}
+                  className={`btn btn-${sortingByThisColumn ? 'light' : 'secondary'} btn-sm ms-1 ps-1 pe-1 pt-0 pb-0`}
                   aria-label={sortButtonAriaLabel}
                   onClick={() => {
                     dispatch({

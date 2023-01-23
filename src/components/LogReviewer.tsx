@@ -1961,7 +1961,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         type: ParamType.Int,
       },
       {
-        title: 'Student',
+        title: 'Student?',
         param: 'isLearner',
         type: ParamType.Boolean,
       },

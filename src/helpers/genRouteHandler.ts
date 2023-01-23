@@ -500,7 +500,7 @@ const genRouteHandler = (
           isAdmin: !!launchInfo.isAdmin,
           isTTM: !!launchInfo.isTTM,
           courseId: launchInfo.courseId,
-          courseName: launchInfo.courseName,
+          courseName: launchInfo.contextLabel,
           browser,
           device,
           year,

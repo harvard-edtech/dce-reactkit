@@ -46,7 +46,24 @@ const genCSV = (
     csv += (
       columns
         .map((column) => {
-          return escapeCellText(datum[column.param]);
+          let contents: string;
+          const cell = datum[column.param];
+          if (
+            typeof cell === 'string'
+            || typeof cell === 'number'
+          ) {
+            contents = String(cell);
+          } else if (
+            typeof cell === 'undefined'
+            || cell === null
+          ) {
+            contents = '';
+          } else if (typeof cell === 'object') {
+            contents = JSON.stringify(cell);
+          } else {
+            contents = '';
+          }
+          return escapeCellText(contents);
         })
         .join(',')
     );

@@ -2242,7 +2242,23 @@ const genCSV = (data, columns) => {
     data.forEach((datum) => {
         csv += (columns
             .map((column) => {
-            return escapeCellText(datum[column.param]);
+            let contents;
+            const cell = datum[column.param];
+            if (typeof cell === 'string'
+                || typeof cell === 'number') {
+                contents = String(cell);
+            }
+            else if (typeof cell === 'undefined'
+                || cell === null) {
+                contents = '';
+            }
+            else if (typeof cell === 'object') {
+                contents = JSON.stringify(cell);
+            }
+            else {
+                contents = '';
+            }
+            return escapeCellText(contents);
         })
             .join(','));
     });
@@ -2391,6 +2407,7 @@ const IntelliTable = (props) => {
         // Custom info based on current sort type
         let sortButtonAriaLabel;
         let sortIcon = freeSolidSvgIcons.faSort;
+        let sortingByThisColumn = false;
         if (!sortColumnParam) {
             // Not being sorted yet
             sortButtonAriaLabel = `sort ascending by ${column.title}`;
@@ -2398,6 +2415,7 @@ const IntelliTable = (props) => {
         }
         else if (column.param === sortColumnParam) {
             // Already sorted by this column
+            sortingByThisColumn = true;
             if (sortType === SortType.Ascending) {
                 // Sorted ascending
                 sortButtonAriaLabel = `sort descending by ${column.title}`;
@@ -2415,11 +2433,11 @@ const IntelliTable = (props) => {
             sortIcon = freeSolidSvgIcons.faSort;
         }
         // Create the cell UI
-        return (React__default["default"].createElement("th", { key: column.param, scope: "col", id: `IntelliTable-${id}-header-${column.param}` },
+        return (React__default["default"].createElement("th", { key: column.param, scope: "col", id: `IntelliTable-${id}-header-${column.param}`, className: "text-start" },
             React__default["default"].createElement("div", { className: "d-flex align-items-center justify-content-center flex-row h-100" },
                 React__default["default"].createElement("span", { className: "text-nowrap" }, column.title),
                 React__default["default"].createElement("div", null,
-                    React__default["default"].createElement("button", { type: "button", className: "btn btn-light btn-sm ms-1", "aria-label": sortButtonAriaLabel, onClick: () => {
+                    React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-sort-by-${column.param}-button`, className: `btn btn-${sortingByThisColumn ? 'light' : 'secondary'} btn-sm ms-1 ps-1 pe-1 pt-0 pb-0`, "aria-label": sortButtonAriaLabel, onClick: () => {
                             dispatch({
                                 type: ActionType$1.ToggleSortColumn,
                                 param: column.param,
@@ -3715,7 +3733,7 @@ const LogReviewer = (props) => {
                 type: ParamType$1.Int,
             },
             {
-                title: 'Student',
+                title: 'Student?',
                 param: 'isLearner',
                 type: ParamType$1.Boolean,
             },
@@ -4891,7 +4909,7 @@ const genRouteHandler = (opts) => {
                     isAdmin: !!launchInfo.isAdmin,
                     isTTM: !!launchInfo.isTTM,
                     courseId: launchInfo.courseId,
-                    courseName: launchInfo.courseName,
+                    courseName: launchInfo.contextLabel,
                     browser,
                     device,
                     year,
