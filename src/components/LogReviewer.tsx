@@ -1637,7 +1637,10 @@ const LogReviewer: React.FC<Props> = (props) => {
             contextFilterState[log.context] === false
             // None of the subcontexts are selected
             || (
-              Object.values(contextFilterState[log.context] ?? {})
+              // Has subcontexts
+              typeof contextFilterState[log.context] !== 'boolean'
+              // None of the subcontexts are selected
+              && Object.values(contextFilterState[log.context] ?? {})
                 .every((isSelected) => {
                   return !isSelected;
                 })
