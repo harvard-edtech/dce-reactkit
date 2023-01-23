@@ -1646,7 +1646,9 @@ const LogReviewer: React.FC<Props> = (props) => {
                 })
             )
           ) {
+            // TODO: figure out why context filter is still not working, why actions and targets filter UI sucks and doesn't wrap and doesn't select
             console.log('RULED OUT: CONTEXT');
+            console.log(log.context, contextFilterState);
             return;
           }
 

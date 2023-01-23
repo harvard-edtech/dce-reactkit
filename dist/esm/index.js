@@ -3450,11 +3450,17 @@ const LogReviewer = (props) => {
                     // Whole context is deselected
                     contextFilterState[log.context] === false
                         // None of the subcontexts are selected
-                        || (Object.values((_a = contextFilterState[log.context]) !== null && _a !== void 0 ? _a : {})
-                            .every((isSelected) => {
-                            return !isSelected;
-                        }))) {
+                        || (
+                        // Has subcontexts
+                        typeof contextFilterState[log.context] !== 'boolean'
+                            // None of the subcontexts are selected
+                            && Object.values((_a = contextFilterState[log.context]) !== null && _a !== void 0 ? _a : {})
+                                .every((isSelected) => {
+                                return !isSelected;
+                            }))) {
+                        // TODO: figure out why context filter is still not working, why actions and targets filter UI sucks and doesn't wrap and doesn't select
                         console.log('RULED OUT: CONTEXT');
+                        console.log(log.context, contextFilterState);
                         return;
                     }
                     // Subcontext doesn't match
