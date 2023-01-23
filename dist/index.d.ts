@@ -441,6 +441,7 @@ declare type Props$1 = {
         [k: string]: any;
     }[];
     columns: IntelliTableColumn[];
+    csvName?: string;
 };
 declare const IntelliTable: React.FC<Props$1>;
 

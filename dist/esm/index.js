@@ -2099,6 +2099,29 @@ const ItemPicker = (props) => {
             React.createElement(NestableItemList, { items: items, onChanged: onChanged }))));
 };
 
+// Import shared helpers
+/**
+ * Get a human-readable description of a date (all in ET)
+ * @author Gabe Abrams
+ * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
+ * @returns human-readable description of the date
+ */
+const getHumanReadableDate = (dateOrTimestamp) => {
+    // Get the date info
+    const { month, day, year, } = getTimeInfoInET(dateOrTimestamp);
+    const currYear = getTimeInfoInET().year;
+    // Get the short month description
+    const monthName = getMonthName(month).short;
+    // Create start of description
+    let description = `${monthName} ${day}${getOrdinal(day)}`;
+    // Add on year if it's different
+    if (year !== currYear) {
+        description += ` ${year}`;
+    }
+    // Return description
+    return description;
+};
+
 /**
  * Path of the route for storing client-side logs
  * @author Gabe Abrams
@@ -2234,6 +2257,7 @@ const genCSV = (data, columns) => {
         .join(','));
     // Add each row
     data.forEach((datum) => {
+        csv += '\n';
         csv += (columns
             .map((column) => {
             let contents;
@@ -2362,6 +2386,11 @@ const IntelliTable = (props) => {
     const data = ((props.data && props.data.length > 0)
         ? props.data
         : [{ id: 'empty-row' }]);
+    if (props.csvName) {
+        (props.csvName.endsWith('.csv')
+            ? props.csvName
+            : `${props.csvName}.csv`);
+    }
     /* -------------- State ------------- */
     // Initial state
     const initColumnVisibilityMap = {};
@@ -3138,14 +3167,24 @@ const LogReviewer = (props) => {
                     } },
                     React.createElement(FontAwesomeIcon, { icon: faHammer, className: "me-2" }),
                     "Action"),
-                React.createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'}`, "aria-label": "toggle advanced filter drawer", onClick: () => {
+                React.createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle advanced filter drawer", onClick: () => {
                         dispatch({
                             type: ActionType.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Advanced,
                         });
                     } },
                     React.createElement(FontAwesomeIcon, { icon: faList, className: "me-2" }),
-                    "Advanced"))));
+                    "Advanced"),
+                React.createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
+                        dispatch({
+                            type: ActionType.ResetFilters,
+                            initActionErrorFilterState,
+                            initAdvancedFilterState,
+                            initContextFilterState,
+                            initDateFilterState,
+                            initTagFilterState,
+                        });
+                    } }, "Reset All"))));
         // Filter drawer
         let filterDrawer;
         if (expandedFilterDrawer) {
@@ -3934,7 +3973,7 @@ const LogReviewer = (props) => {
                 React.createElement("div", null, "Either your filters are too strict or no matching logs have been created yet.")))
             : undefined);
         // Create intelliTable
-        const dataTable = (React.createElement(IntelliTable, { title: "Matching Logs:", id: "logs", data: logs, columns: columns }));
+        const dataTable = (React.createElement(IntelliTable, { title: "Matching Logs:", csvName: `Logs from ${getHumanReadableDate()}`, id: "logs", data: logs, columns: columns }));
         // Main body
         body = (React.createElement(React.Fragment, null,
             filters,
@@ -5179,29 +5218,6 @@ const startMinWait = (minWaitMs) => {
         // Perform wait
         yield waitMs(remainingTimeToWaitMs);
     });
-};
-
-// Import shared helpers
-/**
- * Get a human-readable description of a date (all in ET)
- * @author Gabe Abrams
- * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
- * @returns human-readable description of the date
- */
-const getHumanReadableDate = (dateOrTimestamp) => {
-    // Get the date info
-    const { month, day, year, } = getTimeInfoInET(dateOrTimestamp);
-    const currYear = getTimeInfoInET().year;
-    // Get the short month description
-    const monthName = getMonthName(month).short;
-    // Create start of description
-    let description = `${monthName} ${day}${getOrdinal(day)}`;
-    // Add on year if it's different
-    if (year !== currYear) {
-        description += ` ${year}`;
-    }
-    // Return description
-    return description;
 };
 
 /**

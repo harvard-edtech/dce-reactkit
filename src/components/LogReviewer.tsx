@@ -22,6 +22,7 @@ import {
 import visitServerEndpoint from '../helpers/visitServerEndpoint';
 import getTimeInfoInET from '../helpers/getTimeInfoInET';
 import { alert, showFatalError } from './AppWrapper';
+import getHumanReadableDate from '../helpers/getHumanReadableDate';
 
 // Import shared constants
 import LOG_REVIEW_ROUTE_PATH_PREFIX from '../constants/LOG_REVIEW_ROUTE_PATH_PREFIX';
@@ -901,7 +902,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           <button
             type="button"
             id="LogReviewer-toggle-advanced-filter-drawer"
-            className={`btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'}`}
+            className={`btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
             aria-label="toggle advanced filter drawer"
             onClick={() => {
               dispatch({
@@ -915,6 +916,25 @@ const LogReviewer: React.FC<Props> = (props) => {
               className="me-2"
             />
             Advanced
+          </button>
+          {/* Reset */}
+          <button
+            type="button"
+            id="LogReviewer-reset-filters-button"
+            className="btn btn-light"
+            aria-label="reset filters"
+            onClick={() => {
+              dispatch({
+                type: ActionType.ResetFilters,
+                initActionErrorFilterState,
+                initAdvancedFilterState,
+                initContextFilterState,
+                initDateFilterState,
+                initTagFilterState,
+              });
+            }}
+          >
+            Reset All
           </button>
         </div>
       </div>
@@ -2131,6 +2151,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     const dataTable = (
       <IntelliTable
         title="Matching Logs:"
+        csvName={`Logs from ${getHumanReadableDate()}`}
         id="logs"
         data={logs}
         columns={columns}

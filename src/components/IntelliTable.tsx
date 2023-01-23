@@ -51,6 +51,8 @@ type Props = {
   }[],
   // Column information
   columns: IntelliTableColumn[],
+  // Name of the CSV file. If excluded, title is used
+  csvName?: string,
 };
 
 // Sort types
@@ -191,6 +193,16 @@ const IntelliTable: React.FC<Props> = (props) => {
       ? props.data
       : [{ id: 'empty-row' }]
   );
+
+  // Get CSV filename
+  let filename = `${title}.csv`;
+  if (props.csvName) {
+    filename = (
+      props.csvName.endsWith('.csv')
+        ? props.csvName
+        : `${props.csvName}.csv`
+    );
+  }
 
   /* -------------- State ------------- */
 

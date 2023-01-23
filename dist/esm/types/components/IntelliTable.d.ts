@@ -12,6 +12,7 @@ declare type Props = {
         [k: string]: any;
     }[];
     columns: IntelliTableColumn[];
+    csvName?: string;
 };
 declare const IntelliTable: React.FC<Props>;
 export default IntelliTable;

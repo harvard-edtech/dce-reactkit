@@ -43,6 +43,7 @@ const genCSV = (
 
   // Add each row
   data.forEach((datum) => {
+    csv += '\n';
     csv += (
       columns
         .map((column) => {
