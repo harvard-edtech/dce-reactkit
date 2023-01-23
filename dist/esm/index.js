@@ -1446,14 +1446,16 @@ const Drawer = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { children, } = props;
+    const { customBackgroundColor, children, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /*                 Main UI                */
     /*----------------------------------------*/
-    return (React.createElement("div", { className: "Drawer-container" },
+    return (React.createElement("div", { className: "Drawer-container", style: {
+            backgroundColor: (customBackgroundColor !== null && customBackgroundColor !== void 0 ? customBackgroundColor : undefined),
+        } },
         React.createElement("style", null, style$4),
         children));
 };
@@ -2355,7 +2357,11 @@ const IntelliTable = (props) => {
     var _a;
     /* -------------- Props ------------- */
     // Destructure all props
-    const { title, id, data, columns, } = props;
+    const { title, id, columns, } = props;
+    // Get data, show empty row if none
+    const data = ((props.data && props.data.length > 0)
+        ? props.data
+        : [{ id: 'empty-row' }]);
     /* -------------- State ------------- */
     // Initial state
     const initColumnVisibilityMap = {};
@@ -3293,7 +3299,7 @@ const LogReviewer = (props) => {
                                 } })),
                         React.createElement("div", { className: "input-group mb-2" },
                             React.createElement("span", { className: "input-group-text" }, "Error Code"),
-                            React.createElement("input", { type: "text", className: "form-control", "aria-label": "query for error code", value: actionErrorFilterState.errorMessage, onChange: (e) => {
+                            React.createElement("input", { type: "text", className: "form-control", "aria-label": "query for error code", value: actionErrorFilterState.errorCode, onChange: (e) => {
                                     actionErrorFilterState.errorCode = ((e.target.value)
                                         .trim()
                                         .toUpperCase());
@@ -3474,9 +3480,8 @@ const LogReviewer = (props) => {
         Object.keys(logMap).forEach((year) => {
             Object.keys(logMap[year]).forEach((month) => {
                 logMap[year][month].forEach((log) => {
-                    var _a;
                     /* ----------- Date Filter ---------- */
-                    console.log('Log:', log);
+                    var _a;
                     // Before start date
                     if (
                     // Previous year
@@ -3488,7 +3493,6 @@ const LogReviewer = (props) => {
                         || ((log.year === dateFilterState.startDate.year)
                             && (log.month === dateFilterState.startDate.month)
                             && (log.day < dateFilterState.startDate.day))) {
-                        console.log('RULED OUT: START');
                         return;
                     }
                     // After end date
@@ -3502,7 +3506,6 @@ const LogReviewer = (props) => {
                         || ((log.year === dateFilterState.endDate.year)
                             && (log.month === dateFilterState.endDate.month)
                             && (log.day > dateFilterState.endDate.day))) {
-                        console.log('RULED OUT: END');
                         return;
                     }
                     /* --------- Context Filter --------- */
@@ -3519,7 +3522,6 @@ const LogReviewer = (props) => {
                                 .every((isSelected) => {
                                 return !isSelected;
                             }))) {
-                        console.log('RULED OUT: CONTEXT');
                         console.log(log.context, contextFilterState);
                         return;
                     }
@@ -3535,7 +3537,6 @@ const LogReviewer = (props) => {
                             && contextFilterState[log.context] !== true)
                         // Subcontext is not selected
                         && !contextFilterState[log.context][log.subcontext]) {
-                        console.log('RULED OUT: SUBCONTEXT');
                         return;
                     }
                     /* -------------- Tags -------------- */
@@ -3551,7 +3552,6 @@ const LogReviewer = (props) => {
                         && log.tags.every((tag) => {
                             return !tagFilterState[tag];
                         })) {
-                        console.log('RULED OUT: TAGS');
                         return;
                     }
                     /* ------- Actions and Errors ------- */
@@ -3561,7 +3561,6 @@ const LogReviewer = (props) => {
                     actionErrorFilterState.type !== undefined
                         // Log type doesn't match
                         && actionErrorFilterState.type !== log.type) {
-                        console.log('RULED OUT: TYPE');
                         return;
                     }
                     // Filter errors
@@ -3574,7 +3573,6 @@ const LogReviewer = (props) => {
                             && actionErrorFilterState.errorMessage.trim().length > 0
                             // Message doesn't match
                             && log.errorMessage.toLowerCase().includes(actionErrorFilterState.errorMessage.trim().toLowerCase())) {
-                            console.log('RULED OUT: ERROR MESSAGE');
                             return;
                         }
                         // Code doesn't match
@@ -3585,7 +3583,6 @@ const LogReviewer = (props) => {
                             && actionErrorFilterState.errorCode.trim().length > 0
                             // Code doesn't match
                             && log.errorCode.toUpperCase().includes(actionErrorFilterState.errorCode.trim().toUpperCase())) {
-                            console.log('RULED OUT: ERROR CODE');
                             return;
                         }
                     }
@@ -3597,7 +3594,6 @@ const LogReviewer = (props) => {
                         log.target
                             // Target isn't selected
                             && !actionErrorFilterState.target[log.target]) {
-                            console.log('RULED OUT: TARGET');
                             return;
                         }
                         // Action
@@ -3606,7 +3602,6 @@ const LogReviewer = (props) => {
                         log.action
                             // Action isn't selected
                             && !actionErrorFilterState.action[log.action]) {
-                            console.log('RULED OUT: ACTION');
                             return;
                         }
                     }
@@ -3617,7 +3612,6 @@ const LogReviewer = (props) => {
                     log.userFirstName
                         // First name query doesn't match
                         && !log.userFirstName.toLowerCase().includes(advancedFilterState.userFirstName.toLowerCase().trim())) {
-                        console.log('RULED OUT: FIRST');
                         return;
                     }
                     // Last name doesn't match
@@ -3626,7 +3620,6 @@ const LogReviewer = (props) => {
                     log.userLastName
                         // Last name query doesn't match
                         && !log.userLastName.toLowerCase().includes(advancedFilterState.userLastName.toLowerCase().trim())) {
-                        console.log('RULED OUT: LAST');
                         return;
                     }
                     // Email doesn't match
@@ -3635,7 +3628,6 @@ const LogReviewer = (props) => {
                     log.userEmail
                         // Email query doesn't match
                         && !log.userEmail.toLowerCase().includes(advancedFilterState.userEmail.toLowerCase().trim())) {
-                        console.log('RULED OUT: EMAIL');
                         return;
                     }
                     // User id doesn't match
@@ -3644,7 +3636,6 @@ const LogReviewer = (props) => {
                     log.userId
                         // User id doesn't match
                         && !String(log.userId).includes(advancedFilterState.userId.trim())) {
-                        console.log('RULED OUT: USER ID');
                         return;
                     }
                     // Learner not allowed
@@ -3653,7 +3644,6 @@ const LogReviewer = (props) => {
                     log.isLearner
                         // Learners aren't included
                         && !advancedFilterState.includeLearners) {
-                        console.log('RULED OUT: LEARNER');
                         return;
                     }
                     // TTM not allowed
@@ -3662,7 +3652,6 @@ const LogReviewer = (props) => {
                     log.isTTM
                         // TTMs aren't included
                         && !advancedFilterState.includeTTMs) {
-                        console.log('RULED OUT: TTM');
                         return;
                     }
                     // Admin not allowed
@@ -3671,7 +3660,6 @@ const LogReviewer = (props) => {
                     log.isAdmin
                         // Admins aren't included
                         && !advancedFilterState.includeAdmins) {
-                        console.log('RULED OUT: ADMIN');
                         return;
                     }
                     // Course Id doesn't match
@@ -3680,7 +3668,6 @@ const LogReviewer = (props) => {
                     log.courseId
                         // Course Id doesn't match
                         && !String(log.courseId).includes(advancedFilterState.courseId.trim())) {
-                        console.log('RULED OUT: COURSE ID');
                         return;
                     }
                     // Course name doesn't match
@@ -3689,7 +3676,6 @@ const LogReviewer = (props) => {
                     log.courseName
                         // Course name doesn't match
                         && !String(log.courseName).includes(advancedFilterState.courseName.trim())) {
-                        console.log('RULED OUT: COURSE NAME');
                         return;
                     }
                     // Mobile filter doesn't match
@@ -3699,8 +3685,7 @@ const LogReviewer = (props) => {
                         // Device info exists
                         && log.device
                         // Mobile filter doesn't match
-                        && (advancedFilterState.isMobile === log.device.isMobile)) {
-                        console.log('RULED OUT: MOBILE');
+                        && (advancedFilterState.isMobile !== log.device.isMobile)) {
                         return;
                     }
                     // Log source doesn't match
@@ -3711,7 +3696,6 @@ const LogReviewer = (props) => {
                         && log.source
                         // Source filter doesn't match
                         && (advancedFilterState.source !== log.source)) {
-                        console.log('RULED OUT: SOURCE');
                         return;
                     }
                     // Route path doesn't match (Only for server source)
@@ -3722,7 +3706,6 @@ const LogReviewer = (props) => {
                         && (advancedFilterState.routePath.trim().length)
                         // Route path doesn't match
                         && !(log.routePath.includes(advancedFilterState.routePath.trim()))) {
-                        console.log('RULED OUT: PATH');
                         return;
                     }
                     // Route template doesn't match (Only for server source)
@@ -3733,7 +3716,6 @@ const LogReviewer = (props) => {
                         && (advancedFilterState.routeTemplate.trim().length)
                         // Route template doesn't match
                         && !(log.routeTemplate.includes(advancedFilterState.routeTemplate.trim()))) {
-                        console.log('RULED OUT: TEMPLATE');
                         return;
                     }
                     /* -------------- Done -------------- */
@@ -3932,18 +3914,20 @@ const LogReviewer = (props) => {
                 startsHidden: true,
             },
         ];
+        // Nothing to show notice
+        const noLogsNotice = (logs.length === 0
+            ? (React.createElement("div", { className: "alert alert-warning text-center mt-2" },
+                React.createElement("h4", { className: "m-1" }, "No Logs to Show"),
+                React.createElement("div", null, "Either your filters are too strict or no matching logs have been created yet.")))
+            : undefined);
         // Create intelliTable
-        const dataTable = (logs.length === 0
-            ? (React.createElement(React.Fragment, null,
-                React.createElement("h3", { className: "m-0" }, "Matching Logs:"),
-                React.createElement("div", { className: "alert alert-warning text-center" },
-                    React.createElement("h4", { className: "m-1" }, "No Logs to Show"),
-                    React.createElement("div", null, "Either your filters are too strict or no matching logs have been created yet."))))
-            : (React.createElement(IntelliTable, { title: "Matching Logs:", id: "logs", data: logs, columns: columns })));
+        const dataTable = (React.createElement(IntelliTable, { title: "Matching Logs:", id: "logs", data: logs, columns: columns }));
         // Main body
         body = (React.createElement(React.Fragment, null,
             filters,
-            React.createElement("div", { className: "mt-2" }, dataTable)));
+            React.createElement("div", { className: "mt-2" },
+                dataTable,
+                noLogsNotice)));
     }
     /* ---------- Wrap in Modal --------- */
     return (React.createElement("div", { className: "LogReviewer-outer-container" },

@@ -275,6 +275,7 @@ declare const SimpleDateChooser: React.FC<Props$9>;
  */
 
 declare type Props$8 = {
+    customBackgroundColor?: string;
     children: React.ReactNode;
 };
 declare const Drawer: React.FC<Props$8>;

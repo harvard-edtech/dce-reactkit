@@ -12,6 +12,8 @@ import React from 'react';
 
 // Props definition
 type Props = {
+  // Custom background color
+  customBackgroundColor?: string,
   // Children to display
   children: React.ReactNode,
 };
@@ -49,6 +51,7 @@ const Drawer: React.FC<Props> = (props) => {
 
   // Destructure all props
   const {
+    customBackgroundColor,
     children,
   } = props;
 
@@ -61,7 +64,12 @@ const Drawer: React.FC<Props> = (props) => {
   /*----------------------------------------*/
 
   return (
-    <div className="Drawer-container">
+    <div
+      className="Drawer-container"
+      style={{
+        backgroundColor: (customBackgroundColor ?? undefined),
+      }}
+    >
       <style>{style}</style>
       {children}
     </div>

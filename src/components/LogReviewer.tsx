@@ -1233,7 +1233,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                       type="text"
                       className="form-control"
                       aria-label="query for error code"
-                      value={actionErrorFilterState.errorMessage}
+                      value={actionErrorFilterState.errorCode}
                       onChange={(e) => {
                         actionErrorFilterState.errorCode = (
                           (e.target.value)
@@ -1596,7 +1596,6 @@ const LogReviewer: React.FC<Props> = (props) => {
       Object.keys(logMap[year]).forEach((month) => {
         logMap[year][month].forEach((log) => {
           /* ----------- Date Filter ---------- */
-          console.log('Log:', log);
           
           // Before start date
           if (
@@ -1614,7 +1613,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               && (log.day < dateFilterState.startDate.day)
             )
           ) {
-            console.log('RULED OUT: START');
             return;
           }
 
@@ -1634,7 +1632,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               && (log.day > dateFilterState.endDate.day)
             )
           ) {
-            console.log('RULED OUT: END');
             return;
           }
 
@@ -1655,7 +1652,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                 })
             )
           ) {
-            console.log('RULED OUT: CONTEXT');
             console.log(log.context, contextFilterState);
             return;
           }
@@ -1675,7 +1671,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Subcontext is not selected
             && !(contextFilterState as any)[log.context][log.subcontext]
           ) {
-            console.log('RULED OUT: SUBCONTEXT');
             return;
           }
 
@@ -1694,7 +1689,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               return !tagFilterState[tag];
             })
           ) {
-            console.log('RULED OUT: TAGS');
             return;
           }
 
@@ -1707,7 +1701,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Log type doesn't match
             && actionErrorFilterState.type !== log.type
           ) {
-            console.log('RULED OUT: TYPE');
             return;
           }
 
@@ -1724,7 +1717,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                 actionErrorFilterState.errorMessage.trim().toLowerCase(),
               )
             ) {
-              console.log('RULED OUT: ERROR MESSAGE');
               return;
             }
 
@@ -1739,7 +1731,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                 actionErrorFilterState.errorCode.trim().toUpperCase(),
               )
             ) {
-              console.log('RULED OUT: ERROR CODE');
               return;
             }
           }
@@ -1753,7 +1744,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               // Target isn't selected
               && !actionErrorFilterState.target[log.target]
             ) {
-              console.log('RULED OUT: TARGET');
               return;
             }
 
@@ -1764,7 +1754,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               // Action isn't selected
               && !actionErrorFilterState.action[log.action]
             ) {
-              console.log('RULED OUT: ACTION');
               return;
             }
           }
@@ -1780,7 +1769,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.userFirstName.toLowerCase().trim(),
             )
           ) {
-            console.log('RULED OUT: FIRST');
             return;
           }
 
@@ -1793,7 +1781,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.userLastName.toLowerCase().trim(),
             )
           ) {
-            console.log('RULED OUT: LAST');
             return;
           }
 
@@ -1806,7 +1793,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.userEmail.toLowerCase().trim(),
             )
           ) {
-            console.log('RULED OUT: EMAIL');
             return;
           }
 
@@ -1819,7 +1805,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.userId.trim(),
             )
           ) {
-            console.log('RULED OUT: USER ID');
             return;
           }
 
@@ -1830,7 +1815,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Learners aren't included
             && !advancedFilterState.includeLearners
           ) {
-            console.log('RULED OUT: LEARNER');
             return;
           }
 
@@ -1841,7 +1825,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             // TTMs aren't included
             && !advancedFilterState.includeTTMs
           ) {
-            console.log('RULED OUT: TTM');
             return;
           }
 
@@ -1852,7 +1835,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Admins aren't included
             && !advancedFilterState.includeAdmins
           ) {
-            console.log('RULED OUT: ADMIN');
             return;
           }
 
@@ -1865,7 +1847,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.courseId.trim(),
             )
           ) {
-            console.log('RULED OUT: COURSE ID');
             return;
           }
 
@@ -1878,7 +1859,6 @@ const LogReviewer: React.FC<Props> = (props) => {
               advancedFilterState.courseName.trim(),
             )
           ) {
-            console.log('RULED OUT: COURSE NAME');
             return;
           }
 
@@ -1889,9 +1869,8 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Device info exists
             && log.device
             // Mobile filter doesn't match
-            && (advancedFilterState.isMobile === log.device.isMobile)
+            && (advancedFilterState.isMobile !== log.device.isMobile)
           ) {
-            console.log('RULED OUT: MOBILE');
             return;
           }
 
@@ -1904,7 +1883,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Source filter doesn't match
             && (advancedFilterState.source !== log.source)
           ) {
-            console.log('RULED OUT: SOURCE');
             return;
           }
 
@@ -1917,7 +1895,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Route path doesn't match
             && !(log.routePath.includes(advancedFilterState.routePath.trim()))
           ) {
-            console.log('RULED OUT: PATH');
             return;
           }
 
@@ -1930,7 +1907,6 @@ const LogReviewer: React.FC<Props> = (props) => {
             // Route template doesn't match
             && !(log.routeTemplate.includes(advancedFilterState.routeTemplate.trim()))
           ) {
-            console.log('RULED OUT: TEMPLATE');
             return;
           }
 
@@ -2134,33 +2110,31 @@ const LogReviewer: React.FC<Props> = (props) => {
       },
     ];
 
-    // Create intelliTable
-    const dataTable = (
+    // Nothing to show notice
+    const noLogsNotice = (
       logs.length === 0
         ? (
-          <>
-            <h3 className="m-0">
-              Matching Logs:
-            </h3>
-            <div className="alert alert-warning text-center">
-              <h4 className="m-1">
-                No Logs to Show
-              </h4>
-              <div>
-                Either your filters are too strict or no matching logs have been
-                created yet.
-              </div>
+          <div className="alert alert-warning text-center mt-2">
+            <h4 className="m-1">
+              No Logs to Show
+            </h4>
+            <div>
+              Either your filters are too strict or no matching logs have been
+              created yet.
             </div>
-          </>
+          </div>
         )
-        : (
-          <IntelliTable
-            title="Matching Logs:"
-            id="logs"
-            data={logs}
-            columns={columns}
-          />
-        )
+        : undefined
+    );
+
+    // Create intelliTable
+    const dataTable = (
+      <IntelliTable
+        title="Matching Logs:"
+        id="logs"
+        data={logs}
+        columns={columns}
+      />
     );
 
     // Main body
@@ -2169,6 +2143,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         {filters}
         <div className="mt-2">
           {dataTable}
+          {noLogsNotice}
         </div>
       </>
     );

@@ -182,9 +182,15 @@ const IntelliTable: React.FC<Props> = (props) => {
   const {
     title,
     id,
-    data,
     columns,
   } = props;
+
+  // Get data, show empty row if none
+  const data = (
+    (props.data && props.data.length > 0)
+      ? props.data
+      : [{ id: 'empty-row' }]
+  );
 
   /* -------------- State ------------- */
 
