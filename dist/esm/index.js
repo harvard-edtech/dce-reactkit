@@ -2952,7 +2952,6 @@ const LogReviewer = (props) => {
     Object.values(LogBuiltInMetadata.Target).forEach((target) => {
         initActionErrorFilterState.target[target] = true;
     });
-    console.log(initActionErrorFilterState);
     // Initial state
     const initialState = {
         loading: true,
@@ -3259,7 +3258,7 @@ const LogReviewer = (props) => {
                             const description = genHumanReadableName(action);
                             return (React.createElement(CheckboxButton, { id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: i === Object.keys(LogAction$1).length - 1, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
-                                    console.log(actionErrorFilterState);
+                                    console.log(actionErrorFilterState, action, checked);
                                     dispatch({
                                         type: ActionType.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
@@ -3274,6 +3273,7 @@ const LogReviewer = (props) => {
                                 const description = genHumanReadableName(target);
                                 return (React.createElement(CheckboxButton, { id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], onChanged: (checked) => {
                                         actionErrorFilterState.target[target] = checked;
+                                        console.log(actionErrorFilterState, target, checked);
                                         dispatch({
                                             type: ActionType.UpdateActionErrorFilterState,
                                             actionErrorFilterState,
