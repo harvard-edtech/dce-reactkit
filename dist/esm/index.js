@@ -2387,13 +2387,13 @@ const IntelliTable = (props) => {
                 dispatch({
                     type: ActionType$1.ToggleColVisCusModalVisibility,
                 });
-            } }, columns.map((column) => {
-            return (React.createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, text: column.title, onChanged: () => {
+            }, okayVariant: Variant$1.Light }, columns.map((column) => {
+            return (React.createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: () => {
                     dispatch({
                         type: ActionType$1.ToggleColumnVisibility,
                         param: column.param,
                     });
-                }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column` }));
+                }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Secondary }));
         })));
     }
     /*----------------------------------------*/
@@ -2438,7 +2438,7 @@ const IntelliTable = (props) => {
                 borderRight: '0.05rem solid #555',
                 borderLeft: '0.05rem solid #555',
             } },
-            React.createElement("div", { className: "d-flex align-items-center justify-content-center flex-row h-100" },
+            React.createElement("div", { className: "d-flex align-items-center justify-content-start flex-row h-100" },
                 React.createElement("span", { className: "text-nowrap" }, column.title),
                 React.createElement("div", null,
                     React.createElement("button", { type: "button", id: `IntelliTable-${id}-sort-by-${column.param}-button`, className: `btn btn-${sortingByThisColumn ? 'light' : 'secondary'} btn-sm ms-1 ps-1 pe-1 pt-0 pb-0`, "aria-label": sortButtonAriaLabel, onClick: () => {
@@ -2461,6 +2461,22 @@ const IntelliTable = (props) => {
         sortedData.sort((a, b) => {
             const aVal = a[sortColumnParam];
             const bVal = b[sortColumnParam];
+            // Auto-sort undefined and null to end of list
+            if ((aVal === undefined || aVal === null)
+                || (bVal === undefined || bVal === null)) {
+                // At least one was undefined
+                if ((aVal === undefined || aVal === null)
+                    && (bVal === undefined || bVal === null)) {
+                    // Both undefined
+                    return 0;
+                }
+                if (aVal === undefined || aVal === null) {
+                    // First was undefined
+                    return 1;
+                }
+                // Second was undefined
+                return -1;
+            }
             // Sort differently based on the data type
             // > Boolean
             if (paramType === ParamType$1.Boolean) {

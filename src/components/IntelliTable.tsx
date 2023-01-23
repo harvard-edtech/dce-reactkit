@@ -30,6 +30,7 @@ import Modal from './Modal';
 import ModalType from '../types/ModalType';
 import CheckboxButton from './CheckboxButton';
 import CSVDownloadButton from './CSVDownloadButton';
+import Variant from '../types/Variant';
 
 /*------------------------------------------------------------------------*/
 /*                                  Types                                 */
@@ -234,6 +235,7 @@ const IntelliTable: React.FC<Props> = (props) => {
             type: ActionType.ToggleColVisCusModalVisibility,
           });
         }}
+        okayVariant={Variant.Light}
       >
         {
           columns.map((column) => {
@@ -241,6 +243,7 @@ const IntelliTable: React.FC<Props> = (props) => {
               <CheckboxButton
                 key={column.param}
                 id={`IntelliTable-${id}-toggle-visibility-${column.param}`}
+                className="mb-2"
                 text={column.title}
                 onChanged={() => {
                   dispatch({
@@ -250,6 +253,8 @@ const IntelliTable: React.FC<Props> = (props) => {
                 }}
                 checked={columnVisibilityMap[column.param]}
                 ariaLabel={`show "${column.title}" column`}
+                checkedVariant={Variant.Light}
+                uncheckedVariant={Variant.Secondary}
               />
             );
           })
@@ -307,7 +312,7 @@ const IntelliTable: React.FC<Props> = (props) => {
               borderLeft: '0.05rem solid #555',
             }}
           >
-            <div className="d-flex align-items-center justify-content-center flex-row h-100">
+            <div className="d-flex align-items-center justify-content-start flex-row h-100">
               {/* Title */}
               <span className="text-nowrap">
                 {column.title}
@@ -354,6 +359,27 @@ const IntelliTable: React.FC<Props> = (props) => {
     sortedData.sort((a, b) => {
       const aVal = a[sortColumnParam];
       const bVal = b[sortColumnParam];
+
+      // Auto-sort undefined and null to end of list
+      if (
+        (aVal === undefined || aVal === null)
+        || (bVal === undefined || bVal === null)
+      ) {
+        // At least one was undefined
+        if (
+          (aVal === undefined || aVal === null)
+          && (bVal === undefined || bVal === null)
+        ) {
+          // Both undefined
+          return 0;
+        }
+        if (aVal === undefined || aVal === null) {
+          // First was undefined
+          return 1;
+        }
+        // Second was undefined
+        return -1;
+      }
 
       // Sort differently based on the data type
       // > Boolean
