@@ -2208,12 +2208,12 @@ const roundToNumDecimals = (num, numDecimals) => {
  * @returns escaped cell text
  */
 const escapeCellText = (text) => {
-    if (!text.includes(',')) {
+    if (!String(text).includes(',')) {
         // No need to escape
-        return text;
+        return String(text);
     }
     // Perform escape
-    return `"${text.replace(/"/g, '""')}`;
+    return `"${String(text).replace(/"/g, '""')}`;
 };
 /**
  * Generate a CSV file
