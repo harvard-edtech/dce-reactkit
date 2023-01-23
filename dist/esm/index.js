@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faCheckCircle, faXmarkCircle, faMinus, faSort, faSortDown, faSortUp, faCalendar, faTag, faHammer, faList, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faCalendar, faTag, faHammer, faList, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
 
 /******************************************************************************
@@ -2554,9 +2554,12 @@ const IntelliTable = (props) => {
                 const noValue = (value === undefined
                     || value === null);
                 visibleValue = (noValue
-                    ? (React.createElement(FontAwesomeIcon, { icon: faCheckCircle }))
-                    : (React.createElement(FontAwesomeIcon, { icon: faXmarkCircle })));
+                    ? (React.createElement(FontAwesomeIcon, { icon: faMinus }))
+                    : (React.createElement(FontAwesomeIcon, { icon: fullValue ? faCheckCircle : faXmarkCircle })));
                 title = (fullValue ? 'True' : 'False');
+                if (noValue) {
+                    title = 'Empty Cell';
+                }
             }
             else if (column.type === ParamType$1.Int) {
                 fullValue = Number.parseInt(value, 10);
@@ -2565,6 +2568,9 @@ const IntelliTable = (props) => {
                     ? (React.createElement(FontAwesomeIcon, { icon: faMinus }))
                     : fullValue);
                 title = String(fullValue);
+                if (noValue) {
+                    title = 'Empty Cell';
+                }
             }
             else if (column.type === ParamType$1.Float) {
                 fullValue = Number.parseFloat(value);
@@ -2573,6 +2579,9 @@ const IntelliTable = (props) => {
                     ? (React.createElement(FontAwesomeIcon, { icon: faMinus }))
                     : roundToNumDecimals(fullValue, 2));
                 title = String(fullValue);
+                if (noValue) {
+                    title = 'Empty Cell';
+                }
             }
             else if (column.type === ParamType$1.String) {
                 fullValue = String(value).trim();
@@ -2583,6 +2592,9 @@ const IntelliTable = (props) => {
                     ? (React.createElement(FontAwesomeIcon, { icon: faMinus }))
                     : fullValue);
                 title = `"${value}"`;
+                if (noValue) {
+                    title = 'Empty Cell';
+                }
             }
             else if (column.type === ParamType$1.JSON) {
                 fullValue = JSON.stringify(value);
@@ -2592,6 +2604,7 @@ const IntelliTable = (props) => {
                 visibleValue = (noValue
                     ? (React.createElement(FontAwesomeIcon, { icon: faMinus }))
                     : fullValue);
+                title = "JSON Object";
             }
             // Create UI
             return (React.createElement("td", { key: `${datum.id}-${column.param}`, title: title, style: {
@@ -3473,7 +3486,7 @@ const LogReviewer = (props) => {
         // Filters UI
         const filters = (React.createElement(React.Fragment, null,
             filterToggles,
-            filterDrawer && (React.createElement(Drawer, null, filterDrawer))));
+            filterDrawer && (React.createElement(Drawer, { customBackgroundColor: "#eee" }, filterDrawer))));
         // Actually filter the logs
         // > Perform filters
         const logs = [];

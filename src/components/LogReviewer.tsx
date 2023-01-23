@@ -1582,7 +1582,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       <>
         {filterToggles}
         {filterDrawer && (
-          <Drawer>
+          <Drawer customBackgroundColor="#eee">
             {filterDrawer}
           </Drawer>
         )}

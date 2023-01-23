@@ -480,16 +480,19 @@ const IntelliTable: React.FC<Props> = (props) => {
             noValue
               ? (
                 <FontAwesomeIcon
-                  icon={faCheckCircle}
+                  icon={faMinus}
                 />
               )
               : (
                 <FontAwesomeIcon
-                  icon={faXmarkCircle}
+                  icon={fullValue ? faCheckCircle : faXmarkCircle}
                 />
               )
           );
           title = (fullValue ? 'True' : 'False');
+          if (noValue) {
+            title = 'Empty Cell';
+          }
         } else if (column.type === ParamType.Int) {
           fullValue = Number.parseInt(value, 10);
           const noValue = Number.isNaN(fullValue);
@@ -503,6 +506,9 @@ const IntelliTable: React.FC<Props> = (props) => {
               : fullValue
           );
           title = String(fullValue);
+          if (noValue) {
+            title = 'Empty Cell';
+          }
         } else if (column.type === ParamType.Float) {
           fullValue = Number.parseFloat(value);
           const noValue = Number.isNaN(fullValue);
@@ -516,6 +522,9 @@ const IntelliTable: React.FC<Props> = (props) => {
               : roundToNumDecimals(fullValue as number, 2)
           );
           title = String(fullValue);
+          if (noValue) {
+            title = 'Empty Cell';
+          }
         } else if (column.type === ParamType.String) {
           fullValue = String(value).trim();
           const noValue = (
@@ -533,6 +542,9 @@ const IntelliTable: React.FC<Props> = (props) => {
               : fullValue
           );
           title = `"${value}"`;
+          if (noValue) {
+            title = 'Empty Cell';
+          }
         } else if (column.type === ParamType.JSON) {
           fullValue = JSON.stringify(value);
           const noValue = (
@@ -549,6 +561,7 @@ const IntelliTable: React.FC<Props> = (props) => {
               )
               : fullValue
           );
+          title="JSON Object"
         }
 
         // Create UI
