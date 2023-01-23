@@ -2960,6 +2960,7 @@ const LogReviewer = (props) => {
     Object.values(LogBuiltInMetadata.Target).forEach((target) => {
         initActionErrorFilterState.target[target] = true;
     });
+    console.log(initActionErrorFilterState);
     // Initial state
     const initialState = {
         loading: true,
@@ -3266,6 +3267,7 @@ const LogReviewer = (props) => {
                             const description = genHumanReadableName(action);
                             return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: i === Object.keys(LogAction$1).length - 1, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
+                                    console.log(actionErrorFilterState);
                                     dispatch({
                                         type: ActionType.UpdateActionErrorFilterState,
                                         actionErrorFilterState,

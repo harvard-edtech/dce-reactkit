@@ -631,6 +631,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   Object.values(LogBuiltInMetadata.Target).forEach((target) => {
     initActionErrorFilterState.target[target] = true;
   });
+  console.log(initActionErrorFilterState);
 
   // Initial state
   const initialState: State = {
@@ -1149,6 +1150,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                               checked={actionErrorFilterState.action[action]}
                               onChanged={(checked) => {
                                 actionErrorFilterState.action[action] = checked;
+                                console.log(actionErrorFilterState);
                                 dispatch({
                                   type: ActionType.UpdateActionErrorFilterState,
                                   actionErrorFilterState,
