@@ -88,7 +88,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   let startMonth = today.month;
   if (chooseFromPast) {
     startMonth -= Math.max(0, numMonthsToShow - 1);
-    if (startMonth <= 0) {
+    while (startMonth <= 0) {
       startMonth += 12;
       startYear -= 1;
     }
@@ -96,17 +96,13 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   for (let i = 0; i < numMonthsToShow; i++) {
     // Get month and year info
     const unmoddedMonth = (startMonth + i);
-    const month = (
-      unmoddedMonth > 12
-        ? unmoddedMonth - 12
-        : unmoddedMonth
-    );
+    let month = unmoddedMonth;
+    while (month > 12) {
+      month -= 12;
+    }
     const monthName = getMonthName(month).full;
-    const year = (
-      unmoddedMonth > 12
-        ? startYear + 1
-        : startYear
-    );
+    // Year is start year +1 for each 12 months
+    const year = (startYear + (Math.floor(unmoddedMonth / 12)));
 
     // Figure out which days are allowed
     const days = [];

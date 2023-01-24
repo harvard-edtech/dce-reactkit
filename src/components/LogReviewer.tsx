@@ -1151,7 +1151,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               month={dateFilterState.startDate.month}
               day={dateFilterState.startDate.day}
               chooseFromPast
-              numMonthsToShow={12}
+              numMonthsToShow={36}
               onChange={(month, day, year) => {
                 dateFilterState.startDate = { month, day, year };
                 handleDateRangeUpdated(dateFilterState);
@@ -1434,6 +1434,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                                 text={description}
                                 ariaLabel={`include logs with target "${description}" in results`}
                                 checked={actionErrorFilterState.target[target]}
+                                noMarginOnRight
                                 onChanged={(checked) => {
                                   actionErrorFilterState.target[target] = checked;
                                   console.log(actionErrorFilterState, target, checked);

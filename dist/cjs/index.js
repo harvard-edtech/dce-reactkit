@@ -1347,7 +1347,7 @@ const SimpleDateChooser = (props) => {
     let startMonth = today.month;
     if (chooseFromPast) {
         startMonth -= Math.max(0, numMonthsToShow - 1);
-        if (startMonth <= 0) {
+        while (startMonth <= 0) {
             startMonth += 12;
             startYear -= 1;
         }
@@ -1355,13 +1355,13 @@ const SimpleDateChooser = (props) => {
     for (let i = 0; i < numMonthsToShow; i++) {
         // Get month and year info
         const unmoddedMonth = (startMonth + i);
-        const month = (unmoddedMonth > 12
-            ? unmoddedMonth - 12
-            : unmoddedMonth);
+        let month = unmoddedMonth;
+        while (month > 12) {
+            month -= 12;
+        }
         const monthName = getMonthName(month).full;
-        const year = (unmoddedMonth > 12
-            ? startYear + 1
-            : startYear);
+        // Year is start year +1 for each 12 months
+        const year = (startYear + (Math.floor(unmoddedMonth / 12)));
         // Figure out which days are allowed
         const days = [];
         const numDaysInMonth = (new Date(year, month, 0)).getDate();
@@ -3431,7 +3431,7 @@ const LogReviewer = (props) => {
         if (expandedFilterDrawer) {
             if (expandedFilterDrawer === FilterDrawer.Date) {
                 filterDrawer = (React__default["default"].createElement(TabBox, { title: "Date" },
-                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, numMonthsToShow: 12, onChange: (month, day, year) => {
+                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, numMonthsToShow: 36, onChange: (month, day, year) => {
                             dateFilterState.startDate = { month, day, year };
                             handleDateRangeUpdated(dateFilterState);
                         } }),
@@ -3601,7 +3601,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys(targetMap)
                                 .map((target) => {
                                 const description = genHumanReadableName(target);
-                                return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], onChanged: (checked) => {
+                                return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
                                         actionErrorFilterState.target[target] = checked;
                                         console.log(actionErrorFilterState, target, checked);
                                         dispatch({
