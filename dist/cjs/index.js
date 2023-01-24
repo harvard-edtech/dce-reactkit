@@ -3087,19 +3087,7 @@ const reducer = (state, action) => {
             return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
         }
         case ActionType.UpdateTagFilterState: {
-            const { tagFilterState } = action;
-            // Select all if every tag is deselected
-            const numTagsSelected = (Object.values(tagFilterState)
-                .filter((isSelected) => {
-                return isSelected;
-            })
-                .length);
-            if (numTagsSelected === 0) {
-                Object.keys(tagFilterState).forEach((tag) => {
-                    tagFilterState[tag] = true;
-                });
-            }
-            return Object.assign(Object.assign({}, state), { tagFilterState });
+            return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
         }
         case ActionType.UpdateActionErrorFilterState: {
             return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
@@ -3191,7 +3179,6 @@ const LogReviewer = (props) => {
     Object.keys((_c = LogMetadata.Tag) !== null && _c !== void 0 ? _c : {}).forEach((tag) => {
         initTagFilterState[tag] = false;
     });
-    console.log(contextMap, initContextFilterState, initTagFilterState);
     // Create advanced filter state
     const initAdvancedFilterState = {
         userFirstName: '',
@@ -3535,7 +3522,6 @@ const LogReviewer = (props) => {
                         const description = genHumanReadableName(tag);
                         return (React__default["default"].createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
                                 tagFilterState[tag] = checked;
-                                console.log(tagFilterState);
                                 dispatch({
                                     type: ActionType.UpdateTagFilterState,
                                     tagFilterState,
@@ -3830,7 +3816,6 @@ const LogReviewer = (props) => {
                                 .every((isSelected) => {
                                 return !isSelected;
                             }))) {
-                        console.log(log.context, contextFilterState);
                         return;
                     }
                     // Subcontext doesn't match

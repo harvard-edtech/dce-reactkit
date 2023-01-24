@@ -658,25 +658,9 @@ const reducer = (state: State, action: Action): State => {
       };
     }
     case ActionType.UpdateTagFilterState: {
-      const { tagFilterState } = action;
-
-      // Select all if every tag is deselected
-      const numTagsSelected = (
-        Object.values(tagFilterState)
-          .filter((isSelected) => {
-            return isSelected;
-          })
-          .length
-      );
-      if (numTagsSelected === 0) {
-        Object.keys(tagFilterState).forEach((tag) => {
-          tagFilterState[tag] = true;
-        });
-      }
-
       return {
         ...state,
-        tagFilterState,
+        tagFilterState: action.tagFilterState,
       };
     }
     case ActionType.UpdateActionErrorFilterState: {
@@ -790,7 +774,6 @@ const LogReviewer: React.FC<Props> = (props) => {
   Object.keys(LogMetadata.Tag ?? {}).forEach((tag) => {
     initTagFilterState[tag] = false;
   });
-  console.log(contextMap, initContextFilterState, initTagFilterState);
 
   // Create advanced filter state
   const initAdvancedFilterState: AdvancedFilterState = {
@@ -1320,7 +1303,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                         checked={tagFilterState[tag]}
                         onChanged={(checked) => {
                           tagFilterState[tag] = checked;
-                          console.log(tagFilterState);
                           dispatch({
                             type: ActionType.UpdateTagFilterState,
                             tagFilterState,
@@ -1912,7 +1894,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                 })
             )
           ) {
-            console.log(log.context, contextFilterState);
             return;
           }
 
