@@ -1195,7 +1195,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       } else if (expandedFilterDrawer === FilterDrawer.Context) {
         // Create item picker items
         const builtInPickableItem: PickableItem = {
-          id: '_',
+          id: 'built-in-contexts',
           name: 'Auto-logged',
           isGroup: true,
           children: [],
@@ -1222,6 +1222,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                 // Add to pickable items list
                 pickableItems.push(item);
               }
+              return;
             }
 
             // Has subcategories
@@ -1264,7 +1265,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   // Has subcontexts
 
                   
-                  if (pickableItem.id === '_') {
+                  if (pickableItem.id === 'built-in-contexts') {
                     // Built-in
 
                     // Treat as if these were top-level contexts
@@ -1305,32 +1306,35 @@ const LogReviewer: React.FC<Props> = (props) => {
         filterDrawer = (
           <TabBox title="Tags">
             <div>
-              If any are selected, logs must contain at least one
-              but not necessarily all of the
+              If any tags are selected, logs must contain at least one
+              (but not necessarily all) of the
               selected tags.
             </div>
-            {
-              Object.keys(LogMetadata.Tag ?? {})
-                .map((tag, i) => {
-                  const description = genHumanReadableName(tag);
-                  return (
-                    <CheckboxButton
-                      id={`LogReviewer-tag-${tag}-checkbox`}
-                      text={description}
-                      ariaLabel={`require that logs be tagged with "${description}" or any other selected tag`}
-                      noMarginOnRight={i === Object.keys(tagFilterState).length - 1}
-                      checked={tagFilterState[tag]}
-                      onChanged={(checked) => {
-                        tagFilterState[tag] = checked;
-                        dispatch({
-                          type: ActionType.UpdateTagFilterState,
-                          tagFilterState,
-                        });
-                      }}
-                    />
-                  );
-                })
-            }
+            <div className="d-flex gap-1 flex-wrap">
+              {
+                Object.keys(LogMetadata.Tag ?? {})
+                  .map((tag) => {
+                    const description = genHumanReadableName(tag);
+                    return (
+                      <CheckboxButton
+                        key={tag}
+                        id={`LogReviewer-tag-${tag}-checkbox`}
+                        text={description}
+                        ariaLabel={`require that logs be tagged with "${description}" or any other selected tag`}
+                        checked={tagFilterState[tag]}
+                        onChanged={(checked) => {
+                          tagFilterState[tag] = checked;
+                          console.log(tagFilterState);
+                          dispatch({
+                            type: ActionType.UpdateTagFilterState,
+                            tagFilterState,
+                          });
+                        }}
+                      />
+                    );
+                  })
+              }
+            </div>
           </TabBox>
         );
       } else if (expandedFilterDrawer === FilterDrawer.Action) {
@@ -1513,7 +1517,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         filterDrawer = (
           <>
             {/* User Info */}
-            <TabBox title="User Info">
+            <TabBox title="User">
               {/* First Name */}
               <div className="input-group mb-2">
                 <span className="input-group-text">
@@ -1646,7 +1650,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             </TabBox>
 
             {/* Course Info */}
-            <TabBox title="Course Info">
+            <TabBox title="Course">
               {/* Name */}
               <div className="input-group mb-2">
                 <span className="input-group-text">
@@ -1697,7 +1701,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             </TabBox>
 
             {/* Device Info */}
-            <TabBox title="Device Info">
+            <TabBox title="Device">
               <ButtonInputGroup label="Device Type">
                 <RadioButton
                   text="All Devices"

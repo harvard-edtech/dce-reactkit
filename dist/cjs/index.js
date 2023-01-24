@@ -3442,7 +3442,7 @@ const LogReviewer = (props) => {
             else if (expandedFilterDrawer === FilterDrawer.Context) {
                 // Create item picker items
                 const builtInPickableItem = {
-                    id: '_',
+                    id: 'built-in-contexts',
                     name: 'Auto-logged',
                     isGroup: true,
                     children: [],
@@ -3469,6 +3469,7 @@ const LogReviewer = (props) => {
                             // Add to pickable items list
                             pickableItems.push(item);
                         }
+                        return;
                     }
                     // Has subcategories
                     const children = (Object.keys(value)
@@ -3501,7 +3502,7 @@ const LogReviewer = (props) => {
                         updatedItems.forEach((pickableItem) => {
                             if (pickableItem.isGroup) {
                                 // Has subcontexts
-                                if (pickableItem.id === '_') {
+                                if (pickableItem.id === 'built-in-contexts') {
                                     // Built-in
                                     // Treat as if these were top-level contexts
                                     pickableItem.children.forEach((subcontextItem) => {
@@ -3532,18 +3533,19 @@ const LogReviewer = (props) => {
             else if (expandedFilterDrawer === FilterDrawer.Tag) {
                 // Create filter UI
                 filterDrawer = (React__default["default"].createElement(TabBox, { title: "Tags" },
-                    React__default["default"].createElement("div", null, "If any are selected, logs must contain at least one but not necessarily all of the selected tags."),
-                    Object.keys((_f = LogMetadata.Tag) !== null && _f !== void 0 ? _f : {})
-                        .map((tag, i) => {
+                    React__default["default"].createElement("div", null, "If any tags are selected, logs must contain at least one (but not necessarily all) of the selected tags."),
+                    React__default["default"].createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys((_f = LogMetadata.Tag) !== null && _f !== void 0 ? _f : {})
+                        .map((tag) => {
                         const description = genHumanReadableName(tag);
-                        return (React__default["default"].createElement(CheckboxButton, { id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, noMarginOnRight: i === Object.keys(tagFilterState).length - 1, checked: tagFilterState[tag], onChanged: (checked) => {
+                        return (React__default["default"].createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
                                 tagFilterState[tag] = checked;
+                                console.log(tagFilterState);
                                 dispatch({
                                     type: ActionType.UpdateTagFilterState,
                                     tagFilterState,
                                 });
                             } }));
-                    })));
+                    }))));
             }
             else if (expandedFilterDrawer === FilterDrawer.Action) {
                 // Create filter UI
@@ -3624,7 +3626,7 @@ const LogReviewer = (props) => {
             else if (expandedFilterDrawer === FilterDrawer.Advanced) {
                 // Create advanced filter ui
                 filterDrawer = (React__default["default"].createElement(React__default["default"].Fragment, null,
-                    React__default["default"].createElement(TabBox, { title: "User Info" },
+                    React__default["default"].createElement(TabBox, { title: "User" },
                         React__default["default"].createElement("div", { className: "input-group mb-2" },
                             React__default["default"].createElement("span", { className: "input-group-text" }, "User First Name"),
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
@@ -3689,7 +3691,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
-                    React__default["default"].createElement(TabBox, { title: "Course Info" },
+                    React__default["default"].createElement(TabBox, { title: "Course" },
                         React__default["default"].createElement("div", { className: "input-group mb-2" },
                             React__default["default"].createElement("span", { className: "input-group-text" }, "Course Name"),
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
@@ -3713,7 +3715,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState,
                                     });
                                 } }))),
-                    React__default["default"].createElement(TabBox, { title: "Device Info" },
+                    React__default["default"].createElement(TabBox, { title: "Device" },
                         React__default["default"].createElement(ButtonInputGroup, { label: "Device Type" },
                             React__default["default"].createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
                                     advancedFilterState.isMobile = undefined;
