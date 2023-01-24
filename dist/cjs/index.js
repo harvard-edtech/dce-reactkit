@@ -3131,7 +3131,7 @@ const LogReviewer = (props) => {
     ].forEach((partialContextMap) => {
         Object.keys(partialContextMap).forEach((context) => {
             // Add context
-            contextMap[context] = context;
+            contextMap[context] = partialContextMap[context];
             // If context has children, add an "uncategorized" subcontext
             if (typeof contextMap[context] !== 'string') {
                 contextMap[context][LogBuiltInMetadata.Context.Uncategorized] = (LogBuiltInMetadata.Context.Uncategorized);
@@ -3145,7 +3145,7 @@ const LogReviewer = (props) => {
         LogBuiltInMetadata.Target,
     ].forEach((partialTargetMap) => {
         Object.keys(partialTargetMap).forEach((target) => {
-            targetMap[target] = target;
+            targetMap[target] = partialTargetMap[target];
         });
     });
     /* -------------- State ------------- */
