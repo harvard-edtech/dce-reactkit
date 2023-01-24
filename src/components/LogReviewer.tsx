@@ -765,7 +765,7 @@ const LogReviewer: React.FC<Props> = (props) => {
 
   // Create initial context filter state
   const initContextFilterState: ContextFilterState = {};
-  Object.keys(LogMetadata.Context ?? {}).forEach((context) => {
+  Object.keys(contextMap).forEach((context) => {
     const contextValue = (LogMetadata.Context ?? {})[context];
     if (typeof contextValue === 'string') {
       // Case: no subcontexts, init as checked
@@ -816,15 +816,11 @@ const LogReviewer: React.FC<Props> = (props) => {
     target: {},
     action: {},
   };
-  Object.values(LogMetadata.Target ?? {}).forEach((target) => {
+  Object.values(targetMap).forEach((target) => {
     initActionErrorFilterState.target[target] = true;
   });
   Object.values(LogAction).forEach((action) => {
     initActionErrorFilterState.action[action] = true;
-  });
-  // Add built-in targets
-  Object.values(LogBuiltInMetadata.Target).forEach((target) => {
-    initActionErrorFilterState.target[target] = true;
   });
 
   // Initial state
@@ -1203,7 +1199,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         const pickableItems: PickableItem[] = [];
         Object.keys(contextMap)
           .forEach((context) => {
-            const value = (contextMap)[context];
+            const value = contextMap[context];
             if (typeof value === 'string') {
               // No subcategories
               const item: PickableItem = {
@@ -1264,7 +1260,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                 if (pickableItem.isGroup) {
                   // Has subcontexts
 
-                  
                   if (pickableItem.id === 'built-in-contexts') {
                     // Built-in
 
@@ -1411,7 +1406,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                                 checked={actionErrorFilterState.action[action]}
                                 onChanged={(checked) => {
                                   actionErrorFilterState.action[action] = checked;
-                                  console.log(actionErrorFilterState, action, checked);
                                   dispatch({
                                     type: ActionType.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
@@ -1441,7 +1435,6 @@ const LogReviewer: React.FC<Props> = (props) => {
                                 noMarginOnRight
                                 onChanged={(checked) => {
                                   actionErrorFilterState.target[target] = checked;
-                                  console.log(actionErrorFilterState, target, checked);
                                   dispatch({
                                     type: ActionType.UpdateActionErrorFilterState,
                                     actionErrorFilterState,

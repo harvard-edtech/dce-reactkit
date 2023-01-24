@@ -3111,7 +3111,7 @@ const LogReviewer = (props) => {
     /*------------------------------------------------------------------------*/
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d;
     /* -------------- Props ------------- */
     // Destructure props
     const { LogMetadata, onClose, } = props;
@@ -3159,7 +3159,7 @@ const LogReviewer = (props) => {
     };
     // Create initial context filter state
     const initContextFilterState = {};
-    Object.keys((_c = LogMetadata.Context) !== null && _c !== void 0 ? _c : {}).forEach((context) => {
+    Object.keys(contextMap).forEach((context) => {
         var _a, _b;
         const contextValue = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
         if (typeof contextValue === 'string') {
@@ -3181,7 +3181,7 @@ const LogReviewer = (props) => {
     });
     // Create initial tag filter state
     const initTagFilterState = {};
-    Object.keys((_d = LogMetadata.Tag) !== null && _d !== void 0 ? _d : {}).forEach((tag) => {
+    Object.keys((_c = LogMetadata.Tag) !== null && _c !== void 0 ? _c : {}).forEach((tag) => {
         initTagFilterState[tag] = false;
     });
     // Create advanced filter state
@@ -3208,15 +3208,11 @@ const LogReviewer = (props) => {
         target: {},
         action: {},
     };
-    Object.values((_e = LogMetadata.Target) !== null && _e !== void 0 ? _e : {}).forEach((target) => {
+    Object.values(targetMap).forEach((target) => {
         initActionErrorFilterState.target[target] = true;
     });
     Object.values(LogAction$1).forEach((action) => {
         initActionErrorFilterState.action[action] = true;
-    });
-    // Add built-in targets
-    Object.values(LogBuiltInMetadata.Target).forEach((target) => {
-        initActionErrorFilterState.target[target] = true;
     });
     // Initial state
     const initialState = {
@@ -3442,7 +3438,7 @@ const LogReviewer = (props) => {
                 const pickableItems = [];
                 Object.keys(contextMap)
                     .forEach((context) => {
-                    const value = (contextMap)[context];
+                    const value = contextMap[context];
                     if (typeof value === 'string') {
                         // No subcategories
                         const item = {
@@ -3526,7 +3522,7 @@ const LogReviewer = (props) => {
                 // Create filter UI
                 filterDrawer = (React.createElement(TabBox, { title: "Tags" },
                     React.createElement("div", null, "If any tags are selected, logs must contain at least one (but not necessarily all) of the selected tags."),
-                    React.createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys((_f = LogMetadata.Tag) !== null && _f !== void 0 ? _f : {})
+                    React.createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys((_d = LogMetadata.Tag) !== null && _d !== void 0 ? _d : {})
                         .map((tag) => {
                         const description = genHumanReadableName(tag);
                         return (React.createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
@@ -3572,7 +3568,6 @@ const LogReviewer = (props) => {
                                 const description = genHumanReadableName(action);
                                 return (React.createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                         actionErrorFilterState.action[action] = checked;
-                                        console.log(actionErrorFilterState, action, checked);
                                         dispatch({
                                             type: ActionType.UpdateActionErrorFilterState,
                                             actionErrorFilterState,
@@ -3585,7 +3580,6 @@ const LogReviewer = (props) => {
                                 const description = genHumanReadableName(target);
                                 return (React.createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
                                         actionErrorFilterState.target[target] = checked;
-                                        console.log(actionErrorFilterState, target, checked);
                                         dispatch({
                                             type: ActionType.UpdateActionErrorFilterState,
                                             actionErrorFilterState,
