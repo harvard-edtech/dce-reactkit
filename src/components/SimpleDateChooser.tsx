@@ -141,7 +141,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     monthOptions.push(
       <option
         key={choice.month}
-        value={choice.month}
+        value={`${choice.month}-${choice.year}`}
         aria-label={`choose ${choice.choiceName}`}
         onSelect={() => {
           onChange(choice.month, choice.days[0], choice.year);
@@ -181,7 +181,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
         className="custom-select d-inline-block mr-1"
         style={{ width: 'auto' }}
         id={`SimpleDateChooser-${name}-month`}
-        value={month}
+        value={`${month}-${year}`}
         onChange={(e) => {
           const choice = choices[e.target.selectedIndex];
 

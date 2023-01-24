@@ -1377,7 +1377,7 @@ const SimpleDateChooser = (props) => {
     const dayOptions = [];
     choices.forEach((choice) => {
         // Create month option
-        monthOptions.push(React.createElement("option", { key: choice.month, value: choice.month, "aria-label": `choose ${choice.choiceName}`, onSelect: () => {
+        monthOptions.push(React.createElement("option", { key: choice.month, value: `${choice.month}-${choice.year}`, "aria-label": `choose ${choice.choiceName}`, onSelect: () => {
                 onChange(choice.month, choice.days[0], choice.year);
             } }, choice.choiceName));
         if (month === choice.month) {
@@ -1392,7 +1392,7 @@ const SimpleDateChooser = (props) => {
         }
     });
     return (React.createElement("div", { className: "SimpleDateChooser d-inline-block", "aria-label": `date chooser with selected date: ${month} ${day}, ${year}` },
-        React.createElement("select", { "aria-label": `month for ${ariaLabel}`, className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: month, onChange: (e) => {
+        React.createElement("select", { "aria-label": `month for ${ariaLabel}`, className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: `${month}-${year}`, onChange: (e) => {
                 const choice = choices[e.target.selectedIndex];
                 // Change day, month, and year
                 onChange(choice.month, choice.days[0], choice.year);
