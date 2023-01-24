@@ -1300,18 +1300,6 @@ const getTimeInfoInET = (dateOrTimestamp) => {
 };
 
 /**
- * Force a number to stay within specific bounds
- * @author Gabe Abrams
- * @param num the number to move into the bounds
- * @param min the minimum number in the bound
- * @param max the maximum number in the bound
- * @returns bounded number
- */
-const forceNumIntoBounds = (num, min, max) => {
-    return Math.max(min, Math.min(max, num));
-};
-
-/**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
  */
@@ -1325,7 +1313,7 @@ const SimpleDateChooser = (props) => {
     var _a;
     /* -------------- Props ------------- */
     const { ariaLabel, name, month, day, year, onChange, chooseFromPast, } = props;
-    let numMonthsToShow = forceNumIntoBounds(((_a = props.numMonthsToShow) !== null && _a !== void 0 ? _a : 6), 1, 12);
+    const numMonthsToShow = ((_a = props.numMonthsToShow) !== null && _a !== void 0 ? _a : 6);
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -4161,6 +4149,18 @@ const ceilToNumDecimals = (num, numDecimals) => {
 const floorToNumDecimals = (num, numDecimals) => {
     const rounder = 10 ** numDecimals;
     return (Math.floor(num * rounder) / rounder);
+};
+
+/**
+ * Force a number to stay within specific bounds
+ * @author Gabe Abrams
+ * @param num the number to move into the bounds
+ * @param min the minimum number in the bound
+ * @param max the maximum number in the bound
+ * @returns bounded number
+ */
+const forceNumIntoBounds = (num, min, max) => {
+    return Math.max(min, Math.min(max, num));
 };
 
 /**

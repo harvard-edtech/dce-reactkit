@@ -62,11 +62,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     onChange,
     chooseFromPast,
   } = props;
-  let numMonthsToShow = forceNumIntoBounds(
-    (props.numMonthsToShow ?? 6),
-    1,
-    12,
-  );
+  const numMonthsToShow = (props.numMonthsToShow ?? 6);
 
   /*------------------------------------------------------------------------*/
   /*                                 Render                                 */
