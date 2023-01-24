@@ -36,6 +36,8 @@ import LogAction from '../types/LogAction';
 import ParamType from '../types/ParamType';
 import IntelliTableColumn from '../types/IntelliTableColumn';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
+import LogMetadataContextMap from '../types/LogMetadataContextMap';
+import LogMetadataTargetMap from '../types/LogMetadataTargetMap';
 
 // Import shared components
 import SimpleDateChooser from './SimpleDateChooser';
@@ -712,33 +714,34 @@ const LogReviewer: React.FC<Props> = (props) => {
     onClose,
   } = props;
 
-  // Add built-in LogMetadata
-  // > Add "uncategorized" subcontext to each context
-  Object.keys(LogMetadata.Context ?? {}).forEach((context) => {
-    if (
-      // Context exists
-      LogMetadata.Context
-      // Context has children already
-      && typeof LogMetadata.Context[context] !== 'string'
-    ) {
-      (LogMetadata.Context as any)[context][LogBuiltInMetadata.Context.Uncategorized] = (
-        LogBuiltInMetadata.Context.Uncategorized
-      );
-    }
-  })
-  // > Add built-in contexts
-  LogMetadata.Context = (LogMetadata.Context ?? {});
-  Object.keys(LogBuiltInMetadata.Context).forEach((context) => {
-    if (LogMetadata.Context) {
-      LogMetadata.Context[context] = context;
-    }
+  // Create complete map of contexts
+  const contextMap: LogMetadataContextMap = {};
+  [
+    (LogMetadata.Context ?? {}),
+    LogBuiltInMetadata.Context,
+  ].forEach((contextMap) => {
+    Object.keys(contextMap).forEach((context) => {
+      // Add context
+      contextMap[context] = context;
+
+      // If context has children, add an "uncategorized" subcontext
+      if (typeof contextMap[context] !== 'string') {
+        (contextMap[context] as any)[LogBuiltInMetadata.Context.Uncategorized] = (
+          LogBuiltInMetadata.Context.Uncategorized
+        );
+      }
+    });
   });
-  // > Add built-in targets
-  LogMetadata.Target = (LogMetadata.Target ?? {});
-  Object.keys(LogBuiltInMetadata.Target).forEach((target) => {
-    if (LogMetadata.Target) {
-      LogMetadata.Target[target] = target;
-    }
+
+  // Create complete map of targets
+  const targetMap: LogMetadataTargetMap = {};
+  [
+    (LogMetadata.Target ?? {}),
+    LogBuiltInMetadata.Target,
+  ].forEach((targetMap) => {
+    Object.keys(targetMap).forEach((target) => {
+      targetMap[target] = target;
+    });
   });
 
   /* -------------- State ------------- */
@@ -1125,7 +1128,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               });
             }}
           >
-            Reset All
+            Reset
           </button>
         </div>
       </div>
@@ -1187,45 +1190,63 @@ const LogReviewer: React.FC<Props> = (props) => {
         );
       } else if (expandedFilterDrawer === FilterDrawer.Context) {
         // Create item picker items
-        const pickableItems: PickableItem[] = (
-          Object.keys(LogMetadata.Context ?? {})
-            .map((context) => {
-              const value = (LogMetadata.Context ?? {})[context];
-              if (typeof value === 'string') {
-                // No subcategories
-                const item: PickableItem = {
-                  id: context,
-                  name: genHumanReadableName(context),
-                  isGroup: false,
-                  checked: !!contextFilterState[context],
-                };
-                return item;
-              }
-
-              // Has subcategories
-              const children: PickableItem[] = (
-                Object.keys(value)
-                  .filter((subcontext) => {
-                    return subcontext !== '_';
-                  })
-                  .map((subcontext) => {
-                    return {
-                      id: subcontext,
-                      name: genHumanReadableName(subcontext),
-                      isGroup: false,
-                      checked: (contextFilterState[context] as any)[subcontext],
-                    };
-                  })
-              );
+        const builtInPickableItem: PickableItem = {
+          id: '_',
+          name: 'Auto-logged',
+          isGroup: true,
+          children: [],
+        };
+        const pickableItems: PickableItem[] = [];
+        Object.keys(contextMap)
+          .forEach((context) => {
+            const value = (contextMap)[context];
+            if (typeof value === 'string') {
+              // No subcategories
               const item: PickableItem = {
                 id: context,
                 name: genHumanReadableName(context),
-                isGroup: true,
-                children,
+                isGroup: false,
+                checked: !!contextFilterState[context],
               };
-              return item;
-            })
-        );
+
+              // Add built-in items to its own folder
+              const isBuiltIn = context in LogBuiltInMetadata.Context;
+              if (isBuiltIn) {
+                // Add to built-in pickable item
+                builtInPickableItem.children.push(item);
+              } else {
+                // Add to pickable items list
+                pickableItems.push(item);
+              }
+            }
+
+            // Has subcategories
+            const children: PickableItem[] = (
+              Object.keys(value)
+                // Remove parent name
+                .filter((subcontext) => {
+                  return subcontext !== '_';
+                })
+                // Create child pickable items
+                .map((subcontext) => {
+                  return {
+                    id: subcontext,
+                    name: genHumanReadableName(subcontext),
+                    isGroup: false,
+                    checked: (contextFilterState[context] as any)[subcontext],
+                  };
+                })
+            );
+            const item: PickableItem = {
+              id: context,
+              name: genHumanReadableName(context),
+              isGroup: true,
+              children,
+            };
+            pickableItems.push(item);
+          });
+        // Add built-in contexts to end ofl ist
+        pickableItems.push(builtInPickableItem);
 
         // Create filter UI
         filterDrawer = (
@@ -1237,15 +1258,30 @@ const LogReviewer: React.FC<Props> = (props) => {
               updatedItems.forEach((pickableItem) => {
                 if (pickableItem.isGroup) {
                   // Has subcontexts
-                  pickableItem.children.forEach((subcontextItem) => {
-                    if (!subcontextItem.isGroup) {
-                      (
-                        contextFilterState[pickableItem.id] as { [k: string]: boolean }
-                      )[subcontextItem.id] = (
-                        subcontextItem.checked
+
+                  
+                  if (pickableItem.id === '_') {
+                    // Built-in
+
+                    // Treat as if these were top-level contexts
+                    pickableItem.children.forEach((subcontextItem) => {
+                      contextFilterState[subcontextItem.id] = (
+                        'checked' in subcontextItem
+                        && subcontextItem.checked
                       );
-                    }
-                  });
+                    });
+                  } else {
+                    // Not built-in
+                    pickableItem.children.forEach((subcontextItem) => {
+                      if (!subcontextItem.isGroup) {
+                        (
+                          contextFilterState[pickableItem.id] as { [k: string]: boolean }
+                        )[subcontextItem.id] = (
+                          subcontextItem.checked
+                        );
+                      }
+                    });
+                  }
                 } else {
                   // No subcontexts
                   (contextFilterState as any)[pickableItem.id] = (
@@ -1264,6 +1300,11 @@ const LogReviewer: React.FC<Props> = (props) => {
         // Create filter UI
         filterDrawer = (
           <TabBox title="Tags">
+            <div>
+              If any are selected, logs must contain at least one
+              but not necessarily all of the
+              selected tags.
+            </div>
             {
               Object.keys(LogMetadata.Tag ?? {})
                 .map((tag, i) => {
@@ -1374,15 +1415,9 @@ const LogReviewer: React.FC<Props> = (props) => {
                   </ButtonInputGroup>
                   {/* Target */}
                   <ButtonInputGroup label="Target">
-                    {/* Nothing here */}
-                    {(Object.keys(LogMetadata.Target ?? {}).length === 0) && (
-                      <div>
-                        This app does not have any targets yet.
-                      </div>
-                    )}
                     {/* List of targets */}
                     {
-                      Object.keys(LogMetadata.Target ?? {})
+                      Object.keys(targetMap)
                         .map((target, i) => {
                           const description = genHumanReadableName(target);
                           return (
@@ -1400,7 +1435,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                                   actionErrorFilterState,
                                 });
                               }}
-                              noMarginOnRight={i === Object.keys(LogMetadata.Target ?? {}).length - 1}
+                              noMarginOnRight={i === Object.keys(targetMap).length - 1}
                             />
                           );
                         })

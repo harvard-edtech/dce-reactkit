@@ -3123,34 +3123,34 @@ const LogReviewer = (props) => {
     /*------------------------------------------------------------------------*/
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a, _b, _c, _d, _e, _f;
     /* -------------- Props ------------- */
     // Destructure props
     const { LogMetadata, onClose, } = props;
-    // Add built-in LogMetadata
-    // > Add "uncategorized" subcontext to each context
-    Object.keys((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {}).forEach((context) => {
-        if (
-        // Context exists
-        LogMetadata.Context
-            // Context has children already
-            && typeof LogMetadata.Context[context] !== 'string') {
-            LogMetadata.Context[context][LogBuiltInMetadata.Context.Uncategorized] = (LogBuiltInMetadata.Context.Uncategorized);
-        }
+    // Create complete map of contexts
+    const contextMap = {};
+    [
+        ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {}),
+        LogBuiltInMetadata.Context,
+    ].forEach((contextMap) => {
+        Object.keys(contextMap).forEach((context) => {
+            // Add context
+            contextMap[context] = context;
+            // If context has children, add an "uncategorized" subcontext
+            if (typeof contextMap[context] !== 'string') {
+                contextMap[context][LogBuiltInMetadata.Context.Uncategorized] = (LogBuiltInMetadata.Context.Uncategorized);
+            }
+        });
     });
-    // > Add built-in contexts
-    LogMetadata.Context = ((_b = LogMetadata.Context) !== null && _b !== void 0 ? _b : {});
-    Object.keys(LogBuiltInMetadata.Context).forEach((context) => {
-        if (LogMetadata.Context) {
-            LogMetadata.Context[context] = context;
-        }
-    });
-    // > Add built-in targets
-    LogMetadata.Target = ((_c = LogMetadata.Target) !== null && _c !== void 0 ? _c : {});
-    Object.keys(LogBuiltInMetadata.Target).forEach((target) => {
-        if (LogMetadata.Target) {
-            LogMetadata.Target[target] = target;
-        }
+    // Create complete map of targets
+    const targetMap = {};
+    [
+        ((_b = LogMetadata.Target) !== null && _b !== void 0 ? _b : {}),
+        LogBuiltInMetadata.Target,
+    ].forEach((targetMap) => {
+        Object.keys(targetMap).forEach((target) => {
+            targetMap[target] = target;
+        });
     });
     /* -------------- State ------------- */
     // Create initial date filter state
@@ -3171,7 +3171,7 @@ const LogReviewer = (props) => {
     };
     // Create initial context filter state
     const initContextFilterState = {};
-    Object.keys((_d = LogMetadata.Context) !== null && _d !== void 0 ? _d : {}).forEach((context) => {
+    Object.keys((_c = LogMetadata.Context) !== null && _c !== void 0 ? _c : {}).forEach((context) => {
         var _a, _b;
         const contextValue = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
         if (typeof contextValue === 'string') {
@@ -3193,7 +3193,7 @@ const LogReviewer = (props) => {
     });
     // Create initial tag filter state
     const initTagFilterState = {};
-    Object.keys((_e = LogMetadata.Tag) !== null && _e !== void 0 ? _e : {}).forEach((tag) => {
+    Object.keys((_d = LogMetadata.Tag) !== null && _d !== void 0 ? _d : {}).forEach((tag) => {
         initTagFilterState[tag] = false;
     });
     // Create advanced filter state
@@ -3220,7 +3220,7 @@ const LogReviewer = (props) => {
         target: {},
         action: {},
     };
-    Object.values((_f = LogMetadata.Target) !== null && _f !== void 0 ? _f : {}).forEach((target) => {
+    Object.values((_e = LogMetadata.Target) !== null && _e !== void 0 ? _e : {}).forEach((target) => {
         initActionErrorFilterState.target[target] = true;
     });
     Object.values(LogAction$1).forEach((action) => {
@@ -3414,7 +3414,7 @@ const LogReviewer = (props) => {
                             initDateFilterState,
                             initTagFilterState,
                         });
-                    } }, "Reset All"))));
+                    } }, "Reset"))));
         // Filter drawer
         let filterDrawer;
         if (expandedFilterDrawer) {
@@ -3442,10 +3442,16 @@ const LogReviewer = (props) => {
             }
             else if (expandedFilterDrawer === FilterDrawer.Context) {
                 // Create item picker items
-                const pickableItems = (Object.keys((_g = LogMetadata.Context) !== null && _g !== void 0 ? _g : {})
-                    .map((context) => {
-                    var _a;
-                    const value = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
+                const builtInPickableItem = {
+                    id: '_',
+                    name: 'Auto-logged',
+                    isGroup: true,
+                    children: [],
+                };
+                const pickableItems = [];
+                Object.keys(contextMap)
+                    .forEach((context) => {
+                    const value = (contextMap)[context];
                     if (typeof value === 'string') {
                         // No subcategories
                         const item = {
@@ -3454,13 +3460,24 @@ const LogReviewer = (props) => {
                             isGroup: false,
                             checked: !!contextFilterState[context],
                         };
-                        return item;
+                        // Add built-in items to its own folder
+                        const isBuiltIn = context in LogBuiltInMetadata.Context;
+                        if (isBuiltIn) {
+                            // Add to built-in pickable item
+                            builtInPickableItem.children.push(item);
+                        }
+                        else {
+                            // Add to pickable items list
+                            pickableItems.push(item);
+                        }
                     }
                     // Has subcategories
                     const children = (Object.keys(value)
+                        // Remove parent name
                         .filter((subcontext) => {
                         return subcontext !== '_';
                     })
+                        // Create child pickable items
                         .map((subcontext) => {
                         return {
                             id: subcontext,
@@ -3475,19 +3492,32 @@ const LogReviewer = (props) => {
                         isGroup: true,
                         children,
                     };
-                    return item;
-                }));
+                    pickableItems.push(item);
+                });
+                // Add built-in contexts to end ofl ist
+                pickableItems.push(builtInPickableItem);
                 // Create filter UI
                 filterDrawer = (React.createElement(ItemPicker, { title: "Context", items: pickableItems, onChanged: (updatedItems) => {
                         // Update our state
                         updatedItems.forEach((pickableItem) => {
                             if (pickableItem.isGroup) {
                                 // Has subcontexts
-                                pickableItem.children.forEach((subcontextItem) => {
-                                    if (!subcontextItem.isGroup) {
-                                        contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
-                                    }
-                                });
+                                if (pickableItem.id === '_') {
+                                    // Built-in
+                                    // Treat as if these were top-level contexts
+                                    pickableItem.children.forEach((subcontextItem) => {
+                                        contextFilterState[subcontextItem.id] = ('checked' in subcontextItem
+                                            && subcontextItem.checked);
+                                    });
+                                }
+                                else {
+                                    // Not built-in
+                                    pickableItem.children.forEach((subcontextItem) => {
+                                        if (!subcontextItem.isGroup) {
+                                            contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
+                                        }
+                                    });
+                                }
                             }
                             else {
                                 // No subcontexts
@@ -3502,17 +3532,19 @@ const LogReviewer = (props) => {
             }
             else if (expandedFilterDrawer === FilterDrawer.Tag) {
                 // Create filter UI
-                filterDrawer = (React.createElement(TabBox, { title: "Tags" }, Object.keys((_h = LogMetadata.Tag) !== null && _h !== void 0 ? _h : {})
-                    .map((tag, i) => {
-                    const description = genHumanReadableName(tag);
-                    return (React.createElement(CheckboxButton, { id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, noMarginOnRight: i === Object.keys(tagFilterState).length - 1, checked: tagFilterState[tag], onChanged: (checked) => {
-                            tagFilterState[tag] = checked;
-                            dispatch({
-                                type: ActionType.UpdateTagFilterState,
-                                tagFilterState,
-                            });
-                        } }));
-                })));
+                filterDrawer = (React.createElement(TabBox, { title: "Tags" },
+                    React.createElement("div", null, "If any are selected, logs must contain at least one but not necessarily all of the selected tags."),
+                    Object.keys((_f = LogMetadata.Tag) !== null && _f !== void 0 ? _f : {})
+                        .map((tag, i) => {
+                        const description = genHumanReadableName(tag);
+                        return (React.createElement(CheckboxButton, { id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, noMarginOnRight: i === Object.keys(tagFilterState).length - 1, checked: tagFilterState[tag], onChanged: (checked) => {
+                                tagFilterState[tag] = checked;
+                                dispatch({
+                                    type: ActionType.UpdateTagFilterState,
+                                    tagFilterState,
+                                });
+                            } }));
+                    })));
             }
             else if (expandedFilterDrawer === FilterDrawer.Action) {
                 // Create filter UI
@@ -3553,21 +3585,18 @@ const LogReviewer = (props) => {
                                     });
                                 } }));
                         })),
-                        React.createElement(ButtonInputGroup, { label: "Target" },
-                            (Object.keys((_j = LogMetadata.Target) !== null && _j !== void 0 ? _j : {}).length === 0) && (React.createElement("div", null, "This app does not have any targets yet.")),
-                            Object.keys((_k = LogMetadata.Target) !== null && _k !== void 0 ? _k : {})
-                                .map((target, i) => {
-                                var _a;
-                                const description = genHumanReadableName(target);
-                                return (React.createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], onChanged: (checked) => {
-                                        actionErrorFilterState.target[target] = checked;
-                                        console.log(actionErrorFilterState, target, checked);
-                                        dispatch({
-                                            type: ActionType.UpdateActionErrorFilterState,
-                                            actionErrorFilterState,
-                                        });
-                                    }, noMarginOnRight: i === Object.keys((_a = LogMetadata.Target) !== null && _a !== void 0 ? _a : {}).length - 1 }));
-                            })))),
+                        React.createElement(ButtonInputGroup, { label: "Target" }, Object.keys(targetMap)
+                            .map((target, i) => {
+                            const description = genHumanReadableName(target);
+                            return (React.createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], onChanged: (checked) => {
+                                    actionErrorFilterState.target[target] = checked;
+                                    console.log(actionErrorFilterState, target, checked);
+                                    dispatch({
+                                        type: ActionType.UpdateActionErrorFilterState,
+                                        actionErrorFilterState,
+                                    });
+                                }, noMarginOnRight: i === Object.keys(targetMap).length - 1 }));
+                        })))),
                     (actionErrorFilterState.type === undefined
                         || actionErrorFilterState.type === LogType$1.Error) && (React.createElement(TabBox, { title: "Error Log Details" },
                         React.createElement("div", { className: "input-group mb-2" },

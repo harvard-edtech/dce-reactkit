@@ -370,22 +370,40 @@ declare type Props$3 = {
 declare const ItemPicker: React.FC<Props$3>;
 
 /**
+ * Type of the context map in a LogMetadata file
+ * @author Gabe Abrams
+ */
+declare type LogMetadataContextMap = {
+    [k: string]: (string | {
+        _: string;
+        [k: string]: string;
+    });
+};
+
+/**
+ * Type of the tag map inside a LogMetadata file
+ * @author Gabe Abrams
+ */
+declare type LogMetadataTagMap = {
+    [k: string]: string;
+};
+
+/**
+ * Type of the target map inside a LogMetadata file
+ * @author Gabe Abrams
+ */
+declare type LogMetadataTargetMap = {
+    [k: string]: string;
+};
+
+/**
  * Type of a LogMetadata file
  * @author Gabe Abrams
  */
 declare type LogMetadataType = {
-    Context?: {
-        [k: string]: (string | {
-            _: string;
-            [k: string]: string;
-        });
-    };
-    Tag?: {
-        [k: string]: string;
-    };
-    Target?: {
-        [k: string]: string;
-    };
+    Context?: LogMetadataContextMap;
+    Tag?: LogMetadataTagMap;
+    Target?: LogMetadataTargetMap;
 };
 
 /**
