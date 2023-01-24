@@ -766,7 +766,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Create initial context filter state
   const initContextFilterState: ContextFilterState = {};
   Object.keys(contextMap).forEach((context) => {
-    const contextValue = (LogMetadata.Context ?? {})[context];
+    const contextValue = contextMap[context];
     if (typeof contextValue === 'string') {
       // Case: no subcontexts, init as checked
       initContextFilterState[contextValue] = true;
@@ -790,6 +790,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   Object.keys(LogMetadata.Tag ?? {}).forEach((tag) => {
     initTagFilterState[tag] = false;
   });
+  console.log(contextMap, initContextFilterState, initTagFilterState);
 
   // Create advanced filter state
   const initAdvancedFilterState: AdvancedFilterState = {

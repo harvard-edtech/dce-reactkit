@@ -3168,8 +3168,7 @@ const LogReviewer = (props) => {
     // Create initial context filter state
     const initContextFilterState = {};
     Object.keys(contextMap).forEach((context) => {
-        var _a;
-        const contextValue = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
+        const contextValue = contextMap[context];
         if (typeof contextValue === 'string') {
             // Case: no subcontexts, init as checked
             initContextFilterState[contextValue] = true;
@@ -3192,6 +3191,7 @@ const LogReviewer = (props) => {
     Object.keys((_c = LogMetadata.Tag) !== null && _c !== void 0 ? _c : {}).forEach((tag) => {
         initTagFilterState[tag] = false;
     });
+    console.log(contextMap, initContextFilterState, initTagFilterState);
     // Create advanced filter state
     const initAdvancedFilterState = {
         userFirstName: '',
