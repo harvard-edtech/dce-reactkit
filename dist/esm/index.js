@@ -3414,7 +3414,10 @@ const LogReviewer = (props) => {
                             initDateFilterState,
                             initTagFilterState,
                         });
-                    } }, "Reset"))));
+                    } },
+                    React.createElement(FontAwesomeIcon, { icon: faTimes }),
+                    ' ',
+                    "Reset"))));
         // Filter drawer
         let filterDrawer;
         if (expandedFilterDrawer) {
@@ -3574,7 +3577,7 @@ const LogReviewer = (props) => {
                     (actionErrorFilterState.type === undefined
                         || actionErrorFilterState.type === LogType$1.Action) && (React.createElement(TabBox, { title: "Action Log Details" },
                         React.createElement(ButtonInputGroup, { label: "Action", className: "mb-2" },
-                            React.createElement("div", { className: "grid gap-1" }, Object.keys(LogAction$1)
+                            React.createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys(LogAction$1)
                                 .map((action) => {
                                 const description = genHumanReadableName(action);
                                 return (React.createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
@@ -3587,7 +3590,7 @@ const LogReviewer = (props) => {
                                     } }));
                             }))),
                         React.createElement(ButtonInputGroup, { label: "Target" },
-                            React.createElement("div", { className: "grid gap-1" }, Object.keys(targetMap)
+                            React.createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys(targetMap)
                                 .map((target) => {
                                 const description = genHumanReadableName(target);
                                 return (React.createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], onChanged: (checked) => {

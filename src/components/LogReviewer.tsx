@@ -1128,6 +1128,10 @@ const LogReviewer: React.FC<Props> = (props) => {
               });
             }}
           >
+            <FontAwesomeIcon
+              icon={faTimes}
+            />
+            {' '}
             Reset
           </button>
         </div>
@@ -1388,7 +1392,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                     label="Action"
                     className="mb-2"
                   >
-                    <div className="grid gap-1">
+                    <div className="d-flex gap-1 flex-wrap">
                       {
                         Object.keys(LogAction)
                           .map((action) => {
@@ -1418,7 +1422,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   {/* Target */}
                   <ButtonInputGroup label="Target">
                     {/* List of targets */}
-                    <div className="grid gap-1">
+                    <div className="d-flex gap-1 flex-wrap">
                       {
                         Object.keys(targetMap)
                           .map((target) => {
