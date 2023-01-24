@@ -719,8 +719,8 @@ const LogReviewer: React.FC<Props> = (props) => {
   [
     (LogMetadata.Context ?? {}),
     LogBuiltInMetadata.Context,
-  ].forEach((contextMap) => {
-    Object.keys(contextMap).forEach((context) => {
+  ].forEach((partialContextMap) => {
+    Object.keys(partialContextMap).forEach((context) => {
       // Add context
       contextMap[context] = context;
 
@@ -738,8 +738,8 @@ const LogReviewer: React.FC<Props> = (props) => {
   [
     (LogMetadata.Target ?? {}),
     LogBuiltInMetadata.Target,
-  ].forEach((targetMap) => {
-    Object.keys(targetMap).forEach((target) => {
+  ].forEach((partialTargetMap) => {
+    Object.keys(partialTargetMap).forEach((target) => {
       targetMap[target] = target;
     });
   });
@@ -1388,58 +1388,61 @@ const LogReviewer: React.FC<Props> = (props) => {
                     label="Action"
                     className="mb-2"
                   >
-                    {
-                      Object.keys(LogAction)
-                        .map((action, i) => {
-                          const description = genHumanReadableName(action);
-                          return (
-                            <CheckboxButton
-                              key={action}
-                              id={`LogReviewer-action-${action}-checkbox`}
-                              text={description}
-                              ariaLabel={`include logs with action type "${description}" in results`}
-                              noMarginOnRight={i === Object.keys(LogAction).length - 1}
-                              checked={actionErrorFilterState.action[action]}
-                              onChanged={(checked) => {
-                                actionErrorFilterState.action[action] = checked;
-                                console.log(actionErrorFilterState, action, checked);
-                                dispatch({
-                                  type: ActionType.UpdateActionErrorFilterState,
-                                  actionErrorFilterState,
-                                });
-                              }}
-                            />
-                          );
-                        })
-                    }
+                    <div className="grid gap-1">
+                      {
+                        Object.keys(LogAction)
+                          .map((action) => {
+                            const description = genHumanReadableName(action);
+                            return (
+                              <CheckboxButton
+                                key={action}
+                                id={`LogReviewer-action-${action}-checkbox`}
+                                text={description}
+                                ariaLabel={`include logs with action type "${description}" in results`}
+                                noMarginOnRight
+                                checked={actionErrorFilterState.action[action]}
+                                onChanged={(checked) => {
+                                  actionErrorFilterState.action[action] = checked;
+                                  console.log(actionErrorFilterState, action, checked);
+                                  dispatch({
+                                    type: ActionType.UpdateActionErrorFilterState,
+                                    actionErrorFilterState,
+                                  });
+                                }}
+                              />
+                            );
+                          })
+                      }
+                    </div>
                   </ButtonInputGroup>
                   {/* Target */}
                   <ButtonInputGroup label="Target">
                     {/* List of targets */}
-                    {
-                      Object.keys(targetMap)
-                        .map((target, i) => {
-                          const description = genHumanReadableName(target);
-                          return (
-                            <CheckboxButton
-                              key={target}
-                              id={`LogReviewer-target-${target}-checkbox`}
-                              text={description}
-                              ariaLabel={`include logs with target "${description}" in results`}
-                              checked={actionErrorFilterState.target[target]}
-                              onChanged={(checked) => {
-                                actionErrorFilterState.target[target] = checked;
-                                console.log(actionErrorFilterState, target, checked);
-                                dispatch({
-                                  type: ActionType.UpdateActionErrorFilterState,
-                                  actionErrorFilterState,
-                                });
-                              }}
-                              noMarginOnRight={i === Object.keys(targetMap).length - 1}
-                            />
-                          );
-                        })
-                    }
+                    <div className="grid gap-1">
+                      {
+                        Object.keys(targetMap)
+                          .map((target) => {
+                            const description = genHumanReadableName(target);
+                            return (
+                              <CheckboxButton
+                                key={target}
+                                id={`LogReviewer-target-${target}-checkbox`}
+                                text={description}
+                                ariaLabel={`include logs with target "${description}" in results`}
+                                checked={actionErrorFilterState.target[target]}
+                                onChanged={(checked) => {
+                                  actionErrorFilterState.target[target] = checked;
+                                  console.log(actionErrorFilterState, target, checked);
+                                  dispatch({
+                                    type: ActionType.UpdateActionErrorFilterState,
+                                    actionErrorFilterState,
+                                  });
+                                }}
+                              />
+                            );
+                          })
+                      }
+                    </div>
                   </ButtonInputGroup>
                 </TabBox>
               )
@@ -1461,6 +1464,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                       className="form-control"
                       aria-label="query for error message"
                       value={actionErrorFilterState.errorMessage}
+                      placeholder="e.g. undefined is not a function"
                       onChange={(e) => {
                         actionErrorFilterState.errorMessage = e.target.value;
                         dispatch({
@@ -1480,6 +1484,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                       className="form-control"
                       aria-label="query for error code"
                       value={actionErrorFilterState.errorCode}
+                      placeholder="e.g. GC22"
                       onChange={(e) => {
                         actionErrorFilterState.errorCode = (
                           (e.target.value)
@@ -1514,6 +1519,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   className="form-control"
                   aria-label="query for user first name"
                   value={advancedFilterState.userFirstName}
+                  placeholder="e.g. Divardo"
                   onChange={(e) => {
                     advancedFilterState.userFirstName = e.target.value;
                     dispatch({
@@ -1533,6 +1539,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   className="form-control"
                   aria-label="query for user last name"
                   value={advancedFilterState.userLastName}
+                  placeholder="e.g. Calicci"
                   onChange={(e) => {
                     advancedFilterState.userLastName = e.target.value;
                     dispatch({
@@ -1552,6 +1559,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   className="form-control"
                   aria-label="query for user email"
                   value={advancedFilterState.userEmail}
+                  placeholder="e.g. calicci@fas.harvard.edu"
                   onChange={(e) => {
                     advancedFilterState.userEmail = (
                       (e.target.value)
@@ -1574,6 +1582,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   className="form-control"
                   aria-label="query for user canvas id"
                   value={advancedFilterState.userId}
+                  placeholder="e.g. 104985"
                   onChange={(e) => {
                     const { value } = e.target;
                     // Only update if value contains only numbers  
@@ -1643,6 +1652,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   className="form-control"
                   aria-label="query for course name"
                   value={advancedFilterState.courseName}
+                  placeholder="e.g. GLC 200"
                   onChange={(e) => {
                     advancedFilterState.courseName = e.target.value;
                     dispatch({
@@ -1662,6 +1672,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   className="form-control"
                   aria-label="query for course canvas id"
                   value={advancedFilterState.courseId}
+                  placeholder="e.g. 15948"
                   onChange={(e) => {
                     const { value } = e.target;
                     // Only update if value contains only numbers  
@@ -1777,8 +1788,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                       type="text"
                       className="form-control"
                       aria-label="query for server route path"
-                      placeholder="e.g. /api/ttm/courses/12345"
                       value={advancedFilterState.routePath}
+                      placeholder="e.g. /api/ttm/courses/12345"
                       onChange={(e) => {
                         advancedFilterState.courseName = (
                           (e.target.value)
