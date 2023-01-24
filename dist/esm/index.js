@@ -3160,7 +3160,7 @@ const LogReviewer = (props) => {
     // Create initial context filter state
     const initContextFilterState = {};
     Object.keys(contextMap).forEach((context) => {
-        var _a, _b;
+        var _a;
         const contextValue = ((_a = LogMetadata.Context) !== null && _a !== void 0 ? _a : {})[context];
         if (typeof contextValue === 'string') {
             // Case: no subcontexts, init as checked
@@ -3169,7 +3169,7 @@ const LogReviewer = (props) => {
         else {
             // Case: subcontexts exist
             initContextFilterState[context] = {};
-            Object.values(((_b = LogMetadata.Context) !== null && _b !== void 0 ? _b : {})[context]).forEach((subcontext) => {
+            Object.values(contextMap[context]).forEach((subcontext) => {
                 // Skip self ("_")
                 if (subcontext === '_') {
                     return;
