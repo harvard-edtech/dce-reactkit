@@ -59,6 +59,7 @@ import initLogCollection from './server/initLogCollection';
 import getMonthName from './helpers/getMonthName';
 import genCSV from './helpers/genCSV';
 import canReviewLogs from './helpers/canReviewLogs';
+import isMobileOrTablet from './helpers/isMobileOrTablet';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -135,6 +136,7 @@ export {
   getMonthName,
   genCSV,
   canReviewLogs,
+  isMobileOrTablet,
   // Client helpers
   visitServerEndpoint,
   logClientEvent,
