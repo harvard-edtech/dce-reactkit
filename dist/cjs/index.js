@@ -3027,8 +3027,45 @@ const genHumanReadableName = (machineReadableName) => {
         }
         humanReadableName += char;
     });
-    // Trim and return
-    return humanReadableName.trim();
+    const words = (humanReadableName
+        .trim()
+        // Split into words
+        .split(' ')
+        // Filter out whitespace
+        .filter((word) => {
+        return (word.length > 0);
+    })
+        // Capitalize first letter
+        .map((word) => {
+        if (word.length <= 1) {
+            return word;
+        }
+        return `${word.substring(0, 1).toUpperCase()}${word.substring(1)}`;
+    }));
+    // Handle acronyms by piling words together
+    const consolidatedWords = [];
+    let acronym = '';
+    words.forEach((word) => {
+        if (word.length === 1) {
+            // Add on to acronym
+            acronym += word;
+        }
+        else {
+            // Wrap up acronym
+            if (acronym.length > 0) {
+                consolidatedWords.push(acronym);
+                acronym = '';
+            }
+            // Full word. Just add it
+            consolidatedWords.push(word);
+        }
+    });
+    // Add trailing acronym
+    if (acronym.length > 0) {
+        consolidatedWords.push(acronym);
+    }
+    // Return
+    return consolidatedWords.join(' ');
 };
 /* ------------- Actions ------------ */
 // Types of actions

@@ -467,7 +467,7 @@ const columns: IntelliTableColumn[] = [
  */
 const genHumanReadableName = (machineReadableName: string) => {
   let humanReadableName = '';
-  
+
   // Add chars and spaces
   const chars = machineReadableName.split('');
   chars.forEach((char) => {
@@ -477,9 +477,49 @@ const genHumanReadableName = (machineReadableName: string) => {
     }
     humanReadableName += char;
   });
+  const words = (
+    humanReadableName
+      .trim()
+      // Split into words
+      .split(' ')
+      // Filter out whitespace
+      .filter((word) => {
+        return (word.length > 0);
+      })
+      // Capitalize first letter
+      .map((word) => {
+        if (word.length <= 1) {
+          return word;
+        }
+        return `${word.substring(0, 1).toUpperCase()}${word.substring(1)}`;
+      })
+  );
 
-  // Trim and return
-  return humanReadableName.trim();
+  // Handle acronyms by piling words together
+  const consolidatedWords: string[] = [];
+  let acronym = '';
+  words.forEach((word) => {
+    if (word.length === 1) {
+      // Add on to acronym
+      acronym += word;
+    } else {
+      // Wrap up acronym
+      if (acronym.length > 0) {
+        consolidatedWords.push(acronym);
+        acronym = '';
+      }
+
+      // Full word. Just add it
+      consolidatedWords.push(word);
+    }
+  });
+  // Add trailing acronym
+  if (acronym.length > 0) {
+    consolidatedWords.push(acronym);
+  }
+
+  // Return
+  return consolidatedWords.join(' ');
 };
 
 /*------------------------------------------------------------------------*/
