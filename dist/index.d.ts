@@ -510,6 +510,19 @@ declare const HOUR_IN_MS = 3600000;
 declare const DAY_IN_MS = 86400000;
 
 /**
+ * Dynamic words determined by the user's platform
+ * @author Gabe Abrams
+ */
+declare const DynamicWord: {
+    Click: string;
+    ClickCapitalized: string;
+    App: string;
+    AppCapitalized: string;
+    Device: string;
+    DeviceCapitalized: string;
+};
+
+/**
  * Shorten text so it fits into a certain number of chars
  * @author Gabe Abrams
  * @param text the text to abbreviate
@@ -1052,4 +1065,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

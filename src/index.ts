@@ -26,6 +26,9 @@ import MINUTE_IN_MS from './constants/MINUTE_IN_MS';
 import HOUR_IN_MS from './constants/HOUR_IN_MS';
 import DAY_IN_MS from './constants/DAY_IN_MS';
 
+// Import dynamic constants
+import DynamicWord from './dynamicConstants/DynamicWord';
+
 // Import helpers
 import abbreviate from './helpers/abbreviate';
 import avg from './helpers/avg';
@@ -107,6 +110,8 @@ export {
   MINUTE_IN_MS,
   HOUR_IN_MS,
   DAY_IN_MS,
+  // Dynamic Constants
+  DynamicWord,
   // Helpers
   abbreviate,
   avg,
