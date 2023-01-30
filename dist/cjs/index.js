@@ -2174,8 +2174,8 @@ var LogAction;
     LogAction["Interrupt"] = "Interrupt";
     // Target was created by the user (it did not exist before)
     LogAction["Create"] = "Create";
-    // Target was edited by the user (it existed and was changed)
-    LogAction["Edit"] = "Edit";
+    // Target was modified by the user (it existed and was changed)
+    LogAction["Modify"] = "Modify";
     // Target was deleted by the user (it existed and now it doesn't)
     LogAction["Delete"] = "Delete";
     // Target was added by the user (it already existed and was added to another place)

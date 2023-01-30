@@ -19,8 +19,8 @@ enum LogAction {
   Interrupt = 'Interrupt',
   // Target was created by the user (it did not exist before)
   Create = 'Create',
-  // Target was edited by the user (it existed and was changed)
-  Edit = 'Edit',
+  // Target was modified by the user (it existed and was changed)
+  Modify = 'Modify',
   // Target was deleted by the user (it existed and now it doesn't)
   Delete = 'Delete',
   // Target was added by the user (it already existed and was added to another place)

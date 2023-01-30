@@ -711,7 +711,7 @@ declare enum LogAction {
     View = "View",
     Interrupt = "Interrupt",
     Create = "Create",
-    Edit = "Edit",
+    Modify = "Modify",
     Delete = "Delete",
     Add = "Add",
     Remove = "Remove",
