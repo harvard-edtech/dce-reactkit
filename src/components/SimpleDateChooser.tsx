@@ -140,7 +140,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     // Create month option
     monthOptions.push(
       <option
-        key={choice.month}
+        key={`${choice.year}-${choice.month}`}
         value={`${choice.month}-${choice.year}`}
         aria-label={`choose ${choice.choiceName}`}
         onSelect={() => {
@@ -158,7 +158,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
         const ordinal = getOrdinal(dayChoice);
         dayOptions.push(
           <option
-            key={dayChoice}
+            key={`${choice.year}-${choice.month}-${dayChoice}`}
             value={dayChoice}
             aria-label={`choose date ${dayChoice}`}
           >

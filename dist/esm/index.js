@@ -1379,7 +1379,7 @@ const SimpleDateChooser = (props) => {
     const dayOptions = [];
     choices.forEach((choice) => {
         // Create month option
-        monthOptions.push(React.createElement("option", { key: choice.month, value: `${choice.month}-${choice.year}`, "aria-label": `choose ${choice.choiceName}`, onSelect: () => {
+        monthOptions.push(React.createElement("option", { key: `${choice.year}-${choice.month}`, value: `${choice.month}-${choice.year}`, "aria-label": `choose ${choice.choiceName}`, onSelect: () => {
                 onChange(choice.month, choice.days[0], choice.year);
             } }, choice.choiceName));
         if (month === choice.month) {
@@ -1387,7 +1387,7 @@ const SimpleDateChooser = (props) => {
             // Create day options
             choice.days.forEach((dayChoice) => {
                 const ordinal = getOrdinal(dayChoice);
-                dayOptions.push(React.createElement("option", { key: dayChoice, value: dayChoice, "aria-label": `choose date ${dayChoice}` },
+                dayOptions.push(React.createElement("option", { key: `${choice.year}-${choice.month}-${dayChoice}`, value: dayChoice, "aria-label": `choose date ${dayChoice}` },
                     dayChoice,
                     ordinal));
             });
