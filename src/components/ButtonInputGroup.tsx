@@ -20,6 +20,8 @@ type Props = {
   children: React.ReactNode,
   // Additional class names to add to the outer container
   className?: string,
+  // If true, wrap buttons and create gaps
+  wrapButtonsAndAddGaps?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -39,6 +41,7 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
     minLabelWidth,
     children,
     className,
+    wrapButtonsAndAddGaps,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -77,7 +80,15 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
             borderLeftWidth: 0,
           }}
         >
-          {children}
+          {
+            wrapButtonsAndAddGaps
+              ? (
+                <div className="d-flex gap-1 flex-wrap">
+                  {children}
+                </div>
+              )
+              : children
+          }
         </span>
       </div>
     </div>

@@ -8,6 +8,7 @@ declare type Props = {
     minLabelWidth?: string;
     children: React.ReactNode;
     className?: string;
+    wrapButtonsAndAddGaps?: boolean;
 };
 declare const ButtonInputGroup: React.FC<Props>;
 export default ButtonInputGroup;

@@ -1188,7 +1188,7 @@ const ButtonInputGroup = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { label, minLabelWidth, children, className, } = props;
+    const { label, minLabelWidth, children, className, wrapButtonsAndAddGaps, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -1207,7 +1207,9 @@ const ButtonInputGroup = (props) => {
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
                     borderLeftWidth: 0,
-                } }, children))));
+                } }, wrapButtonsAndAddGaps
+                ? (React__default["default"].createElement("div", { className: "d-flex gap-1 flex-wrap" }, children))
+                : children))));
 };
 
 const monthNames = [
@@ -3593,30 +3595,28 @@ const LogReviewer = (props) => {
                             }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
                     (actionErrorFilterState.type === undefined
                         || actionErrorFilterState.type === LogType$1.Action) && (React__default["default"].createElement(TabBox, { title: "Action Log Details" },
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Action", className: "mb-2" },
-                            React__default["default"].createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys(LogAction$1)
-                                .map((action) => {
-                                const description = genHumanReadableName(action);
-                                return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
-                                        actionErrorFilterState.action[action] = checked;
-                                        dispatch({
-                                            type: ActionType.UpdateActionErrorFilterState,
-                                            actionErrorFilterState,
-                                        });
-                                    } }));
-                            }))),
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Target" },
-                            React__default["default"].createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys(targetMap)
-                                .map((target) => {
-                                const description = genHumanReadableName(target);
-                                return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
-                                        actionErrorFilterState.target[target] = checked;
-                                        dispatch({
-                                            type: ActionType.UpdateActionErrorFilterState,
-                                            actionErrorFilterState,
-                                        });
-                                    } }));
-                            }))))),
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Action", className: "mb-2", wrapButtonsAndAddGaps: true }, Object.keys(LogAction$1)
+                            .map((action) => {
+                            const description = genHumanReadableName(action);
+                            return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
+                                    actionErrorFilterState.action[action] = checked;
+                                    dispatch({
+                                        type: ActionType.UpdateActionErrorFilterState,
+                                        actionErrorFilterState,
+                                    });
+                                } }));
+                        })),
+                        React__default["default"].createElement(ButtonInputGroup, { label: "Target", wrapButtonsAndAddGaps: true }, Object.keys(targetMap)
+                            .map((target) => {
+                            const description = genHumanReadableName(target);
+                            return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
+                                    actionErrorFilterState.target[target] = checked;
+                                    dispatch({
+                                        type: ActionType.UpdateActionErrorFilterState,
+                                        actionErrorFilterState,
+                                    });
+                                } }));
+                        })))),
                     (actionErrorFilterState.type === undefined
                         || actionErrorFilterState.type === LogType$1.Error) && (React__default["default"].createElement(TabBox, { title: "Error Log Details" },
                         React__default["default"].createElement("div", { className: "input-group mb-2" },

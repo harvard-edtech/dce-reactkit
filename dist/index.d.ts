@@ -243,6 +243,7 @@ declare type Props$a = {
     minLabelWidth?: string;
     children: React.ReactNode;
     className?: string;
+    wrapButtonsAndAddGaps?: boolean;
 };
 declare const ButtonInputGroup: React.FC<Props$a>;
 

@@ -1413,61 +1413,61 @@ const LogReviewer: React.FC<Props> = (props) => {
                   <ButtonInputGroup
                     label="Action"
                     className="mb-2"
+                    wrapButtonsAndAddGaps
                   >
-                    <div className="d-flex gap-1 flex-wrap">
-                      {
-                        Object.keys(LogAction)
-                          .map((action) => {
-                            const description = genHumanReadableName(action);
-                            return (
-                              <CheckboxButton
-                                key={action}
-                                id={`LogReviewer-action-${action}-checkbox`}
-                                text={description}
-                                ariaLabel={`include logs with action type "${description}" in results`}
-                                noMarginOnRight
-                                checked={actionErrorFilterState.action[action]}
-                                onChanged={(checked) => {
-                                  actionErrorFilterState.action[action] = checked;
-                                  dispatch({
-                                    type: ActionType.UpdateActionErrorFilterState,
-                                    actionErrorFilterState,
-                                  });
-                                }}
-                              />
-                            );
-                          })
-                      }
-                    </div>
+                    {
+                      Object.keys(LogAction)
+                        .map((action) => {
+                          const description = genHumanReadableName(action);
+                          return (
+                            <CheckboxButton
+                              key={action}
+                              id={`LogReviewer-action-${action}-checkbox`}
+                              text={description}
+                              ariaLabel={`include logs with action type "${description}" in results`}
+                              noMarginOnRight
+                              checked={actionErrorFilterState.action[action]}
+                              onChanged={(checked) => {
+                                actionErrorFilterState.action[action] = checked;
+                                dispatch({
+                                  type: ActionType.UpdateActionErrorFilterState,
+                                  actionErrorFilterState,
+                                });
+                              }}
+                            />
+                          );
+                        })
+                    }
                   </ButtonInputGroup>
                   {/* Target */}
-                  <ButtonInputGroup label="Target">
+                  <ButtonInputGroup
+                    label="Target"
+                    wrapButtonsAndAddGaps
+                  >
                     {/* List of targets */}
-                    <div className="d-flex gap-1 flex-wrap">
-                      {
-                        Object.keys(targetMap)
-                          .map((target) => {
-                            const description = genHumanReadableName(target);
-                            return (
-                              <CheckboxButton
-                                key={target}
-                                id={`LogReviewer-target-${target}-checkbox`}
-                                text={description}
-                                ariaLabel={`include logs with target "${description}" in results`}
-                                checked={actionErrorFilterState.target[target]}
-                                noMarginOnRight
-                                onChanged={(checked) => {
-                                  actionErrorFilterState.target[target] = checked;
-                                  dispatch({
-                                    type: ActionType.UpdateActionErrorFilterState,
-                                    actionErrorFilterState,
-                                  });
-                                }}
-                              />
-                            );
-                          })
-                      }
-                    </div>
+                    {
+                      Object.keys(targetMap)
+                        .map((target) => {
+                          const description = genHumanReadableName(target);
+                          return (
+                            <CheckboxButton
+                              key={target}
+                              id={`LogReviewer-target-${target}-checkbox`}
+                              text={description}
+                              ariaLabel={`include logs with target "${description}" in results`}
+                              checked={actionErrorFilterState.target[target]}
+                              noMarginOnRight
+                              onChanged={(checked) => {
+                                actionErrorFilterState.target[target] = checked;
+                                dispatch({
+                                  type: ActionType.UpdateActionErrorFilterState,
+                                  actionErrorFilterState,
+                                });
+                              }}
+                            />
+                          );
+                        })
+                    }
                   </ButtonInputGroup>
                 </TabBox>
               )
