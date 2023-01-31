@@ -1026,6 +1026,30 @@ declare const canReviewLogs: () => Promise<boolean>;
 declare const isMobileOrTablet: () => boolean;
 
 /**
+ * For every element in an array, extract the value of a prop
+ *   (e.g. for all user objects, extract their ages and put that into a new
+ *   ages array)
+ * @author Gabe Abrams
+ * @param arr the array of objects to operate on
+ * @param prop the property to extract from each object
+ * @returns new array containing the corresponding values, in order, of each
+ *   object in the original array
+ */
+declare const extractProp: (arr: any[], prop: string) => any[];
+
+/**
+ * Compare two arrays of objects by only comparing the values in a specific
+ *  property (e.g. compare user arrays by comparing their user.id values)
+ * @author Gabe Abrams
+ * @param a the first array
+ * @param b the second array
+ * @param prop the property to compare with
+ * @returns true if the arrays contain the same objects as determined by
+ *   the values associated with each object's prop
+ */
+declare const compareArraysByProp: (a: any[], b: any[], prop: string) => boolean;
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -1073,4 +1097,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

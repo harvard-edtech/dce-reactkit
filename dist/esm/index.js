@@ -5526,6 +5526,54 @@ const canReviewLogs = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 
 /**
+ * For every element in an array, extract the value of a prop
+ *   (e.g. for all user objects, extract their ages and put that into a new
+ *   ages array)
+ * @author Gabe Abrams
+ * @param arr the array of objects to operate on
+ * @param prop the property to extract from each object
+ * @returns new array containing the corresponding values, in order, of each
+ *   object in the original array
+ */
+const extractProp = (arr, prop) => {
+    return arr.map((item) => {
+        return item[prop];
+    });
+};
+
+// Import shared helpers
+/**
+ * Compare two arrays of objects by only comparing the values in a specific
+ *  property (e.g. compare user arrays by comparing their user.id values)
+ * @author Gabe Abrams
+ * @param a the first array
+ * @param b the second array
+ * @param prop the property to compare with
+ * @returns true if the arrays contain the same objects as determined by
+ *   the values associated with each object's prop
+ */
+const compareArraysByProp = (a, b, prop) => {
+    // Extract values for comparison
+    const aVals = new Set(extractProp(a, prop));
+    const bVals = new Set(extractProp(b, prop));
+    // Compare sizes first
+    if (aVals.size !== bVals.size) {
+        return false;
+    }
+    // Same number of items. Make sure every object in aVals appears in bVals
+    // (if so, they should be equivalent since the sizes are the same)
+    // > Create map of items in bVals
+    const inBVals = {}; // item => true if in bVals
+    Array.from(bVals.values()).forEach((item) => {
+        inBVals[item] = true;
+    });
+    // > Loop through aVals and make sure every item is in bVals
+    return Array.from(aVals.values()).every((item) => {
+        return inBVals[item];
+    });
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -5541,5 +5589,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, confirm, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$1 as Variant, abbreviate, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

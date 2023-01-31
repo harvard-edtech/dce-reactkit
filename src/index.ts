@@ -60,6 +60,8 @@ import getMonthName from './helpers/getMonthName';
 import genCSV from './helpers/genCSV';
 import canReviewLogs from './helpers/canReviewLogs';
 import isMobileOrTablet from './helpers/isMobileOrTablet';
+import extractProp from './helpers/extractProp';
+import compareArraysByProp from './helpers/compareArraysByProp';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -137,6 +139,8 @@ export {
   genCSV,
   canReviewLogs,
   isMobileOrTablet,
+  extractProp,
+  compareArraysByProp,
   // Client helpers
   visitServerEndpoint,
   logClientEvent,
