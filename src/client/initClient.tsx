@@ -60,7 +60,7 @@ export const getSendRequest = async () => {
   let timedOut = false;
   await Promise.all([
     (async () => {
-      await waitMs(1000);
+      await waitMs(5000);
       timedOut = true;
     })(),
     initialized,

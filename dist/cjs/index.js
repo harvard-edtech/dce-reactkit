@@ -564,7 +564,7 @@ const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
     let timedOut = false;
     yield Promise.all([
         (() => __awaiter(void 0, void 0, void 0, function* () {
-            yield waitMs(1000);
+            yield waitMs(5000);
             timedOut = true;
         }))(),
         initialized,
