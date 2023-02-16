@@ -36,7 +36,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK11
+// Highest error code = DRK13
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -54,6 +54,8 @@ var ReactKitErrorCode;
     ReactKitErrorCode["NotTTM"] = "DRK9";
     ReactKitErrorCode["NotAdmin"] = "DRK10";
     ReactKitErrorCode["NotAllowedToReviewLogs"] = "DRK11";
+    ReactKitErrorCode["ThemeCheckedBeforeReactKitReady"] = "DRK12";
+    ReactKitErrorCode["SessionExpiredMessageGottenBeforeReactKitReady"] = "DRK13";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -148,6 +150,24 @@ var ModalType;
     ModalType["NoButtons"] = "-";
 })(ModalType || (ModalType = {}));
 var ModalType$1 = ModalType;
+
+/**
+ * Built-in metadata for logs
+ * @author Gabe Abrams
+ */
+const LogBuiltInMetadata = {
+    // Contexts
+    Context: {
+        Uncategorized: 'Uncategorized',
+        ServerRenderedErrorPage: 'ServerRenderedErrorPage',
+        ServerEndpointError: 'ServerEndpointError',
+        ClientFatalError: 'ClientFatalError',
+    },
+    // Targets
+    Target: {
+        NoTarget: 'NoTarget',
+    },
+};
 
 /**
  * Wait for a certain number of ms
@@ -513,24 +533,6 @@ const ROUTE_PATH_PREFIX = '/dce-reactkit';
 const LOG_ROUTE_PATH = `${ROUTE_PATH_PREFIX}/log`;
 
 /**
- * Built-in metadata for logs
- * @author Gabe Abrams
- */
-const LogBuiltInMetadata = {
-    // Contexts
-    Context: {
-        Uncategorized: 'Uncategorized',
-        ServerRenderedErrorPage: 'ServerRenderedErrorPage',
-        ServerEndpointError: 'ServerEndpointError',
-        ClientFatalError: 'ClientFatalError',
-    },
-    // Targets
-    Target: {
-        NoTarget: 'NoTarget',
-    },
-};
-
-/**
  * Allowed log levels
  * @author Gabe Abrams
  */
@@ -541,6 +543,83 @@ var LogLevel;
     LogLevel["Debug"] = "Debug";
 })(LogLevel || (LogLevel = {}));
 var LogLevel$1 = LogLevel;
+
+// Import other components
+/*----------------------------------------*/
+/* ---- Static Variables and Getters ---- */
+/*----------------------------------------*/
+/* ----------- Initialized ---------- */
+let initialized = false;
+/* ---------- Send Request ---------- */
+let storedSendRequest;
+/**
+ * Get the send request function
+ * @author Gabe Abrams
+ * @returns sendRequest function
+ */
+const getSendRequest = () => {
+    // Error if no send request function
+    if (!initialized) {
+        showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
+        // Return dummy function that never resolves
+        return (() => {
+            return new Promise(() => { });
+        });
+    }
+    // Return
+    return storedSendRequest;
+};
+/* ------------ Dark Mode ----------- */
+let dark;
+/**
+ * Get the current dark/light theme
+ * @author Gabe Abrams
+ * @returns true if the app has a dark theme
+ */
+const darkModeIsOn = () => {
+    // Error if not set up yet
+    if (!initialized) {
+        showFatalError(new ErrorWithCode('Could not check theme color because dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.ThemeCheckedBeforeReactKitReady));
+        return false;
+    }
+    // Return
+    return !!dark;
+};
+/* ----- Session Expired Message ---- */
+let sessionExpiredMessage;
+/**
+ * Get the custom session expired message
+ * @author Gabe Abrams
+ * @returns session expired message
+ */
+const getSessionExpiredMessage = () => {
+    // Error if not set up yet
+    if (!initialized) {
+        showFatalError(new ErrorWithCode('Could not get the session expired message because dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.SessionExpiredMessageGottenBeforeReactKitReady));
+        return '';
+    }
+    // Return
+    return (sessionExpiredMessage !== null && sessionExpiredMessage !== void 0 ? sessionExpiredMessage : 'Your session has expired. Please go back to Canvas and start over.');
+};
+/*----------------------------------------*/
+/* ---------------- Init ---------------- */
+/*----------------------------------------*/
+/**
+ * Initialize the client-side version of reactkit
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.sendRequest caccl send request functions
+ * @param [opts.dark] if true, the app is a dark-themed app
+ * @param [opts.sessionExpiredMessage] a custom session expired message
+ */
+const initClient = (opts) => {
+    // Store values
+    storedSendRequest = opts.sendRequest;
+    dark = !!opts.dark;
+    sessionExpiredMessage = opts.sessionExpiredMessage;
+    // Mark as initialized
+    initialized = true;
+};
 
 // Keep track of whether or not session expiry has already been handled
 let sessionAlreadyExpired = false;
@@ -613,7 +692,8 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
         throw new ErrorWithCode(stubResponse.errorMessage, stubResponse.errorCode);
     }
     // Send the request
-    const response = yield cacclSendRequest({
+    const sendRequest = getSendRequest();
+    const response = yield sendRequest({
         path: opts.path,
         method: (_c = opts.method) !== null && _c !== void 0 ? _c : 'GET',
         params: opts.params,
@@ -699,24 +779,6 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
 /*------------------------------------------------------------------------*/
 /*                             Static Helpers                             */
 /*------------------------------------------------------------------------*/
-/*----------------------------------------*/
-/*              Send Request              */
-/*----------------------------------------*/
-// Store copy of caccl send request
-let _cacclSendRequest;
-/**
- * Send a request using caccl's send request feature
- * @author Gabe Abrams
- * @param opts send request options
- * @returns send request response
- */
-const cacclSendRequest = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    // Make sure send request has been passed in
-    if (!_cacclSendRequest) {
-        throw new ErrorWithCode(`\nThe request could not be sent because the AppWrapper component does not have a copy of sendRequest from CACCL.\nIf you are currently writing tests for your app, this means you did not properly stub the server response.\nMethod: ${opts.method}\nPath: ${opts.path}\n\n`, ReactKitErrorCode$1.NoCACCLSendRequestFunction);
-    }
-    return _cacclSendRequest(opts);
-});
 /*----------------------------------------*/
 /*                  Alert                 */
 /*----------------------------------------*/
@@ -841,9 +903,7 @@ const AppWrapper = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { children, sendRequest, dark, sessionExpiredMessage = 'Your session has expired. Please go back to Canvas and start over.', } = props;
-    // Store copy of send request
-    _cacclSendRequest = sendRequest;
+    const { children, } = props;
     /* -------------- State ------------- */
     // Fatal error
     const [fatalErrorMessage, setFatalErrorMessageInner,] = React.useState();
@@ -896,7 +956,7 @@ const AppWrapper = (props) => {
     if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
-            ? new ErrorWithCode(sessionExpiredMessage, ReactKitErrorCode$1.SessionExpired)
+            ? new ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
             : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode)));
         // Build error screen
         body = (React__default["default"].createElement("div", { style: {
@@ -904,7 +964,7 @@ const AppWrapper = (props) => {
                 width: '100vw',
                 minHeight: '100vh',
                 paddingTop: '2rem',
-                backgroundColor: (dark
+                backgroundColor: (darkModeIsOn()
                     ? '#222'
                     : '#fff'),
             } },
@@ -5650,6 +5710,7 @@ exports.getPartOfDay = getPartOfDay;
 exports.getTimeInfoInET = getTimeInfoInET;
 exports.handleError = handleError;
 exports.handleSuccess = handleSuccess;
+exports.initClient = initClient;
 exports.initLogCollection = initLogCollection;
 exports.initServer = initServer;
 exports.isMobileOrTablet = isMobileOrTablet;

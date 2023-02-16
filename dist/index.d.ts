@@ -24,27 +24,7 @@ declare enum Variant {
 
 declare type Props$g = {
     children: React.ReactNode;
-    sendRequest: SendRequestFunction;
-    dark?: boolean;
-    sessionExpiredMessage?: string;
 };
-declare type SendRequestFunction = (opts: {
-    path: string;
-    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
-    params?: {
-        [x: string]: any;
-    } | undefined;
-    headers?: {
-        [x: string]: any;
-    } | undefined;
-    numRetries?: number | undefined;
-}) => Promise<{
-    body: any;
-    status: number;
-    headers: {
-        [x: string]: any;
-    };
-}>;
 /**
  * Show an alert modal with an "Okay" button
  * @author Gabe Abrams
@@ -522,6 +502,41 @@ declare const DynamicWord: {
     Device: string;
     DeviceCapitalized: string;
 };
+
+/**
+ * Type of CACCL's send request function
+ * @author Gabe Abrams
+ */
+declare type SendRequestFunction = (opts: {
+    path: string;
+    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
+    params?: {
+        [x: string]: any;
+    } | undefined;
+    headers?: {
+        [x: string]: any;
+    } | undefined;
+    numRetries?: number | undefined;
+}) => Promise<{
+    body: any;
+    status: number;
+    headers: {
+        [x: string]: any;
+    };
+}>;
+/**
+ * Initialize the client-side version of reactkit
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.sendRequest caccl send request functions
+ * @param [opts.dark] if true, the app is a dark-themed app
+ * @param [opts.sessionExpiredMessage] a custom session expired message
+ */
+declare const initClient: (opts: {
+    sendRequest: SendRequestFunction;
+    dark?: boolean;
+    sessionExpiredMessage?: string;
+}) => void;
 
 /**
  * Shorten text so it fits into a certain number of chars
@@ -1064,7 +1079,9 @@ declare enum ReactKitErrorCode {
     NoCACCLGetLaunchInfoFunction = "DRK8",
     NotTTM = "DRK9",
     NotAdmin = "DRK10",
-    NotAllowedToReviewLogs = "DRK11"
+    NotAllowedToReviewLogs = "DRK11",
+    ThemeCheckedBeforeReactKitReady = "DRK12",
+    SessionExpiredMessageGottenBeforeReactKitReady = "DRK13"
 }
 
 /**
@@ -1097,4 +1114,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };

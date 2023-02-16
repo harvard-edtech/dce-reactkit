@@ -30,6 +30,7 @@ import DAY_IN_MS from './constants/DAY_IN_MS';
 import DynamicWord from './dynamicConstants/DynamicWord';
 
 // Import helpers
+import initClient from './client/initClient';
 import abbreviate from './helpers/abbreviate';
 import avg from './helpers/avg';
 import ceilToNumDecimals from './helpers/ceilToNumDecimals';
@@ -142,6 +143,7 @@ export {
   extractProp,
   compareArraysByProp,
   // Client helpers
+  initClient,
   visitServerEndpoint,
   logClientEvent,
   // Server helpers

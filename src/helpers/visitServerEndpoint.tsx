@@ -2,8 +2,8 @@
 import ErrorWithCode from '../errors/ErrorWithCode';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
-// Import helpers from app wrapper
-import { cacclSendRequest } from '../components/AppWrapper';
+// Import helpers
+import { getSendRequest } from '../client/initClient';
 
 /*------------------------------------------------------------------------*/
 /*                                Listener                                */
@@ -138,7 +138,8 @@ const visitServerEndpoint = async (
   }
 
   // Send the request
-  const response = await cacclSendRequest({
+  const sendRequest = getSendRequest();
+  const response = await sendRequest({
     path: opts.path,
     method: opts.method ?? 'GET',
     params: opts.params,
