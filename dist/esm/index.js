@@ -536,12 +536,14 @@ var LogLevel;
 })(LogLevel || (LogLevel = {}));
 var LogLevel$1 = LogLevel;
 
-// Import other components
 /*----------------------------------------*/
 /* ---- Static Variables and Getters ---- */
 /*----------------------------------------*/
 /* ----------- Initialized ---------- */
-let initialized = false;
+let onInitialized;
+let initialized = new Promise((resolve) => {
+    onInitialized = resolve;
+});
 /* ---------- Send Request ---------- */
 let storedSendRequest;
 /**
@@ -549,9 +551,18 @@ let storedSendRequest;
  * @author Gabe Abrams
  * @returns sendRequest function
  */
-const getSendRequest = () => {
+const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for initialization or timeout
+    let timedOut = false;
+    yield Promise.all([
+        (() => __awaiter(void 0, void 0, void 0, function* () {
+            yield waitMs(1000);
+            timedOut = true;
+        }))(),
+        initialized,
+    ]);
     // Error if no send request function
-    if (!initialized) {
+    if (timedOut) {
         showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
         // Return dummy function that never resolves
         return (() => {
@@ -560,23 +571,7 @@ const getSendRequest = () => {
     }
     // Return
     return storedSendRequest;
-};
-/* ------------ Dark Mode ----------- */
-let dark;
-/**
- * Get the current dark/light theme
- * @author Gabe Abrams
- * @returns true if the app has a dark theme
- */
-const darkModeIsOn = () => {
-    // Error if not set up yet
-    if (!initialized) {
-        showFatalError(new ErrorWithCode('Could not check theme color because dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.ThemeCheckedBeforeReactKitReady));
-        return false;
-    }
-    // Return
-    return !!dark;
-};
+});
 /* ----- Session Expired Message ---- */
 let sessionExpiredMessage;
 /**
@@ -585,11 +580,6 @@ let sessionExpiredMessage;
  * @returns session expired message
  */
 const getSessionExpiredMessage = () => {
-    // Error if not set up yet
-    if (!initialized) {
-        showFatalError(new ErrorWithCode('Could not get the session expired message because dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.SessionExpiredMessageGottenBeforeReactKitReady));
-        return '';
-    }
     // Return
     return (sessionExpiredMessage !== null && sessionExpiredMessage !== void 0 ? sessionExpiredMessage : 'Your session has expired. Please go back to Canvas and start over.');
 };
@@ -601,16 +591,14 @@ const getSessionExpiredMessage = () => {
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.sendRequest caccl send request functions
- * @param [opts.dark] if true, the app is a dark-themed app
  * @param [opts.sessionExpiredMessage] a custom session expired message
  */
 const initClient = (opts) => {
     // Store values
     storedSendRequest = opts.sendRequest;
-    dark = !!opts.dark;
     sessionExpiredMessage = opts.sessionExpiredMessage;
     // Mark as initialized
-    initialized = true;
+    onInitialized(null);
 };
 
 // Keep track of whether or not session expiry has already been handled
@@ -684,7 +672,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
         throw new ErrorWithCode(stubResponse.errorMessage, stubResponse.errorCode);
     }
     // Send the request
-    const sendRequest = getSendRequest();
+    const sendRequest = yield getSendRequest();
     const response = yield sendRequest({
         path: opts.path,
         method: (_c = opts.method) !== null && _c !== void 0 ? _c : 'GET',
@@ -895,7 +883,7 @@ const AppWrapper = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { children, } = props;
+    const { children, dark, } = props;
     /* -------------- State ------------- */
     // Fatal error
     const [fatalErrorMessage, setFatalErrorMessageInner,] = useState();
@@ -956,7 +944,7 @@ const AppWrapper = (props) => {
                 width: '100vw',
                 minHeight: '100vh',
                 paddingTop: '2rem',
-                backgroundColor: (darkModeIsOn()
+                backgroundColor: (dark
                     ? '#222'
                     : '#fff'),
             } },

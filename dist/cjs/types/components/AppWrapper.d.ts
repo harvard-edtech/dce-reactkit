@@ -7,6 +7,7 @@ import React from 'react';
 import Variant from '../types/Variant';
 declare type Props = {
     children: React.ReactNode;
+    dark?: boolean;
 };
 /**
  * Show an alert modal with an "Okay" button

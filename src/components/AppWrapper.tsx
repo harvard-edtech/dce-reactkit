@@ -26,7 +26,6 @@ import ErrorWithCode from '../errors/ErrorWithCode';
 // Import other helpers
 import logClientEvent from '../helpers/logClientEvent';
 import {
-  darkModeIsOn,
   getSessionExpiredMessage,
 } from '../client/initClient';
 
@@ -37,6 +36,8 @@ import {
 type Props = {
   // The entire app
   children: React.ReactNode,
+  // True if this app is a dark-themed app
+  dark?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -237,6 +238,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   const {
     children,
+    dark,
   } = props;
 
   /* -------------- State ------------- */
@@ -387,7 +389,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
           minHeight: '100vh',
           paddingTop: '2rem',
           backgroundColor: (
-            darkModeIsOn()
+            dark
               ? '#222'
               : '#fff'
           ),

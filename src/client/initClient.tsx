@@ -3,6 +3,7 @@ import { showFatalError } from '../components/AppWrapper';
 
 // Import shared types
 import ErrorWithCode from '../errors/ErrorWithCode';
+import waitMs from '../helpers/waitMs';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 
@@ -40,7 +41,10 @@ type SendRequestFunction = (
 
 /* ----------- Initialized ---------- */
 
-let initialized = false;
+let onInitialized: (a: unknown) => void;
+let initialized = new Promise((resolve) => {
+  onInitialized = resolve;
+});
 
 /* ---------- Send Request ---------- */
 
@@ -51,9 +55,19 @@ let storedSendRequest: SendRequestFunction;
  * @author Gabe Abrams
  * @returns sendRequest function
  */
-export const getSendRequest = () => {
+export const getSendRequest = async () => {
+  // Wait for initialization or timeout
+  let timedOut = false;
+  await Promise.all([
+    (async () => {
+      await waitMs(1000);
+      timedOut = true;
+    })(),
+    initialized,
+  ]);
+
   // Error if no send request function
-  if (!initialized) {
+  if (timedOut) {
     showFatalError(
       new ErrorWithCode(
         'Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.',
@@ -73,31 +87,6 @@ export const getSendRequest = () => {
   return storedSendRequest;
 };
 
-/* ------------ Dark Mode ----------- */
-
-let dark: boolean | undefined;
-
-/**
- * Get the current dark/light theme
- * @author Gabe Abrams
- * @returns true if the app has a dark theme
- */
-export const darkModeIsOn = () => {
-  // Error if not set up yet
-  if (!initialized) {
-    showFatalError(
-      new ErrorWithCode(
-        'Could not check theme color because dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.',
-        ReactKitErrorCode.ThemeCheckedBeforeReactKitReady,
-      ),
-    );
-    return false;
-  }
-
-  // Return
-  return !!dark;
-};
-
 /* ----- Session Expired Message ---- */
 
 let sessionExpiredMessage: string | undefined;
@@ -108,17 +97,6 @@ let sessionExpiredMessage: string | undefined;
  * @returns session expired message
  */
 export const getSessionExpiredMessage = () => {
-  // Error if not set up yet
-  if (!initialized) {
-    showFatalError(
-      new ErrorWithCode(
-        'Could not get the session expired message because dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.',
-        ReactKitErrorCode.SessionExpiredMessageGottenBeforeReactKitReady,
-      ),
-    );
-    return '';
-  }
-
   // Return
   return (
     sessionExpiredMessage
@@ -135,26 +113,22 @@ export const getSessionExpiredMessage = () => {
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.sendRequest caccl send request functions
- * @param [opts.dark] if true, the app is a dark-themed app
  * @param [opts.sessionExpiredMessage] a custom session expired message
  */
 const initClient = (
   opts: {
     // Copy of CACCL's send request function
     sendRequest: SendRequestFunction,
-    // True if this app is a dark-themed app
-    dark?: boolean,
     // Custom session expired message
     sessionExpiredMessage?: string,
   },
 ) => {
   // Store values
   storedSendRequest = opts.sendRequest;
-  dark = !!opts.dark;
   sessionExpiredMessage = opts.sessionExpiredMessage;
 
   // Mark as initialized
-  initialized = true;
+  onInitialized(null);
 };
 
 export default initClient;

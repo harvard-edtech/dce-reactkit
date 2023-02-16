@@ -24,14 +24,7 @@ declare type SendRequestFunction = (opts: {
  * @author Gabe Abrams
  * @returns sendRequest function
  */
-export declare const getSendRequest: () => SendRequestFunction;
-declare let dark: boolean | undefined;
-/**
- * Get the current dark/light theme
- * @author Gabe Abrams
- * @returns true if the app has a dark theme
- */
-export declare const darkModeIsOn: () => boolean;
+export declare const getSendRequest: () => Promise<SendRequestFunction>;
 declare let sessionExpiredMessage: string | undefined;
 /**
  * Get the custom session expired message
@@ -44,12 +37,10 @@ export declare const getSessionExpiredMessage: () => string;
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.sendRequest caccl send request functions
- * @param [opts.dark] if true, the app is a dark-themed app
  * @param [opts.sessionExpiredMessage] a custom session expired message
  */
 declare const initClient: (opts: {
     sendRequest: SendRequestFunction;
-    dark?: boolean;
     sessionExpiredMessage?: string;
 }) => void;
 export default initClient;

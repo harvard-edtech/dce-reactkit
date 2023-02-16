@@ -24,6 +24,7 @@ declare enum Variant {
 
 declare type Props$g = {
     children: React.ReactNode;
+    dark?: boolean;
 };
 /**
  * Show an alert modal with an "Okay" button
@@ -529,12 +530,10 @@ declare type SendRequestFunction = (opts: {
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.sendRequest caccl send request functions
- * @param [opts.dark] if true, the app is a dark-themed app
  * @param [opts.sessionExpiredMessage] a custom session expired message
  */
 declare const initClient: (opts: {
     sendRequest: SendRequestFunction;
-    dark?: boolean;
     sessionExpiredMessage?: string;
 }) => void;
 

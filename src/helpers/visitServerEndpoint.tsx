@@ -138,7 +138,7 @@ const visitServerEndpoint = async (
   }
 
   // Send the request
-  const sendRequest = getSendRequest();
+  const sendRequest = await getSendRequest();
   const response = await sendRequest({
     path: opts.path,
     method: opts.method ?? 'GET',
