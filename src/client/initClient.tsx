@@ -56,15 +56,15 @@ let storedSendRequest: SendRequestFunction;
  * @returns sendRequest function
  */
 export const getSendRequest = async () => {
-  // Wait for initialization or timeout
+  // Track timeout
   let timedOut = false;
-  await Promise.all([
-    (async () => {
-      await waitMs(5000);
-      timedOut = true;
-    })(),
-    initialized,
-  ]);
+  (async () => {
+    await waitMs(5000);
+    timedOut = true;
+  })(),
+
+  // Wait for initialization
+  await initialized;
 
   // Error if no send request function
   if (timedOut) {
