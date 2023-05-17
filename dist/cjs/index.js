@@ -1303,9 +1303,10 @@ const getOrdinal = (num) => {
  * Get current time info in US Boston Eastern Time, independent of machine
  *   timezone
  * @author Gabe Abrams
- * @param [date=now] the date to get info on or a ms since epoch timestamp
+ * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
  * @returns object with timestamp (ms since epoch) and numbers
- *   corresponding to ET time values for year, month, day, hour, minute
+ *   corresponding to ET time values for year, month, day, hour, hour12, minute, isPM
+ *   where hour is in 24hr time and hour12 is in 12hr time.
  */
 const getTimeInfoInET = (dateOrTimestamp) => {
     // Create a time string
@@ -1335,14 +1336,15 @@ const getTimeInfoInET = (dateOrTimestamp) => {
     const month = Number.parseInt(monthStr, 10);
     const day = Number.parseInt(dayStr, 10);
     const minute = Number.parseInt(minStr, 10);
-    let hour = Number.parseInt(hourStr, 10);
+    let hour12 = Number.parseInt(hourStr, 10);
     // Convert from am/pm to 24hr
     const isAM = ending.toLowerCase().includes('am');
     const isPM = !isAM;
-    if (isPM && hour !== 12) {
+    let hour = hour12;
+    if (isPM && hour12 !== 12) {
         hour += 12;
     }
-    else if (isAM && hour === 12) {
+    else if (isAM && hour12 === 12) {
         hour = 0;
     }
     // Return
@@ -1352,6 +1354,8 @@ const getTimeInfoInET = (dateOrTimestamp) => {
         month,
         day,
         hour,
+        hour12,
+        isPM,
         minute,
     };
 };
