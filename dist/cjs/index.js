@@ -5662,7 +5662,10 @@ const getLocalTimeInfo = (dateOrTimestamp) => {
     const day = d.getDate();
     const hour = d.getHours();
     const isPM = hour >= 12;
-    const hour12 = hour % 12;
+    let hour12 = hour % 12;
+    if (hour12 === 0) {
+        hour12 = 12;
+    }
     const minute = d.getMinutes();
     // Return
     return {
