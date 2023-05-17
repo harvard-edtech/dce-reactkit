@@ -63,6 +63,7 @@ import canReviewLogs from './helpers/canReviewLogs';
 import isMobileOrTablet from './helpers/isMobileOrTablet';
 import extractProp from './helpers/extractProp';
 import compareArraysByProp from './helpers/compareArraysByProp';
+import getLocalTimeInfo from './helpers/getLocalTimeInfo';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -142,6 +143,7 @@ export {
   isMobileOrTablet,
   extractProp,
   compareArraysByProp,
+  getLocalTimeInfo,
   // Client helpers
   initClient,
   visitServerEndpoint,
