@@ -173,6 +173,13 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
     // Start the save loading indicator
     dispatch({ type: ActionType.StartSave });
 
+    // add all default values to the entry
+    entryFields.forEach((field) => {
+      if (field.defaultValue && !entry[field.objectKey]) {
+        entry[field.objectKey] = field.defaultValue;
+      }
+    });
+
     const modifiedEntry = objectModifier ? objectModifier(entry) : entry;
 
     // Send to server
@@ -223,7 +230,6 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
 
   if (!saving) {
     // create validation boolean array for each field
-    const validations = entryFields.map(() => { return true; });
     let validationError = '';
 
     for (let i = 0; i < entryFields.length; i += 1) {
@@ -231,14 +237,12 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
       const value = entry[field.objectKey];
 
       if (field.required && !value) {
-        validations[i] = false;
         validationError = `Please fill in the ${field.label} field`;
         break;
       }
 
       if (field.objectKey === idPropName) {
         if (entries.find((e) => { return e[idPropName] === value; })) {
-          validations[i] = false;
           validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
           break;
         }
@@ -247,35 +251,27 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
       if (value) {
         if (field.type === DBEntryFieldType.String) {
           if (field.minNumChars && value.length < field.minNumChars) {
-            validations[i] = false;
             validationError = `${field.label} must be at least ${field.minNumChars} characters long`;
           } else if (field.maxNumChars && value.length > field.maxNumChars) {
-            validations[i] = false;
             validationError = `${field.label} must be at most ${field.maxNumChars} characters long`;
           }
         } else if (field.type === DBEntryFieldType.Number) {
           if (field.minNumber && value < field.minNumber) {
-            validations[i] = false;
             validationError = `${field.label} must be at least ${field.minNumber}`;
           } else if (field.maxNumber && value > field.maxNumber) {
-            validations[i] = false;
             validationError = `${field.label} must be at most ${field.maxNumber}`;
           }
         } else if (field.type === DBEntryFieldType.StringArray || field.type === DBEntryFieldType.NumberArray) {
           if (field.minNumElements && value.length < field.minNumElements) {
-            validations[i] = false;
             validationError = `${field.label} must have at least ${field.minNumElements} values`;
           } else if (field.maxNumElements && value.length > field.maxNumElements) {
-            validations[i] = false;
             validationError = `${field.label} must have at most ${field.maxNumElements} values`;
           } else if (field.type === DBEntryFieldType.NumberArray) {
             for (let j = 0; j < value.length; j += 1) {
               if (field.minNumber && value[j] < field.minNumber) {
-                validations[i] = false;
                 validationError = `${field.label} values must be at least ${field.minNumber}`;
                 break;
               } else if (field.maxNumber && value[j] > field.maxNumber) {
-                validations[i] = false;
                 validationError = `${field.label} values must be at most ${field.maxNumber}`;
                 break;
               }
@@ -285,7 +281,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
       }
     }
 
-    const validationFailed = validations.includes(false);
+    const validationFailed = !!validationError;
 
     // UI
     body = (

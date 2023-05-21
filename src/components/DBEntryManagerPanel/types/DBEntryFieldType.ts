@@ -1,11 +1,13 @@
-// Options for field types
+/**
+ * Options for field types
+ * @author Yuen Ler Chow
+ */
 enum DBEntryFieldType {
   String = 'String',
   Number = 'Number',
   Object = 'Object',
   StringArray = 'StringArray',
   NumberArray = 'NumberArray',
-  ChooseOneFromList = 'ChooseOneFromList',
 }
 
 export default DBEntryFieldType;

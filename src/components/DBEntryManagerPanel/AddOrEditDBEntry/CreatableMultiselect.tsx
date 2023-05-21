@@ -2,6 +2,7 @@ import React, { KeyboardEventHandler, useReducer } from 'react';
 
 import CreatableSelect from 'react-select/creatable';
 import DBEntryFieldType from '../types/DBEntryFieldType';
+import { MultiValue } from 'react-select';
 
 const components = {
   DropdownIndicator: null,
@@ -99,22 +100,40 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
    */
   const addValues = (newValue: string) => {
     if (type === DBEntryFieldType.NumberArray) {
-      const newValues: Number[] = [];
-      newValue.split(',').forEach((val) => {
-        const trimmedVal = val.trim();
-        if (trimmedVal.length > 0 && !values.some((value) => { return value === Number(trimmedVal); })) {
-          newValues.push(Number(trimmedVal));
-        }
-      });
+      const newValues = newValue.split(',')
+        // Trim strings
+        .map((val) => {
+          return val.trim();
+        })
+        // Filter zero length
+        .filter((trimmedVal) => {
+          return trimmedVal.length > 0;
+        })
+        // Parse to number
+        .map(Number.parseFloat)
+        // Filter out existing values
+        .filter((numberVal) => {
+          return !values.some((value) => {
+            return value === numberVal;
+          })
+        });
       onChange([...values, ...newValues] as number[]);
     } else {
-      const newValues: String[] = [];
-      newValue.split(',').forEach((val) => {
-        const trimmedVal = val.trim();
-        if (trimmedVal.length > 0 && !values.some((value) => { return value === trimmedVal; })) {
-          newValues.push(trimmedVal);
-        }
-      });
+      const newValues = newValue.split(',')
+        // Trim strings
+        .map((val) => {
+          return val.trim();
+        })
+        // Filter zero length
+        .filter((trimmedVal) => {
+          return trimmedVal.length > 0;
+        })
+        // Filter out existing values
+        .filter((val) => {
+          return !values.some((value) => {
+            return value === val;
+          });
+        });
       onChange([...values, ...newValues] as string[]);
     }
     dispatch({ type: ActionType.SetInputValue, value: '' });
@@ -153,6 +172,29 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
     }
   };
 
+  /**
+   * Handles the value change of the multiselect component
+   * @author Yuen Ler Chow
+   * @param newValue new values
+   */
+  const handleValueChange = (newValues: MultiValue<Option>) => {
+    if (newValues) {
+      if (type === DBEntryFieldType.NumberArray) {
+        const numberValues: number[] = [];
+        newValues.forEach((val) => {
+          numberValues.push(Number(val.value));
+        });
+        onChange(numberValues);
+      } else {
+        const stringValues: string[] = [];
+        newValues.forEach((val) => {
+          stringValues.push(val.value);
+        });
+        onChange(stringValues);
+      }
+    }
+  };
+
   return (
     <CreatableSelect
       components={components}
@@ -160,23 +202,7 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
       isClearable
       isMulti
       menuIsOpen={false}
-      onChange={(newValue) => {
-        if (newValue) {
-          if (type === DBEntryFieldType.NumberArray) {
-            const newValues: number[] = [];
-            newValue.forEach((val) => {
-              newValues.push(Number(val.value));
-            });
-            onChange(newValues);
-          } else {
-            const newValues: string[] = [];
-            newValue.forEach((val) => {
-              newValues.push(val.value);
-            });
-            onChange(newValues);
-          }
-        }
-      }}
+      onChange={(newValue) => handleValueChange(newValue)}
       onInputChange={handleInputChange}
       onKeyDown={handleKeyDown}
       placeholder="Type something and press enter..."
