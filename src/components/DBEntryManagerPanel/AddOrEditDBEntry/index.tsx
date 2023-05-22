@@ -288,6 +288,8 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
       <div>
         {
           entryFields.map((field: DBEntryField) => {
+            const disabled = (idPropName === field.objectKey && DBEntryToEdit !== undefined)
+              || (field.lockAfterCreation && DBEntryToEdit !== undefined);
             if (field.type === DBEntryFieldType.String) {
               if (field.choices) {
                 return (
@@ -295,7 +297,12 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                     key={field.objectKey}
                     className="mb-2"
                   >
-                    <div className="input-group">
+                    <div className="input-group"
+                      style={{
+                        pointerEvents:
+                          (disabled) ? 'none' : 'auto',
+                      }}
+                    >
                       <ButtonInputGroup
                         label={field.label}
                       >
@@ -339,7 +346,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                     </span>
                     <input
                       id="AddDBEntry-form-name-input"
-                      disabled={idPropName === field.objectKey && DBEntryToEdit !== undefined}
+                      disabled={disabled}
                       type="text"
                       className="form-control"
                       placeholder={field.placeholder}
@@ -380,6 +387,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                       placeholder={field.placeholder}
                       aria-describedby="AddDBEntry-form-name-label"
                       value={field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || ''}
+                      disabled={disabled}
                       onChange={(e) => {
                         entry[field.objectKey] = (
                           e.target.value
@@ -402,7 +410,12 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                     key={field.objectKey}
                     className="mb-2"
                   >
-                    <div className="input-group">
+                    <div className="input-group"
+                      style={{
+                        pointerEvents:
+                          disabled ? 'none' : 'auto',
+                      }}
+                    >
                       <ButtonInputGroup
                         label={field.label}
                       >
@@ -452,6 +465,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                     </span>
                     <div className="flex-grow-1">
                       <CreatableMultiselect
+                        disabled={disabled}
                         type={DBEntryFieldType.StringArray}
                         values={entry[field.objectKey] || []}
                         onChange={(values) => {
@@ -483,6 +497,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                     </span>
                     <div className="flex-grow-1">
                       <CreatableMultiselect
+                        disabled={disabled}
                         type={DBEntryFieldType.NumberArray}
                         values={entry[field.objectKey] || []}
                         onChange={(values) => {
@@ -547,7 +562,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             Cancel
           </button>
         </div>
-      </div>
+      </div >
     );
   }
 

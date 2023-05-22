@@ -18,6 +18,7 @@ type Props = {
   type: DBEntryFieldType.StringArray | DBEntryFieldType.NumberArray;
   values: string[] | number[];
   onChange: (values: string[] | number[]) => void;
+  disabled?: boolean;
 };
 
 /* -------- State Definition -------- */
@@ -64,6 +65,7 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
     type,
     values,
     onChange,
+    disabled,
   } = props;
 
   /* -------------- State ------------- */
@@ -197,6 +199,7 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
 
   return (
     <CreatableSelect
+      isDisabled={disabled ?? false}
       components={components}
       inputValue={inputValue}
       isClearable

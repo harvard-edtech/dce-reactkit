@@ -9,7 +9,7 @@ type DBEntryField = (
 
   {
     label: string,
-    objectKey: string,
+    objectKey: string, // the key this corresponds to in the DBEntry
     placeholder: string,
     lockAfterCreation?: boolean, // If true, only allow the user to edit when creating (not when editing)
     required?: boolean,
