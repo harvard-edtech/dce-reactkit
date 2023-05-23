@@ -64,6 +64,7 @@ import isMobileOrTablet from './helpers/isMobileOrTablet';
 import extractProp from './helpers/extractProp';
 import compareArraysByProp from './helpers/compareArraysByProp';
 import getLocalTimeInfo from './helpers/getLocalTimeInfo';
+import addDBEditorEndpoints from './helpers/addDBEditorEndpoints';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -159,6 +160,7 @@ export {
   handleError,
   handleSuccess,
   initLogCollection,
+  addDBEditorEndpoints,
   // Types
   ModalButtonType,
   ModalSize,

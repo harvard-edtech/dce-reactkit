@@ -21,7 +21,7 @@ import DBEntry from './types/DBEntry';
 import DBEntryField from './types/DBEntryField';
 
 import AddorEditDBEntry from './AddOrEditDBEntry';
-import generateEndpointPath from '../../helpers/generateEndpointPath';
+import generateEndpointPath from './helpers/generateEndpointPath';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */

@@ -2,7 +2,7 @@ import express from 'express';
 
 // Import dce-reactkit
 import { genRouteHandler, ParamType } from 'dce-reactkit';
-import generateEndpointPath from './generateEndpointPath';
+import generateEndpointPath from '../components/DBEntryManagerPanel/helpers/generateEndpointPath';
 
 interface Collection {
   find: (filterQuery: any) => Promise<any[]>,

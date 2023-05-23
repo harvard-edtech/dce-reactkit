@@ -2241,7 +2241,7 @@ var LogAction$1 = LogAction;
  * Server-side API param types
  * @author Gabe Abrams
  */
-var ParamType$1;
+var ParamType$2;
 (function (ParamType) {
     ParamType["Boolean"] = "boolean";
     ParamType["BooleanOptional"] = "boolean-optional";
@@ -2253,8 +2253,8 @@ var ParamType$1;
     ParamType["JSONOptional"] = "json-optional";
     ParamType["String"] = "string";
     ParamType["StringOptional"] = "string-optional";
-})(ParamType$1 || (ParamType$1 = {}));
-var ParamType$2 = ParamType$1;
+})(ParamType$2 || (ParamType$2 = {}));
+var ParamType$3 = ParamType$2;
 
 /**
  * Round a number to a certain number of decimals
@@ -2600,7 +2600,7 @@ const IntelliTable = (props) => {
             }
             // Sort differently based on the data type
             // > Boolean
-            if (paramType === ParamType$2.Boolean) {
+            if (paramType === ParamType$3.Boolean) {
                 if (aVal && !bVal) {
                     return (descending ? -1 : 1);
                 }
@@ -2610,14 +2610,14 @@ const IntelliTable = (props) => {
                 return tiebreaker;
             }
             // > Number
-            if (paramType === ParamType$2.Int
-                || paramType === ParamType$2.Float) {
+            if (paramType === ParamType$3.Int
+                || paramType === ParamType$3.Float) {
                 return (descending
                     ? (bVal - aVal)
                     : (aVal - bVal));
             }
             // > String
-            if (paramType === ParamType$2.String) {
+            if (paramType === ParamType$3.String) {
                 if (aVal < bVal) {
                     return (descending ? 1 : -1);
                 }
@@ -2627,7 +2627,7 @@ const IntelliTable = (props) => {
                 return tiebreaker;
             }
             // > JSON
-            if (paramType === ParamType$2.JSON) {
+            if (paramType === ParamType$3.JSON) {
                 const aSize = (Array.isArray(aVal)
                     ? aVal.length
                     : Object.keys(aVal).length);
@@ -2659,7 +2659,7 @@ const IntelliTable = (props) => {
             let fullValue;
             let visibleValue;
             let title = '';
-            if (column.type === ParamType$2.Boolean) {
+            if (column.type === ParamType$3.Boolean) {
                 fullValue = !!(value);
                 const noValue = (value === undefined
                     || value === null);
@@ -2671,7 +2671,7 @@ const IntelliTable = (props) => {
                     title = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$2.Int) {
+            else if (column.type === ParamType$3.Int) {
                 fullValue = Number.parseInt(value, 10);
                 const noValue = Number.isNaN(fullValue);
                 visibleValue = (noValue
@@ -2682,7 +2682,7 @@ const IntelliTable = (props) => {
                     title = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$2.Float) {
+            else if (column.type === ParamType$3.Float) {
                 fullValue = Number.parseFloat(value);
                 const noValue = Number.isNaN(fullValue);
                 visibleValue = (noValue
@@ -2693,7 +2693,7 @@ const IntelliTable = (props) => {
                     title = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$2.String) {
+            else if (column.type === ParamType$3.String) {
                 fullValue = String(value).trim();
                 const noValue = (value === undefined
                     || value === null
@@ -2706,7 +2706,7 @@ const IntelliTable = (props) => {
                     title = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$2.JSON) {
+            else if (column.type === ParamType$3.JSON) {
                 fullValue = JSON.stringify(value);
                 const noValue = (Array.isArray(value)
                     ? (!value || value.length === 0)
@@ -2871,185 +2871,185 @@ const columns = [
     {
         title: 'First Name',
         param: 'userFirstName',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
     },
     {
         title: 'Last Name',
         param: 'userLastName',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
     },
     {
         title: 'Email',
         param: 'userEmail',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
     },
     {
         title: 'Canvas Id',
         param: 'userId',
-        type: ParamType$2.Int,
+        type: ParamType$3.Int,
     },
     {
         title: 'Student?',
         param: 'isLearner',
-        type: ParamType$2.Boolean,
+        type: ParamType$3.Boolean,
     },
     {
         title: 'Teaching Staff?',
         param: 'isTTM',
-        type: ParamType$2.Boolean,
+        type: ParamType$3.Boolean,
         startsHidden: true,
     },
     {
         title: 'Admin?',
         param: 'isAdmin',
-        type: ParamType$2.Boolean,
+        type: ParamType$3.Boolean,
         startsHidden: true,
     },
     {
         title: 'Course Canvas Id',
         param: 'courseId',
-        type: ParamType$2.Int,
+        type: ParamType$3.Int,
         startsHidden: true,
     },
     {
         title: 'Course Name',
         param: 'courseName',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
     },
     {
         title: 'Browser Name',
         param: 'browser.name',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Browser Version',
         param: 'browser.version',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'OS',
         param: 'device.os',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Mobile?',
         param: 'device.isMobile',
-        type: ParamType$2.Boolean,
+        type: ParamType$3.Boolean,
         startsHidden: true,
     },
     {
         title: 'Year',
         param: 'year',
-        type: ParamType$2.Int,
+        type: ParamType$3.Int,
     },
     {
         title: 'Month',
         param: 'month',
-        type: ParamType$2.Int,
+        type: ParamType$3.Int,
     },
     {
         title: 'Day',
         param: 'day',
-        type: ParamType$2.Int,
+        type: ParamType$3.Int,
     },
     {
         title: 'Hour',
         param: 'hour',
-        type: ParamType$2.Int,
+        type: ParamType$3.Int,
     },
     {
         title: 'Minute',
         param: 'minute',
-        type: ParamType$2.Int,
+        type: ParamType$3.Int,
         startsHidden: true,
     },
     {
         title: 'Timestamp',
         param: 'timestamp',
-        type: ParamType$2.Int,
+        type: ParamType$3.Int,
         startsHidden: true,
     },
     {
         title: 'Context',
         param: 'context',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
     },
     {
         title: 'Subcontext',
         param: 'subcontext',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
     },
     {
         title: 'Tags',
         param: 'tags',
-        type: ParamType$2.JSON,
+        type: ParamType$3.JSON,
         startsHidden: true,
     },
     {
         title: 'Log Level',
         param: 'level',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Metadata',
         param: 'metadata',
-        type: ParamType$2.JSON,
+        type: ParamType$3.JSON,
         startsHidden: true,
     },
     {
         title: 'Source',
         param: 'source',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
     },
     {
         title: 'Server Route Path',
         param: 'routePath',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Server Route Template',
         param: 'routeTemplate',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Type',
         param: 'type',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
     },
     {
         title: 'Error Message',
         param: 'errorMessage',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Error Code',
         param: 'errorCode',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Error Stack',
         param: 'errorStack',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Action Target',
         param: 'target',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
     {
         title: 'Action Type',
         param: 'action',
-        type: ParamType$2.String,
+        type: ParamType$3.String,
         startsHidden: true,
     },
 ];
@@ -4676,6 +4676,24 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     return body;
 });
 
+// Import custom error
+// Stored copy of caccl functions
+let _cacclGetLaunchInfo$1;
+/*------------------------------------------------------------------------*/
+/*                                 Helpers                                */
+/*------------------------------------------------------------------------*/
+/**
+ * Get launch info via CACCL
+ * @author Gabe Abrams
+ * @param req express request object
+ * @returns object { launched, launchInfo }
+ */
+const cacclGetLaunchInfo$1 = (req) => {
+    {
+        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
+    }
+};
+
 /**
  * Server-side API param types
  * @author Gabe Abrams
@@ -4693,6 +4711,371 @@ var ParamType;
     ParamType["String"] = "string";
     ParamType["StringOptional"] = "string-optional";
 })(ParamType || (ParamType = {}));
+var ParamType$1 = ParamType;
+
+// Import shared types
+/**
+ * Handle an error and respond to the client
+ * @author Gabe Abrams
+ * @param res express response
+ * @param error error info
+ * @param opts.err the error to send to the client
+ *   or the error message
+ * @param [opts.code] an error code (only used if err.code is not
+ *   included)
+ * @param [opts.status=500] the https status code to use
+ *   defined)
+ */
+const handleError$1 = (res, error) => {
+    // Get the error message
+    let message;
+    if (error && error.message) {
+        message = (error.message || 'An unknown error occurred.');
+    }
+    else if (typeof error === 'string') {
+        message = (error.trim().length > 0
+            ? error
+            : 'An unknown error occurred.');
+    }
+    else {
+        message = 'An unknown error occurred.';
+    }
+    // Get the error code
+    const code = (error.code || ReactKitErrorCode$1.NoCode);
+    // Get the status code
+    const status = (error.status || 500);
+    // Respond to user
+    res
+        // Set the http status code
+        .status(status)
+        // Send a JSON response
+        .json({
+        // Error message
+        message,
+        // Error code
+        code,
+        // Success = false flag so client can detect server-side errors
+        success: false,
+    });
+    return undefined;
+};
+
+/**
+ * Send successful API response
+ * @author Gabe Abrams
+ * @param res express response
+ * @param body the body of the response to send to the client
+ */
+const handleSuccess$1 = (res, body) => {
+    // Send a http 200 json response
+    res.json({
+        // Include the body as a parameter
+        body,
+        // Success = true flag so client can detect successful responses
+        success: true,
+    });
+    return undefined;
+};
+
+/**
+ * Generate an express API route handler
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.paramTypes map containing the types for each parameter that is
+ *   included in the request (map: param name => type)
+ * @param opts.handler function that processes the request
+ * @returns express route handler that takes the following arguments:
+ *   params (map: param name => value), handleSuccess (function for handling
+ *   successful requests), handleError (function for handling failed requests),
+ *   req (express request object), res (express response object),
+ *   next (express next function). Params also has userId, userFirstName,
+ *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
+ *   are directly added to the session
+ */
+const genRouteHandler$1 = (opts) => {
+    // Return a route handler
+    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        // Output params
+        const output = {};
+        /*----------------------------------------*/
+        /*              Parse Params              */
+        /*----------------------------------------*/
+        // Process items one by one
+        const paramList = Object.entries((_a = opts.paramTypes) !== null && _a !== void 0 ? _a : {});
+        for (let i = 0; i < paramList.length; i++) {
+            const [name, type] = paramList[i];
+            // Find the value as a string
+            const value = (req.params[name]
+                || req.query[name]
+                || req.body[name]);
+            // Parse
+            if (type === ParamType$1.Boolean || type === ParamType$1.BooleanOptional) {
+                // Boolean
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.BooleanOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError$1(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Simplify value
+                    const simpleVal = (String(value)
+                        .trim()
+                        .toLowerCase());
+                    // Parse
+                    output[name] = ([
+                        'true',
+                        'yes',
+                        'y',
+                        '1',
+                        't',
+                    ].indexOf(simpleVal) >= 0);
+                }
+            }
+            else if (type === ParamType$1.Float || type === ParamType$1.FloatOptional) {
+                // Float
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.FloatOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError$1(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else if (!Number.isNaN(Number.parseFloat(String(value)))) {
+                    // Value is a number
+                    output[name] = Number.parseFloat(String(value));
+                }
+                else {
+                    // Issue!
+                    return handleError$1(res, {
+                        message: `Request data was malformed: ${name} was not a valid float.`,
+                        code: ReactKitErrorCode$1.InvalidParameter,
+                        status: 422,
+                    });
+                }
+            }
+            else if (type === ParamType$1.Int || type === ParamType$1.IntOptional) {
+                // Int
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.IntOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError$1(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else if (!Number.isNaN(Number.parseInt(String(value), 10))) {
+                    // Value is a number
+                    output[name] = Number.parseInt(String(value), 10);
+                }
+                else {
+                    // Issue!
+                    return handleError$1(res, {
+                        message: `Request data was malformed: ${name} was not a valid int.`,
+                        code: ReactKitErrorCode$1.InvalidParameter,
+                        status: 422,
+                    });
+                }
+            }
+            else if (type === ParamType$1.JSON || type === ParamType$1.JSONOptional) {
+                // Stringified JSON
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.JSONOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError$1(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Parse
+                    try {
+                        output[name] = JSON.parse(String(value));
+                    }
+                    catch (err) {
+                        return handleError$1(res, {
+                            message: `Request data was malformed: ${name} was not a valid JSON payload.`,
+                            code: ReactKitErrorCode$1.InvalidParameter,
+                            status: 422,
+                        });
+                    }
+                }
+            }
+            else if (type === ParamType$1.String || type === ParamType$1.StringOptional) {
+                // String
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.StringOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError$1(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Leave as is
+                    output[name] = value;
+                }
+            }
+            else {
+                // No valid data type
+                return handleError$1(res, {
+                    message: `An internal error occurred: we could not determine the type of ${name}.`,
+                    code: ReactKitErrorCode$1.InvalidParameter,
+                    status: 422,
+                });
+            }
+        }
+        /*----------------------------------------*/
+        /*               Launch Info              */
+        /*----------------------------------------*/
+        // Get launch info
+        const { launched, launchInfo } = cacclGetLaunchInfo$1(req);
+        if (!launched || !launchInfo) {
+            return handleError$1(res, {
+                message: 'Your session has expired. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.SessionExpired,
+                status: 440,
+            });
+        }
+        // Error if user info cannot be found
+        if (!launchInfo.userId
+            || !launchInfo.userFirstName
+            || !launchInfo.userLastName
+            || (launchInfo.notInCourse
+                && !launchInfo.isAdmin)
+            || (!launchInfo.isTTM
+                && !launchInfo.isLearner
+                && !launchInfo.isAdmin)) {
+            return handleError$1(res, {
+                message: 'Your session was invalid. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.SessionExpired,
+                status: 440,
+            });
+        }
+        // Add launch info to output
+        output.userId = launchInfo.userId;
+        output.userFirstName = launchInfo.userFirstName;
+        output.userLastName = launchInfo.userLastName;
+        output.userEmail = launchInfo.userEmail;
+        output.isLearner = !!launchInfo.isLearner;
+        output.isTTM = !!launchInfo.isTTM;
+        output.isAdmin = !!launchInfo.isAdmin;
+        output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
+        output.courseName = launchInfo.contextLabel;
+        // Add other session variables
+        Object.keys(req.session).forEach((propName) => {
+            // Skip if prop already in output
+            if (output[propName] !== undefined) {
+                return;
+            }
+            // Add to output
+            const value = req.session[propName];
+            if (typeof value === 'string'
+                || typeof value === 'boolean'
+                || typeof value === 'number') {
+                output[propName] = value;
+            }
+        });
+        /*----------------------------------------*/
+        /*       Require Course Consistency       */
+        /*----------------------------------------*/
+        // Make sure the user actually launched from the appropriate course
+        if (output.courseId
+            && launchInfo.courseId
+            && output.courseId !== launchInfo.courseId
+            && !output.isTTM
+            && !output.isAdmin) {
+            // Course of interest is not the launch course
+            return handleError$1(res, {
+                message: 'You switched sessions by opening this app in another tab. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.WrongCourse,
+                status: 401,
+            });
+        }
+        /*----------------------------------------*/
+        /*       Require Proper Permissions       */
+        /*----------------------------------------*/
+        // Add TTM endpoint security
+        if (
+        // This is a TTM endpoint
+        req.path.startsWith('/api/ttm')
+            // User is not a TTM
+            && (
+            // User is not a TTM
+            !output.isTTM
+                // User is not an admin
+                && !output.isAdmin)) {
+            // User does not have access
+            return handleError$1(res, {
+                message: 'This action is only allowed if you are a teaching team member for the course. Please go back to Canvas, log in as a teaching team member, and try again.',
+                code: ReactKitErrorCode$1.NotTTM,
+                status: 401,
+            });
+        }
+        // Add Admin endpoint security
+        if (
+        // This is an admin endpoint
+        req.path.startsWith('/api/admin')
+            // User is not an admin
+            && !output.isAdmin) {
+            // User does not have access
+            return handleError$1(res, {
+                message: 'This action is only allowed if you are a Canvas admin. Please go back to Canvas, log in as an admin, and try again.',
+                code: ReactKitErrorCode$1.NotAdmin,
+                status: 401,
+            });
+        }
+        /*------------------------------------------------------------------------*/
+        /*                              Call handler                              */
+        /*------------------------------------------------------------------------*/
+        try {
+            const results = yield opts.handler({
+                params: output,
+                req,
+                res,
+                next,
+            });
+            // Send results to client
+            handleSuccess$1(res, results !== null && results !== void 0 ? results : undefined);
+        }
+        catch (err) {
+            // Send error to client
+            handleError$1(res, err);
+        }
+    });
+};
 
 /**
  * Days of the week
@@ -40985,16 +41368,16 @@ const initServer = (opts) => {
      */
     opts.app.post(LOG_ROUTE_PATH, genRouteHandler({
         paramTypes: {
-            context: ParamType$2.String,
-            subcontext: ParamType$2.String,
-            tags: ParamType$2.JSON,
-            level: ParamType$2.String,
-            metadata: ParamType$2.JSON,
-            errorMessage: ParamType$2.StringOptional,
-            errorCode: ParamType$2.StringOptional,
-            errorStack: ParamType$2.StringOptional,
-            target: ParamType$2.StringOptional,
-            action: ParamType$2.StringOptional,
+            context: ParamType$3.String,
+            subcontext: ParamType$3.String,
+            tags: ParamType$3.JSON,
+            level: ParamType$3.String,
+            metadata: ParamType$3.JSON,
+            errorMessage: ParamType$3.StringOptional,
+            errorCode: ParamType$3.StringOptional,
+            errorStack: ParamType$3.StringOptional,
+            target: ParamType$3.StringOptional,
+            action: ParamType$3.StringOptional,
         },
         handler: ({ params, logServerEvent }) => {
             // Create log info
@@ -41088,8 +41471,8 @@ const initServer = (opts) => {
      */
     opts.app.get(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler({
         paramTypes: {
-            year: ParamType$2.Int,
-            month: ParamType$2.Int,
+            year: ParamType$3.Int,
+            month: ParamType$3.Int,
         },
         handler: ({ params }) => __awaiter$1(void 0, void 0, void 0, function* () {
             // Get user info
@@ -41447,11 +41830,11 @@ const genRouteHandler = (opts) => {
                 || req.query[name]
                 || req.body[name]);
             // Parse
-            if (type === ParamType$2.Boolean || type === ParamType$2.BooleanOptional) {
+            if (type === ParamType$3.Boolean || type === ParamType$3.BooleanOptional) {
                 // Boolean
                 // Handle case where value doesn't exist
                 if (value === undefined) {
-                    if (type === ParamType$2.BooleanOptional) {
+                    if (type === ParamType$3.BooleanOptional) {
                         output[name] = undefined;
                     }
                     else {
@@ -41478,11 +41861,11 @@ const genRouteHandler = (opts) => {
                     ].indexOf(simpleVal) >= 0);
                 }
             }
-            else if (type === ParamType$2.Float || type === ParamType$2.FloatOptional) {
+            else if (type === ParamType$3.Float || type === ParamType$3.FloatOptional) {
                 // Float
                 // Handle case where value doesn't exist
                 if (value === undefined) {
-                    if (type === ParamType$2.FloatOptional) {
+                    if (type === ParamType$3.FloatOptional) {
                         output[name] = undefined;
                     }
                     else {
@@ -41506,11 +41889,11 @@ const genRouteHandler = (opts) => {
                     });
                 }
             }
-            else if (type === ParamType$2.Int || type === ParamType$2.IntOptional) {
+            else if (type === ParamType$3.Int || type === ParamType$3.IntOptional) {
                 // Int
                 // Handle case where value doesn't exist
                 if (value === undefined) {
-                    if (type === ParamType$2.IntOptional) {
+                    if (type === ParamType$3.IntOptional) {
                         output[name] = undefined;
                     }
                     else {
@@ -41534,11 +41917,11 @@ const genRouteHandler = (opts) => {
                     });
                 }
             }
-            else if (type === ParamType$2.JSON || type === ParamType$2.JSONOptional) {
+            else if (type === ParamType$3.JSON || type === ParamType$3.JSONOptional) {
                 // Stringified JSON
                 // Handle case where value doesn't exist
                 if (value === undefined) {
-                    if (type === ParamType$2.JSONOptional) {
+                    if (type === ParamType$3.JSONOptional) {
                         output[name] = undefined;
                     }
                     else {
@@ -41564,11 +41947,11 @@ const genRouteHandler = (opts) => {
                     }
                 }
             }
-            else if (type === ParamType$2.String || type === ParamType$2.StringOptional) {
+            else if (type === ParamType$3.String || type === ParamType$3.StringOptional) {
                 // String
                 // Handle case where value doesn't exist
                 if (value === undefined) {
-                    if (type === ParamType$2.StringOptional) {
+                    if (type === ParamType$3.StringOptional) {
                         output[name] = undefined;
                     }
                     else {
@@ -42245,6 +42628,61 @@ const getLocalTimeInfo = (dateOrTimestamp) => {
 };
 
 /**
+ * Add all routes for the training list
+ * @author Yuen Ler Chow
+ * @param app express app to add routes too
+ */
+const addDBEditorEndpoints = (opts) => {
+    const { app, collectionName, adminsOnly, collection, } = opts;
+    const endpoint = generateEndpointPath(collectionName, adminsOnly);
+    /**
+     * List all items in the collection
+     * @author Yuen Ler Chow
+     * @returns {any[]} the list of items in the collection
+     */
+    app.get(endpoint, genRouteHandler$1({
+        paramTypes: {
+            filterQuery: ParamType$1.JSONOptional,
+        },
+        handler: ({ params }) => __awaiter$1(void 0, void 0, void 0, function* () {
+            var _a;
+            const filterQuery = (_a = params.filterQuery) !== null && _a !== void 0 ? _a : {};
+            const categories = yield collection.find(filterQuery);
+            return categories;
+        }),
+    }));
+    /**
+     * Create a new item in the collection
+     * @author Yuen Ler Chow
+     * @param {any} item the item to create
+     */
+    app.post(endpoint, genRouteHandler$1({
+        paramTypes: {
+            item: ParamType$1.JSON,
+        },
+        handler: ({ params, }) => __awaiter$1(void 0, void 0, void 0, function* () {
+            // Destructure params
+            const { item, } = params;
+            yield collection.insert(item);
+        }),
+    }));
+    /**
+     * Remove an item from the collection by id
+     * @author Yuen Ler Chow
+     */
+    app.delete(`${endpoint}/:id`, genRouteHandler$1({
+        paramTypes: {
+            id: ParamType$1.String,
+        },
+        handler: ({ params, }) => __awaiter$1(void 0, void 0, void 0, function* () {
+            // Destructure params
+            const { id, } = params;
+            yield collection.delete({ id });
+        }),
+    }));
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -42260,5 +42698,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, ButtonInputGroup$1 as ButtonInputGroup, CSVDownloadButton, CheckboxButton$1 as CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode$1 as ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner$1 as LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$3 as ModalButtonType, ModalSize$2 as ModalSize, ModalType$3 as ModalType, ParamType$2 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton$1 as RadioButton, ReactKitErrorCode$3 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$3 as Variant, abbreviate, alert$2 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError$1 as showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint$1 as visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup$1 as ButtonInputGroup, CSVDownloadButton, CheckboxButton$1 as CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode$1 as ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner$1 as LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$3 as ModalButtonType, ModalSize$2 as ModalSize, ModalType$3 as ModalType, ParamType$3 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton$1 as RadioButton, ReactKitErrorCode$3 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$3 as Variant, abbreviate, addDBEditorEndpoints, alert$2 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError$1 as showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint$1 as visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map
