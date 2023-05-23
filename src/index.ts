@@ -17,7 +17,7 @@ import ItemPicker from './components/ItemPicker';
 import LogReviewer from './components/LogReviewer';
 import IntelliTable from './components/IntelliTable';
 import CSVDownloadButton from './components/CSVDownloadButton';
-
+import DBEntryManagerPanel from './components/DBEntryManagerPanel';
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
 
@@ -83,6 +83,10 @@ import IntelliTableColumn from './types/IntelliTableColumn';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
+import DBEntry from './components/DBEntryManagerPanel/types/DBEntry';
+import DBEntryField from './components/DBEntryManagerPanel/types/DBEntryField';
+import DBEntryFieldType from './components/DBEntryManagerPanel/types/DBEntryFieldType';
+
 
 // Export each item
 export {
@@ -105,6 +109,7 @@ export {
   LogReviewer,
   IntelliTable,
   CSVDownloadButton,
+  DBEntryManagerPanel,
   // Global functions
   alert,
   confirm,
@@ -170,6 +175,9 @@ export {
   IntelliTableColumn,
   // Component-specific-types
   PickableItem,
+  DBEntry,
+  DBEntryField,
+  DBEntryFieldType,
   // Server types
   ParamType,
 };
