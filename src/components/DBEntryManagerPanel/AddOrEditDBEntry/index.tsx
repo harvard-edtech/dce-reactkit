@@ -283,239 +283,268 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
 
     const validationFailed = !!validationError;
 
+    const renderEntryField = (field: DBEntryField, disabled: boolean) => {
+      if (field.type === DBEntryFieldType.String) {
+        if (field.choices) {
+          return (
+            <div
+              key={field.objectKey}
+              className="mb-2"
+            >
+              <div className="input-group"
+                style={{
+                  pointerEvents:
+                    (disabled) ? 'none' : 'auto',
+                }}
+              >
+                <ButtonInputGroup
+                  label={field.label}
+                >
+                  {
+                    field.choices.map((choice) => {
+                      return (
+                        <RadioButton
+                          key={choice.value}
+                          text={choice.title}
+                          selected={entry[field.objectKey] === choice.value}
+                          onSelected={() => {
+                            entry[field.objectKey] = choice.value;
+                            dispatch({
+                              type: ActionType.UpdateDBEntry,
+                              DBEntry: entry,
+                            });
+                          }}
+                          ariaLabel={choice.title}
+                        />
+                      );
+                    })
+                  }
+                </ButtonInputGroup>
+
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div
+            className="mb-2"
+            key={field.objectKey}
+          >
+            <div className="input-group">
+              <span
+                className="AddDBEntry-input-label input-group-text"
+                id="AddDBEntry-form-name-label"
+              >
+                {field.label}
+              </span>
+              <input
+                id="AddDBEntry-form-name-input"
+                disabled={disabled}
+                type="text"
+                className="form-control"
+                placeholder={field.placeholder}
+                aria-describedby="AddDBEntry-form-name-label"
+                value={field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || ''}
+                onChange={(e) => {
+                  entry[field.objectKey] = (
+                    e.target.value
+                      .replace(/[^a-zA-Z0-9\s(),-]/g, '')
+                  );
+                  dispatch({
+                    type: ActionType.UpdateDBEntry,
+                    DBEntry: entry,
+                  });
+                }}
+              />
+            </div>
+          </div>
+        );
+      }
+      if (field.type === DBEntryFieldType.Number) {
+        return (
+          <div
+            key={field.objectKey}
+            className="mb-2"
+          >
+            <div className="input-group">
+              <span
+                className="AddDBEntry-input-label input-group-text"
+                id="AddDBEntry-form-name-label"
+              >
+                {field.label}
+              </span>
+              <input
+                id="AddDBEntry-form-name-input"
+                type="text"
+                className="form-control"
+                placeholder={field.placeholder}
+                aria-describedby="AddDBEntry-form-name-label"
+                value={field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || ''}
+                disabled={disabled}
+                onChange={(e) => {
+                  entry[field.objectKey] = (
+                    e.target.value
+                      .replace(/[^0-9]/g, '')
+                  );
+                  dispatch({
+                    type: ActionType.UpdateDBEntry,
+                    DBEntry: entry,
+                  });
+                }}
+              />
+            </div>
+          </div>
+        );
+      }
+      if (field.type === DBEntryFieldType.StringArray) {
+        if (field.choices) {
+          return (
+            <div
+              key={field.objectKey}
+              className="mb-2"
+            >
+              <div className="input-group"
+                style={{
+                  pointerEvents:
+                    disabled ? 'none' : 'auto',
+                }}
+              >
+                <ButtonInputGroup
+                  label={field.label}
+                >
+                  {
+                    field.choices.map((choice) => {
+                      return (
+                        <CheckboxButton
+                          key={choice.value}
+                          text={choice.title}
+                          checked={entry[field.objectKey] && entry[field.objectKey].includes(choice.value)}
+                          onChanged={(checked) => {
+                            if (checked) {
+                              if (!entry[field.objectKey]) {
+                                entry[field.objectKey] = [];
+                              }
+                              entry[field.objectKey].push(choice.value);
+                            } else {
+                              entry[field.objectKey] = entry[field.objectKey]
+                                .filter((val: any) => { return val !== choice.value; });
+                            }
+                            dispatch({
+                              type: ActionType.UpdateDBEntry,
+                              DBEntry: entry,
+                            });
+                          }}
+                          ariaLabel={choice.title}
+                        />
+                      );
+                    })
+                  }
+                </ButtonInputGroup>
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div
+            key={field.objectKey}
+            className="mb-2"
+          >
+            <div className="input-group">
+              <span
+                className="AddDBEntry-input-label input-group-text"
+                id="AddDBEntry-form-name-label"
+              >
+                {field.label}
+              </span>
+              <div className="flex-grow-1">
+                <CreatableMultiselect
+                  disabled={disabled}
+                  type={DBEntryFieldType.StringArray}
+                  values={entry[field.objectKey] || []}
+                  onChange={(values) => {
+                    entry[field.objectKey] = values;
+                    dispatch({
+                      type: ActionType.UpdateDBEntry,
+                      DBEntry: entry,
+                    });
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+        );
+      }
+      if (field.type === DBEntryFieldType.NumberArray) {
+        return (
+          <div
+            key={field.objectKey}
+            className="mb-2"
+          >
+            <div className="input-group">
+              <span
+                className="AddDBEntry-input-label input-group-text"
+                id="AddDBEntry-form-name-label"
+              >
+                {field.label}
+              </span>
+              <div className="flex-grow-1">
+                <CreatableMultiselect
+                  disabled={disabled}
+                  type={DBEntryFieldType.NumberArray}
+                  values={entry[field.objectKey] || []}
+                  onChange={(values) => {
+                    entry[field.objectKey] = values;
+                    dispatch({
+                      type: ActionType.UpdateDBEntry,
+                      DBEntry: entry,
+                    });
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+        );
+      }
+      if (field.type == DBEntryFieldType.Object) {
+        return (
+          <div
+            key={field.objectKey}
+            className="mb-2"
+          >
+            <div className="input-group">
+              <span
+                className="AddDBEntry-input-label input-group-text"
+                id="AddDBEntry-form-name-label"
+              >
+                {field.label}
+              </span>
+              {
+                field.subfields.map((subfield: DBEntryField) => {
+                  return renderEntryField(subfield, disabled);
+                })
+              }
+            </div>
+          </div>
+
+        );
+
+      }
+
+      return null;
+
+    }
+
     // UI
     body = (
       <div>
         {
           entryFields.map((field: DBEntryField) => {
             const disabled = (idPropName === field.objectKey && DBEntryToEdit !== undefined)
-              || (field.lockAfterCreation && DBEntryToEdit !== undefined);
-            if (field.type === DBEntryFieldType.String) {
-              if (field.choices) {
-                return (
-                  <div
-                    key={field.objectKey}
-                    className="mb-2"
-                  >
-                    <div className="input-group"
-                      style={{
-                        pointerEvents:
-                          (disabled) ? 'none' : 'auto',
-                      }}
-                    >
-                      <ButtonInputGroup
-                        label={field.label}
-                      >
-                        {
-                          field.choices.map((choice) => {
-                            return (
-                              <RadioButton
-                                key={choice.value}
-                                text={choice.title}
-                                selected={entry[field.objectKey] === choice.value}
-                                onSelected={() => {
-                                  entry[field.objectKey] = choice.value;
-                                  dispatch({
-                                    type: ActionType.UpdateDBEntry,
-                                    DBEntry: entry,
-                                  });
-                                }}
-                                ariaLabel={choice.title}
-                              />
-                            );
-                          })
-                        }
-                      </ButtonInputGroup>
-
-                    </div>
-                  </div>
-                );
-              }
-
-              return (
-                <div
-                  className="mb-2"
-                  key={field.objectKey}
-                >
-                  <div className="input-group">
-                    <span
-                      className="AddDBEntry-input-label input-group-text"
-                      id="AddDBEntry-form-name-label"
-                    >
-                      {field.label}
-                    </span>
-                    <input
-                      id="AddDBEntry-form-name-input"
-                      disabled={disabled}
-                      type="text"
-                      className="form-control"
-                      placeholder={field.placeholder}
-                      aria-describedby="AddDBEntry-form-name-label"
-                      value={field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || ''}
-                      onChange={(e) => {
-                        entry[field.objectKey] = (
-                          e.target.value
-                            .replace(/[^a-zA-Z0-9\s(),-]/g, '')
-                        );
-                        dispatch({
-                          type: ActionType.UpdateDBEntry,
-                          DBEntry: entry,
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            }
-            if (field.type === DBEntryFieldType.Number) {
-              return (
-                <div
-                  key={field.objectKey}
-                  className="mb-2"
-                >
-                  <div className="input-group">
-                    <span
-                      className="AddDBEntry-input-label input-group-text"
-                      id="AddDBEntry-form-name-label"
-                    >
-                      {field.label}
-                    </span>
-                    <input
-                      id="AddDBEntry-form-name-input"
-                      type="text"
-                      className="form-control"
-                      placeholder={field.placeholder}
-                      aria-describedby="AddDBEntry-form-name-label"
-                      value={field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || ''}
-                      disabled={disabled}
-                      onChange={(e) => {
-                        entry[field.objectKey] = (
-                          e.target.value
-                            .replace(/[^0-9]/g, '')
-                        );
-                        dispatch({
-                          type: ActionType.UpdateDBEntry,
-                          DBEntry: entry,
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            }
-            if (field.type === DBEntryFieldType.StringArray) {
-              if (field.choices) {
-                return (
-                  <div
-                    key={field.objectKey}
-                    className="mb-2"
-                  >
-                    <div className="input-group"
-                      style={{
-                        pointerEvents:
-                          disabled ? 'none' : 'auto',
-                      }}
-                    >
-                      <ButtonInputGroup
-                        label={field.label}
-                      >
-                        {
-                          field.choices.map((choice) => {
-                            return (
-                              <CheckboxButton
-                                key={choice.value}
-                                text={choice.title}
-                                checked={entry[field.objectKey] && entry[field.objectKey].includes(choice.value)}
-                                onChanged={(checked) => {
-                                  if (checked) {
-                                    if (!entry[field.objectKey]) {
-                                      entry[field.objectKey] = [];
-                                    }
-                                    entry[field.objectKey].push(choice.value);
-                                  } else {
-                                    entry[field.objectKey] = entry[field.objectKey]
-                                      .filter((val: any) => { return val !== choice.value; });
-                                  }
-                                  dispatch({
-                                    type: ActionType.UpdateDBEntry,
-                                    DBEntry: entry,
-                                  });
-                                }}
-                                ariaLabel={choice.title}
-                              />
-                            );
-                          })
-                        }
-                      </ButtonInputGroup>
-                    </div>
-                  </div>
-                );
-              }
-              return (
-                <div
-                  key={field.objectKey}
-                  className="mb-2"
-                >
-                  <div className="input-group">
-                    <span
-                      className="AddDBEntry-input-label input-group-text"
-                      id="AddDBEntry-form-name-label"
-                    >
-                      {field.label}
-                    </span>
-                    <div className="flex-grow-1">
-                      <CreatableMultiselect
-                        disabled={disabled}
-                        type={DBEntryFieldType.StringArray}
-                        values={entry[field.objectKey] || []}
-                        onChange={(values) => {
-                          entry[field.objectKey] = values;
-                          dispatch({
-                            type: ActionType.UpdateDBEntry,
-                            DBEntry: entry,
-                          });
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-              );
-            }
-            if (field.type === DBEntryFieldType.NumberArray) {
-              return (
-                <div
-                  key={field.objectKey}
-                  className="mb-2"
-                >
-                  <div className="input-group">
-                    <span
-                      className="AddDBEntry-input-label input-group-text"
-                      id="AddDBEntry-form-name-label"
-                    >
-                      {field.label}
-                    </span>
-                    <div className="flex-grow-1">
-                      <CreatableMultiselect
-                        disabled={disabled}
-                        type={DBEntryFieldType.NumberArray}
-                        values={entry[field.objectKey] || []}
-                        onChange={(values) => {
-                          entry[field.objectKey] = values;
-                          dispatch({
-                            type: ActionType.UpdateDBEntry,
-                            DBEntry: entry,
-                          });
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-              );
-            }
-
-            return null;
+              || (field.lockAfterCreation !== undefined && DBEntryToEdit !== undefined);
+            return renderEntryField(field, disabled);
           })
         }
 
