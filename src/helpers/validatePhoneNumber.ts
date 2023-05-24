@@ -1,7 +1,7 @@
 import validateString from "./validateString.js";
 
 type phoneNumberResult = 
-  | { isValid: true, cleanedNumber: string} 
+  | { isValid: true, cleanedNumber: string } 
   | { isValid: false, errorMessage: string }
 
 /** 
@@ -15,21 +15,22 @@ type phoneNumberResult =
  */
 const validatePhoneNumber = (phoneNumber: string): phoneNumberResult => {
   
-  const phoneNumberReqs = { // require that cleaned number has 10 digits 
+  
+  // remove parentheses, dashes, and whitespace from number 
+  const cleanedNumber: string = phoneNumber.replace(/\s+|[()]|-/g, ''); 
+  
+  const phoneNumberReqs = { // require that cleaned number is 10 digits 
     minLen: 10, 
     maxLen: 10,
     numbersOnly: true,
   };
 
-  // remove parentheses, dashes, and whitespace from number 
-  const cleanedNumber: string = phoneNumber.replace(/\s+|[()]|-/g, ''); 
-  
   const response = validateString(cleanedNumber, phoneNumberReqs); // validate
 
   return (
     response.isValid 
       ? { isValid: true, cleanedNumber }
-      : { isValid: false, errorMessage: 'Please enter a valid phone number.' }
+      : { isValid: false, errorMessage: 'Please provide a valid phone number.' }
   );
 };
 

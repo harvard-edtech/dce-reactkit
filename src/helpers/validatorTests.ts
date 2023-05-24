@@ -1,6 +1,7 @@
 import validateString from "./validateString.js";
 import validatePhoneNumber from "./validatePhoneNumber.js";
 import validateEmail from "./validateEmail.js";
+import validateRegex from './validateRegex.js';
 
   const reqs = { 
       minLen: 0,
@@ -9,11 +10,21 @@ import validateEmail from "./validateEmail.js";
       numbersOnly: true,
   }
   
-  const testString: string = "a@gmail.com";
-
-  const response = validateEmail(testString);
-  
+  let testString = "austen@gmail.com";
+  let response = validateEmail(testString);
   console.log(response);
+
+  // testString = "a@gmail.com";
+  // response = validateEmail(testString);
+  // console.log(response);
+
+  // testString = "a@gmail.com";
+  // response = validateEmail(testString);
+  // console.log(response);
+
+  // testString = "a@gmail.com";
+  // response = validateEmail(testString);
+  // console.log(response);
 
   /* input was not valid */
 //   if (response.isValid === false) { 

@@ -1,4 +1,6 @@
-type Result = 
+import validateRegex from './validateRegex'
+
+type stringResult = 
   | { isValid: true} 
   | { isValid: false, errorMessages: Array<string> }
 
@@ -8,6 +10,7 @@ type Requirements = {
   lettersOnly?: boolean 
   numbersOnly?: boolean 
   ignoreWhitespace?: boolean
+  regexTest?: string
 }
 
 /** 
@@ -20,7 +23,7 @@ type Requirements = {
  *          invalid, an array is also returned containing messages describing
  *          which requirements were not met.
  */
-const validateString = (input: string, reqs: Requirements): Result => {
+const validateString = (input: string, reqs: Requirements): stringResult => {
 
   const errorMessages: Array<string> = []; 
   let parsedInput: string = input;
@@ -63,6 +66,15 @@ const validateString = (input: string, reqs: Requirements): Result => {
         errorMessages.push(`Input must not contain non-numbers.`);
         break;
       }
+    }
+  }
+
+  if (reqs.regexTest) { // check against regex requirement
+    const regex = new RegExp(reqs.regexTest);
+    const result = validateRegex(parsedInput, regex);
+
+    if (result.isValid === false) {
+      errorMessages.push(result.errorMessage);
     }
   }
 
