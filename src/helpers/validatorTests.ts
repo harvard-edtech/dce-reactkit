@@ -1,5 +1,6 @@
 import validateString from "./validateString.js";
 import validatePhoneNumber from "./validatePhoneNumber.js";
+import validateEmail from "./validateEmail.js";
 
   const reqs = { 
       minLen: 0,
@@ -8,17 +9,19 @@ import validatePhoneNumber from "./validatePhoneNumber.js";
       numbersOnly: true,
   }
   
-  const testString: string = "803----0       43----52 99";
+  const testString: string = "a@gmail.com";
 
-  const response = validatePhoneNumber(testString);
+  const response = validateEmail(testString);
   
+  console.log(response);
+
   /* input was not valid */
-  if (response.isValid === false) { 
-      console.log(response.errorMessage);
-  }
+//   if (response.isValid === false) { 
+//       console.log(response.errorMessage);
+//   }
   
-  /* input was valid */
-  else { 
-      console.log(response.cleanedNumber);
-  }
+//   /* input was valid */
+//   else { 
+//       console.log(response.cleanedNumber);
+//   }
 

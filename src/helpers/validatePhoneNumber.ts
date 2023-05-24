@@ -23,6 +23,7 @@ const validatePhoneNumber = (phoneNumber: string): phoneNumberResult => {
 
   // remove parentheses, dashes, and whitespace from number 
   const cleanedNumber: string = phoneNumber.replace(/\s+|[()]|-/g, ''); 
+  
   const response = validateString(cleanedNumber, phoneNumberReqs); // validate
 
   return (
