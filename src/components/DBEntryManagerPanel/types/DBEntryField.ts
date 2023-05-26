@@ -9,9 +9,11 @@ type DBEntryField = (
 
   {
     label: string,
-    objectKey: string, // the key this corresponds to in the DBEntry
+    // the key this corresponds to in the DBEntry
+    objectKey: string,
     placeholder: string,
-    lockAfterCreation?: boolean, // If true, only allow the user to edit when creating (not when editing)
+    // If true, only allow the user to edit when creating (not when editing)
+    lockAfterCreation?: boolean,
     required?: boolean,
   } & (
     // A string input field

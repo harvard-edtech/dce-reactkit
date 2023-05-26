@@ -4,25 +4,37 @@ import CreatableSelect from 'react-select/creatable';
 import DBEntryFieldType from '../types/DBEntryFieldType';
 import { MultiValue } from 'react-select';
 
-const components = {
-  DropdownIndicator: null,
-};
+
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Types ------------------------------- */
+/*------------------------------------------------------------------------*/
 
 type Option = {
-  readonly label: string;
-  readonly value: string;
+  // what the user sees and types in for the option
+  label: string;
+  // lowercase, no spaces, no special characters of the label
+  value: string;
 };
 
 // Props definition
 type Props = {
+  // type of the field
   type: DBEntryFieldType.StringArray | DBEntryFieldType.NumberArray;
+  // the values entered by the user
   values: string[] | number[];
+  // function to call when the values change
   onChange: (values: string[] | number[]) => void;
+  // true if the field is disabled
   disabled?: boolean;
 };
 
+/*------------------------------------------------------------------------*/
+/* -------------------------------- State ------------------------------- */
+/*------------------------------------------------------------------------*/
+
 /* -------- State Definition -------- */
 type State = {
+  // what the user has typed in so far(before pressing enter or tab)
   inputValue: string;
 };
 
@@ -30,12 +42,18 @@ type State = {
 
 // Types of actions
 enum ActionType {
+  // updates the input value
   SetInputValue = 'SetInputValue',
 }
 
 // Action definitions
 type Action = (
-  | { type: ActionType.SetInputValue; value: string }
+  | {
+    // Action type
+    type: ActionType.SetInputValue;
+    // New value
+    value: string
+  }
 );
 
 /**
@@ -58,9 +76,13 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
+/*------------------------------------------------------------------------*/
+/* -------------------------------- State ------------------------------- */
+/*------------------------------------------------------------------------*/
+
 const CreatableMultiselect: React.FC<Props> = (props) => {
 
-  // destructure all props 
+  // Destructure all props
   const {
     type,
     values,
@@ -82,16 +104,25 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
   const { inputValue } = state;
 
 
+  /*------------------------------------------------------------------------*/
+  /* ------------------------- Component Functions ------------------------ */
+  /*------------------------------------------------------------------------*/
+
   /**
    * Creates an option for the multiselect component
    * @author Yuen Ler Chow
    * @param label label of the option
    */
   const createOption = (label: string): Option => {
+    // set the value to the label without special characters and spaces, and lowercase
     return {
       label,
-      value: label.toLowerCase().replace(/\W/g, '')
-        .replace(' ', '-'),
+      value: (
+        label
+          .toLowerCase()
+          .replace(/\W/g, '')
+          .replace(' ', '-')
+      ),
     };
   };
 
@@ -102,42 +133,51 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
    */
   const addValues = (newValue: string) => {
     if (type === DBEntryFieldType.NumberArray) {
-      const newValues = newValue.split(',')
-        // Trim strings
-        .map((val) => {
-          return val.trim();
-        })
-        // Filter zero length
-        .filter((trimmedVal) => {
-          return trimmedVal.length > 0;
-        })
-        // Parse to number
-        .map(Number.parseFloat)
-        // Filter out existing values
-        .filter((numberVal) => {
-          return !values.some((value) => {
-            return value === numberVal;
+      const newValues = (
+        newValue
+          // Split into items
+          .split(',')
+          // Trim strings
+          .map((val) => {
+            return val.trim();
           })
-        });
+          // Filter zero length
+          .filter((trimmedVal) => {
+            return trimmedVal.length > 0;
+          })
+          // Parse to number
+          .map(Number.parseFloat)
+          // Filter out existing values
+          .filter((numberVal) => {
+            return !values.some((value) => {
+              return value === numberVal;
+            })
+          })
+      );
       onChange([...values, ...newValues] as number[]);
     } else {
-      const newValues = newValue.split(',')
-        // Trim strings
-        .map((val) => {
-          return val.trim();
-        })
-        // Filter zero length
-        .filter((trimmedVal) => {
-          return trimmedVal.length > 0;
-        })
-        // Filter out existing values
-        .filter((val) => {
-          return !values.some((value) => {
-            return value === val;
-          });
-        });
+      const newValues = (
+        newValue
+          // Split into items
+          .split(',')
+          // Trim strings
+          .map((val) => {
+            return val.trim();
+          })
+          // Filter zero length
+          .filter((trimmedVal) => {
+            return trimmedVal.length > 0;
+          })
+          // Filter out existing values
+          .filter((val) => {
+            return !values.some((value) => {
+              return value === val;
+            })
+          })
+      );
       onChange([...values, ...newValues] as string[]);
     }
+    // resets text field to empty because the values have been added
     dispatch({ type: ActionType.SetInputValue, value: '' });
   };
 
@@ -148,11 +188,9 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
    */
   const handleKeyDown: KeyboardEventHandler = (event) => {
     if (!inputValue) return;
-    switch (event.key) {
-      case 'Enter':
-      case 'Tab':
-        addValues(inputValue);
-        event.preventDefault();
+    if (['Enter', 'Tab'].includes(event.key)) {
+      addValues(inputValue);
+      event.preventDefault();
     }
   };
 
@@ -163,13 +201,17 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
    */
 
   const handleInputChange = (input: string) => {
+    // create copy of input value so we can modify it
     let newValue = input;
+    // don't allow user to type in non numbers
     if (type === DBEntryFieldType.NumberArray) {
       newValue = input.replace(/[^0-9,]/g, '');
     }
     if (input.includes(',')) {
+      // if the input has a comma, add the values separated by commas
       addValues(newValue);
     } else {
+      // simply update the input value to the new input value
       dispatch({ type: ActionType.SetInputValue, value: newValue });
     }
   };
@@ -180,37 +222,42 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
    * @param newValue new values
    */
   const handleValueChange = (newValues: MultiValue<Option>) => {
-    if (newValues) {
-      if (type === DBEntryFieldType.NumberArray) {
-        const numberValues: number[] = [];
-        newValues.forEach((val) => {
-          numberValues.push(Number(val.value));
-        });
-        onChange(numberValues);
-      } else {
-        const stringValues: string[] = [];
-        newValues.forEach((val) => {
-          stringValues.push(val.value);
-        });
-        onChange(stringValues);
-      }
+    if (!newValues) {
+      return;
+    }
+    if (type === DBEntryFieldType.NumberArray) {
+      const numberValues: number[] = [];
+      newValues.forEach((val) => {
+        numberValues.push(Number(val.value));
+      });
+      onChange(numberValues);
+    } else {
+      const stringValues: string[] = [];
+      newValues.forEach((val) => {
+        stringValues.push(val.value);
+      });
+      onChange(stringValues);
     }
   };
 
+  /*----------------------------------------*/
+  /* --------------- Main UI -------------- */
+  /*----------------------------------------*/
+
   return (
     <CreatableSelect
-      isDisabled={disabled ?? false}
-      components={components}
+      isDisabled={!!disabled}
+      components={{ DropdownIndicator: null }}
       inputValue={inputValue}
       isClearable
       isMulti
       menuIsOpen={false}
-      onChange={(newValue) => handleValueChange(newValue)}
+      onChange={handleValueChange}
       onInputChange={handleInputChange}
       onKeyDown={handleKeyDown}
-      placeholder="Type something and press enter..."
+      placeholder="Type/paste value and press enter..."
       value={values.map((val) => {
-        return createOption(val.toString());
+        return createOption(String(val));
       })}
     />
   );

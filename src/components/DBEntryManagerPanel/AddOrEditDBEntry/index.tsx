@@ -27,9 +27,6 @@ import DBEntry from '../types/DBEntry';
 import DBEntryField from '../types/DBEntryField';
 import DBEntryFieldType from '../types/DBEntryFieldType';
 
-// Import constants
-import INPUT_PLACEHOLDER from './INPUT_PLACEHOLDER';
-
 import CreatableMultiselect from './CreatableMultiselect';
 
 
@@ -352,7 +349,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                 className="form-control"
                 placeholder={field.placeholder}
                 aria-describedby="AddDBEntry-form-name-label"
-                value={field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || ''}
+                value={entry[field.objectKey] || ''}
                 onChange={(e) => {
                   entry[field.objectKey] = (
                     e.target.value
@@ -387,7 +384,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                 className="form-control"
                 placeholder={field.placeholder}
                 aria-describedby="AddDBEntry-form-name-label"
-                value={field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || ''}
+                value={entry[field.objectKey] || ''}
                 disabled={disabled}
                 onChange={(e) => {
                   entry[field.objectKey] = (

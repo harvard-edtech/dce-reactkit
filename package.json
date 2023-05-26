@@ -28,7 +28,8 @@
     "@fortawesome/free-solid-svg-icons": "^x.x.x",
     "@fortawesome/react-fontawesome": "^x.x.x",
     "bootstrap": "^5.x.x",
-    "react": "^x.x.x"
+    "react": "^x.x.x",
+    "express": "^x.x.x"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.0",
@@ -57,7 +58,6 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "react-select": "^5.7.3"
   }
 }
