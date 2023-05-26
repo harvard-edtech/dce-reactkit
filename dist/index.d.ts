@@ -1175,17 +1175,37 @@ declare const getLocalTimeInfo: (dateOrTimestamp?: number | Date | undefined) =>
     isPM: boolean;
 };
 
+/**
+ * Interface for a collection in the database
+ * @author Yuen Ler Chow
+ */
 interface Collection {
+    /**
+     * Find all items in the collection that match the filter query
+     * @param filterQuery
+     * @returns list of items that match the filter query
+     */
     find: (filterQuery: any) => Promise<any[]>;
+    /**
+     * Insert an item into the collection
+     * @param item the item to insert
+     */
     insert: (item: any) => Promise<void>;
+    /**
+     * Delete an item in the collection
+     * @param id the id of the item to delete
+     */
     delete: (filterQuery: {
         id: string;
     }) => Promise<void>;
 }
 /**
- * Add all routes for the training list
+ * Add all routes for the DBEditor
  * @author Yuen Ler Chow
- * @param app express app to add routes too
+ * @param opts object containing all arguments
+ * @param opts.app express app to add routes too
+ * @param opts.collectionName the name of the collection
+ * @param opts.adminsOnly true if the endpoint is for admins only
  */
 declare const addDBEditorEndpoints: (opts: {
     app: express.Application;

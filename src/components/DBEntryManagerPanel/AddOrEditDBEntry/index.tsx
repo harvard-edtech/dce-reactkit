@@ -44,9 +44,9 @@ type Props = {
    */
   onFinished: (dbEntry: DBEntry | undefined) => void,
   entryFields: DBEntryField[],
-  DBEntryToEdit: DBEntry | undefined
-  validationFunction?: (dbEntry: DBEntry) => Promise<void>
-  objectModifier?: (dbEntry: DBEntry) => DBEntry
+  dbEntryToEdit: DBEntry | undefined
+  validateEntry?: (dbEntry: DBEntry) => Promise<void>
+  modifyEntry?: (dbEntry: DBEntry) => DBEntry
   idPropName: string
   endpoint: string
   entries: DBEntry[]
@@ -140,9 +140,9 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
   const {
     onFinished,
     entryFields,
-    DBEntryToEdit,
-    validationFunction,
-    objectModifier,
+    dbEntryToEdit,
+    validateEntry,
+    modifyEntry,
     idPropName,
     endpoint,
     entries,
@@ -152,7 +152,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
 
   // Initial state
   const initialState: State = {
-    entry: DBEntryToEdit || {},
+    entry: dbEntryToEdit || {},
     saving: false,
   };
 
@@ -184,7 +184,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
       }
     });
 
-    const modifiedEntry = objectModifier ? objectModifier(entry) : entry;
+    const modifiedEntry = modifyEntry ? modifyEntry(entry) : entry;
 
     // Send to server
     try {
@@ -546,8 +546,8 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
       <div>
         {
           entryFields.map((field: DBEntryField) => {
-            const disabled = (idPropName === field.objectKey && DBEntryToEdit !== undefined)
-              || (field.lockAfterCreation !== undefined && DBEntryToEdit !== undefined);
+            const disabled = (idPropName === field.objectKey && dbEntryToEdit !== undefined)
+              || (field.lockAfterCreation !== undefined && dbEntryToEdit !== undefined);
             return renderEntryField(field, disabled);
           })
         }
@@ -566,9 +566,9 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                   validationError,
                 );
               }
-              if (validationFunction) {
+              if (validateEntry) {
                 try {
-                  validationFunction(entry);
+                  validateEntry(entry);
                 } catch (error) {
                   return alert(
                     'Please fix the following error',

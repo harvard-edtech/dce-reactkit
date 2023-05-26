@@ -5098,19 +5098,18 @@ var DayOfWeek$2;
  */
 var DBEntryFieldType;
 (function (DBEntryFieldType) {
+    // A string input field
     DBEntryFieldType["String"] = "String";
+    // A number input field
     DBEntryFieldType["Number"] = "Number";
+    // input field with subfields that are also DBEntryFields
     DBEntryFieldType["Object"] = "Object";
+    // list of strings input field
     DBEntryFieldType["StringArray"] = "StringArray";
+    // list of numbers input field
     DBEntryFieldType["NumberArray"] = "NumberArray";
 })(DBEntryFieldType || (DBEntryFieldType = {}));
 var DBEntryFieldType$1 = DBEntryFieldType;
-
-/**
- * Text that represents a placeholder
- * @author Gabe Abrams
- */
-const INPUT_PLACEHOLDER = '!$%#';
 
 function _extends() {
   _extends = Object.assign ? Object.assign.bind() : function (target) {
@@ -37616,7 +37615,7 @@ var SingleValue = function SingleValue(props) {
 };
 var SingleValue$1 = SingleValue;
 
-var components$1 = {
+var components = {
   ClearIndicator: ClearIndicator,
   Control: Control$1,
   DropdownIndicator: DropdownIndicator,
@@ -37644,7 +37643,7 @@ var components$1 = {
   ValueContainer: ValueContainer
 };
 var defaultComponents = function defaultComponents(props) {
-  return _objectSpread2(_objectSpread2({}, components$1), props.components);
+  return _objectSpread2(_objectSpread2({}, components), props.components);
 };
 
 var safeIsNaN = Number.isNaN ||
@@ -40400,13 +40399,11 @@ var CreatableSelect = /*#__PURE__*/forwardRef(function (props, ref) {
 });
 var CreatableSelect$1 = CreatableSelect;
 
-const components = {
-    DropdownIndicator: null,
-};
 /* ------------- Actions ------------ */
 // Types of actions
 var ActionType$2;
 (function (ActionType) {
+    // updates the input value
     ActionType["SetInputValue"] = "SetInputValue";
 })(ActionType$2 || (ActionType$2 = {}));
 /**
@@ -40425,8 +40422,11 @@ const reducer$2 = (state, action) => {
         }
     }
 };
+/*------------------------------------------------------------------------*/
+/* -------------------------------- State ------------------------------- */
+/*------------------------------------------------------------------------*/
 const CreatableMultiselect = (props) => {
-    // destructure all props 
+    // Destructure all props
     const { type, values, onChange, disabled, } = props;
     /* -------------- State ------------- */
     // Initial state
@@ -40437,16 +40437,22 @@ const CreatableMultiselect = (props) => {
     const [state, dispatch] = useReducer(reducer$2, initialState);
     // Destructure common state
     const { inputValue } = state;
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Component Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
     /**
      * Creates an option for the multiselect component
      * @author Yuen Ler Chow
      * @param label label of the option
      */
     const createOption = (label) => {
+        // set the value to the label without special characters and spaces, and lowercase
         return {
             label,
-            value: label.toLowerCase().replace(/\W/g, '')
-                .replace(' ', '-'),
+            value: (label
+                .toLowerCase()
+                .replace(/\W/g, '')
+                .replace(' ', '-')),
         };
     };
     /**
@@ -40456,7 +40462,9 @@ const CreatableMultiselect = (props) => {
      */
     const addValues = (newValue) => {
         if (type === DBEntryFieldType$1.NumberArray) {
-            const newValues = newValue.split(',')
+            const newValues = (newValue
+                // Split into items
+                .split(',')
                 // Trim strings
                 .map((val) => {
                 return val.trim();
@@ -40472,11 +40480,13 @@ const CreatableMultiselect = (props) => {
                 return !values.some((value) => {
                     return value === numberVal;
                 });
-            });
+            }));
             onChange([...values, ...newValues]);
         }
         else {
-            const newValues = newValue.split(',')
+            const newValues = (newValue
+                // Split into items
+                .split(',')
                 // Trim strings
                 .map((val) => {
                 return val.trim();
@@ -40490,9 +40500,10 @@ const CreatableMultiselect = (props) => {
                 return !values.some((value) => {
                     return value === val;
                 });
-            });
+            }));
             onChange([...values, ...newValues]);
         }
+        // resets text field to empty because the values have been added
         dispatch({ type: ActionType$2.SetInputValue, value: '' });
     };
     /**
@@ -40503,11 +40514,9 @@ const CreatableMultiselect = (props) => {
     const handleKeyDown = (event) => {
         if (!inputValue)
             return;
-        switch (event.key) {
-            case 'Enter':
-            case 'Tab':
-                addValues(inputValue);
-                event.preventDefault();
+        if (['Enter', 'Tab'].includes(event.key)) {
+            addValues(inputValue);
+            event.preventDefault();
         }
     };
     /**
@@ -40516,14 +40525,18 @@ const CreatableMultiselect = (props) => {
      * @param input input value
      */
     const handleInputChange = (input) => {
+        // create copy of input value so we can modify it
         let newValue = input;
+        // don't allow user to type in non numbers
         if (type === DBEntryFieldType$1.NumberArray) {
             newValue = input.replace(/[^0-9,]/g, '');
         }
         if (input.includes(',')) {
+            // if the input has a comma, add the values separated by commas
             addValues(newValue);
         }
         else {
+            // simply update the input value to the new input value
             dispatch({ type: ActionType$2.SetInputValue, value: newValue });
         }
     };
@@ -40533,25 +40546,29 @@ const CreatableMultiselect = (props) => {
      * @param newValue new values
      */
     const handleValueChange = (newValues) => {
-        if (newValues) {
-            if (type === DBEntryFieldType$1.NumberArray) {
-                const numberValues = [];
-                newValues.forEach((val) => {
-                    numberValues.push(Number(val.value));
-                });
-                onChange(numberValues);
-            }
-            else {
-                const stringValues = [];
-                newValues.forEach((val) => {
-                    stringValues.push(val.value);
-                });
-                onChange(stringValues);
-            }
+        if (!newValues) {
+            return;
+        }
+        if (type === DBEntryFieldType$1.NumberArray) {
+            const numberValues = [];
+            newValues.forEach((val) => {
+                numberValues.push(Number(val.value));
+            });
+            onChange(numberValues);
+        }
+        else {
+            const stringValues = [];
+            newValues.forEach((val) => {
+                stringValues.push(val.value);
+            });
+            onChange(stringValues);
         }
     };
-    return (React__default.createElement(CreatableSelect$1, { isDisabled: disabled !== null && disabled !== void 0 ? disabled : false, components: components, inputValue: inputValue, isClearable: true, isMulti: true, menuIsOpen: false, onChange: (newValue) => handleValueChange(newValue), onInputChange: handleInputChange, onKeyDown: handleKeyDown, placeholder: "Type something and press enter...", value: values.map((val) => {
-            return createOption(val.toString());
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    return (React__default.createElement(CreatableSelect$1, { isDisabled: !!disabled, components: { DropdownIndicator: null }, inputValue: inputValue, isClearable: true, isMulti: true, menuIsOpen: false, onChange: handleValueChange, onInputChange: handleInputChange, onKeyDown: handleKeyDown, placeholder: "Type/paste value and press enter...", value: values.map((val) => {
+            return createOption(String(val));
         }) }));
 };
 
@@ -40744,7 +40761,7 @@ const AddorEditDBEntry = (props) => {
                 return (React__default.createElement("div", { className: "mb-2", key: field.objectKey },
                     React__default.createElement("div", { className: "input-group" },
                         React__default.createElement("span", { className: "AddDBEntry-input-label input-group-text", id: "AddDBEntry-form-name-label" }, field.label),
-                        React__default.createElement("input", { id: "AddDBEntry-form-name-input", disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddDBEntry-form-name-label", value: field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || '', onChange: (e) => {
+                        React__default.createElement("input", { id: "AddDBEntry-form-name-input", disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^a-zA-Z0-9\s(),-]/g, ''));
                                 dispatch({
@@ -40757,7 +40774,7 @@ const AddorEditDBEntry = (props) => {
                 return (React__default.createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default.createElement("div", { className: "input-group" },
                         React__default.createElement("span", { className: "AddDBEntry-input-label input-group-text", id: "AddDBEntry-form-name-label" }, field.label),
-                        React__default.createElement("input", { id: "AddDBEntry-form-name-input", type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddDBEntry-form-name-label", value: field.label === INPUT_PLACEHOLDER ? '' : entry[field.objectKey] || '', disabled: disabled, onChange: (e) => {
+                        React__default.createElement("input", { id: "AddDBEntry-form-name-input", type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddDBEntry-form-name-label", value: entry[field.objectKey] || '', disabled: disabled, onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^0-9]/g, ''));
                                 dispatch({
@@ -42628,19 +42645,22 @@ const getLocalTimeInfo = (dateOrTimestamp) => {
 };
 
 /**
- * Add all routes for the training list
+ * Add all routes for the DBEditor
  * @author Yuen Ler Chow
- * @param app express app to add routes too
+ * @param opts object containing all arguments
+ * @param opts.app express app to add routes too
+ * @param opts.collectionName the name of the collection
+ * @param opts.adminsOnly true if the endpoint is for admins only
  */
 const addDBEditorEndpoints = (opts) => {
     const { app, collectionName, adminsOnly, collection, } = opts;
-    const endpoint = generateEndpointPath(collectionName, adminsOnly);
+    const endpointPath = generateEndpointPath(collectionName, adminsOnly);
     /**
      * List all items in the collection
      * @author Yuen Ler Chow
      * @returns {any[]} the list of items in the collection
      */
-    app.get(endpoint, genRouteHandler$1({
+    app.get(endpointPath, genRouteHandler$1({
         paramTypes: {
             filterQuery: ParamType$1.JSONOptional,
         },
@@ -42656,7 +42676,7 @@ const addDBEditorEndpoints = (opts) => {
      * @author Yuen Ler Chow
      * @param {any} item the item to create
      */
-    app.post(endpoint, genRouteHandler$1({
+    app.post(endpointPath, genRouteHandler$1({
         paramTypes: {
             item: ParamType$1.JSON,
         },
@@ -42670,7 +42690,7 @@ const addDBEditorEndpoints = (opts) => {
      * Remove an item from the collection by id
      * @author Yuen Ler Chow
      */
-    app.delete(`${endpoint}/:id`, genRouteHandler$1({
+    app.delete(`${endpointPath}/:id`, genRouteHandler$1({
         paramTypes: {
             id: ParamType$1.String,
         },

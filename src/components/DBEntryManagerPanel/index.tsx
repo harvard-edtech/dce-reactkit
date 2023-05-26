@@ -20,7 +20,8 @@ import LoadingSpinner from '../LoadingSpinner';
 import DBEntry from './types/DBEntry';
 import DBEntryField from './types/DBEntryField';
 
-import AddorEditDBEntry from './AddOrEditDBEntry';
+// Import other components
+import AddorEditdbEntry from './AddOrEditDBEntry';
 import generateEndpointPath from './helpers/generateEndpointPath';
 
 /*------------------------------------------------------------------------*/
@@ -42,9 +43,9 @@ type Props = {
   // the phrase you want when you say "add a new [itemName]"
   itemName: string
   // Function to validate the db entry before sending to the server
-  validationFunction?: (dbEntry: DBEntry) => Promise<void>
+  validateEntry?: (dbEntry: DBEntry) => Promise<void>
   // Function to modify the db entry before sending to the server
-  objectModifier?: (dbEntry: DBEntry) => Promise<DBEntry>
+  modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry>
   // True if editing is disabled
   disableEdit?: boolean
   // Name of the collection in the database
@@ -63,11 +64,11 @@ type Props = {
 
 type State = {
   // List of db items
-  DBEntries: DBEntry[],
+  dbEntries: DBEntry[],
   // True if adding a new db item
   adding: boolean,
   // Db item to edit
-  DBEntryToEdit?: DBEntry,
+  dbEntryToEdit?: DBEntry,
   // True if loading
   loading: boolean,
 };
@@ -96,13 +97,13 @@ type Action = (
     // Action type
     type: ActionType.FinishLoading,
     // db entry list
-    DBentries: DBEntry[],
+    dbEntries: DBEntry[],
   }
   | {
     // Action type
     type: ActionType.ShowEditor,
     // db item to edit
-    DBEntry: DBEntry,
+    dbEntry: DBEntry,
   }
   | {
     // Action type
@@ -114,7 +115,7 @@ type Action = (
     // Action type
     type: ActionType.FinishAdd,
     // DB entry that was added
-    DBEntry?: DBEntry,
+    dbEntry?: DBEntry,
     idPropName: string,
   }
   | {
@@ -125,7 +126,7 @@ type Action = (
     // Action type
     type: ActionType.FinishDelete,
     // db entry that was deleted
-    DBentry: DBEntry,
+    dbEntry: DBEntry,
     // unique id prop name
     idPropName: string,
   }
@@ -143,46 +144,46 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         loading: false,
-        DBEntries: action.DBentries,
+        dbEntries: action.dbEntries,
       };
     }
     case ActionType.ShowAdder: {
       return {
         ...state,
         adding: true,
-        DBEntryToEdit: undefined,
+        dbEntryToEdit: undefined,
       };
     }
     case ActionType.ShowEditor: {
       return {
         ...state,
         adding: false,
-        DBEntryToEdit: action.DBEntry,
+        dbEntryToEdit: action.dbEntry,
       };
     }
     case ActionType.FinishAdd: {
       // Handle cancel
-      const finishedEntry = action.DBEntry;
+      const finishedEntry = action.dbEntry;
       if (!finishedEntry) {
         return {
           ...state,
           adding: false,
-          DBEntryToEdit: undefined,
+          dbEntryToEdit: undefined,
         };
       }
 
       // Create an updated list of DB entries
-      let updatedDBEntries: DBEntry[];
+      let updatedDbEntries: DBEntry[];
       if (state.adding) {
-        updatedDBEntries = [...state.DBEntries, finishedEntry];
+        updatedDbEntries = [...state.dbEntries, finishedEntry];
       } else {
-        updatedDBEntries = state.DBEntries.map((existingDBEntry) => {
-          if (state.DBEntryToEdit && state.DBEntryToEdit[action.idPropName] === existingDBEntry[action.idPropName]) {
+        updatedDbEntries = state.dbEntries.map((existingDbEntry) => {
+          if (state.dbEntryToEdit && state.dbEntryToEdit[action.idPropName] === existingDbEntry[action.idPropName]) {
             // This is the entry being edited! Replace
             return finishedEntry;
           }
           // This is not the entry being edited
-          return existingDBEntry;
+          return existingDbEntry;
         });
       }
 
@@ -190,8 +191,8 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         adding: false,
-        DBEntryToEdit: undefined,
-        DBEntries: updatedDBEntries,
+        dbEntryToEdit: undefined,
+        dbEntries: updatedDbEntries,
       };
     }
     case ActionType.StartDelete: {
@@ -204,8 +205,8 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         loading: false,
-        DBEntries: state.DBEntries.filter((category) => {
-          return (category.webName !== action.DBentry[action.idPropName]);
+        dbEntries: state.dbEntries.filter((category: DBEntry) => {
+          return (category[action.idPropName] !== action.dbEntry[action.idPropName]);
         }),
       };
     }
@@ -219,7 +220,7 @@ const reducer = (state: State, action: Action): State => {
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-const DBEntryManagerPanel: React.FC<Props> = (props) => {
+const dbEntryManagerPanel: React.FC<Props> = (props) => {
 
   // Destructure all props
   const {
@@ -229,8 +230,8 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
     idPropName,
     itemListTitle,
     itemName,
-    validationFunction,
-    objectModifier,
+    validateEntry,
+    modifyEntry,
     disableEdit,
     collectionName,
     adminsOnly,
@@ -241,7 +242,7 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
 
   // Initial state
   const initialState: State = {
-    DBEntries: [],
+    dbEntries: [],
     adding: false,
     loading: true,
   };
@@ -252,10 +253,14 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
   // Destructure common state
   const {
     adding,
-    DBEntryToEdit,
-    DBEntries,
+    dbEntryToEdit,
+    dbEntries,
     loading,
   } = state;
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------- Component Functions ------------------------ */
+  /*------------------------------------------------------------------------*/
 
   const endpoint = generateEndpointPath(collectionName, adminsOnly);
 
@@ -292,13 +297,17 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
       // Finish loader
       dispatch({
         type: ActionType.FinishDelete,
-        DBentry: entry,
+        dbEntry: entry,
         idPropName,
       });
     } catch (err) {
       return showFatalError(err);
     }
   };
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------- Lifecycle Functions ------------------------ */
+  /*------------------------------------------------------------------------*/
 
   /**
    * Mount
@@ -320,7 +329,7 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
           // Save loaded data
           dispatch({
             type: ActionType.FinishLoading,
-            DBentries: data,
+            dbEntries: data,
           });
         } catch (err) {
           return showFatalError(err);
@@ -330,7 +339,14 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
     [],
   );
 
-  /* ------------ DB Entry Category List ------------ */
+  /*------------------------------------------------------------------------*/
+  /* ------------------------------- Render ------------------------------- */
+  /*------------------------------------------------------------------------*/
+
+  /*----------------------------------------*/
+  /* ---------------- Views --------------- */
+  /*----------------------------------------*/
+
   let body: React.ReactNode;
 
   /* ------------- Loading ------------ */
@@ -341,7 +357,9 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
     );
   }
 
-  if (!loading && !adding && !DBEntryToEdit) {
+  /* ------------- List of entries ------------ */
+
+  if (!loading && !adding && !dbEntryToEdit) {
     // Create body
     body = (
       <div>
@@ -349,7 +367,7 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
           title={itemListTitle}
         >
           {/* List of DB entries */}
-          {DBEntries.map((entry) => {
+          {dbEntries.map((entry) => {
             return (
               <div
                 key={entry[idPropName]}
@@ -370,7 +388,7 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
                 <div className="d-flex align-items-center">
                   <button
                     type="button"
-                    id={`DBEntryManagerPanel-remove-category-with-id-${entry[idPropName]}`}
+                    id={`dbEntryManagerPanel-remove-entry-with-id-${entry[idPropName]}`}
                     className="btn btn-secondary me-1"
                     aria-label={`remove database entry: ${entry[titlePropName]}`}
                     onClick={() => {
@@ -388,13 +406,13 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
                   {!disableEdit && (
                     <button
                       type="button"
-                      id={`DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`}
+                      id={`dbEntryManagerPanel-edit-with-id-${entry[idPropName]}`}
                       className="btn btn-primary"
                       aria-label={`edit db entry: ${entry[titlePropName]}`}
                       onClick={() => {
                         dispatch({
                           type: ActionType.ShowEditor,
-                          DBEntry: entry,
+                          dbEntry: entry,
                         });
                       }}
                     >
@@ -416,9 +434,9 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
           <div className="d-grid">
             <button
               type="button"
-              id="DBEntryManagerPanel-add-category"
+              id="dbEntryManagerPanel-add-entry"
               className="btn btn-lg btn-primary"
-              aria-label="add a new category to the list of available categories"
+              aria-label="add a new entry to the list of available entries"
               onClick={() => {
                 dispatch({
                   type: ActionType.ShowAdder,
@@ -437,22 +455,22 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
     );
   }
 
-  /* --------- Create category -------- */
+  /* --------- Create or edit entry -------- */
 
-  if (!loading && (adding || DBEntryToEdit)) {
+  if (!loading && (adding || dbEntryToEdit)) {
     body = (
-      <AddorEditDBEntry
+      <AddorEditdbEntry
         endpoint={endpoint}
-        validationFunction={validationFunction}
-        objectModifier={objectModifier}
+        validateEntry={validateEntry}
+        modifyEntry={modifyEntry}
         entryFields={entryFields}
-        DBEntryToEdit={DBEntryToEdit}
+        dbEntryToEdit={dbEntryToEdit}
         idPropName={idPropName}
-        entries={DBEntries}
+        entries={dbEntries}
         onFinished={(entry?: DBEntry) => {
           dispatch({
             type: ActionType.FinishAdd,
-            DBEntry: entry,
+            dbEntry: entry,
             idPropName,
           });
         }}
@@ -476,4 +494,4 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
 /*------------------------------------------------------------------------*/
 
 // Export component
-export default DBEntryManagerPanel;
+export default dbEntryManagerPanel;
