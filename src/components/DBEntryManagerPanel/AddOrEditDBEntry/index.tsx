@@ -23,10 +23,12 @@ import {
   visitServerEndpoint,
 } from 'dce-reactkit';
 
+// Import other types
 import DBEntry from '../types/DBEntry';
 import DBEntryField from '../types/DBEntryField';
 import DBEntryFieldType from '../types/DBEntryFieldType';
 
+// Import other components
 import CreatableMultiselect from './CreatableMultiselect';
 
 
@@ -42,21 +44,35 @@ type Props = {
    * (if no DBEntry is returned, process was cancelled)
    * @param DBEntry the DBEntry that was just created
    */
-  onFinished: (dbEntry: DBEntry | undefined) => void,
+  onFinished: (dbEntry?: DBEntry) => void,
+  /**
+   * Function to validate the DBEntry before saving
+   * @param dbEntry 
+   */
+  validateEntry?: (dbEntry: DBEntry) => Promise<void>,
+  /**
+   * Function to modify the DBEntry before saving
+   * @param dbEntry 
+   * @returns the modified DBEntry
+   */
+  modifyEntry?: (dbEntry: DBEntry) => DBEntry,
+  // the fields needed to create a new DBEntry
   entryFields: DBEntryField[],
-  dbEntryToEdit: DBEntry | undefined
-  validateEntry?: (dbEntry: DBEntry) => Promise<void>
-  modifyEntry?: (dbEntry: DBEntry) => DBEntry
-  idPropName: string
-  endpoint: string
-  entries: DBEntry[]
+  // the DBEntry to edit (if any)
+  dbEntryToEdit?: DBEntry,
+  // the unique object key of the DBEntry
+  idPropName: string,
+  // server endpoint path to save the DBEntry
+  saveEndpointPath: string,
+  // all entries in the database
+  entries: DBEntry[],
 };
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style = `
-  .AddDBEntry-input-label {
+  .AddOrEditDBEntry-input-label {
     min-width: 7rem;
   }
 `;
@@ -89,7 +105,7 @@ type Action = (
     // Action type
     type: ActionType.UpdateDBEntry,
     // New state of the DBEntry
-    DBEntry: DBEntry,
+    dbEntry: DBEntry,
   }
   | {
     // Action type
@@ -110,7 +126,7 @@ const reducer = (state: State, action: Action): State => {
     case ActionType.UpdateDBEntry: {
       return {
         ...state,
-        entry: action.DBEntry,
+        entry: action.dbEntry,
       };
     }
     case ActionType.StartSave: {
@@ -144,7 +160,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
     validateEntry,
     modifyEntry,
     idPropName,
-    endpoint,
+    saveEndpointPath,
     entries,
   } = props;
 
@@ -189,7 +205,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
     // Send to server
     try {
       await visitServerEndpoint({
-        path: endpoint,
+        path: saveEndpointPath,
         method: 'POST',
         params: {
           item: JSON.stringify(modifiedEntry),
@@ -232,19 +248,23 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
 
   /* -------------- Form -------------- */
 
+  // if not saving, validate what the user has entered
   if (!saving) {
     // create validation boolean array for each field
-    let validationError = '';
+    let validationError: string | undefined = undefined;
 
+    // iterate through each field
     for (let i = 0; i < entryFields.length; i += 1) {
       const field = entryFields[i];
       const value = entry[field.objectKey];
 
+      // check if required field is empty
       if (field.required && !value) {
         validationError = `Please fill in the ${field.label} field`;
         break;
       }
 
+      // check if unique field is unique
       if (field.objectKey === idPropName) {
         if (entries.find((e) => { return e[idPropName] === value; })) {
           validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
@@ -252,19 +272,23 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
         }
       }
 
+      // if they have entered a value for the field, check if it is valid
       if (value) {
+        // string validation
         if (field.type === DBEntryFieldType.String) {
           if (field.minNumChars && value.length < field.minNumChars) {
             validationError = `${field.label} must be at least ${field.minNumChars} characters long`;
           } else if (field.maxNumChars && value.length > field.maxNumChars) {
             validationError = `${field.label} must be at most ${field.maxNumChars} characters long`;
           }
+          // number validation
         } else if (field.type === DBEntryFieldType.Number) {
           if (field.minNumber && value < field.minNumber) {
             validationError = `${field.label} must be at least ${field.minNumber}`;
           } else if (field.maxNumber && value > field.maxNumber) {
             validationError = `${field.label} must be at most ${field.maxNumber}`;
           }
+          // string and number array validation
         } else if (field.type === DBEntryFieldType.StringArray || field.type === DBEntryFieldType.NumberArray) {
           if (field.minNumElements && value.length < field.minNumElements) {
             validationError = `${field.label} must have at least ${field.minNumElements} values`;
@@ -283,10 +307,17 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           }
         }
       }
+      if (validationError) {
+        break;
+      }
     }
 
-    const validationFailed = !!validationError;
-
+    /**
+     * render a single entry field
+     * @author Yuen Ler Chow
+     * @param field the entry field to render
+     * @param disabled true if the field should be disabled
+     */
     const renderEntryField = (field: DBEntryField, disabled: boolean) => {
       if (field.type === DBEntryFieldType.String) {
         if (field.choices) {
@@ -297,8 +328,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             >
               <div className="input-group"
                 style={{
-                  pointerEvents:
-                    (disabled) ? 'none' : 'auto',
+                  pointerEvents: (disabled ? 'none' : 'auto'),
                 }}
               >
                 <ButtonInputGroup
@@ -315,7 +345,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                             entry[field.objectKey] = choice.value;
                             dispatch({
                               type: ActionType.UpdateDBEntry,
-                              DBEntry: entry,
+                              dbEntry: entry,
                             });
                           }}
                           ariaLabel={choice.title}
@@ -337,27 +367,26 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           >
             <div className="input-group">
               <span
-                className="AddDBEntry-input-label input-group-text"
-                id="AddDBEntry-form-name-label"
+                className="AddOrEditDBEntry-input-label input-group-text"
+                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
               <input
-                id="AddDBEntry-form-name-input"
+                id="AddOrEditDBEntry-form-name-input"
                 disabled={disabled}
                 type="text"
                 className="form-control"
                 placeholder={field.placeholder}
-                aria-describedby="AddDBEntry-form-name-label"
+                aria-describedby="AddOrEditDBEntry-form-name-label"
                 value={entry[field.objectKey] || ''}
                 onChange={(e) => {
                   entry[field.objectKey] = (
                     e.target.value
-                      .replace(/[^a-zA-Z0-9\s(),-]/g, '')
                   );
                   dispatch({
                     type: ActionType.UpdateDBEntry,
-                    DBEntry: entry,
+                    dbEntry: entry,
                   });
                 }}
               />
@@ -373,17 +402,17 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           >
             <div className="input-group">
               <span
-                className="AddDBEntry-input-label input-group-text"
-                id="AddDBEntry-form-name-label"
+                className="AddOrEditDBEntry-input-label input-group-text"
+                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
               <input
-                id="AddDBEntry-form-name-input"
+                id="AddOrEditDBEntry-form-name-input"
                 type="text"
                 className="form-control"
                 placeholder={field.placeholder}
-                aria-describedby="AddDBEntry-form-name-label"
+                aria-describedby="AddOrEditDBEntry-form-name-label"
                 value={entry[field.objectKey] || ''}
                 disabled={disabled}
                 onChange={(e) => {
@@ -393,7 +422,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                   );
                   dispatch({
                     type: ActionType.UpdateDBEntry,
-                    DBEntry: entry,
+                    dbEntry: entry,
                   });
                 }}
               />
@@ -410,8 +439,8 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             >
               <div className="input-group"
                 style={{
-                  pointerEvents:
-                    disabled ? 'none' : 'auto',
+                  pointerEvents: (disabled ? 'none' : 'auto'),
+
                 }}
               >
                 <ButtonInputGroup
@@ -431,12 +460,14 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                               }
                               entry[field.objectKey].push(choice.value);
                             } else {
-                              entry[field.objectKey] = entry[field.objectKey]
-                                .filter((val: any) => { return val !== choice.value; });
+                              entry[field.objectKey] = (
+                                entry[field.objectKey]
+                                  .filter((val: any) => { return val !== choice.value; })
+                              );
                             }
                             dispatch({
                               type: ActionType.UpdateDBEntry,
-                              DBEntry: entry,
+                              dbEntry: entry,
                             });
                           }}
                           ariaLabel={choice.title}
@@ -456,8 +487,8 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           >
             <div className="input-group">
               <span
-                className="AddDBEntry-input-label input-group-text"
-                id="AddDBEntry-form-name-label"
+                className="AddOrEditDBEntry-input-label input-group-text"
+                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
@@ -470,7 +501,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                     entry[field.objectKey] = values;
                     dispatch({
                       type: ActionType.UpdateDBEntry,
-                      DBEntry: entry,
+                      dbEntry: entry,
                     });
                   }}
                 />
@@ -488,8 +519,8 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           >
             <div className="input-group">
               <span
-                className="AddDBEntry-input-label input-group-text"
-                id="AddDBEntry-form-name-label"
+                className="AddOrEditDBEntry-input-label input-group-text"
+                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
@@ -502,7 +533,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                     entry[field.objectKey] = values;
                     dispatch({
                       type: ActionType.UpdateDBEntry,
-                      DBEntry: entry,
+                      dbEntry: entry,
                     });
                   }}
                 />
@@ -520,8 +551,8 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           >
             <div className="input-group">
               <span
-                className="AddDBEntry-input-label input-group-text"
-                id="AddDBEntry-form-name-label"
+                className="AddOrEditDBEntry-input-label input-group-text"
+                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
@@ -536,7 +567,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
         );
 
       }
-
+      // this should never happen
       return null;
 
     }
@@ -556,11 +587,11 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
         <div className="text-center mt-2">
           <button
             type="button"
-            id="AddDBEntry-save-changes-button"
+            id="AddOrEditDBEntry-save-changes-button"
             className="btn btn-primary btn-lg me-1"
             aria-label="save changes"
             onClick={async () => {
-              if (validationFailed) {
+              if (validationError) {
                 return alert(
                   'Please fix the following error',
                   validationError,
@@ -587,7 +618,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           </button>
           <button
             type="button"
-            id="AddDBEntry-cancel-button"
+            id="AddOrEditDBEntry-cancel-button"
             className="btn btn-secondary btn-lg me-1"
             aria-label="save changes"
             onClick={cancel}

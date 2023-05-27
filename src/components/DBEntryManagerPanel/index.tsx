@@ -460,7 +460,7 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
   if (!loading && (adding || dbEntryToEdit)) {
     body = (
       <AddorEditdbEntry
-        endpoint={endpoint}
+        saveEndpointPath={endpoint}
         validateEntry={validateEntry}
         modifyEntry={modifyEntry}
         entryFields={entryFields}
