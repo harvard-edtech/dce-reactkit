@@ -11,13 +11,22 @@ declare type Props = {
      * (if no DBEntry is returned, process was cancelled)
      * @param DBEntry the DBEntry that was just created
      */
-    onFinished: (dbEntry: DBEntry | undefined) => void;
+    onFinished: (dbEntry?: DBEntry) => void;
+    /**
+     * Function to validate the DBEntry before saving
+     * @param dbEntry
+     */
+    validateEntry?: (dbEntry: DBEntry) => Promise<void>;
+    /**
+     * Function to modify the DBEntry before saving
+     * @param dbEntry
+     * @returns the modified DBEntry
+     */
+    modifyEntry?: (dbEntry: DBEntry) => DBEntry;
     entryFields: DBEntryField[];
-    DBEntryToEdit: DBEntry | undefined;
-    validationFunction?: (dbEntry: DBEntry) => Promise<void>;
-    objectModifier?: (dbEntry: DBEntry) => DBEntry;
+    dbEntryToEdit?: DBEntry;
     idPropName: string;
-    endpoint: string;
+    saveEndpointPath: string;
     entries: DBEntry[];
 };
 declare const AddorEditDBEntry: React.FC<Props>;

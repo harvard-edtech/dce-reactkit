@@ -40580,7 +40580,7 @@ const CreatableMultiselect = (props) => {
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style = `
-  .AddDBEntry-input-label {
+  .AddOrEditDBEntry-input-label {
     min-width: 7rem;
   }
 `;
@@ -40602,7 +40602,7 @@ var ActionType$1;
 const reducer$1 = (state, action) => {
     switch (action.type) {
         case ActionType$1.UpdateDBEntry: {
-            return Object.assign(Object.assign({}, state), { entry: action.DBEntry });
+            return Object.assign(Object.assign({}, state), { entry: action.dbEntry });
         }
         case ActionType$1.StartSave: {
             return Object.assign(Object.assign({}, state), { saving: true });
@@ -40621,11 +40621,11 @@ const AddorEditDBEntry = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { onFinished, entryFields, DBEntryToEdit, validationFunction, objectModifier, idPropName, endpoint, entries, } = props;
+    const { onFinished, entryFields, dbEntryToEdit, validateEntry, modifyEntry, idPropName, saveEndpointPath, entries, } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
-        entry: DBEntryToEdit || {},
+        entry: dbEntryToEdit || {},
         saving: false,
     };
     // Initialize state
@@ -40648,11 +40648,11 @@ const AddorEditDBEntry = (props) => {
                 entry[field.objectKey] = field.defaultValue;
             }
         });
-        const modifiedEntry = objectModifier ? objectModifier(entry) : entry;
+        const modifiedEntry = modifyEntry ? modifyEntry(entry) : entry;
         // Send to server
         try {
             yield visitServerEndpoint({
-                path: endpoint,
+                path: saveEndpointPath,
                 method: 'POST',
                 params: {
                     item: JSON.stringify(modifiedEntry),
@@ -40685,23 +40685,29 @@ const AddorEditDBEntry = (props) => {
         body = (React__default.createElement(LoadingSpinner, null));
     }
     /* -------------- Form -------------- */
+    // if not saving, validate what the user has entered
     if (!saving) {
         // create validation boolean array for each field
-        let validationError = '';
+        let validationError = undefined;
+        // iterate through each field
         for (let i = 0; i < entryFields.length; i += 1) {
             const field = entryFields[i];
             const value = entry[field.objectKey];
+            // check if required field is empty
             if (field.required && !value) {
                 validationError = `Please fill in the ${field.label} field`;
                 break;
             }
+            // check if unique field is unique
             if (field.objectKey === idPropName) {
                 if (entries.find((e) => { return e[idPropName] === value; })) {
                     validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
                     break;
                 }
             }
+            // if they have entered a value for the field, check if it is valid
             if (value) {
+                // string validation
                 if (field.type === DBEntryFieldType$1.String) {
                     if (field.minNumChars && value.length < field.minNumChars) {
                         validationError = `${field.label} must be at least ${field.minNumChars} characters long`;
@@ -40709,6 +40715,7 @@ const AddorEditDBEntry = (props) => {
                     else if (field.maxNumChars && value.length > field.maxNumChars) {
                         validationError = `${field.label} must be at most ${field.maxNumChars} characters long`;
                     }
+                    // number validation
                 }
                 else if (field.type === DBEntryFieldType$1.Number) {
                     if (field.minNumber && value < field.minNumber) {
@@ -40717,6 +40724,7 @@ const AddorEditDBEntry = (props) => {
                     else if (field.maxNumber && value > field.maxNumber) {
                         validationError = `${field.label} must be at most ${field.maxNumber}`;
                     }
+                    // string and number array validation
                 }
                 else if (field.type === DBEntryFieldType$1.StringArray || field.type === DBEntryFieldType$1.NumberArray) {
                     if (field.minNumElements && value.length < field.minNumElements) {
@@ -40739,47 +40747,54 @@ const AddorEditDBEntry = (props) => {
                     }
                 }
             }
+            if (validationError) {
+                break;
+            }
         }
-        const validationFailed = !!validationError;
+        /**
+         * render a single entry field
+         * @author Yuen Ler Chow
+         * @param field the entry field to render
+         * @param disabled true if the field should be disabled
+         */
         const renderEntryField = (field, disabled) => {
             if (field.type === DBEntryFieldType$1.String) {
                 if (field.choices) {
                     return (React__default.createElement("div", { key: field.objectKey, className: "mb-2" },
                         React__default.createElement("div", { className: "input-group", style: {
-                                pointerEvents: (disabled) ? 'none' : 'auto',
+                                pointerEvents: (disabled ? 'none' : 'auto'),
                             } },
                             React__default.createElement(ButtonInputGroup, { label: field.label }, field.choices.map((choice) => {
                                 return (React__default.createElement(RadioButton, { key: choice.value, text: choice.title, selected: entry[field.objectKey] === choice.value, onSelected: () => {
                                         entry[field.objectKey] = choice.value;
                                         dispatch({
                                             type: ActionType$1.UpdateDBEntry,
-                                            DBEntry: entry,
+                                            dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
                             })))));
                 }
                 return (React__default.createElement("div", { className: "mb-2", key: field.objectKey },
                     React__default.createElement("div", { className: "input-group" },
-                        React__default.createElement("span", { className: "AddDBEntry-input-label input-group-text", id: "AddDBEntry-form-name-label" }, field.label),
-                        React__default.createElement("input", { id: "AddDBEntry-form-name-input", disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
-                                entry[field.objectKey] = (e.target.value
-                                    .replace(/[^a-zA-Z0-9\s(),-]/g, ''));
+                        React__default.createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
+                        React__default.createElement("input", { id: "AddOrEditDBEntry-form-name-input", disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
+                                entry[field.objectKey] = (e.target.value);
                                 dispatch({
                                     type: ActionType$1.UpdateDBEntry,
-                                    DBEntry: entry,
+                                    dbEntry: entry,
                                 });
                             } }))));
             }
             if (field.type === DBEntryFieldType$1.Number) {
                 return (React__default.createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default.createElement("div", { className: "input-group" },
-                        React__default.createElement("span", { className: "AddDBEntry-input-label input-group-text", id: "AddDBEntry-form-name-label" }, field.label),
-                        React__default.createElement("input", { id: "AddDBEntry-form-name-input", type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddDBEntry-form-name-label", value: entry[field.objectKey] || '', disabled: disabled, onChange: (e) => {
+                        React__default.createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
+                        React__default.createElement("input", { id: "AddOrEditDBEntry-form-name-input", type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', disabled: disabled, onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^0-9]/g, ''));
                                 dispatch({
                                     type: ActionType$1.UpdateDBEntry,
-                                    DBEntry: entry,
+                                    dbEntry: entry,
                                 });
                             } }))));
             }
@@ -40787,7 +40802,7 @@ const AddorEditDBEntry = (props) => {
                 if (field.choices) {
                     return (React__default.createElement("div", { key: field.objectKey, className: "mb-2" },
                         React__default.createElement("div", { className: "input-group", style: {
-                                pointerEvents: disabled ? 'none' : 'auto',
+                                pointerEvents: (disabled ? 'none' : 'auto'),
                             } },
                             React__default.createElement(ButtonInputGroup, { label: field.label }, field.choices.map((choice) => {
                                 return (React__default.createElement(CheckboxButton, { key: choice.value, text: choice.title, checked: entry[field.objectKey] && entry[field.objectKey].includes(choice.value), onChanged: (checked) => {
@@ -40798,66 +40813,67 @@ const AddorEditDBEntry = (props) => {
                                             entry[field.objectKey].push(choice.value);
                                         }
                                         else {
-                                            entry[field.objectKey] = entry[field.objectKey]
-                                                .filter((val) => { return val !== choice.value; });
+                                            entry[field.objectKey] = (entry[field.objectKey]
+                                                .filter((val) => { return val !== choice.value; }));
                                         }
                                         dispatch({
                                             type: ActionType$1.UpdateDBEntry,
-                                            DBEntry: entry,
+                                            dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
                             })))));
                 }
                 return (React__default.createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default.createElement("div", { className: "input-group" },
-                        React__default.createElement("span", { className: "AddDBEntry-input-label input-group-text", id: "AddDBEntry-form-name-label" }, field.label),
+                        React__default.createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
                         React__default.createElement("div", { className: "flex-grow-1" },
                             React__default.createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.StringArray, values: entry[field.objectKey] || [], onChange: (values) => {
                                     entry[field.objectKey] = values;
                                     dispatch({
                                         type: ActionType$1.UpdateDBEntry,
-                                        DBEntry: entry,
+                                        dbEntry: entry,
                                     });
                                 } })))));
             }
             if (field.type === DBEntryFieldType$1.NumberArray) {
                 return (React__default.createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default.createElement("div", { className: "input-group" },
-                        React__default.createElement("span", { className: "AddDBEntry-input-label input-group-text", id: "AddDBEntry-form-name-label" }, field.label),
+                        React__default.createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
                         React__default.createElement("div", { className: "flex-grow-1" },
                             React__default.createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.NumberArray, values: entry[field.objectKey] || [], onChange: (values) => {
                                     entry[field.objectKey] = values;
                                     dispatch({
                                         type: ActionType$1.UpdateDBEntry,
-                                        DBEntry: entry,
+                                        dbEntry: entry,
                                     });
                                 } })))));
             }
             if (field.type == DBEntryFieldType$1.Object) {
                 return (React__default.createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default.createElement("div", { className: "input-group" },
-                        React__default.createElement("span", { className: "AddDBEntry-input-label input-group-text", id: "AddDBEntry-form-name-label" }, field.label),
+                        React__default.createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
                         field.subfields.map((subfield) => {
                             return renderEntryField(subfield, disabled);
                         }))));
             }
+            // this should never happen
             return null;
         };
         // UI
         body = (React__default.createElement("div", null,
             entryFields.map((field) => {
-                const disabled = (idPropName === field.objectKey && DBEntryToEdit !== undefined)
-                    || (field.lockAfterCreation !== undefined && DBEntryToEdit !== undefined);
+                const disabled = (idPropName === field.objectKey && dbEntryToEdit !== undefined)
+                    || (field.lockAfterCreation !== undefined && dbEntryToEdit !== undefined);
                 return renderEntryField(field, disabled);
             }),
             React__default.createElement("div", { className: "text-center mt-2" },
-                React__default.createElement("button", { type: "button", id: "AddDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "save changes", onClick: () => __awaiter$1(void 0, void 0, void 0, function* () {
-                        if (validationFailed) {
+                React__default.createElement("button", { type: "button", id: "AddOrEditDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "save changes", onClick: () => __awaiter$1(void 0, void 0, void 0, function* () {
+                        if (validationError) {
                             return alert$1('Please fix the following error', validationError);
                         }
-                        if (validationFunction) {
+                        if (validateEntry) {
                             try {
-                                validationFunction(entry);
+                                validateEntry(entry);
                             }
                             catch (error) {
                                 return alert$1('Please fix the following error', String(error));
@@ -40867,7 +40883,7 @@ const AddorEditDBEntry = (props) => {
                     }) },
                     React__default.createElement(FontAwesomeIcon, { icon: faSave, className: "me-1" }),
                     "Save"),
-                React__default.createElement("button", { type: "button", id: "AddDBEntry-cancel-button", className: "btn btn-secondary btn-lg me-1", "aria-label": "save changes", onClick: cancel }, "Cancel"))));
+                React__default.createElement("button", { type: "button", id: "AddOrEditDBEntry-cancel-button", className: "btn btn-secondary btn-lg me-1", "aria-label": "save changes", onClick: cancel }, "Cancel"))));
     }
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
@@ -40918,44 +40934,44 @@ var ActionType;
 const reducer = (state, action) => {
     switch (action.type) {
         case ActionType.FinishLoading: {
-            return Object.assign(Object.assign({}, state), { loading: false, DBEntries: action.DBentries });
+            return Object.assign(Object.assign({}, state), { loading: false, dbEntries: action.dbEntries });
         }
         case ActionType.ShowAdder: {
-            return Object.assign(Object.assign({}, state), { adding: true, DBEntryToEdit: undefined });
+            return Object.assign(Object.assign({}, state), { adding: true, dbEntryToEdit: undefined });
         }
         case ActionType.ShowEditor: {
-            return Object.assign(Object.assign({}, state), { adding: false, DBEntryToEdit: action.DBEntry });
+            return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: action.dbEntry });
         }
         case ActionType.FinishAdd: {
             // Handle cancel
-            const finishedEntry = action.DBEntry;
+            const finishedEntry = action.dbEntry;
             if (!finishedEntry) {
-                return Object.assign(Object.assign({}, state), { adding: false, DBEntryToEdit: undefined });
+                return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: undefined });
             }
             // Create an updated list of DB entries
-            let updatedDBEntries;
+            let updatedDbEntries;
             if (state.adding) {
-                updatedDBEntries = [...state.DBEntries, finishedEntry];
+                updatedDbEntries = [...state.dbEntries, finishedEntry];
             }
             else {
-                updatedDBEntries = state.DBEntries.map((existingDBEntry) => {
-                    if (state.DBEntryToEdit && state.DBEntryToEdit[action.idPropName] === existingDBEntry[action.idPropName]) {
+                updatedDbEntries = state.dbEntries.map((existingDbEntry) => {
+                    if (state.dbEntryToEdit && state.dbEntryToEdit[action.idPropName] === existingDbEntry[action.idPropName]) {
                         // This is the entry being edited! Replace
                         return finishedEntry;
                     }
                     // This is not the entry being edited
-                    return existingDBEntry;
+                    return existingDbEntry;
                 });
             }
             // Update the state
-            return Object.assign(Object.assign({}, state), { adding: false, DBEntryToEdit: undefined, DBEntries: updatedDBEntries });
+            return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: undefined, dbEntries: updatedDbEntries });
         }
         case ActionType.StartDelete: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
         case ActionType.FinishDelete: {
-            return Object.assign(Object.assign({}, state), { loading: false, DBEntries: state.DBEntries.filter((category) => {
-                    return (category.webName !== action.DBentry[action.idPropName]);
+            return Object.assign(Object.assign({}, state), { loading: false, dbEntries: state.dbEntries.filter((category) => {
+                    return (category[action.idPropName] !== action.dbEntry[action.idPropName]);
                 }) });
         }
         default: {
@@ -40966,20 +40982,23 @@ const reducer = (state, action) => {
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
-const DBEntryManagerPanel = (props) => {
+const dbEntryManagerPanel = (props) => {
     // Destructure all props
-    const { entryFields, titlePropName, descriptionPropName, idPropName, itemListTitle, itemName, validationFunction, objectModifier, disableEdit, collectionName, adminsOnly, filterQuery } = props;
+    const { entryFields, titlePropName, descriptionPropName, idPropName, itemListTitle, itemName, validateEntry, modifyEntry, disableEdit, collectionName, adminsOnly, filterQuery } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
-        DBEntries: [],
+        dbEntries: [],
         adding: false,
         loading: true,
     };
     // Initialize state
     const [state, dispatch] = useReducer(reducer, initialState);
     // Destructure common state
-    const { adding, DBEntryToEdit, DBEntries, loading, } = state;
+    const { adding, dbEntryToEdit, dbEntries, loading, } = state;
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Component Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
     const endpoint = generateEndpointPath(collectionName, adminsOnly);
     /**
      * Delete a database entry
@@ -41006,7 +41025,7 @@ const DBEntryManagerPanel = (props) => {
             // Finish loader
             dispatch({
                 type: ActionType.FinishDelete,
-                DBentry: entry,
+                dbEntry: entry,
                 idPropName,
             });
         }
@@ -41014,6 +41033,9 @@ const DBEntryManagerPanel = (props) => {
             return showFatalError$1(err);
         }
     });
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Lifecycle Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
     /**
      * Mount
      * @author Yuen Ler Chow
@@ -41032,7 +41054,7 @@ const DBEntryManagerPanel = (props) => {
                 // Save loaded data
                 dispatch({
                     type: ActionType.FinishLoading,
-                    DBentries: data,
+                    dbEntries: data,
                 });
             }
             catch (err) {
@@ -41040,17 +41062,23 @@ const DBEntryManagerPanel = (props) => {
             }
         }))();
     }, []);
-    /* ------------ DB Entry Category List ------------ */
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* ---------------- Views --------------- */
+    /*----------------------------------------*/
     let body;
     /* ------------- Loading ------------ */
     if (loading) {
         body = (React__default.createElement(LoadingSpinner$1, null));
     }
-    if (!loading && !adding && !DBEntryToEdit) {
+    /* ------------- List of entries ------------ */
+    if (!loading && !adding && !dbEntryToEdit) {
         // Create body
         body = (React__default.createElement("div", null,
             React__default.createElement(TabBox, { title: itemListTitle },
-                DBEntries.map((entry) => {
+                dbEntries.map((entry) => {
                     return (React__default.createElement("div", { key: entry[idPropName], className: "alert alert-secondary p-2 mb-2 d-flex align-items-center justify-content-center mb-1" },
                         React__default.createElement("div", { className: "flex-grow-1" },
                             React__default.createElement("h4", { className: "m-0" },
@@ -41061,22 +41089,22 @@ const DBEntryManagerPanel = (props) => {
                                     entry[descriptionPropName],
                                     ")"))),
                         React__default.createElement("div", { className: "d-flex align-items-center" },
-                            React__default.createElement("button", { type: "button", id: `DBEntryManagerPanel-remove-category-with-id-${entry[idPropName]}`, className: "btn btn-secondary me-1", "aria-label": `remove database entry: ${entry[titlePropName]}`, onClick: () => {
+                            React__default.createElement("button", { type: "button", id: `dbEntryManagerPanel-remove-entry-with-id-${entry[idPropName]}`, className: "btn btn-secondary me-1", "aria-label": `remove database entry: ${entry[titlePropName]}`, onClick: () => {
                                     deleteEntry(entry);
                                 } },
                                 React__default.createElement(FontAwesomeIcon, { icon: faTrash }),
                                 React__default.createElement("span", { className: "d-none d-md-inline ms-1" }, "Remove")),
-                            !disableEdit && (React__default.createElement("button", { type: "button", id: `DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
+                            !disableEdit && (React__default.createElement("button", { type: "button", id: `dbEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
                                     dispatch({
                                         type: ActionType.ShowEditor,
-                                        DBEntry: entry,
+                                        dbEntry: entry,
                                     });
                                 } },
                                 React__default.createElement(FontAwesomeIcon, { icon: faCog }),
                                 React__default.createElement("span", { className: "d-none d-md-inline ms-1" }, "Edit"))))));
                 }),
                 React__default.createElement("div", { className: "d-grid" },
-                    React__default.createElement("button", { type: "button", id: "DBEntryManagerPanel-add-category", className: "btn btn-lg btn-primary", "aria-label": "add a new category to the list of available categories", onClick: () => {
+                    React__default.createElement("button", { type: "button", id: "dbEntryManagerPanel-add-entry", className: "btn btn-lg btn-primary", "aria-label": "add a new entry to the list of available entries", onClick: () => {
                             dispatch({
                                 type: ActionType.ShowAdder,
                             });
@@ -41084,12 +41112,12 @@ const DBEntryManagerPanel = (props) => {
                         React__default.createElement(FontAwesomeIcon, { icon: faPlus, className: "me-2" }),
                         `Add ${itemName}`)))));
     }
-    /* --------- Create category -------- */
-    if (!loading && (adding || DBEntryToEdit)) {
-        body = (React__default.createElement(AddorEditDBEntry, { endpoint: endpoint, validationFunction: validationFunction, objectModifier: objectModifier, entryFields: entryFields, DBEntryToEdit: DBEntryToEdit, idPropName: idPropName, entries: DBEntries, onFinished: (entry) => {
+    /* --------- Create or edit entry -------- */
+    if (!loading && (adding || dbEntryToEdit)) {
+        body = (React__default.createElement(AddorEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, onFinished: (entry) => {
                 dispatch({
                     type: ActionType.FinishAdd,
-                    DBEntry: entry,
+                    dbEntry: entry,
                     idPropName,
                 });
             } }));
@@ -42718,5 +42746,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, ButtonInputGroup$1 as ButtonInputGroup, CSVDownloadButton, CheckboxButton$1 as CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode$1 as ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner$1 as LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$3 as ModalButtonType, ModalSize$2 as ModalSize, ModalType$3 as ModalType, ParamType$3 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton$1 as RadioButton, ReactKitErrorCode$3 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$3 as Variant, abbreviate, addDBEditorEndpoints, alert$2 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError$1 as showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint$1 as visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup$1 as ButtonInputGroup, CSVDownloadButton, CheckboxButton$1 as CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, dbEntryManagerPanel as DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode$1 as ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner$1 as LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$3 as ModalButtonType, ModalSize$2 as ModalSize, ModalType$3 as ModalType, ParamType$3 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton$1 as RadioButton, ReactKitErrorCode$3 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$3 as Variant, abbreviate, addDBEditorEndpoints, alert$2 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError$1 as showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint$1 as visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

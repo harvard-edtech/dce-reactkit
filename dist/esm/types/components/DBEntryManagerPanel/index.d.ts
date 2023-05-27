@@ -12,8 +12,8 @@ declare type Props = {
     descriptionPropName: string;
     itemListTitle: string;
     itemName: string;
-    validationFunction?: (dbEntry: DBEntry) => Promise<void>;
-    objectModifier?: (dbEntry: DBEntry) => Promise<DBEntry>;
+    validateEntry?: (dbEntry: DBEntry) => Promise<void>;
+    modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry>;
     disableEdit?: boolean;
     collectionName: string;
     adminsOnly?: boolean;
@@ -21,5 +21,5 @@ declare type Props = {
         [k: string]: any;
     };
 };
-declare const DBEntryManagerPanel: React.FC<Props>;
-export default DBEntryManagerPanel;
+declare const dbEntryManagerPanel: React.FC<Props>;
+export default dbEntryManagerPanel;
