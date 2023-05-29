@@ -1,7 +1,7 @@
-import validateString from "./validateString.js";
-import validatePhoneNumber from "./validatePhoneNumber.js";
-import validateEmail from "./validateEmail.js";
-import validateRegex from './validateRegex.js';
+import validateString from "./validateString/index";
+// import validatePhoneNumber from "./validatePhoneNumber.js";
+// import validateEmail from "./validateEmail.js";
+// import validateRegex from './shared/helpers/validateRegex.js';
 
   const reqs = { 
       minLen: 0,
@@ -11,7 +11,9 @@ import validateRegex from './validateRegex.js';
   }
   
   let testString = "austen@gmail.com";
-  let response = validateEmail(testString);
+  let response = validateString(testString, reqs);
+
+
   console.log(response);
 
   // testString = "a@gmail.com";
@@ -27,9 +29,9 @@ import validateRegex from './validateRegex.js';
   // console.log(response);
 
   /* input was not valid */
-//   if (response.isValid === false) { 
-//       console.log(response.errorMessage);
-//   }
+  if (response.isValid === false) { 
+      console.log(response.errorMessage);
+  }
   
 //   /* input was valid */
 //   else { 

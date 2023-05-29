@@ -1,4 +1,4 @@
-import validateRegex from './validateRegex.js';
+import validateRegex from './shared/helpers/validateRegex.js';
 
 type emailResult = 
   | { isValid: true } 

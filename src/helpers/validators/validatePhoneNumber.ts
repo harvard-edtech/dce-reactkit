@@ -1,4 +1,4 @@
-import validateString from "./validateString.js";
+import validateString from "./validateString/index.js";
 
 type phoneNumberResult = 
   | { isValid: true, cleanedNumber: string } 
@@ -14,8 +14,6 @@ type phoneNumberResult =
  *          error message.
  */
 const validatePhoneNumber = (phoneNumber: string): phoneNumberResult => {
-  
-  
   // remove parentheses, dashes, and whitespace from number 
   const cleanedNumber: string = phoneNumber.replace(/\s+|[()]|-/g, ''); 
   

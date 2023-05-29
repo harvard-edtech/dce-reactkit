@@ -1,17 +1,9 @@
-import validateRegex from './validateRegex'
+// Import helpers
+import validateRegex from '../shared/helpers/validateRegex';
+import ValidationResult from '../shared/types/ValidationResult';
 
-type stringResult = 
-  | { isValid: true} 
-  | { isValid: false, errorMessages: Array<string> }
-
-type Requirements = {
-  minLen?: number 
-  maxLen?: number
-  lettersOnly?: boolean 
-  numbersOnly?: boolean 
-  ignoreWhitespace?: boolean
-  regexTest?: string
-}
+// Import types
+import StringValidationRequirements from './StringValidationRequirements';
 
 /** 
  * Determines whether a given input string is considered valid based on 
@@ -23,31 +15,31 @@ type Requirements = {
  *          invalid, an array is also returned containing messages describing
  *          which requirements were not met.
  */
-const validateString = (input: string, reqs: Requirements): stringResult => {
+const validateString = (input: string, reqs: StringValidationRequirements): ValidationResult => {
 
   const errorMessages: Array<string> = []; 
-  let parsedInput: string = input;
+  let cleanedValue: string = input;
 
   if (reqs.ignoreWhitespace) { // remove whitespace if required
-    parsedInput = input.replace(/\s+/g, '');
+    cleanedValue = input.replace(/\s+/g, '');
   }
 
   
   if (reqs.minLen) { // apply max char requirement
-    if (parsedInput.length < reqs.minLen) { 
+    if (cleanedValue.length < reqs.minLen) { 
       errorMessages.push(`Input must not be under ${reqs.minLen} character(s).`);
     }
   }
 
   if (reqs.maxLen) { // apply max char requirement
-    if (parsedInput.length > reqs.maxLen) { 
+    if (cleanedValue.length > reqs.maxLen) { 
       errorMessages.push(`Input must not be over ${reqs.maxLen} character(s).`);
     }
   }
 
   if (reqs.lettersOnly) { // apply alphabetical requirement
-    for (let i = 0, len = parsedInput.length; i < len; i++) {
-      let curr = parsedInput.charCodeAt(i);
+    for (let i = 0, len = cleanedValue.length; i < len; i++) {
+      let curr = cleanedValue.charCodeAt(i);
 
       if (!(curr > 64 && curr < 91) && // upper alpha
           !(curr > 96 && curr < 123)) { // lower alpha
@@ -59,8 +51,8 @@ const validateString = (input: string, reqs: Requirements): stringResult => {
   }
 
   if (reqs.numbersOnly) { // apply numerical requirement
-    for (let i = 0, len = parsedInput.length; i < len; i++) {
-      let curr = parsedInput.charCodeAt(i);
+    for (let i = 0, len = cleanedValue.length; i < len; i++) {
+      let curr = cleanedValue.charCodeAt(i);
 
       if (!(curr > 47 && curr < 58)) { // digits 0-9
         errorMessages.push(`Input must not contain non-numbers.`);
@@ -71,17 +63,24 @@ const validateString = (input: string, reqs: Requirements): stringResult => {
 
   if (reqs.regexTest) { // check against regex requirement
     const regex = new RegExp(reqs.regexTest);
-    const result = validateRegex(parsedInput, regex);
+    const result = validateRegex(cleanedValue, regex);
 
     if (result.isValid === false) {
       errorMessages.push(result.errorMessage);
     }
   }
 
+  let errorMessage = "The following errors occurred:";
+  for (let i = 0; i < errorMessages.length; i++) { 
+    errorMessage = `${errorMessage}\n\t${errorMessages[i]}`;
+    
+  }
+  console.log(errorMessage);
+
   return (
     errorMessages.length === 0
-      ? { isValid: true }
-      : { isValid: false, errorMessages }
+      ? { isValid: true, cleanedValue }
+      : { isValid: false, errorMessage }
   );
 };
 
