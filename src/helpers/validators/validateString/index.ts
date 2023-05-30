@@ -1,29 +1,29 @@
-// Import helpers
+// import helpers
 import validateRegex from '../shared/helpers/validateRegex';
 import ValidationResult from '../shared/types/ValidationResult';
 
-// Import types
+// import types
 import StringValidationRequirements from './StringValidationRequirements';
 
 /** 
  * Determines whether a given input string is considered valid based on 
  * the provided requirements.
  * @author Austen Money
- * @param input user input string
- * @param reqs requirements that the provided input should conform to 
- * @returns whether input is considered valid according to the reqs - if 
- *          invalid, an array is also returned containing messages describing
- *          which requirements were not met.
+ * @param input input string
+ * @param reqs requirements that the provided string should conform to 
+ * @returns whether input is considered valid according to reqs - if 
+ *          valid, returns a cleaned version of input; if invalid, returns 
+ *          a string containing error messages describing which requirements 
+ *          were not met.
  */
 const validateString = (input: string, reqs: StringValidationRequirements): ValidationResult => {
 
-  const errorMessages: Array<string> = []; 
-  let cleanedValue: string = input;
+  const errorMessages: Array<string> = []; // stores all invalid input errors
+  let cleanedValue: string = input; // version of input that will be returned
 
   if (reqs.ignoreWhitespace) { // remove whitespace if required
     cleanedValue = input.replace(/\s+/g, '');
   }
-
   
   if (reqs.minLen) { // apply max char requirement
     if (cleanedValue.length < reqs.minLen) { 
@@ -63,19 +63,24 @@ const validateString = (input: string, reqs: StringValidationRequirements): Vali
 
   if (reqs.regexTest) { // check against regex requirement
     const regex = new RegExp(reqs.regexTest);
-    const result = validateRegex(cleanedValue, regex);
+    let result: ValidationResult; 
 
-    if (result.isValid === false) {
+    // validate and create customized error message if description is provided
+    reqs.regexDescription 
+      ? result = validateRegex(cleanedValue, regex, reqs.regexDescription)
+      : result = validateRegex(cleanedValue, regex)
+
+    if (result.isValid === false) { // string did not pass regex validation
       errorMessages.push(result.errorMessage);
     }
   }
 
   let errorMessage = "The following errors occurred:";
+  // combine all error messages into one string to return
   for (let i = 0; i < errorMessages.length; i++) { 
     errorMessage = `${errorMessage}\n\t${errorMessages[i]}`;
     
   }
-  console.log(errorMessage);
 
   return (
     errorMessages.length === 0

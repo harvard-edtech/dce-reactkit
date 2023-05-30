@@ -1,8 +1,5 @@
-import validateString from "./validateString/index.js";
-
-type phoneNumberResult = 
-  | { isValid: true, cleanedNumber: string } 
-  | { isValid: false, errorMessage: string }
+import validateRegex from "./shared/helpers/validateRegex"
+import ValidationResult from './shared/types/ValidationResult';
 
 /** 
  * Determines whether a given phone number is valid. 
@@ -10,24 +7,21 @@ type phoneNumberResult =
  * @param phoneNumber phone number to validate 
  * @returns whether phone number is considered valid - if valid, also returns 
  *          a cleaned version of the number without any formatting (without
- *          parentheses, dashes, or whitespace); if invalid, also returns an
+ *          parentheses, dashes, or whitespace); if invalid, returns an
  *          error message.
  */
-const validatePhoneNumber = (phoneNumber: string): phoneNumberResult => {
-  // remove parentheses, dashes, and whitespace from number 
-  const cleanedNumber: string = phoneNumber.replace(/\s+|[()]|-/g, ''); 
+const validatePhoneNumber = (phoneNumber: string): ValidationResult => {
   
-  const phoneNumberReqs = { // require that cleaned number is 10 digits 
-    minLen: 10, 
-    maxLen: 10,
-    numbersOnly: true,
-  };
-
-  const response = validateString(cleanedNumber, phoneNumberReqs); // validate
+  const validationRegex = new RegExp(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/); // regex to validate phone number
+  
+  // validate phone number
+  const validationResponse = validateRegex(phoneNumber, validationRegex);
+  // remove parentheses, dashes, and whitespace from number 
+  const cleanedValue: string = phoneNumber.replace(/\s+|[()]|-/g, ''); 
 
   return (
-    response.isValid 
-      ? { isValid: true, cleanedNumber }
+    validationResponse.isValid 
+      ? { isValid: true, cleanedValue }
       : { isValid: false, errorMessage: 'Please provide a valid phone number.' }
   );
 };

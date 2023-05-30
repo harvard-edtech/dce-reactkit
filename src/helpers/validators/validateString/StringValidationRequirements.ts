@@ -1,3 +1,7 @@
+/**
+ * Requirements for string validation function.
+ * @author Austen Money
+ */
 type StringValidationRequirements = {
   minLen?: number 
   maxLen?: number
@@ -5,6 +9,7 @@ type StringValidationRequirements = {
   numbersOnly?: boolean 
   ignoreWhitespace?: boolean
   regexTest?: string
+  regexDescription?: string
 };
 
 export default StringValidationRequirements;

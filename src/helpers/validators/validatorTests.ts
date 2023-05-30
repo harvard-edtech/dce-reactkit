@@ -4,13 +4,16 @@ import validateString from "./validateString/index";
 // import validateRegex from './shared/helpers/validateRegex.js';
 
   const reqs = { 
-      minLen: 0,
-      maxLen: 5, 
-      lettersOnly: false,
-      numbersOnly: true,
-  }
+    minLen: 20, 
+    maxLen: 2,
+    lettersOnly: true, 
+    numbersOnly: true, 
+    ignoreWhitespace: true,
+    regexTest: '/\s+/g',
+    regexDescription: 'Must not have whitespace',
+  };
   
-  let testString = "austen@gmail.com";
+  let testString = "  ";
   let response = validateString(testString, reqs);
 
 

@@ -1,19 +1,15 @@
 /**
- * Result of a validation function
+ * Result of a validation function.
  * @author Austen Money
  */
 type ValidationResult = (
   | {
-    // If true, the validation was successful
-    isValid: true,
-    // The cleaned version of the value
-    cleanedValue: string,
+    isValid: true, // if true, the validation was successful
+    cleanedValue: string, // the cleaned version of the value
   }
   | {
-    // If true, the validation was successful
-    isValid: false,
-    // A pretty error message that describes why the validation failed
-    errorMessage: string, // combine arr
+    isValid: false, // if false, the validation was not successful
+    errorMessage: string, // describes why the validation failed
   }
 );
 
