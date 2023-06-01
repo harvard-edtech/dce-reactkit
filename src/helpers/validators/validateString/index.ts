@@ -79,11 +79,10 @@ const validateString = (input: string, reqs: StringValidationRequirements): Vali
   // combine all error messages into one string to return
   for (let i = 0; i < errorMessages.length; i++) { 
     errorMessage = `${errorMessage}\n\t${errorMessages[i]}`;
-    
   }
 
   return (
-    errorMessages.length === 0
+    errorMessages.length === 0 // if no error messages, string is valid
       ? { isValid: true, cleanedValue }
       : { isValid: false, errorMessage }
   );

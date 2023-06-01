@@ -1,4 +1,6 @@
-import validateRegex from "./shared/helpers/validateRegex"
+// import helpers
+import validateRegex from './shared/helpers/validateRegex';
+// import types
 import ValidationResult from './shared/types/ValidationResult';
 
 /** 
@@ -14,7 +16,7 @@ const validatePhoneNumber = (phoneNumber: string): ValidationResult => {
   
   const validationRegex = new RegExp(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/); // regex to validate phone number
   
-  // validate phone number
+  // validate phone number with regex
   const validationResponse = validateRegex(phoneNumber, validationRegex);
   // remove all non-digits from number 
   const cleanedValue: string = phoneNumber.replace(/\D/g,''); 

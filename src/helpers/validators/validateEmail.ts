@@ -1,7 +1,7 @@
 // import helpers
-import validateRegex from './shared/helpers/validateRegex.js';
+import validateRegex from './shared/helpers/validateRegex';
 // import types
-import ValidationResult from './shared/types/ValidationResult.js';
+import ValidationResult from './shared/types/ValidationResult';
 
 /** 
  * Determines whether a given email address is valid.
@@ -13,13 +13,13 @@ import ValidationResult from './shared/types/ValidationResult.js';
  */
 const validateEmail = (email: string): ValidationResult => {
   
-  const emailRegex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/); // validation regex sourced from HTML living standard
+  const emailRegex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/); // validation regex, sourced from HTML living standard
 
   // remove leading and trailing whitespace
   const cleanedValue: string = email.replace(/^\s+|\s+$/g, '');
 
   return ( 
-    validateRegex(cleanedValue, emailRegex).isValid // validate email
+    validateRegex(cleanedValue, emailRegex).isValid // validate email with regex
       ? { isValid: true, cleanedValue }
       : { isValid: false, errorMessage: 'Please provide a valid email address.'}
   );

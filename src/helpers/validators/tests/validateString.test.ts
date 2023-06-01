@@ -10,6 +10,11 @@ test(
     const validReqs: StringValidationRequirements = { 
       minLen: 10, 
       maxLen: 30,
+      lettersOnly: false,
+      numbersOnly: false,
+      ignoreWhitespace: false,
+      regexTest: '',
+      regexDescription: '',
     };
 
     const expectedResponse: ValidationResult = { 
