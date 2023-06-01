@@ -40425,11 +40425,12 @@ var CreatableSelect = /*#__PURE__*/React.forwardRef(function (props, ref) {
 });
 var CreatableSelect$1 = CreatableSelect;
 
+// Import React
 /* ------------- Actions ------------ */
 // Types of actions
 var ActionType$2;
 (function (ActionType) {
-    // updates the input value
+    // Update the input value
     ActionType["SetInputValue"] = "SetInputValue";
 })(ActionType$2 || (ActionType$2 = {}));
 /**
@@ -40519,7 +40520,7 @@ const CreatableMultiselect = (props) => {
             })
                 // Filter zero length
                 .filter((trimmedVal) => {
-                return trimmedVal.length > 0;
+                return (trimmedVal.length > 0);
             })
                 // Filter out existing values
                 .filter((val) => {
@@ -40530,7 +40531,10 @@ const CreatableMultiselect = (props) => {
             onChange([...values, ...newValues]);
         }
         // resets text field to empty because the values have been added
-        dispatch({ type: ActionType$2.SetInputValue, value: '' });
+        dispatch({
+            type: ActionType$2.SetInputValue,
+            value: '',
+        });
     };
     /**
      * Adds the values to the multiselect component when enter or tab is pressed
@@ -40538,11 +40542,14 @@ const CreatableMultiselect = (props) => {
      * @param event keyboard event
      */
     const handleKeyDown = (event) => {
-        if (!inputValue)
+        event.preventDefault();
+        // Skip if no input value
+        if (!inputValue) {
             return;
+        }
+        // Add values if enter or tab is pressed
         if (['Enter', 'Tab'].includes(event.key)) {
             addValues(inputValue);
-            event.preventDefault();
         }
     };
     /**
@@ -40551,9 +40558,9 @@ const CreatableMultiselect = (props) => {
      * @param input input value
      */
     const handleInputChange = (input) => {
-        // create copy of input value so we can modify it
+        // Create copy of input value so we can modify it
         let newValue = input;
-        // don't allow user to type in non numbers
+        // Don't allow user to type in non numbers
         if (type === DBEntryFieldType$1.NumberArray) {
             newValue = input.replace(/[^0-9,]/g, '');
         }
@@ -40563,7 +40570,10 @@ const CreatableMultiselect = (props) => {
         }
         else {
             // simply update the input value to the new input value
-            dispatch({ type: ActionType$2.SetInputValue, value: newValue });
+            dispatch({
+                type: ActionType$2.SetInputValue,
+                value: newValue,
+            });
         }
     };
     /**
@@ -40572,20 +40582,20 @@ const CreatableMultiselect = (props) => {
      * @param newValue new values
      */
     const handleValueChange = (newValues) => {
+        // Skip if no new values
         if (!newValues) {
             return;
         }
+        // Update values based on type
         if (type === DBEntryFieldType$1.NumberArray) {
-            const numberValues = [];
-            newValues.forEach((val) => {
-                numberValues.push(Number(val.value));
+            const numberValues = newValues.map((val) => {
+                return Number(val.value);
             });
             onChange(numberValues);
         }
         else {
-            const stringValues = [];
-            newValues.forEach((val) => {
-                stringValues.push(val.value);
+            const stringValues = newValues.map((val) => {
+                return val.value;
             });
             onChange(stringValues);
         }
@@ -40641,7 +40651,7 @@ const reducer$1 = (state, action) => {
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
-const AddorEditDBEntry = (props) => {
+const AddOrEditDBEntry = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -40695,9 +40705,9 @@ const AddorEditDBEntry = (props) => {
      * Cancel and return without saving
      * @author Gabe Abrams
      */
-    const cancel = () => __awaiter$1(void 0, void 0, void 0, function* () {
+    const cancel = () => {
         onFinished(undefined);
-    });
+    };
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -40711,61 +40721,95 @@ const AddorEditDBEntry = (props) => {
         body = (React__default["default"].createElement(LoadingSpinner, null));
     }
     /* -------------- Form -------------- */
-    // if not saving, validate what the user has entered
+    // If not saving, validate what the user has entered
     if (!saving) {
-        // create validation boolean array for each field
+        // Validation error if there is one
         let validationError = undefined;
-        // iterate through each field
+        // Validate each field
         for (let i = 0; i < entryFields.length; i += 1) {
             const field = entryFields[i];
             const value = entry[field.objectKey];
-            // check if required field is empty
+            // Check if required field is empty
             if (field.required && !value) {
                 validationError = `Please fill in the ${field.label} field`;
                 break;
             }
-            // check if unique field is unique
+            // Check if unique field is unique
             if (field.objectKey === idPropName) {
                 if (entries.find((e) => { return e[idPropName] === value; })) {
                     validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
                     break;
                 }
             }
-            // if they have entered a value for the field, check if it is valid
+            // If they have entered a value for the field, check if it is valid
             if (value) {
-                // string validation
+                // String validation
                 if (field.type === DBEntryFieldType$1.String) {
-                    if (field.minNumChars && value.length < field.minNumChars) {
-                        validationError = `${field.label} must be at least ${field.minNumChars} characters long`;
+                    if (
+                    // Minimum length requirement is defined
+                    field.minNumChars
+                        // Value is too short
+                        && value.length < field.minNumChars) {
+                        validationError = `${field.label} must be at least ${field.minNumChars} character${field.minNumChars === 1 ? '' : 's'} long`;
                     }
-                    else if (field.maxNumChars && value.length > field.maxNumChars) {
-                        validationError = `${field.label} must be at most ${field.maxNumChars} characters long`;
+                    else if (
+                    // Maximum length requirement is defined
+                    field.maxNumChars
+                        // Value is too long
+                        && value.length > field.maxNumChars) {
+                        validationError = `${field.label} must be at most ${field.maxNumChars} character${field.maxNumChars === 1 ? '' : 's'} long`;
                     }
-                    // number validation
+                    // Number validation
                 }
                 else if (field.type === DBEntryFieldType$1.Number) {
-                    if (field.minNumber && value < field.minNumber) {
+                    if (
+                    // Minimum value requirement is defined
+                    field.minNumber
+                        // Value is too small
+                        && value < field.minNumber) {
                         validationError = `${field.label} must be at least ${field.minNumber}`;
                     }
-                    else if (field.maxNumber && value > field.maxNumber) {
+                    else if (
+                    // Maximum value requirement is defined
+                    field.maxNumber
+                        // Value is too large
+                        && value > field.maxNumber) {
                         validationError = `${field.label} must be at most ${field.maxNumber}`;
                     }
-                    // string and number array validation
                 }
-                else if (field.type === DBEntryFieldType$1.StringArray || field.type === DBEntryFieldType$1.NumberArray) {
-                    if (field.minNumElements && value.length < field.minNumElements) {
-                        validationError = `${field.label} must have at least ${field.minNumElements} values`;
+                else if (field.type === DBEntryFieldType$1.StringArray
+                    || field.type === DBEntryFieldType$1.NumberArray) {
+                    // String and Number Array validation
+                    if (
+                    // Minimum number of elements requirement is defined
+                    field.minNumElements
+                        // Value has too few elements
+                        && value.length < field.minNumElements) {
+                        validationError = `${field.label} must have at least ${field.minNumElements} value${field.minNumElements === 1 ? '' : 's'}`;
                     }
-                    else if (field.maxNumElements && value.length > field.maxNumElements) {
-                        validationError = `${field.label} must have at most ${field.maxNumElements} values`;
+                    else if (
+                    // Maximum number of elements requirement is defined
+                    field.maxNumElements
+                        // Value has too many elements
+                        && value.length > field.maxNumElements) {
+                        validationError = `${field.label} must have at most ${field.maxNumElements} value${field.maxNumElements === 1 ? '' : 's'}`;
                     }
                     else if (field.type === DBEntryFieldType$1.NumberArray) {
+                        // Number Array validation
                         for (let j = 0; j < value.length; j += 1) {
-                            if (field.minNumber && value[j] < field.minNumber) {
+                            if (
+                            // Minimum value requirement is defined
+                            field.minNumber
+                                // Value is too small
+                                && value[j] < field.minNumber) {
                                 validationError = `${field.label} values must be at least ${field.minNumber}`;
                                 break;
                             }
-                            else if (field.maxNumber && value[j] > field.maxNumber) {
+                            else if (
+                            // Maximum value requirement is defined
+                            field.maxNumber
+                                // Value is too large
+                                && value[j] > field.maxNumber) {
                                 validationError = `${field.label} values must be at most ${field.maxNumber}`;
                                 break;
                             }
@@ -40778,7 +40822,7 @@ const AddorEditDBEntry = (props) => {
             }
         }
         /**
-         * render a single entry field
+         * Render a single entry field
          * @author Yuen Ler Chow
          * @param field the entry field to render
          * @param disabled true if the field should be disabled
@@ -40802,8 +40846,8 @@ const AddorEditDBEntry = (props) => {
                 }
                 return (React__default["default"].createElement("div", { className: "mb-2", key: field.objectKey },
                     React__default["default"].createElement("div", { className: "input-group" },
-                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
-                        React__default["default"].createElement("input", { id: "AddOrEditDBEntry-form-name-input", disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
+                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text" }, field.label),
+                        React__default["default"].createElement("input", { disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value);
                                 dispatch({
                                     type: ActionType$1.UpdateDBEntry,
@@ -40814,8 +40858,8 @@ const AddorEditDBEntry = (props) => {
             if (field.type === DBEntryFieldType$1.Number) {
                 return (React__default["default"].createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default["default"].createElement("div", { className: "input-group" },
-                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
-                        React__default["default"].createElement("input", { id: "AddOrEditDBEntry-form-name-input", type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', disabled: disabled, onChange: (e) => {
+                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text" }, field.label),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', disabled: disabled, onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^0-9]/g, ''));
                                 dispatch({
@@ -40833,15 +40877,21 @@ const AddorEditDBEntry = (props) => {
                             React__default["default"].createElement(ButtonInputGroup, { label: field.label }, field.choices.map((choice) => {
                                 return (React__default["default"].createElement(CheckboxButton, { key: choice.value, text: choice.title, checked: entry[field.objectKey] && entry[field.objectKey].includes(choice.value), onChanged: (checked) => {
                                         if (checked) {
+                                            // Initialize array if it doesn't exist
                                             if (!entry[field.objectKey]) {
                                                 entry[field.objectKey] = [];
                                             }
+                                            // Add value to array
                                             entry[field.objectKey].push(choice.value);
                                         }
                                         else {
+                                            // Remove value from array
                                             entry[field.objectKey] = (entry[field.objectKey]
-                                                .filter((val) => { return val !== choice.value; }));
+                                                .filter((val) => {
+                                                return val !== choice.value;
+                                            }));
                                         }
+                                        // Save
                                         dispatch({
                                             type: ActionType$1.UpdateDBEntry,
                                             dbEntry: entry,
@@ -40849,11 +40899,13 @@ const AddorEditDBEntry = (props) => {
                                     }, ariaLabel: choice.title }));
                             })))));
                 }
+                // Flexible (no specific choices for this field)
                 return (React__default["default"].createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default["default"].createElement("div", { className: "input-group" },
-                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
+                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text" }, field.label),
                         React__default["default"].createElement("div", { className: "flex-grow-1" },
                             React__default["default"].createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.StringArray, values: entry[field.objectKey] || [], onChange: (values) => {
+                                    // Update entry and save
                                     entry[field.objectKey] = values;
                                     dispatch({
                                         type: ActionType$1.UpdateDBEntry,
@@ -40864,7 +40916,7 @@ const AddorEditDBEntry = (props) => {
             if (field.type === DBEntryFieldType$1.NumberArray) {
                 return (React__default["default"].createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default["default"].createElement("div", { className: "input-group" },
-                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
+                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text" }, field.label),
                         React__default["default"].createElement("div", { className: "flex-grow-1" },
                             React__default["default"].createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.NumberArray, values: entry[field.objectKey] || [], onChange: (values) => {
                                     entry[field.objectKey] = values;
@@ -40877,12 +40929,12 @@ const AddorEditDBEntry = (props) => {
             if (field.type == DBEntryFieldType$1.Object) {
                 return (React__default["default"].createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default["default"].createElement("div", { className: "input-group" },
-                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text", id: "AddOrEditDBEntry-form-name-label" }, field.label),
+                        React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text" }, field.label),
                         field.subfields.map((subfield) => {
                             return renderEntryField(subfield, disabled);
                         }))));
             }
-            // this should never happen
+            // This should never happen
             return null;
         };
         // UI
@@ -40893,7 +40945,7 @@ const AddorEditDBEntry = (props) => {
                 return renderEntryField(field, disabled);
             }),
             React__default["default"].createElement("div", { className: "text-center mt-2" },
-                React__default["default"].createElement("button", { type: "button", id: "AddOrEditDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "save changes", onClick: () => __awaiter$1(void 0, void 0, void 0, function* () {
+                React__default["default"].createElement("button", { type: "button", id: "AddOrEditDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "Save changes", onClick: () => __awaiter$1(void 0, void 0, void 0, function* () {
                         if (validationError) {
                             return alert$1('Please fix the following error', validationError);
                         }
@@ -40922,11 +40974,13 @@ const AddorEditDBEntry = (props) => {
 /**
  * Generates the endpoint path for the given collection name
  * @author Yuen Ler Chow
- * @param {string} collectionName the name of the collection
- * @param {boolean} adminsOnly true if the endpoint is for admins only
+ * @param collectionName the name of the collection
+ * @param [adminsOnly] true if the endpoint is for admins only
  */
 const generateEndpointPath = (collectionName, adminsOnly) => {
+    // Determine prefix based on whether the endpoint is for admins only
     const userPath = adminsOnly ? 'admin' : 'ttm';
+    // Return the endpoint path
     return `/api/${userPath}/dce-reactkit/dbeditor/${collectionName}`;
 };
 
@@ -40996,8 +41050,10 @@ const reducer = (state, action) => {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
         case ActionType.FinishDelete: {
-            return Object.assign(Object.assign({}, state), { loading: false, dbEntries: state.dbEntries.filter((category) => {
-                    return (category[action.idPropName] !== action.dbEntry[action.idPropName]);
+            return Object.assign(Object.assign({}, state), { loading: false, 
+                // Remove the deleted entry from the list
+                dbEntries: state.dbEntries.filter((entry) => {
+                    return (entry[action.idPropName] !== action.dbEntry[action.idPropName]);
                 }) });
         }
         default: {
@@ -41008,7 +41064,7 @@ const reducer = (state, action) => {
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
-const dbEntryManagerPanel = (props) => {
+const DBEntryManagerPanel = (props) => {
     // Destructure all props
     const { entryFields, titlePropName, descriptionPropName, idPropName, itemListTitle, itemName, validateEntry, modifyEntry, disableEdit, collectionName, adminsOnly, filterQuery } = props;
     /* -------------- State ------------- */
@@ -41025,6 +41081,7 @@ const dbEntryManagerPanel = (props) => {
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
+    // Generate the endpoint path
     const endpoint = generateEndpointPath(collectionName, adminsOnly);
     /**
      * Delete a database entry
@@ -41032,8 +41089,11 @@ const dbEntryManagerPanel = (props) => {
      * @param entry the database entry to delete
      */
     const deleteEntry = (entry) => __awaiter$1(void 0, void 0, void 0, function* () {
-        // Confirm once
-        const confirmed = yield confirm('Remove?', `Are you sure you want to remove this ${itemName}?`);
+        // Confirm
+        const confirmed = yield confirm('Remove?', `Are you sure you want to remove this ${itemName}?`, {
+            confirmButtonText: 'Remove Item',
+        });
+        // Skip if cancelled
         if (!confirmed) {
             return;
         }
@@ -41115,12 +41175,12 @@ const dbEntryManagerPanel = (props) => {
                                     entry[descriptionPropName],
                                     ")"))),
                         React__default["default"].createElement("div", { className: "d-flex align-items-center" },
-                            React__default["default"].createElement("button", { type: "button", id: `dbEntryManagerPanel-remove-entry-with-id-${entry[idPropName]}`, className: "btn btn-secondary me-1", "aria-label": `remove database entry: ${entry[titlePropName]}`, onClick: () => {
+                            React__default["default"].createElement("button", { type: "button", id: `DBEntryManagerPanel-remove-entry-with-id-${entry[idPropName]}`, className: "btn btn-secondary me-1", "aria-label": `remove database entry: ${entry[titlePropName]}`, onClick: () => {
                                     deleteEntry(entry);
                                 } },
                                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTrash }),
                                 React__default["default"].createElement("span", { className: "d-none d-md-inline ms-1" }, "Remove")),
-                            !disableEdit && (React__default["default"].createElement("button", { type: "button", id: `dbEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
+                            !disableEdit && (React__default["default"].createElement("button", { type: "button", id: `DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
                                     dispatch({
                                         type: ActionType.ShowEditor,
                                         dbEntry: entry,
@@ -41130,17 +41190,19 @@ const dbEntryManagerPanel = (props) => {
                                 React__default["default"].createElement("span", { className: "d-none d-md-inline ms-1" }, "Edit"))))));
                 }),
                 React__default["default"].createElement("div", { className: "d-grid" },
-                    React__default["default"].createElement("button", { type: "button", id: "dbEntryManagerPanel-add-entry", className: "btn btn-lg btn-primary", "aria-label": "add a new entry to the list of available entries", onClick: () => {
+                    React__default["default"].createElement("button", { type: "button", id: "DBEntryManagerPanel-add-entry", className: "btn btn-lg btn-primary", "aria-label": `add a new ${itemName} entry to the list of entries`, onClick: () => {
                             dispatch({
                                 type: ActionType.ShowAdder,
                             });
                         } },
                         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faPlus, className: "me-2" }),
-                        `Add ${itemName}`)))));
+                        "Add",
+                        ' ',
+                        itemName)))));
     }
     /* --------- Create or edit entry -------- */
     if (!loading && (adding || dbEntryToEdit)) {
-        body = (React__default["default"].createElement(AddorEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, onFinished: (entry) => {
+        body = (React__default["default"].createElement(AddOrEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, onFinished: (entry) => {
                 dispatch({
                     type: ActionType.FinishAdd,
                     dbEntry: entry,
@@ -42779,7 +42841,7 @@ exports.CheckboxButton = CheckboxButton$1;
 exports.CopiableBox = CopiableBox;
 exports.DAY_IN_MS = DAY_IN_MS;
 exports.DBEntryFieldType = DBEntryFieldType$1;
-exports.DBEntryManagerPanel = dbEntryManagerPanel;
+exports.DBEntryManagerPanel = DBEntryManagerPanel;
 exports.DayOfWeek = DayOfWeek$1;
 exports.Drawer = Drawer;
 exports.DynamicWord = DynamicWord;

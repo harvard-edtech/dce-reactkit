@@ -21,5 +21,5 @@ declare type Props = {
         [k: string]: any;
     };
 };
-declare const dbEntryManagerPanel: React.FC<Props>;
-export default dbEntryManagerPanel;
+declare const DBEntryManagerPanel: React.FC<Props>;
+export default DBEntryManagerPanel;

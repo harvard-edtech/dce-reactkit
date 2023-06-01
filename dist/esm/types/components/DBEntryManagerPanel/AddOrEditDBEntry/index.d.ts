@@ -29,5 +29,5 @@ declare type Props = {
     saveEndpointPath: string;
     entries: DBEntry[];
 };
-declare const AddorEditDBEntry: React.FC<Props>;
-export default AddorEditDBEntry;
+declare const AddOrEditDBEntry: React.FC<Props>;
+export default AddOrEditDBEntry;

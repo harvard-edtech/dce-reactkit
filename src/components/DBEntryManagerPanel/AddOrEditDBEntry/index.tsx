@@ -8,9 +8,7 @@ import React, { useReducer } from 'react';
 
 // Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSave,
-} from '@fortawesome/free-solid-svg-icons';
+import { faSave } from '@fortawesome/free-solid-svg-icons';
 
 // Import dce-reactkit
 import {
@@ -30,8 +28,6 @@ import DBEntryFieldType from '../types/DBEntryFieldType';
 
 // Import other components
 import CreatableMultiselect from './CreatableMultiselect';
-
-
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
@@ -56,26 +52,28 @@ type Props = {
    * @returns the modified DBEntry
    */
   modifyEntry?: (dbEntry: DBEntry) => DBEntry,
-  // the fields needed to create a new DBEntry
+  // The fields needed to create a new DBEntry
   entryFields: DBEntryField[],
-  // the DBEntry to edit (if any)
+  // The DBEntry to edit (if any)
   dbEntryToEdit?: DBEntry,
-  // the unique object key of the DBEntry
+  // The unique object key of the DBEntry
   idPropName: string,
-  // server endpoint path to save the DBEntry
+  // Server endpoint path to save the DBEntry
   saveEndpointPath: string,
-  // all entries in the database
+  // All entries in the database
   entries: DBEntry[],
 };
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
+
 const style = `
   .AddOrEditDBEntry-input-label {
     min-width: 7rem;
   }
 `;
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- State ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -145,7 +143,7 @@ const reducer = (state: State, action: Action): State => {
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-const AddorEditDBEntry: React.FC<Props> = (props) => {
+const AddOrEditDBEntry: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
   /* -------------------------------- Setup ------------------------------- */
   /*------------------------------------------------------------------------*/
@@ -223,7 +221,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
    * Cancel and return without saving
    * @author Gabe Abrams
    */
-  const cancel = async () => {
+  const cancel = () => {
     onFinished(undefined);
   };
 
@@ -248,23 +246,23 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
 
   /* -------------- Form -------------- */
 
-  // if not saving, validate what the user has entered
+  // If not saving, validate what the user has entered
   if (!saving) {
-    // create validation boolean array for each field
+    // Validation error if there is one
     let validationError: string | undefined = undefined;
 
-    // iterate through each field
+    // Validate each field
     for (let i = 0; i < entryFields.length; i += 1) {
       const field = entryFields[i];
       const value = entry[field.objectKey];
 
-      // check if required field is empty
+      // Check if required field is empty
       if (field.required && !value) {
         validationError = `Please fill in the ${field.label} field`;
         break;
       }
 
-      // check if unique field is unique
+      // Check if unique field is unique
       if (field.objectKey === idPropName) {
         if (entries.find((e) => { return e[idPropName] === value; })) {
           validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
@@ -272,34 +270,78 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
         }
       }
 
-      // if they have entered a value for the field, check if it is valid
+      // If they have entered a value for the field, check if it is valid
       if (value) {
-        // string validation
+        // String validation
         if (field.type === DBEntryFieldType.String) {
-          if (field.minNumChars && value.length < field.minNumChars) {
-            validationError = `${field.label} must be at least ${field.minNumChars} characters long`;
-          } else if (field.maxNumChars && value.length > field.maxNumChars) {
-            validationError = `${field.label} must be at most ${field.maxNumChars} characters long`;
+          if (
+            // Minimum length requirement is defined
+            field.minNumChars
+            // Value is too short
+            && value.length < field.minNumChars
+          ) {
+            validationError = `${field.label} must be at least ${field.minNumChars} character${field.minNumChars === 1 ? '' : 's'} long`;
+          } else if (
+            // Maximum length requirement is defined
+            field.maxNumChars
+            // Value is too long
+            && value.length > field.maxNumChars
+          ) {
+            validationError = `${field.label} must be at most ${field.maxNumChars} character${field.maxNumChars === 1 ? '' : 's'} long`;
           }
-          // number validation
+          // Number validation
         } else if (field.type === DBEntryFieldType.Number) {
-          if (field.minNumber && value < field.minNumber) {
+          if (
+            // Minimum value requirement is defined
+            field.minNumber
+            // Value is too small
+            && value < field.minNumber
+          ) {
             validationError = `${field.label} must be at least ${field.minNumber}`;
-          } else if (field.maxNumber && value > field.maxNumber) {
+          } else if (
+            // Maximum value requirement is defined
+            field.maxNumber
+            // Value is too large
+            && value > field.maxNumber
+          ) {
             validationError = `${field.label} must be at most ${field.maxNumber}`;
           }
-          // string and number array validation
-        } else if (field.type === DBEntryFieldType.StringArray || field.type === DBEntryFieldType.NumberArray) {
-          if (field.minNumElements && value.length < field.minNumElements) {
-            validationError = `${field.label} must have at least ${field.minNumElements} values`;
-          } else if (field.maxNumElements && value.length > field.maxNumElements) {
-            validationError = `${field.label} must have at most ${field.maxNumElements} values`;
+        } else if (
+          field.type === DBEntryFieldType.StringArray
+          || field.type === DBEntryFieldType.NumberArray
+        ) {
+          // String and Number Array validation
+          if (
+            // Minimum number of elements requirement is defined
+            field.minNumElements
+            // Value has too few elements
+            && value.length < field.minNumElements
+          ) {
+            validationError = `${field.label} must have at least ${field.minNumElements} value${field.minNumElements === 1 ? '' : 's'}`;
+          } else if (
+            // Maximum number of elements requirement is defined
+            field.maxNumElements
+            // Value has too many elements
+            && value.length > field.maxNumElements
+          ) {
+            validationError = `${field.label} must have at most ${field.maxNumElements} value${field.maxNumElements === 1 ? '' : 's'}`;
           } else if (field.type === DBEntryFieldType.NumberArray) {
+            // Number Array validation
             for (let j = 0; j < value.length; j += 1) {
-              if (field.minNumber && value[j] < field.minNumber) {
+              if (
+                // Minimum value requirement is defined
+                field.minNumber
+                // Value is too small
+                && value[j] < field.minNumber
+              ) {
                 validationError = `${field.label} values must be at least ${field.minNumber}`;
                 break;
-              } else if (field.maxNumber && value[j] > field.maxNumber) {
+              } else if (
+                // Maximum value requirement is defined
+                field.maxNumber
+                // Value is too large
+                && value[j] > field.maxNumber
+              ) {
                 validationError = `${field.label} values must be at most ${field.maxNumber}`;
                 break;
               }
@@ -313,7 +355,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
     }
 
     /**
-     * render a single entry field
+     * Render a single entry field
      * @author Yuen Ler Chow
      * @param field the entry field to render
      * @param disabled true if the field should be disabled
@@ -354,7 +396,6 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                     })
                   }
                 </ButtonInputGroup>
-
               </div>
             </div>
           );
@@ -368,12 +409,10 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             <div className="input-group">
               <span
                 className="AddOrEditDBEntry-input-label input-group-text"
-                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
               <input
-                id="AddOrEditDBEntry-form-name-input"
                 disabled={disabled}
                 type="text"
                 className="form-control"
@@ -394,6 +433,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           </div>
         );
       }
+
       if (field.type === DBEntryFieldType.Number) {
         return (
           <div
@@ -403,12 +443,10 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             <div className="input-group">
               <span
                 className="AddOrEditDBEntry-input-label input-group-text"
-                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
               <input
-                id="AddOrEditDBEntry-form-name-input"
                 type="text"
                 className="form-control"
                 placeholder={field.placeholder}
@@ -430,6 +468,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
           </div>
         );
       }
+
       if (field.type === DBEntryFieldType.StringArray) {
         if (field.choices) {
           return (
@@ -440,7 +479,6 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
               <div className="input-group"
                 style={{
                   pointerEvents: (disabled ? 'none' : 'auto'),
-
                 }}
               >
                 <ButtonInputGroup
@@ -455,16 +493,24 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                           checked={entry[field.objectKey] && entry[field.objectKey].includes(choice.value)}
                           onChanged={(checked) => {
                             if (checked) {
+                              // Initialize array if it doesn't exist
                               if (!entry[field.objectKey]) {
                                 entry[field.objectKey] = [];
                               }
+
+                              // Add value to array
                               entry[field.objectKey].push(choice.value);
                             } else {
+                              // Remove value from array
                               entry[field.objectKey] = (
                                 entry[field.objectKey]
-                                  .filter((val: any) => { return val !== choice.value; })
+                                  .filter((val: string) => {
+                                    return val !== choice.value;
+                                  })
                               );
                             }
+
+                            // Save
                             dispatch({
                               type: ActionType.UpdateDBEntry,
                               dbEntry: entry,
@@ -480,6 +526,8 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             </div>
           );
         }
+
+        // Flexible (no specific choices for this field)
         return (
           <div
             key={field.objectKey}
@@ -488,7 +536,6 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             <div className="input-group">
               <span
                 className="AddOrEditDBEntry-input-label input-group-text"
-                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
@@ -498,6 +545,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
                   type={DBEntryFieldType.StringArray}
                   values={entry[field.objectKey] || []}
                   onChange={(values) => {
+                    // Update entry and save
                     entry[field.objectKey] = values;
                     dispatch({
                       type: ActionType.UpdateDBEntry,
@@ -508,9 +556,9 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
               </div>
             </div>
           </div>
-
         );
       }
+
       if (field.type === DBEntryFieldType.NumberArray) {
         return (
           <div
@@ -520,7 +568,6 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             <div className="input-group">
               <span
                 className="AddOrEditDBEntry-input-label input-group-text"
-                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
@@ -540,9 +587,9 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
               </div>
             </div>
           </div>
-
         );
       }
+
       if (field.type == DBEntryFieldType.Object) {
         return (
           <div
@@ -550,12 +597,13 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             className="mb-2"
           >
             <div className="input-group">
+              {/* Label */}
               <span
                 className="AddOrEditDBEntry-input-label input-group-text"
-                id="AddOrEditDBEntry-form-name-label"
               >
                 {field.label}
               </span>
+              {/* Add each subfield */}
               {
                 field.subfields.map((subfield: DBEntryField) => {
                   return renderEntryField(subfield, disabled);
@@ -563,18 +611,17 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
               }
             </div>
           </div>
-
         );
-
       }
-      // this should never happen
-      return null;
 
+      // This should never happen
+      return null;
     }
 
     // UI
     body = (
       <div>
+        {/* Entry fields */}
         {
           entryFields.map((field: DBEntryField) => {
             const disabled = (idPropName === field.objectKey && dbEntryToEdit !== undefined)
@@ -589,7 +636,7 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
             type="button"
             id="AddOrEditDBEntry-save-changes-button"
             className="btn btn-primary btn-lg me-1"
-            aria-label="save changes"
+            aria-label="Save changes"
             onClick={async () => {
               if (validationError) {
                 return alert(
@@ -649,4 +696,4 @@ const AddorEditDBEntry: React.FC<Props> = (props) => {
 /*------------------------------------------------------------------------*/
 
 // Export component
-export default AddorEditDBEntry;
+export default AddOrEditDBEntry;

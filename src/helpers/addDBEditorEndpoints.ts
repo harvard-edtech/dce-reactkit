@@ -37,7 +37,7 @@ interface Collection {
  */
 const addDBEditorEndpoints = (opts: {
   app: express.Application,
-  collectionName: String,
+  collectionName: string,
   adminsOnly: boolean,
   collection: Collection
 },

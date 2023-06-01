@@ -41,7 +41,9 @@ declare type DBEntryField = ({
     defaultValue?: number[];
 } | {
     type: DBEntryFieldType.Object;
-    defaultValue?: any;
+    defaultValue?: {
+        [k: string]: any;
+    };
     subfields: DBEntryField[];
 }));
 export default DBEntryField;

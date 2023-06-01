@@ -21,7 +21,7 @@ import DBEntry from './types/DBEntry';
 import DBEntryField from './types/DBEntryField';
 
 // Import other components
-import AddorEditdbEntry from './AddOrEditDBEntry';
+import AddOrEditDBEntry from './AddOrEditDBEntry';
 import generateEndpointPath from './helpers/generateEndpointPath';
 
 /*------------------------------------------------------------------------*/
@@ -31,29 +31,29 @@ import generateEndpointPath from './helpers/generateEndpointPath';
 // Props definition
 type Props = {
   // List of db entry fields
-  entryFields: DBEntryField[]
+  entryFields: DBEntryField[],
   // a prop that is unique to each item
-  idPropName: string
+  idPropName: string,
   // the prop that you want to show up as the title of each item
-  titlePropName: string
+  titlePropName: string,
   // The prop that you want in parentheses after the title
-  descriptionPropName: string
+  descriptionPropName: string,
   // the title of the tabBox
-  itemListTitle: string
+  itemListTitle: string,
   // the phrase you want when you say "add a new [itemName]"
-  itemName: string
+  itemName: string,
   // Function to validate the db entry before sending to the server
-  validateEntry?: (dbEntry: DBEntry) => Promise<void>
+  validateEntry?: (dbEntry: DBEntry) => Promise<void>,
   // Function to modify the db entry before sending to the server
-  modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry>
+  modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry>,
   // True if editing is disabled
-  disableEdit?: boolean
+  disableEdit?: boolean,
   // Name of the collection in the database
-  collectionName: string
+  collectionName: string,
   // True if only admins can access this page
-  adminsOnly?: boolean
+  adminsOnly?: boolean,
   // the query to filter the db entries
-  filterQuery?: { [k: string]: any }
+  filterQuery?: { [k: string]: any },
 };
 
 /*------------------------------------------------------------------------*/
@@ -205,8 +205,11 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         loading: false,
-        dbEntries: state.dbEntries.filter((category: DBEntry) => {
-          return (category[action.idPropName] !== action.dbEntry[action.idPropName]);
+        // Remove the deleted entry from the list
+        dbEntries: state.dbEntries.filter((entry: DBEntry) => {
+          return (
+            entry[action.idPropName] !== action.dbEntry[action.idPropName]
+          );
         }),
       };
     }
@@ -220,7 +223,7 @@ const reducer = (state: State, action: Action): State => {
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-const dbEntryManagerPanel: React.FC<Props> = (props) => {
+const DBEntryManagerPanel: React.FC<Props> = (props) => {
 
   // Destructure all props
   const {
@@ -262,6 +265,7 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
   /* ------------------------- Component Functions ------------------------ */
   /*------------------------------------------------------------------------*/
 
+  // Generate the endpoint path
   const endpoint = generateEndpointPath(collectionName, adminsOnly);
 
   /**
@@ -270,13 +274,16 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
    * @param entry the database entry to delete
    */
   const deleteEntry = async (entry: DBEntry) => {
-    // Confirm once
-
+    // Confirm
     const confirmed = await confirm(
       'Remove?',
       `Are you sure you want to remove this ${itemName}?`,
+      {
+        confirmButtonText: 'Remove Item',
+      },
     );
 
+    // Skip if cancelled
     if (!confirmed) {
       return;
     }
@@ -373,9 +380,12 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
                 key={entry[idPropName]}
                 className="alert alert-secondary p-2 mb-2 d-flex align-items-center justify-content-center mb-1"
               >
+                {/* Title */}
                 <div className="flex-grow-1">
                   <h4 className="m-0">
-                    <span className="fw-bold">{entry[titlePropName]}</span>
+                    <span className="fw-bold">
+                      {entry[titlePropName]}
+                    </span>
                     <span className="small">
                       {' '}
                       (
@@ -384,11 +394,13 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
                     </span>
                   </h4>
                 </div>
+
                 {/* Buttons */}
                 <div className="d-flex align-items-center">
+                  {/* Remove Button */}
                   <button
                     type="button"
-                    id={`dbEntryManagerPanel-remove-entry-with-id-${entry[idPropName]}`}
+                    id={`DBEntryManagerPanel-remove-entry-with-id-${entry[idPropName]}`}
                     className="btn btn-secondary me-1"
                     aria-label={`remove database entry: ${entry[titlePropName]}`}
                     onClick={() => {
@@ -403,10 +415,11 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
                     </span>
                   </button>
 
+                  {/* Edit Button */}
                   {!disableEdit && (
                     <button
                       type="button"
-                      id={`dbEntryManagerPanel-edit-with-id-${entry[idPropName]}`}
+                      id={`DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`}
                       className="btn btn-primary"
                       aria-label={`edit db entry: ${entry[titlePropName]}`}
                       onClick={() => {
@@ -424,7 +437,6 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
                       </span>
                     </button>
                   )}
-
                 </div>
               </div>
             );
@@ -434,9 +446,9 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
           <div className="d-grid">
             <button
               type="button"
-              id="dbEntryManagerPanel-add-entry"
+              id="DBEntryManagerPanel-add-entry"
               className="btn btn-lg btn-primary"
-              aria-label="add a new entry to the list of available entries"
+              aria-label={`add a new ${itemName} entry to the list of entries`}
               onClick={() => {
                 dispatch({
                   type: ActionType.ShowAdder,
@@ -447,7 +459,9 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
                 icon={faPlus}
                 className="me-2"
               />
-              {`Add ${itemName}`}
+              Add
+              {' '}
+              {itemName}
             </button>
           </div>
         </TabBox>
@@ -459,7 +473,7 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
 
   if (!loading && (adding || dbEntryToEdit)) {
     body = (
-      <AddorEditdbEntry
+      <AddOrEditDBEntry
         saveEndpointPath={endpoint}
         validateEntry={validateEntry}
         modifyEntry={modifyEntry}
@@ -494,4 +508,4 @@ const dbEntryManagerPanel: React.FC<Props> = (props) => {
 /*------------------------------------------------------------------------*/
 
 // Export component
-export default dbEntryManagerPanel;
+export default DBEntryManagerPanel;
