@@ -1,8 +1,11 @@
 import express from 'express';
 
-// Import dce-reactkit
-import { genRouteHandler, ParamType } from 'dce-reactkit';
+// Import shared helpers
+import genRouteHandler from './genRouteHandler';
 import generateEndpointPath from '../components/DBEntryManagerPanel/helpers/generateEndpointPath';
+
+// Import shared types
+import ParamType from '../types/ParamType';
 
 /**
  * Interface for a collection in the database

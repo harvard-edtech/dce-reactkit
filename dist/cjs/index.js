@@ -45,7 +45,7 @@ OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 
-function __awaiter$1(thisArg, _arguments, P, generator) {
+function __awaiter(thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -60,7 +60,7 @@ function __awaiter$1(thisArg, _arguments, P, generator) {
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
-var ReactKitErrorCode$2;
+var ReactKitErrorCode;
 (function (ReactKitErrorCode) {
     ReactKitErrorCode["NoResponse"] = "DRK1";
     ReactKitErrorCode["NoCode"] = "DRK2";
@@ -75,8 +75,8 @@ var ReactKitErrorCode$2;
     ReactKitErrorCode["NotAllowedToReviewLogs"] = "DRK11";
     ReactKitErrorCode["ThemeCheckedBeforeReactKitReady"] = "DRK12";
     ReactKitErrorCode["SessionExpiredMessageGottenBeforeReactKitReady"] = "DRK13";
-})(ReactKitErrorCode$2 || (ReactKitErrorCode$2 = {}));
-var ReactKitErrorCode$3 = ReactKitErrorCode$2;
+})(ReactKitErrorCode || (ReactKitErrorCode = {}));
+var ReactKitErrorCode$1 = ReactKitErrorCode;
 
 /**
  * Displays an error
@@ -116,7 +116,7 @@ const ErrorBox = (props) => {
                 } },
                 "code:",
                 ' ',
-                String((_a = error.code) !== null && _a !== void 0 ? _a : ReactKitErrorCode$3.NoCode).toUpperCase())));
+                String((_a = error.code) !== null && _a !== void 0 ? _a : ReactKitErrorCode$1.NoCode).toUpperCase())));
     }
     // Main UI
     return (React__default["default"].createElement("div", { className: "alert alert-danger text-center", style: {
@@ -137,7 +137,7 @@ const ErrorBox = (props) => {
  * Types of buttons in the modal
  * @author Gabe Abrams
  */
-var ModalButtonType$2;
+var ModalButtonType;
 (function (ModalButtonType) {
     ModalButtonType["Okay"] = "okay";
     ModalButtonType["Cancel"] = "cancel";
@@ -149,14 +149,14 @@ var ModalButtonType$2;
     ModalButtonType["ImSure"] = "imSure";
     ModalButtonType["Delete"] = "delete";
     ModalButtonType["Confirm"] = "confirm";
-})(ModalButtonType$2 || (ModalButtonType$2 = {}));
-var ModalButtonType$3 = ModalButtonType$2;
+})(ModalButtonType || (ModalButtonType = {}));
+var ModalButtonType$1 = ModalButtonType;
 
 /**
  * Types of modals
  * @author Gabe Abrams
  */
-var ModalType$2;
+var ModalType;
 (function (ModalType) {
     ModalType["Okay"] = "okay";
     ModalType["OkayCancel"] = "okay-cancel";
@@ -167,8 +167,8 @@ var ModalType$2;
     ModalType["DeleteCancel"] = "delete-cancel";
     ModalType["ConfirmCancel"] = "confirm-cancel";
     ModalType["NoButtons"] = "-";
-})(ModalType$2 || (ModalType$2 = {}));
-var ModalType$3 = ModalType$2;
+})(ModalType || (ModalType = {}));
+var ModalType$1 = ModalType;
 
 /**
  * Built-in metadata for logs
@@ -193,7 +193,7 @@ const LogBuiltInMetadata = {
  * @author Gabe Abrams
  * @param ms number of ms to wait
  */
-const waitMs = (ms = 0) => __awaiter$1(void 0, void 0, void 0, function* () {
+const waitMs = (ms = 0) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
@@ -203,7 +203,7 @@ const waitMs = (ms = 0) => __awaiter$1(void 0, void 0, void 0, function* () {
  * Bootstrap variants
  * @author Gabe Abrams
  */
-var Variant$2;
+var Variant;
 (function (Variant) {
     Variant["Primary"] = "primary";
     Variant["Secondary"] = "secondary";
@@ -213,21 +213,21 @@ var Variant$2;
     Variant["Danger"] = "danger";
     Variant["Light"] = "light";
     Variant["Dark"] = "dark";
-})(Variant$2 || (Variant$2 = {}));
-var Variant$3 = Variant$2;
+})(Variant || (Variant = {}));
+var Variant$1 = Variant;
 
 /**
  * Modal sizes
  * @author Gabe Abrams
  */
-var ModalSize$1;
+var ModalSize;
 (function (ModalSize) {
     ModalSize["Small"] = "sm";
     ModalSize["Medium"] = "md";
     ModalSize["Large"] = "lg";
     ModalSize["ExtraLarge"] = "xl";
-})(ModalSize$1 || (ModalSize$1 = {}));
-var ModalSize$2 = ModalSize$1;
+})(ModalSize || (ModalSize = {}));
+var ModalSize$1 = ModalSize;
 
 /**
  * A generic popup modal
@@ -240,80 +240,80 @@ var ModalSize$2 = ModalSize$1;
 const MS_TO_ANIMATE = 200; // Animation duration
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes = {
-    [ModalType$3.Okay]: [
-        ModalButtonType$3.Okay,
+    [ModalType$1.Okay]: [
+        ModalButtonType$1.Okay,
     ],
-    [ModalType$3.OkayCancel]: [
-        ModalButtonType$3.Okay,
-        ModalButtonType$3.Cancel,
+    [ModalType$1.OkayCancel]: [
+        ModalButtonType$1.Okay,
+        ModalButtonType$1.Cancel,
     ],
-    [ModalType$3.YesNo]: [
-        ModalButtonType$3.Yes,
-        ModalButtonType$3.No,
+    [ModalType$1.YesNo]: [
+        ModalButtonType$1.Yes,
+        ModalButtonType$1.No,
     ],
-    [ModalType$3.YesNoCancel]: [
-        ModalButtonType$3.Yes,
-        ModalButtonType$3.No,
-        ModalButtonType$3.Cancel,
+    [ModalType$1.YesNoCancel]: [
+        ModalButtonType$1.Yes,
+        ModalButtonType$1.No,
+        ModalButtonType$1.Cancel,
     ],
-    [ModalType$3.AbandonGoBack]: [
-        ModalButtonType$3.Abandon,
-        ModalButtonType$3.GoBack,
+    [ModalType$1.AbandonGoBack]: [
+        ModalButtonType$1.Abandon,
+        ModalButtonType$1.GoBack,
     ],
-    [ModalType$3.ImSureCancel]: [
-        ModalButtonType$3.ImSure,
-        ModalButtonType$3.Cancel,
+    [ModalType$1.ImSureCancel]: [
+        ModalButtonType$1.ImSure,
+        ModalButtonType$1.Cancel,
     ],
-    [ModalType$3.DeleteCancel]: [
-        ModalButtonType$3.Delete,
-        ModalButtonType$3.Cancel,
+    [ModalType$1.DeleteCancel]: [
+        ModalButtonType$1.Delete,
+        ModalButtonType$1.Cancel,
     ],
-    [ModalType$3.ConfirmCancel]: [
-        ModalButtonType$3.Confirm,
-        ModalButtonType$3.Cancel,
+    [ModalType$1.ConfirmCancel]: [
+        ModalButtonType$1.Confirm,
+        ModalButtonType$1.Cancel,
     ],
 };
 // Button type styling and labels
 const ModalButtonTypeToLabelAndVariant = {
-    [ModalButtonType$3.Okay]: {
+    [ModalButtonType$1.Okay]: {
         label: 'Okay',
-        variant: Variant$3.Dark,
+        variant: Variant$1.Dark,
     },
-    [ModalButtonType$3.Cancel]: {
+    [ModalButtonType$1.Cancel]: {
         label: 'Cancel',
-        variant: Variant$3.Secondary,
+        variant: Variant$1.Secondary,
     },
-    [ModalButtonType$3.Yes]: {
+    [ModalButtonType$1.Yes]: {
         label: 'Yes',
-        variant: Variant$3.Dark,
+        variant: Variant$1.Dark,
     },
-    [ModalButtonType$3.No]: {
+    [ModalButtonType$1.No]: {
         label: 'No',
-        variant: Variant$3.Secondary,
+        variant: Variant$1.Secondary,
     },
-    [ModalButtonType$3.Abandon]: {
+    [ModalButtonType$1.Abandon]: {
         label: 'Abandon Changes',
-        variant: Variant$3.Warning,
+        variant: Variant$1.Warning,
     },
-    [ModalButtonType$3.GoBack]: {
+    [ModalButtonType$1.GoBack]: {
         label: 'Go Back',
-        variant: Variant$3.Secondary,
+        variant: Variant$1.Secondary,
     },
-    [ModalButtonType$3.Continue]: {
+    [ModalButtonType$1.Continue]: {
         label: 'Continue',
-        variant: Variant$3.Dark,
+        variant: Variant$1.Dark,
     },
-    [ModalButtonType$3.ImSure]: {
+    [ModalButtonType$1.ImSure]: {
         label: 'I am sure',
-        variant: Variant$3.Warning,
+        variant: Variant$1.Warning,
     },
-    [ModalButtonType$3.Delete]: {
+    [ModalButtonType$1.Delete]: {
         label: 'Yes, Delete',
-        variant: Variant$3.Danger,
+        variant: Variant$1.Danger,
     },
-    [ModalButtonType$3.Confirm]: {
+    [ModalButtonType$1.Confirm]: {
         label: 'Confirm',
-        variant: Variant$3.Dark,
+        variant: Variant$1.Dark,
     },
 };
 /*------------------------------------------------------------------------*/
@@ -391,7 +391,7 @@ const Modal = (props) => {
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
-    const { type = ModalType$3.NoButtons, size = ModalSize$2.Large, title, children, onClose, dontAllowBackdropExit, onTopOfOtherModals, } = props;
+    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, children, onClose, dontAllowBackdropExit, onTopOfOtherModals, } = props;
     /* -------------- State ------------- */
     // If true, the modal is shown
     const [visible, setVisible] = React.useState(false);
@@ -408,7 +408,7 @@ const Modal = (props) => {
      * @author Gabe Abrams
      */
     React.useEffect(() => {
-        (() => __awaiter$1(void 0, void 0, void 0, function* () {
+        (() => __awaiter(void 0, void 0, void 0, function* () {
             // Set defaults
             setVisible(false);
             setAnimatingIn(true);
@@ -434,7 +434,7 @@ const Modal = (props) => {
      * @param ModalButtonType the button that was clicked when closing the
      *   modal
      */
-    const handleClose = (ModalButtonType) => __awaiter$1(void 0, void 0, void 0, function* () {
+    const handleClose = (ModalButtonType) => __awaiter(void 0, void 0, void 0, function* () {
         // Don't close if no handler
         if (!onClose) {
             return;
@@ -496,7 +496,7 @@ const Modal = (props) => {
         React__default["default"].createElement("style", null, style$8),
         React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
-            }, onClick: () => __awaiter$1(void 0, void 0, void 0, function* () {
+            }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                 // Skip if exit via backdrop not allowed
                 if (dontAllowBackdropExit || !onClose) {
                     // Show pop animation
@@ -509,7 +509,7 @@ const Modal = (props) => {
                     return;
                 }
                 // Handle close
-                handleClose(ModalButtonType$3.Cancel);
+                handleClose(ModalButtonType$1.Cancel);
             }) }),
         React__default["default"].createElement("div", { className: `modal-dialog modal-${size} ${animationClass}`, style: {
                 zIndex: 5000000002,
@@ -521,7 +521,7 @@ const Modal = (props) => {
                         } }, title),
                     onClose && (React__default["default"].createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: () => {
                             // Handle close
-                            handleClose(ModalButtonType$3.Cancel);
+                            handleClose(ModalButtonType$1.Cancel);
                         } }))),
                 children && (React__default["default"].createElement("div", { className: "modal-body" }, children)),
                 footer && (React__default["default"].createElement("div", { className: "modal-footer pt-1 pb-1" }, footer))))));
@@ -531,7 +531,7 @@ const Modal = (props) => {
  * An error with a code
  * @author Gabe Abrams
  */
-class ErrorWithCode$1 extends Error {
+class ErrorWithCode extends Error {
     constructor(message, code) {
         super(message);
         this.name = 'ErrorWithCode';
@@ -578,10 +578,10 @@ let storedSendRequest;
  * @author Gabe Abrams
  * @returns sendRequest function
  */
-const getSendRequest = () => __awaiter$1(void 0, void 0, void 0, function* () {
+const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
     // Track timeout
     let timedOut = false;
-    (() => __awaiter$1(void 0, void 0, void 0, function* () {
+    (() => __awaiter(void 0, void 0, void 0, function* () {
         yield waitMs(5000);
         timedOut = true;
     }))(),
@@ -589,7 +589,7 @@ const getSendRequest = () => __awaiter$1(void 0, void 0, void 0, function* () {
         yield initialized;
     // Error if no send request function
     if (timedOut) {
-        showFatalError(new ErrorWithCode$1('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$3.NoCACCLSendRequestFunction));
+        showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
         // Return dummy function that never resolves
         return (() => {
             return new Promise(() => { });
@@ -649,7 +649,7 @@ const _setStubResponse = (opts) => {
     const { path, body, } = opts;
     const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET').toUpperCase();
     const errorMessage = ((_b = opts.errorMessage) !== null && _b !== void 0 ? _b : 'An unknown error has occurred.');
-    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$3.NoCode);
+    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode);
     // Store to stub responses
     if (!stubResponses[method]) {
         stubResponses[method] = {};
@@ -677,7 +677,7 @@ const _setStubResponse = (opts) => {
  * @param [opts.params] - query/body parameters to include
  * @returns response from server
  */
-const visitServerEndpoint = (opts) => __awaiter$1(void 0, void 0, void 0, function* () {
+const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET');
     // Handle stubs
@@ -695,7 +695,7 @@ const visitServerEndpoint = (opts) => __awaiter$1(void 0, void 0, void 0, functi
             return stubResponse.body;
         }
         // Error
-        throw new ErrorWithCode$1(stubResponse.errorMessage, stubResponse.errorCode);
+        throw new ErrorWithCode(stubResponse.errorMessage, stubResponse.errorCode);
     }
     // Send the request
     const sendRequest = yield getSendRequest();
@@ -706,11 +706,11 @@ const visitServerEndpoint = (opts) => __awaiter$1(void 0, void 0, void 0, functi
     });
     // Check for failure
     if (!response || !response.body) {
-        throw new ErrorWithCode$1('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$3.NoResponse);
+        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
     }
     if (!response.body.success) {
         // Session expired
-        if (response.body.code === ReactKitErrorCode$3.SessionExpired) {
+        if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
             // Skip notice if session was already expired
             if (sessionAlreadyExpired) {
                 // Never return (browser is already reloading)
@@ -731,9 +731,9 @@ const visitServerEndpoint = (opts) => __awaiter$1(void 0, void 0, void 0, functi
             });
         }
         // Other errors
-        throw new ErrorWithCode$1((response.body.message
+        throw new ErrorWithCode((response.body.message
             || 'An unknown error occurred. Please contact an admin.'), (response.body.code
-            || ReactKitErrorCode$3.NoCode));
+            || ReactKitErrorCode$1.NoCode));
     }
     // Success! Extract the body
     const { body } = response.body;
@@ -745,7 +745,7 @@ const visitServerEndpoint = (opts) => __awaiter$1(void 0, void 0, void 0, functi
  * Log a user action on the client (cannot be used on the server)
  * @author Gabe Abrams
  */
-const logClientEvent = (opts) => __awaiter$1(void 0, void 0, void 0, function* () {
+const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g;
     return visitServerEndpoint({
         path: LOG_ROUTE_PATH,
@@ -797,7 +797,7 @@ let onAlertClosed;
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-const alert$1 = (title, text) => __awaiter$1(void 0, void 0, void 0, function* () {
+const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
     // Fallback if alert not available
     if (!setAlertInfo) {
         window.alert(`${title}\n\n${text}`);
@@ -837,7 +837,7 @@ let onConfirmClosed;
  *   button
  * @returns true if the user confirmed
  */
-const confirm = (title, text, opts) => __awaiter$1(void 0, void 0, void 0, function* () {
+const confirm = (title, text, opts) => __awaiter(void 0, void 0, void 0, function* () {
     // Fallback if confirm is not available
     if (!setConfirmInfo) {
         return window.confirm(`${title}\n\n${text}`);
@@ -876,8 +876,8 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
         ? error.trim()
         : String((_a = error.message) !== null && _a !== void 0 ? _a : 'An unknown error occurred.'));
     const code = (typeof error === 'string'
-        ? ReactKitErrorCode$3.NoCode
-        : String((_b = error.code) !== null && _b !== void 0 ? _b : ReactKitErrorCode$3.NoCode));
+        ? ReactKitErrorCode$1.NoCode
+        : String((_b = error.code) !== null && _b !== void 0 ? _b : ReactKitErrorCode$1.NoCode));
     // Add log
     logClientEvent({
         context: LogBuiltInMetadata.Context.ClientFatalError,
@@ -936,7 +936,7 @@ const AppWrapper = (props) => {
     let modal;
     /* -------------- Alert ------------- */
     if (alertInfo) {
-        modal = (React__default["default"].createElement(Modal, { key: `alert-${alertInfo.title}-${alertInfo.text}`, title: alertInfo.title, type: ModalType$3.Okay, onClose: () => {
+        modal = (React__default["default"].createElement(Modal, { key: `alert-${alertInfo.title}-${alertInfo.text}`, title: alertInfo.title, type: ModalType$1.Okay, onClose: () => {
                 // Alert closed
                 setAlertInfo(undefined);
                 if (onAlertClosed) {
@@ -946,10 +946,10 @@ const AppWrapper = (props) => {
     }
     /* ------------- Confirm ------------ */
     if (confirmInfo) {
-        modal = (React__default["default"].createElement(Modal, { key: `confirm-${confirmInfo.title}-${confirmInfo.text}`, title: confirmInfo.title, type: ModalType$3.OkayCancel, okayLabel: confirmInfo.opts.confirmButtonText, okayVariant: confirmInfo.opts.confirmButtonVariant, cancelLabel: confirmInfo.opts.cancelButtonText, cancelVariant: confirmInfo.opts.cancelButtonVariant, onClose: (buttonType) => {
+        modal = (React__default["default"].createElement(Modal, { key: `confirm-${confirmInfo.title}-${confirmInfo.text}`, title: confirmInfo.title, type: ModalType$1.OkayCancel, okayLabel: confirmInfo.opts.confirmButtonText, okayVariant: confirmInfo.opts.confirmButtonVariant, cancelLabel: confirmInfo.opts.cancelButtonText, cancelVariant: confirmInfo.opts.cancelButtonVariant, onClose: (buttonType) => {
                 setConfirmInfo(undefined);
                 if (onConfirmClosed) {
-                    onConfirmClosed(buttonType === ModalButtonType$3.Okay);
+                    onConfirmClosed(buttonType === ModalButtonType$1.Okay);
                 }
             }, dontAllowBackdropExit: true }, confirmInfo.text));
     }
@@ -962,8 +962,8 @@ const AppWrapper = (props) => {
     if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
-            ? new ErrorWithCode$1(getSessionExpiredMessage(), ReactKitErrorCode$3.SessionExpired)
-            : new ErrorWithCode$1((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$3.NoCode)));
+            ? new ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
+            : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode)));
         // Build error screen
         body = (React__default["default"].createElement("div", { style: {
                 display: 'block',
@@ -1188,7 +1188,7 @@ const RadioButton = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$3.Secondary, unselectedVariant = Variant$3.Light, small, } = props;
+    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$1.Secondary, unselectedVariant = Variant$1.Light, small, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -1216,7 +1216,7 @@ const CheckboxButton = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onChanged, ariaLabel, title, checked, id, className, noMarginOnRight, checkedVariant = Variant$3.Secondary, uncheckedVariant = Variant$3.Light, small, dashed, } = props;
+    const { text, onChanged, ariaLabel, title, checked, id, className, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, dashed, } = props;
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
@@ -1862,13 +1862,13 @@ const PopPendingMark = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$8;
+var ActionType$6;
 (function (ActionType) {
     // Indicate that the text was recently copied
     ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
     // Clear the status
     ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType$8 || (ActionType$8 = {}));
+})(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
@@ -1877,12 +1877,12 @@ var ActionType$8;
  */
 const reducer$6 = (state, action) => {
     switch (action.type) {
-        case ActionType$8.IndicateRecentlyCopied: {
+        case ActionType$6.IndicateRecentlyCopied: {
             return {
                 recentlyCopied: true,
             };
         }
-        case ActionType$8.ClearRecentlyCopiedStatus: {
+        case ActionType$6.ClearRecentlyCopiedStatus: {
             return {
                 recentlyCopied: false,
             };
@@ -1918,7 +1918,7 @@ const CopiableBox = (props) => {
      * Perform a copy
      * @author Gabe Abrams
      */
-    const performCopy = () => __awaiter$1(void 0, void 0, void 0, function* () {
+    const performCopy = () => __awaiter(void 0, void 0, void 0, function* () {
         // Write to clipboard
         try {
             yield navigator.clipboard.writeText(text);
@@ -1928,13 +1928,13 @@ const CopiableBox = (props) => {
         }
         // Show copied notice
         dispatch({
-            type: ActionType$8.IndicateRecentlyCopied,
+            type: ActionType$6.IndicateRecentlyCopied,
         });
         // Wait a moment
         yield waitMs(4000);
         // Hide copied notice
         dispatch({
-            type: ActionType$8.ClearRecentlyCopiedStatus,
+            type: ActionType$6.ClearRecentlyCopiedStatus,
         });
     });
     /*------------------------------------------------------------------------*/
@@ -1990,11 +1990,11 @@ const CopiableBox = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$7;
+var ActionType$5;
 (function (ActionType) {
     // Toggle whether a child are being shown
     ActionType["ToggleChild"] = "toggle-child";
-})(ActionType$7 || (ActionType$7 = {}));
+})(ActionType$5 || (ActionType$5 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
@@ -2003,7 +2003,7 @@ var ActionType$7;
  */
 const reducer$5 = (state, action) => {
     switch (action.type) {
-        case ActionType$7.ToggleChild: {
+        case ActionType$5.ToggleChild: {
             return Object.assign(Object.assign({}, state), { childExpanded: Object.assign(Object.assign({}, state.childExpanded), { [String(action.id)]: !state.childExpanded[String(action.id)] }) });
         }
         default: {
@@ -2122,14 +2122,14 @@ const NestableItemList = (props) => {
                     backgroundColor: 'transparent',
                 }, type: "button", onClick: () => {
                     dispatch({
-                        type: ActionType$7.ToggleChild,
+                        type: ActionType$5.ToggleChild,
                         id: item.id,
                     });
                 }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}` },
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: childExpanded[item.id] ? freeSolidSvgIcons.faChevronDown : freeSolidSvgIcons.faChevronRight })))),
             React__default["default"].createElement(CheckboxButton, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
                     onChanged(changeChecked(item.id, checked, items));
-                }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$3.Light }),
+                }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$1.Light }),
             (item.isGroup && childExpanded[item.id]) && (React__default["default"].createElement("div", { className: "NestableItemList-children-container", style: {
                     paddingLeft: '2.2rem',
                 } },
@@ -2267,7 +2267,7 @@ var LogAction$1 = LogAction;
  * Server-side API param types
  * @author Gabe Abrams
  */
-var ParamType$2;
+var ParamType;
 (function (ParamType) {
     ParamType["Boolean"] = "boolean";
     ParamType["BooleanOptional"] = "boolean-optional";
@@ -2279,8 +2279,8 @@ var ParamType$2;
     ParamType["JSONOptional"] = "json-optional";
     ParamType["String"] = "string";
     ParamType["StringOptional"] = "string-optional";
-})(ParamType$2 || (ParamType$2 = {}));
-var ParamType$3 = ParamType$2;
+})(ParamType || (ParamType = {}));
+var ParamType$1 = ParamType;
 
 /**
  * Round a number to a certain number of decimals
@@ -2397,7 +2397,7 @@ var SortType;
 })(SortType || (SortType = {}));
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$6;
+var ActionType$4;
 (function (ActionType) {
     // Toggle sort column param
     ActionType["ToggleSortColumn"] = "toggle-sort-column";
@@ -2409,7 +2409,7 @@ var ActionType$6;
     ActionType["ShowAllColumns"] = "show-all-columns";
     // Hide all columns
     ActionType["HideAllColumns"] = "hide-all-columns";
-})(ActionType$6 || (ActionType$6 = {}));
+})(ActionType$4 || (ActionType$4 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
@@ -2418,7 +2418,7 @@ var ActionType$6;
  */
 const reducer$4 = (state, action) => {
     switch (action.type) {
-        case ActionType$6.ToggleSortColumn: {
+        case ActionType$4.ToggleSortColumn: {
             if (action.param !== state.sortColumnParam) {
                 // Different column param
                 return Object.assign(Object.assign({}, state), { sortColumnParam: action.param, sortType: SortType.Ascending });
@@ -2430,22 +2430,22 @@ const reducer$4 = (state, action) => {
             // Stop sorting by column
             return Object.assign(Object.assign({}, state), { sortColumnParam: undefined, sortType: SortType.Ascending });
         }
-        case ActionType$6.UpdateColumnVisibility: {
+        case ActionType$4.UpdateColumnVisibility: {
             const { columnVisibilityMap } = state;
             columnVisibilityMap[action.param] = action.visible;
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$6.ToggleColVisCusModalVisibility: {
+        case ActionType$4.ToggleColVisCusModalVisibility: {
             return Object.assign(Object.assign({}, state), { columnVisibilityCustomizationModalVisible: !state.columnVisibilityCustomizationModalVisible });
         }
-        case ActionType$6.ShowAllColumns: {
+        case ActionType$4.ShowAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = true;
             });
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$6.HideAllColumns: {
+        case ActionType$4.HideAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = false;
@@ -2506,7 +2506,7 @@ const IntelliTable = (props) => {
     /* ------- Col Vis Customization Modal ------ */
     if (columnVisibilityCustomizationModalVisible) {
         // Create modal
-        modal = (React__default["default"].createElement(Modal, { type: ModalType$3.Okay, title: "Choose columns to show:", onClose: () => {
+        modal = (React__default["default"].createElement(Modal, { type: ModalType$1.Okay, title: "Choose columns to show:", onClose: () => {
                 const noColumnsSelected = (Object.values(columnVisibilityMap)
                     .every((isSelected) => {
                     return !isSelected;
@@ -2515,27 +2515,27 @@ const IntelliTable = (props) => {
                     return alert$1('Choose at least one column', 'To continue, you have to choose at least one column to show');
                 }
                 dispatch({
-                    type: ActionType$6.ToggleColVisCusModalVisibility,
+                    type: ActionType$4.ToggleColVisCusModalVisibility,
                 });
-            }, okayVariant: Variant$3.Light },
+            }, okayVariant: Variant$1.Light },
             columns.map((column) => {
                 return (React__default["default"].createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
                         dispatch({
-                            type: ActionType$6.UpdateColumnVisibility,
+                            type: ActionType$4.UpdateColumnVisibility,
                             param: column.param,
                             visible: checked,
                         });
-                    }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column in the ${title} table`, checkedVariant: Variant$3.Light, uncheckedVariant: Variant$3.Secondary }));
+                    }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column in the ${title} table`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Secondary }));
             }),
             React__default["default"].createElement("div", { className: "mt-3" }, "Or you can:"),
             React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-select-all-columns`, className: "btn btn-secondary me-2", "aria-label": `show all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$6.ShowAllColumns,
+                        type: ActionType$4.ShowAllColumns,
                     });
                 } }, "Select All"),
             React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-select-none-columns`, className: "btn btn-secondary", "aria-label": `hide all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$6.HideAllColumns,
+                        type: ActionType$4.HideAllColumns,
                     });
                 } }, "Deselect All")));
     }
@@ -2586,7 +2586,7 @@ const IntelliTable = (props) => {
                 React__default["default"].createElement("div", null,
                     React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-sort-by-${column.param}-button`, className: `btn btn-${sortingByThisColumn ? 'light' : 'secondary'} btn-sm ms-1 ps-1 pe-1 pt-0 pb-0`, "aria-label": sortButtonAriaLabel, onClick: () => {
                             dispatch({
-                                type: ActionType$6.ToggleSortColumn,
+                                type: ActionType$4.ToggleSortColumn,
                                 param: column.param,
                             });
                         } },
@@ -2626,7 +2626,7 @@ const IntelliTable = (props) => {
             }
             // Sort differently based on the data type
             // > Boolean
-            if (paramType === ParamType$3.Boolean) {
+            if (paramType === ParamType$1.Boolean) {
                 if (aVal && !bVal) {
                     return (descending ? -1 : 1);
                 }
@@ -2636,14 +2636,14 @@ const IntelliTable = (props) => {
                 return tiebreaker;
             }
             // > Number
-            if (paramType === ParamType$3.Int
-                || paramType === ParamType$3.Float) {
+            if (paramType === ParamType$1.Int
+                || paramType === ParamType$1.Float) {
                 return (descending
                     ? (bVal - aVal)
                     : (aVal - bVal));
             }
             // > String
-            if (paramType === ParamType$3.String) {
+            if (paramType === ParamType$1.String) {
                 if (aVal < bVal) {
                     return (descending ? 1 : -1);
                 }
@@ -2653,7 +2653,7 @@ const IntelliTable = (props) => {
                 return tiebreaker;
             }
             // > JSON
-            if (paramType === ParamType$3.JSON) {
+            if (paramType === ParamType$1.JSON) {
                 const aSize = (Array.isArray(aVal)
                     ? aVal.length
                     : Object.keys(aVal).length);
@@ -2685,7 +2685,7 @@ const IntelliTable = (props) => {
             let fullValue;
             let visibleValue;
             let title = '';
-            if (column.type === ParamType$3.Boolean) {
+            if (column.type === ParamType$1.Boolean) {
                 fullValue = !!(value);
                 const noValue = (value === undefined
                     || value === null);
@@ -2697,7 +2697,7 @@ const IntelliTable = (props) => {
                     title = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$3.Int) {
+            else if (column.type === ParamType$1.Int) {
                 fullValue = Number.parseInt(value, 10);
                 const noValue = Number.isNaN(fullValue);
                 visibleValue = (noValue
@@ -2708,7 +2708,7 @@ const IntelliTable = (props) => {
                     title = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$3.Float) {
+            else if (column.type === ParamType$1.Float) {
                 fullValue = Number.parseFloat(value);
                 const noValue = Number.isNaN(fullValue);
                 visibleValue = (noValue
@@ -2719,7 +2719,7 @@ const IntelliTable = (props) => {
                     title = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$3.String) {
+            else if (column.type === ParamType$1.String) {
                 fullValue = String(value).trim();
                 const noValue = (value === undefined
                     || value === null
@@ -2732,7 +2732,7 @@ const IntelliTable = (props) => {
                     title = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$3.JSON) {
+            else if (column.type === ParamType$1.JSON) {
                 fullValue = JSON.stringify(value);
                 const noValue = (Array.isArray(value)
                     ? (!value || value.length === 0)
@@ -2775,7 +2775,7 @@ const IntelliTable = (props) => {
                 React__default["default"].createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: filename, csv: csv }),
                 React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary ms-2", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
                         dispatch({
-                            type: ActionType$6.ToggleColVisCusModalVisibility,
+                            type: ActionType$4.ToggleColVisCusModalVisibility,
                         });
                     } },
                     "Show/Hide Cols",
@@ -2897,185 +2897,185 @@ const columns = [
     {
         title: 'First Name',
         param: 'userFirstName',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
     },
     {
         title: 'Last Name',
         param: 'userLastName',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
     },
     {
         title: 'Email',
         param: 'userEmail',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
     },
     {
         title: 'Canvas Id',
         param: 'userId',
-        type: ParamType$3.Int,
+        type: ParamType$1.Int,
     },
     {
         title: 'Student?',
         param: 'isLearner',
-        type: ParamType$3.Boolean,
+        type: ParamType$1.Boolean,
     },
     {
         title: 'Teaching Staff?',
         param: 'isTTM',
-        type: ParamType$3.Boolean,
+        type: ParamType$1.Boolean,
         startsHidden: true,
     },
     {
         title: 'Admin?',
         param: 'isAdmin',
-        type: ParamType$3.Boolean,
+        type: ParamType$1.Boolean,
         startsHidden: true,
     },
     {
         title: 'Course Canvas Id',
         param: 'courseId',
-        type: ParamType$3.Int,
+        type: ParamType$1.Int,
         startsHidden: true,
     },
     {
         title: 'Course Name',
         param: 'courseName',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
     },
     {
         title: 'Browser Name',
         param: 'browser.name',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Browser Version',
         param: 'browser.version',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'OS',
         param: 'device.os',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Mobile?',
         param: 'device.isMobile',
-        type: ParamType$3.Boolean,
+        type: ParamType$1.Boolean,
         startsHidden: true,
     },
     {
         title: 'Year',
         param: 'year',
-        type: ParamType$3.Int,
+        type: ParamType$1.Int,
     },
     {
         title: 'Month',
         param: 'month',
-        type: ParamType$3.Int,
+        type: ParamType$1.Int,
     },
     {
         title: 'Day',
         param: 'day',
-        type: ParamType$3.Int,
+        type: ParamType$1.Int,
     },
     {
         title: 'Hour',
         param: 'hour',
-        type: ParamType$3.Int,
+        type: ParamType$1.Int,
     },
     {
         title: 'Minute',
         param: 'minute',
-        type: ParamType$3.Int,
+        type: ParamType$1.Int,
         startsHidden: true,
     },
     {
         title: 'Timestamp',
         param: 'timestamp',
-        type: ParamType$3.Int,
+        type: ParamType$1.Int,
         startsHidden: true,
     },
     {
         title: 'Context',
         param: 'context',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
     },
     {
         title: 'Subcontext',
         param: 'subcontext',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
     },
     {
         title: 'Tags',
         param: 'tags',
-        type: ParamType$3.JSON,
+        type: ParamType$1.JSON,
         startsHidden: true,
     },
     {
         title: 'Log Level',
         param: 'level',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Metadata',
         param: 'metadata',
-        type: ParamType$3.JSON,
+        type: ParamType$1.JSON,
         startsHidden: true,
     },
     {
         title: 'Source',
         param: 'source',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
     },
     {
         title: 'Server Route Path',
         param: 'routePath',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Server Route Template',
         param: 'routeTemplate',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Type',
         param: 'type',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
     },
     {
         title: 'Error Message',
         param: 'errorMessage',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Error Code',
         param: 'errorCode',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Error Stack',
         param: 'errorStack',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Action Target',
         param: 'target',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
     {
         title: 'Action Type',
         param: 'action',
-        type: ParamType$3.String,
+        type: ParamType$1.String,
         startsHidden: true,
     },
 ];
@@ -3141,7 +3141,7 @@ const genHumanReadableName = (machineReadableName) => {
 };
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$5;
+var ActionType$3;
 (function (ActionType) {
     // Show the loading bar
     ActionType["StartLoading"] = "start-loading";
@@ -3163,7 +3163,7 @@ var ActionType$5;
     ActionType["UpdateActionErrorFilterState"] = "update-action-error-filter-state";
     // Update the advanced filter state
     ActionType["UpdateAdvancedFilterState"] = "update-advanced-filter-state";
-})(ActionType$5 || (ActionType$5 = {}));
+})(ActionType$3 || (ActionType$3 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
@@ -3172,36 +3172,36 @@ var ActionType$5;
  */
 const reducer$3 = (state, action) => {
     switch (action.type) {
-        case ActionType$5.StartLoading: {
+        case ActionType$3.StartLoading: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$5.FinishLoading: {
+        case ActionType$3.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, logMap: action.logMap });
         }
-        case ActionType$5.ToggleFilterDrawer: {
+        case ActionType$3.ToggleFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
                     ? undefined // hide
                     : action.filterDrawer) });
         }
-        case ActionType$5.HideFilterDrawer: {
+        case ActionType$3.HideFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
         }
-        case ActionType$5.ResetFilters: {
+        case ActionType$3.ResetFilters: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState });
         }
-        case ActionType$5.UpdateDateFilterState: {
+        case ActionType$3.UpdateDateFilterState: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
         }
-        case ActionType$5.UpdateContextFilterState: {
+        case ActionType$3.UpdateContextFilterState: {
             return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
         }
-        case ActionType$5.UpdateTagFilterState: {
+        case ActionType$3.UpdateTagFilterState: {
             return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
         }
-        case ActionType$5.UpdateActionErrorFilterState: {
+        case ActionType$3.UpdateActionErrorFilterState: {
             return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
         }
-        case ActionType$5.UpdateAdvancedFilterState: {
+        case ActionType$3.UpdateAdvancedFilterState: {
             return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
         }
         default: {
@@ -3378,10 +3378,10 @@ const LogReviewer = (props) => {
      * @author Gabe Abrams
      * @param newDateFilterState the new date filter state
      */
-    const handleDateRangeUpdated = (newDateFilterState) => __awaiter$1(void 0, void 0, void 0, function* () {
+    const handleDateRangeUpdated = (newDateFilterState) => __awaiter(void 0, void 0, void 0, function* () {
         // Update state
         dispatch({
-            type: ActionType$5.UpdateDateFilterState,
+            type: ActionType$3.UpdateDateFilterState,
             dateFilterState: newDateFilterState,
         });
         // Check which year/month combos we need to load
@@ -3392,7 +3392,7 @@ const LogReviewer = (props) => {
         }
         // Start loading
         dispatch({
-            type: ActionType$5.StartLoading,
+            type: ActionType$3.StartLoading,
         });
         // Load required months
         try {
@@ -3416,7 +3416,7 @@ const LogReviewer = (props) => {
         }
         // Finish loading
         dispatch({
-            type: ActionType$5.FinishLoading,
+            type: ActionType$3.FinishLoading,
             logMap,
         });
     });
@@ -3455,7 +3455,7 @@ const LogReviewer = (props) => {
             React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$3.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Date,
                         });
                     } },
@@ -3463,7 +3463,7 @@ const LogReviewer = (props) => {
                     "Date"),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$3.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Context,
                         });
                     } },
@@ -3471,7 +3471,7 @@ const LogReviewer = (props) => {
                     "Context"),
                 (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$3.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Tag,
                         });
                     } },
@@ -3479,7 +3479,7 @@ const LogReviewer = (props) => {
                     "Tag")),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$3.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Action,
                         });
                     } },
@@ -3487,7 +3487,7 @@ const LogReviewer = (props) => {
                     "Action"),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle advanced filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$3.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Advanced,
                         });
                     } },
@@ -3495,7 +3495,7 @@ const LogReviewer = (props) => {
                     "Advanced"),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ResetFilters,
+                            type: ActionType$3.ResetFilters,
                             initActionErrorFilterState,
                             initAdvancedFilterState,
                             initContextFilterState,
@@ -3617,7 +3617,7 @@ const LogReviewer = (props) => {
                             }
                         });
                         dispatch({
-                            type: ActionType$5.UpdateContextFilterState,
+                            type: ActionType$3.UpdateContextFilterState,
                             contextFilterState,
                         });
                     } }));
@@ -3632,7 +3632,7 @@ const LogReviewer = (props) => {
                         return (React__default["default"].createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
                                 tagFilterState[tag] = checked;
                                 dispatch({
-                                    type: ActionType$5.UpdateTagFilterState,
+                                    type: ActionType$3.UpdateTagFilterState,
                                     tagFilterState,
                                 });
                             } }));
@@ -3645,21 +3645,21 @@ const LogReviewer = (props) => {
                         React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
                                 actionErrorFilterState.type = undefined;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$3.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
                         React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Action;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$3.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
                         React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Error;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$3.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
@@ -3671,7 +3671,7 @@ const LogReviewer = (props) => {
                             return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$3.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -3682,7 +3682,7 @@ const LogReviewer = (props) => {
                             return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
                                     actionErrorFilterState.target[target] = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$3.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -3694,7 +3694,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
                                     actionErrorFilterState.errorMessage = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$3.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } })),
@@ -3705,7 +3705,7 @@ const LogReviewer = (props) => {
                                         .trim()
                                         .toUpperCase());
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$3.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }))))));
@@ -3719,7 +3719,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
                                     advancedFilterState.userFirstName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3728,7 +3728,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
                                     advancedFilterState.userLastName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3738,7 +3738,7 @@ const LogReviewer = (props) => {
                                     advancedFilterState.userEmail = ((e.target.value)
                                         .trim());
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3752,7 +3752,7 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3760,21 +3760,21 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
                                     advancedFilterState.includeLearners = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
                             React__default["default"].createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
                                     advancedFilterState.includeTTMs = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
                             React__default["default"].createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
                                     advancedFilterState.includeAdmins = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
@@ -3784,7 +3784,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
                                     advancedFilterState.courseName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3798,7 +3798,7 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }))),
@@ -3807,21 +3807,21 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
                                     advancedFilterState.isMobile = undefined;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default["default"].createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
                                     advancedFilterState.isMobile = true;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default["default"].createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
                                     advancedFilterState.isMobile = false;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true }))),
@@ -3830,21 +3830,21 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
                                     advancedFilterState.source = undefined;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default["default"].createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Client;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default["default"].createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Server;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$3.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true })),
@@ -3855,7 +3855,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$5.UpdateAdvancedFilterState,
+                                            type: ActionType$3.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })),
@@ -3865,7 +3865,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$5.UpdateAdvancedFilterState,
+                                            type: ActionType$3.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })))))));
@@ -39465,11 +39465,11 @@ var CreatableSelect$1 = CreatableSelect;
 // Import React
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$4;
+var ActionType$2;
 (function (ActionType) {
     // Update the input value
     ActionType["SetInputValue"] = "SetInputValue";
-})(ActionType$4 || (ActionType$4 = {}));
+})(ActionType$2 || (ActionType$2 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -39478,7 +39478,7 @@ var ActionType$4;
  */
 const reducer$2 = (state, action) => {
     switch (action.type) {
-        case ActionType$4.SetInputValue: {
+        case ActionType$2.SetInputValue: {
             return Object.assign(Object.assign({}, state), { inputValue: action.value });
         }
         default: {
@@ -39569,7 +39569,7 @@ const CreatableMultiselect = (props) => {
         }
         // resets text field to empty because the values have been added
         dispatch({
-            type: ActionType$4.SetInputValue,
+            type: ActionType$2.SetInputValue,
             value: '',
         });
     };
@@ -39608,7 +39608,7 @@ const CreatableMultiselect = (props) => {
         else {
             // simply update the input value to the new input value
             dispatch({
-                type: ActionType$4.SetInputValue,
+                type: ActionType$2.SetInputValue,
                 value: newValue,
             });
         }
@@ -39659,13 +39659,13 @@ const style = `
 `;
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$3;
+var ActionType$1;
 (function (ActionType) {
     // Update the DBEntry
     ActionType["UpdateDBEntry"] = "UpdateDBEntry";
     // Start the save spinner
     ActionType["StartSave"] = "StartSave";
-})(ActionType$3 || (ActionType$3 = {}));
+})(ActionType$1 || (ActionType$1 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -39674,10 +39674,10 @@ var ActionType$3;
  */
 const reducer$1 = (state, action) => {
     switch (action.type) {
-        case ActionType$3.UpdateDBEntry: {
+        case ActionType$1.UpdateDBEntry: {
             return Object.assign(Object.assign({}, state), { entry: action.dbEntry });
         }
-        case ActionType$3.StartSave: {
+        case ActionType$1.StartSave: {
             return Object.assign(Object.assign({}, state), { saving: true });
         }
         default: {
@@ -39712,9 +39712,9 @@ const AddOrEditDBEntry = (props) => {
      * Save changes to the DBEntry and then finish
      * @author Yuen Ler Chow
      */
-    const save = () => __awaiter$1(void 0, void 0, void 0, function* () {
+    const save = () => __awaiter(void 0, void 0, void 0, function* () {
         // Start the save loading indicator
-        dispatch({ type: ActionType$3.StartSave });
+        dispatch({ type: ActionType$1.StartSave });
         // add all default values to the entry
         entryFields.forEach((field) => {
             if (field.defaultValue && !entry[field.objectKey]) {
@@ -39875,7 +39875,7 @@ const AddOrEditDBEntry = (props) => {
                                 return (React__default["default"].createElement(RadioButton, { key: choice.value, text: choice.title, selected: entry[field.objectKey] === choice.value, onSelected: () => {
                                         entry[field.objectKey] = choice.value;
                                         dispatch({
-                                            type: ActionType$3.UpdateDBEntry,
+                                            type: ActionType$1.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -39887,7 +39887,7 @@ const AddOrEditDBEntry = (props) => {
                         React__default["default"].createElement("input", { disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value);
                                 dispatch({
-                                    type: ActionType$3.UpdateDBEntry,
+                                    type: ActionType$1.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -39900,7 +39900,7 @@ const AddOrEditDBEntry = (props) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^0-9]/g, ''));
                                 dispatch({
-                                    type: ActionType$3.UpdateDBEntry,
+                                    type: ActionType$1.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -39930,7 +39930,7 @@ const AddOrEditDBEntry = (props) => {
                                         }
                                         // Save
                                         dispatch({
-                                            type: ActionType$3.UpdateDBEntry,
+                                            type: ActionType$1.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -39945,7 +39945,7 @@ const AddOrEditDBEntry = (props) => {
                                     // Update entry and save
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$3.UpdateDBEntry,
+                                        type: ActionType$1.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -39958,7 +39958,7 @@ const AddOrEditDBEntry = (props) => {
                             React__default["default"].createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.NumberArray, values: entry[field.objectKey] || [], onChange: (values) => {
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$3.UpdateDBEntry,
+                                        type: ActionType$1.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -39982,7 +39982,7 @@ const AddOrEditDBEntry = (props) => {
                 return renderEntryField(field, disabled);
             }),
             React__default["default"].createElement("div", { className: "text-center mt-2" },
-                React__default["default"].createElement("button", { type: "button", id: "AddOrEditDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "Save changes", onClick: () => __awaiter$1(void 0, void 0, void 0, function* () {
+                React__default["default"].createElement("button", { type: "button", id: "AddOrEditDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "Save changes", onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                         if (validationError) {
                             return alert$1('Please fix the following error', validationError);
                         }
@@ -40028,7 +40028,7 @@ const generateEndpointPath = (collectionName, adminsOnly) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$2;
+var ActionType;
 (function (ActionType) {
     // Show adder
     ActionType["ShowAdder"] = "ShowAdder";
@@ -40042,7 +40042,7 @@ var ActionType$2;
     ActionType["StartDelete"] = "StartDelete";
     // Finish deletion process
     ActionType["FinishDelete"] = "FinishDelete";
-})(ActionType$2 || (ActionType$2 = {}));
+})(ActionType || (ActionType = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -40051,16 +40051,16 @@ var ActionType$2;
  */
 const reducer = (state, action) => {
     switch (action.type) {
-        case ActionType$2.FinishLoading: {
+        case ActionType.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, dbEntries: action.dbEntries });
         }
-        case ActionType$2.ShowAdder: {
+        case ActionType.ShowAdder: {
             return Object.assign(Object.assign({}, state), { adding: true, dbEntryToEdit: undefined });
         }
-        case ActionType$2.ShowEditor: {
+        case ActionType.ShowEditor: {
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: action.dbEntry });
         }
-        case ActionType$2.FinishAdd: {
+        case ActionType.FinishAdd: {
             // Handle cancel
             const finishedEntry = action.dbEntry;
             if (!finishedEntry) {
@@ -40084,10 +40084,10 @@ const reducer = (state, action) => {
             // Update the state
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: undefined, dbEntries: updatedDbEntries });
         }
-        case ActionType$2.StartDelete: {
+        case ActionType.StartDelete: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$2.FinishDelete: {
+        case ActionType.FinishDelete: {
             return Object.assign(Object.assign({}, state), { loading: false, 
                 // Remove the deleted entry from the list
                 dbEntries: state.dbEntries.filter((entry) => {
@@ -40126,7 +40126,7 @@ const DBEntryManagerPanel = (props) => {
      * @author Yuen Ler Chow
      * @param entry the database entry to delete
      */
-    const deleteEntry = (entry) => __awaiter$1(void 0, void 0, void 0, function* () {
+    const deleteEntry = (entry) => __awaiter(void 0, void 0, void 0, function* () {
         // Confirm
         const confirmed = yield confirm('Remove?', `Are you sure you want to remove this ${itemName}?`, {
             confirmButtonText: 'Remove Item',
@@ -40139,7 +40139,7 @@ const DBEntryManagerPanel = (props) => {
         try {
             // Start loader
             dispatch({
-                type: ActionType$2.StartDelete,
+                type: ActionType.StartDelete,
             });
             // Perform deletion
             yield visitServerEndpoint({
@@ -40148,7 +40148,7 @@ const DBEntryManagerPanel = (props) => {
             });
             // Finish loader
             dispatch({
-                type: ActionType$2.FinishDelete,
+                type: ActionType.FinishDelete,
                 dbEntry: entry,
                 idPropName,
             });
@@ -40165,7 +40165,7 @@ const DBEntryManagerPanel = (props) => {
      * @author Yuen Ler Chow
      */
     React.useEffect(() => {
-        (() => __awaiter$1(void 0, void 0, void 0, function* () {
+        (() => __awaiter(void 0, void 0, void 0, function* () {
             // Load list of database entries
             try {
                 const data = yield visitServerEndpoint({
@@ -40177,7 +40177,7 @@ const DBEntryManagerPanel = (props) => {
                 });
                 // Save loaded data
                 dispatch({
-                    type: ActionType$2.FinishLoading,
+                    type: ActionType.FinishLoading,
                     dbEntries: data,
                 });
             }
@@ -40220,7 +40220,7 @@ const DBEntryManagerPanel = (props) => {
                                 React__default["default"].createElement("span", { className: "d-none d-md-inline ms-1" }, "Remove")),
                             !disableEdit && (React__default["default"].createElement("button", { type: "button", id: `DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
                                     dispatch({
-                                        type: ActionType$2.ShowEditor,
+                                        type: ActionType.ShowEditor,
                                         dbEntry: entry,
                                     });
                                 } },
@@ -40230,7 +40230,7 @@ const DBEntryManagerPanel = (props) => {
                 React__default["default"].createElement("div", { className: "d-grid" },
                     React__default["default"].createElement("button", { type: "button", id: "DBEntryManagerPanel-add-entry", className: "btn btn-lg btn-primary", "aria-label": `add a new ${itemName} entry to the list of entries`, onClick: () => {
                             dispatch({
-                                type: ActionType$2.ShowAdder,
+                                type: ActionType.ShowAdder,
                             });
                         } },
                         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faPlus, className: "me-2" }),
@@ -40242,7 +40242,7 @@ const DBEntryManagerPanel = (props) => {
     if (!loading && (adding || dbEntryToEdit)) {
         body = (React__default["default"].createElement(AddOrEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, onFinished: (entry) => {
                 dispatch({
-                    type: ActionType$2.FinishAdd,
+                    type: ActionType.FinishAdd,
                     dbEntry: entry,
                     idPropName,
                 });
@@ -40465,7 +40465,7 @@ const padZerosLeft = (num, numDigits) => {
 const LOG_REVIEW_STATUS_ROUTE = `${ROUTE_PATH_PREFIX}/logs/access_allowed`;
 
 // Stored copy of caccl functions
-let _cacclGetLaunchInfo$1;
+let _cacclGetLaunchInfo;
 // Stored copy of dce-mango log collection
 let _logCollection;
 /*------------------------------------------------------------------------*/
@@ -40477,11 +40477,11 @@ let _logCollection;
  * @param req express request object
  * @returns object { launched, launchInfo }
  */
-const cacclGetLaunchInfo$1 = (req) => {
-    if (!_cacclGetLaunchInfo$1) {
-        throw new ErrorWithCode$1('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$3.NoCACCLGetLaunchInfoFunction);
+const cacclGetLaunchInfo = (req) => {
+    if (!_cacclGetLaunchInfo) {
+        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
     }
-    return _cacclGetLaunchInfo$1(req);
+    return _cacclGetLaunchInfo(req);
 };
 /**
  * Get log collection
@@ -40513,7 +40513,7 @@ const internalGetLogCollection = () => {
  *   to review logs
  */
 const initServer = (opts) => {
-    _cacclGetLaunchInfo$1 = opts.getLaunchInfo;
+    _cacclGetLaunchInfo = opts.getLaunchInfo;
     _logCollection = opts.logCollection;
     /*----------------------------------------*/
     /*                Logging                 */
@@ -40537,18 +40537,18 @@ const initServer = (opts) => {
      * @param {LogAction} [action] the type of action performed on the target
      * @returns {Log}
      */
-    opts.app.post(LOG_ROUTE_PATH, genRouteHandler$1({
+    opts.app.post(LOG_ROUTE_PATH, genRouteHandler({
         paramTypes: {
-            context: ParamType$3.String,
-            subcontext: ParamType$3.String,
-            tags: ParamType$3.JSON,
-            level: ParamType$3.String,
-            metadata: ParamType$3.JSON,
-            errorMessage: ParamType$3.StringOptional,
-            errorCode: ParamType$3.StringOptional,
-            errorStack: ParamType$3.StringOptional,
-            target: ParamType$3.StringOptional,
-            action: ParamType$3.StringOptional,
+            context: ParamType$1.String,
+            subcontext: ParamType$1.String,
+            tags: ParamType$1.JSON,
+            level: ParamType$1.String,
+            metadata: ParamType$1.JSON,
+            errorMessage: ParamType$1.StringOptional,
+            errorCode: ParamType$1.StringOptional,
+            errorStack: ParamType$1.StringOptional,
+            target: ParamType$1.StringOptional,
+            action: ParamType$1.StringOptional,
         },
         handler: ({ params, logServerEvent }) => {
             // Create log info
@@ -40594,7 +40594,7 @@ const initServer = (opts) => {
      * @param isAdmin if true, the user is an admin
      * @returns true if the user can review logs
      */
-    const canReviewLogs = (userId, isAdmin) => __awaiter$1(void 0, void 0, void 0, function* () {
+    const canReviewLogs = (userId, isAdmin) => __awaiter(void 0, void 0, void 0, function* () {
         // Immediately deny access if user is not an admin
         if (!isAdmin) {
             return false;
@@ -40626,8 +40626,8 @@ const initServer = (opts) => {
      * @author Gabe Abrams
      * @returns {boolean} true if user has access
      */
-    opts.app.get(LOG_REVIEW_STATUS_ROUTE, genRouteHandler$1({
-        handler: ({ params }) => __awaiter$1(void 0, void 0, void 0, function* () {
+    opts.app.get(LOG_REVIEW_STATUS_ROUTE, genRouteHandler({
+        handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
             const { userId, isAdmin } = params;
             const canReview = yield canReviewLogs(userId, isAdmin);
             return canReview;
@@ -40640,18 +40640,18 @@ const initServer = (opts) => {
      * @param {number} month the month to query (e.g. 1 = January)
      * @returns {Log[]} list of logs from the given month
      */
-    opts.app.get(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler$1({
+    opts.app.get(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler({
         paramTypes: {
-            year: ParamType$3.Int,
-            month: ParamType$3.Int,
+            year: ParamType$1.Int,
+            month: ParamType$1.Int,
         },
-        handler: ({ params }) => __awaiter$1(void 0, void 0, void 0, function* () {
+        handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
             // Get user info
             const { year, month, userId, isAdmin, } = params;
             // Validate user
             const canReview = yield canReviewLogs(userId, isAdmin);
             if (!canReview) {
-                throw new ErrorWithCode$1('You cannot access this resource because you do not have the appropriate permissions.', ReactKitErrorCode$3.NotAllowedToReviewLogs);
+                throw new ErrorWithCode('You cannot access this resource because you do not have the appropriate permissions.', ReactKitErrorCode$1.NotAllowedToReviewLogs);
             }
             // Query for logs
             const logs = yield _logCollection.find({
@@ -40677,7 +40677,7 @@ const initServer = (opts) => {
  * @param [opts.status=500] the https status code to use
  *   defined)
  */
-const handleError$1 = (res, error) => {
+const handleError = (res, error) => {
     // Get the error message
     let message;
     if (error && error.message) {
@@ -40692,7 +40692,7 @@ const handleError$1 = (res, error) => {
         message = 'An unknown error occurred.';
     }
     // Get the error code
-    const code = (error.code || ReactKitErrorCode$3.NoCode);
+    const code = (error.code || ReactKitErrorCode$1.NoCode);
     // Get the status code
     const status = (error.status || 500);
     // Respond to user
@@ -40717,7 +40717,7 @@ const handleError$1 = (res, error) => {
  * @param res express response
  * @param body the body of the response to send to the client
  */
-const handleSuccess$1 = (res, body) => {
+const handleSuccess = (res, body) => {
     // Send a http 200 json response
     res.json({
         // Include the body as a parameter
@@ -40746,7 +40746,7 @@ const genErrorPage = (opts = {}) => {
     const title = ((_a = opts.title) !== null && _a !== void 0 ? _a : 'An Error Occurred');
     const pageTitle = ((_b = opts.pageTitle) !== null && _b !== void 0 ? _b : title);
     const description = ((_c = opts.description) !== null && _c !== void 0 ? _c : 'An unknown server error occurred. Please contact support.');
-    const code = ((_d = opts.code) !== null && _d !== void 0 ? _d : ReactKitErrorCode$3.NoCode);
+    const code = ((_d = opts.code) !== null && _d !== void 0 ? _d : ReactKitErrorCode$1.NoCode);
     return `
 <head>
   <!-- Metadata -->
@@ -40983,1164 +40983,6 @@ const parseUserAgent = (userAgent) => {
  *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
  *   are directly added to the session, if the user does have a session.
  */
-const genRouteHandler$1 = (opts) => {
-    // Return a route handler
-    return (req, res, next) => __awaiter$1(void 0, void 0, void 0, function* () {
-        var _a, _b;
-        // Output params
-        const output = {};
-        /*----------------------------------------*/
-        /*              Parse Params              */
-        /*----------------------------------------*/
-        // Process items one by one
-        const paramList = Object.entries((_a = opts.paramTypes) !== null && _a !== void 0 ? _a : {});
-        for (let i = 0; i < paramList.length; i++) {
-            const [name, type] = paramList[i];
-            // Find the value as a string
-            const value = (req.params[name]
-                || req.query[name]
-                || req.body[name]);
-            // Parse
-            if (type === ParamType$3.Boolean || type === ParamType$3.BooleanOptional) {
-                // Boolean
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$3.BooleanOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$3.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Simplify value
-                    const simpleVal = (String(value)
-                        .trim()
-                        .toLowerCase());
-                    // Parse
-                    output[name] = ([
-                        'true',
-                        'yes',
-                        'y',
-                        '1',
-                        't',
-                    ].indexOf(simpleVal) >= 0);
-                }
-            }
-            else if (type === ParamType$3.Float || type === ParamType$3.FloatOptional) {
-                // Float
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$3.FloatOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$3.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else if (!Number.isNaN(Number.parseFloat(String(value)))) {
-                    // Value is a number
-                    output[name] = Number.parseFloat(String(value));
-                }
-                else {
-                    // Issue!
-                    return handleError$1(res, {
-                        message: `Request data was malformed: ${name} was not a valid float.`,
-                        code: ReactKitErrorCode$3.InvalidParameter,
-                        status: 422,
-                    });
-                }
-            }
-            else if (type === ParamType$3.Int || type === ParamType$3.IntOptional) {
-                // Int
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$3.IntOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$3.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else if (!Number.isNaN(Number.parseInt(String(value), 10))) {
-                    // Value is a number
-                    output[name] = Number.parseInt(String(value), 10);
-                }
-                else {
-                    // Issue!
-                    return handleError$1(res, {
-                        message: `Request data was malformed: ${name} was not a valid int.`,
-                        code: ReactKitErrorCode$3.InvalidParameter,
-                        status: 422,
-                    });
-                }
-            }
-            else if (type === ParamType$3.JSON || type === ParamType$3.JSONOptional) {
-                // Stringified JSON
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$3.JSONOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$3.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Parse
-                    try {
-                        output[name] = JSON.parse(String(value));
-                    }
-                    catch (err) {
-                        return handleError$1(res, {
-                            message: `Request data was malformed: ${name} was not a valid JSON payload.`,
-                            code: ReactKitErrorCode$3.InvalidParameter,
-                            status: 422,
-                        });
-                    }
-                }
-            }
-            else if (type === ParamType$3.String || type === ParamType$3.StringOptional) {
-                // String
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$3.StringOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$3.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Leave as is
-                    output[name] = value;
-                }
-            }
-            else {
-                // No valid data type
-                return handleError$1(res, {
-                    message: `An internal error occurred: we could not determine the type of ${name}.`,
-                    code: ReactKitErrorCode$3.InvalidParameter,
-                    status: 422,
-                });
-            }
-        }
-        /*----------------------------------------*/
-        /*               Launch Info              */
-        /*----------------------------------------*/
-        // Get launch info
-        const { launched, launchInfo } = cacclGetLaunchInfo$1(req);
-        if (
-        // Not launched
-        (!launched || !launchInfo)
-            // Not skipping the session check
-            && !opts.skipSessionCheck) {
-            return handleError$1(res, {
-                message: 'Your session has expired. Please refresh the page and try again.',
-                code: ReactKitErrorCode$3.SessionExpired,
-                status: 401,
-            });
-        }
-        // Error if user info cannot be found
-        if (
-        // User information is incomplete
-        (!launchInfo
-            || !launchInfo.userId
-            || !launchInfo.userFirstName
-            || !launchInfo.userLastName
-            || (launchInfo.notInCourse
-                && !launchInfo.isAdmin)
-            || (!launchInfo.isTTM
-                && !launchInfo.isLearner
-                && !launchInfo.isAdmin))
-            // Not skipping the session check
-            && !opts.skipSessionCheck) {
-            return handleError$1(res, {
-                message: 'Your session was invalid. Please refresh the page and try again.',
-                code: ReactKitErrorCode$3.SessionExpired,
-                status: 401,
-            });
-        }
-        // Add launch info to output
-        output.userId = (launchInfo
-            ? launchInfo.userId
-            : undefined);
-        output.userFirstName = (launchInfo
-            ? launchInfo.userFirstName
-            : undefined);
-        output.userLastName = (launchInfo
-            ? launchInfo.userLastName
-            : undefined);
-        output.userEmail = (launchInfo
-            ? launchInfo.userEmail
-            : undefined);
-        output.isLearner = (launchInfo
-            ? !!launchInfo.isLearner
-            : undefined);
-        output.isTTM = (launchInfo
-            ? !!launchInfo.isTTM
-            : undefined);
-        output.isAdmin = (launchInfo
-            ? !!launchInfo.isAdmin
-            : undefined);
-        output.courseId = (launchInfo
-            ? ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId)
-            : undefined);
-        output.courseName = (launchInfo
-            ? launchInfo.contextLabel
-            : undefined);
-        // Add other session variables
-        Object.keys(req.session).forEach((propName) => {
-            // Skip if prop already in output
-            if (output[propName] !== undefined) {
-                return;
-            }
-            // Add to output
-            const value = req.session[propName];
-            if (typeof value === 'string'
-                || typeof value === 'boolean'
-                || typeof value === 'number') {
-                output[propName] = value;
-            }
-        });
-        /*----------------------------------------*/
-        /*       Require Course Consistency       */
-        /*----------------------------------------*/
-        // Make sure the user actually launched from the appropriate course
-        if (output.courseId
-            && launchInfo
-            && launchInfo.courseId
-            && output.courseId !== launchInfo.courseId
-            && !output.isTTM
-            && !output.isAdmin) {
-            // Course of interest is not the launch course
-            return handleError$1(res, {
-                message: 'You switched sessions by opening this app in another tab. Please refresh the page and try again.',
-                code: ReactKitErrorCode$3.WrongCourse,
-                status: 401,
-            });
-        }
-        /*----------------------------------------*/
-        /*       Require Proper Permissions       */
-        /*----------------------------------------*/
-        // Add TTM endpoint security
-        if (
-        // This is a TTM endpoint
-        req.path.startsWith('/api/ttm')
-            // User is not a TTM
-            && (
-            // User is not a TTM
-            !output.isTTM
-                // User is not an admin
-                && !output.isAdmin)) {
-            // User does not have access
-            return handleError$1(res, {
-                message: 'This action is only allowed if you are a teaching team member for the course. Please go back to Canvas, log in as a teaching team member, and try again.',
-                code: ReactKitErrorCode$3.NotTTM,
-                status: 401,
-            });
-        }
-        // Add Admin endpoint security
-        if (
-        // This is an admin endpoint
-        req.path.startsWith('/api/admin')
-            // User is not an admin
-            && !output.isAdmin) {
-            // User does not have access
-            return handleError$1(res, {
-                message: 'This action is only allowed if you are a Canvas admin. Please go back to Canvas, log in as an admin, and try again.',
-                code: ReactKitErrorCode$3.NotAdmin,
-                status: 401,
-            });
-        }
-        /*----------------------------------------*/
-        /*               Log Handler              */
-        /*----------------------------------------*/
-        // Create a log handler function
-        /**
-         * Log an event on the server
-         * @author Gabe Abrams
-         */
-        const logServerEvent = (opts) => __awaiter$1(void 0, void 0, void 0, function* () {
-            var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-            // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
-            // that indicates that this is actually a client event, but we don't
-            // include that in the LogFunction type because this is internal and
-            // hidden from users
-            try {
-                // Parse user agent
-                const { browser, device, } = parseUserAgent(req.headers['user-agent']);
-                // Get time info in ET
-                const { timestamp, year, month, day, hour, minute, } = getTimeInfoInET();
-                // Main log info
-                const mainLogInfo = {
-                    id: `${launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
-                    userFirstName: launchInfo.userFirstName,
-                    userLastName: launchInfo.userLastName,
-                    userEmail: launchInfo.userEmail,
-                    userId: launchInfo.userId,
-                    isLearner: !!launchInfo.isLearner,
-                    isAdmin: !!launchInfo.isAdmin,
-                    isTTM: !!launchInfo.isTTM,
-                    courseId: launchInfo.courseId,
-                    courseName: launchInfo.contextLabel,
-                    browser,
-                    device,
-                    year,
-                    month,
-                    day,
-                    hour,
-                    minute,
-                    timestamp,
-                    context: (typeof opts.context === 'string'
-                        ? opts.context
-                        : ((_d = ((_c = opts.context) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
-                    subcontext: ((_e = opts.subcontext) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized),
-                    tags: ((_f = opts.tags) !== null && _f !== void 0 ? _f : []),
-                    level: ((_g = opts.level) !== null && _g !== void 0 ? _g : LogLevel$1.Info),
-                    metadata: ((_h = opts.metadata) !== null && _h !== void 0 ? _h : {}),
-                };
-                // Type-specific info
-                const typeSpecificInfo = (('error' in opts && opts.error)
-                    ? {
-                        type: LogType$1.Error,
-                        errorMessage: (_j = opts.error.message) !== null && _j !== void 0 ? _j : 'Unknown message',
-                        errorCode: (_k = opts.error.code) !== null && _k !== void 0 ? _k : ReactKitErrorCode$3.NoCode,
-                        errorStack: (_l = opts.error.stack) !== null && _l !== void 0 ? _l : 'No stack',
-                    }
-                    : {
-                        type: LogType$1.Action,
-                        target: ((_m = opts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoTarget),
-                        action: ((_o = opts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
-                    });
-                // Source-specific info
-                const sourceSpecificInfo = (opts.overrideAsClientEvent
-                    ? {
-                        source: LogSource$1.Client,
-                    }
-                    : {
-                        source: LogSource$1.Server,
-                        routePath: req.path,
-                        routeTemplate: req.route.path,
-                    });
-                // Build log event
-                const log = Object.assign(Object.assign(Object.assign({}, mainLogInfo), typeSpecificInfo), sourceSpecificInfo);
-                // Either print to console or save to db
-                const logCollection = internalGetLogCollection();
-                if (logCollection) {
-                    // Store to the log collection
-                    yield logCollection.insert(log);
-                }
-                else {
-                    // Print to console
-                    if (log.type === LogType$1.Error) {
-                        console.error('dce-reactkit error log:', log);
-                    }
-                    else {
-                        console.log('dce-reactkit action log:', log);
-                    }
-                }
-                // Return log entry
-                return log;
-            }
-            catch (err) {
-                // Print because we cannot store the error
-                console.error('Could not log the following:', opts);
-                // Create a dummy log to return
-                const dummyMainInfo = {
-                    id: '-1',
-                    userFirstName: 'Unknown',
-                    userLastName: 'Unknown',
-                    userEmail: 'unknown@harvard.edu',
-                    userId: 1,
-                    isLearner: false,
-                    isAdmin: false,
-                    isTTM: false,
-                    courseId: 1,
-                    courseName: 'Unknown',
-                    browser: {
-                        name: 'Unknown',
-                        version: 'Unknown',
-                    },
-                    device: {
-                        isMobile: false,
-                        os: 'Unknown',
-                    },
-                    year: 1,
-                    month: 1,
-                    day: 1,
-                    hour: 1,
-                    minute: 1,
-                    timestamp: Date.now(),
-                    tags: [],
-                    level: LogLevel$1.Warn,
-                    metadata: {},
-                    context: LogBuiltInMetadata.Context.Uncategorized,
-                    subcontext: LogBuiltInMetadata.Context.Uncategorized,
-                };
-                const dummyTypeSpecificInfo = {
-                    type: LogType$1.Error,
-                    errorMessage: 'Unknown',
-                    errorCode: 'Unknown',
-                    errorStack: 'No Stack',
-                };
-                const dummySourceSpecificInfo = {
-                    source: LogSource$1.Server,
-                    routePath: req.path,
-                    routeTemplate: req.route.path,
-                };
-                const log = Object.assign(Object.assign(Object.assign({}, dummyMainInfo), dummyTypeSpecificInfo), dummySourceSpecificInfo);
-                return log;
-            }
-        });
-        /*------------------------------------------------------------------------*/
-        /*                              Call handler                              */
-        /*------------------------------------------------------------------------*/
-        // Keep track of whether a response was already sent
-        let responseSent = false;
-        /**
-         * Redirect the user to another path or url
-         * @author Gabe Abrams
-         * @param pathOrURL the path or url to redirect to
-         */
-        const redirect = (pathOrURL) => {
-            responseSent = true;
-            res.redirect(pathOrURL);
-        };
-        /**
-         * Send text to the client (with an optional status code)
-         * @author Gabe Abrams
-         * @param text the text to send to the client
-         * @parm [status=200] the http status code to send
-         */
-        const send = (text, status = 200) => {
-            responseSent = true;
-            res.status(status).send(text);
-        };
-        /**
-         * Render an error page
-         * @author Gabe Abrams
-         * @param opts object containing all arguments
-         * @param [opts.title=An Error Occurred] title of the error box
-         * @param [opts.description=An unknown server error occurred. Please contact support.]
-         *   a human-readable description of the error
-         * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
-         * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
-         *   the title of the error
-         * @param [opts.status=500] http status code
-         */
-        const renderErrorPage = (opts = {}) => {
-            var _a, _b;
-            const html = genErrorPage(opts);
-            send(html, (_a = opts.status) !== null && _a !== void 0 ? _a : 500);
-            // Log
-            logServerEvent({
-                context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
-                error: {
-                    message: `${opts.title}: ${opts.description}`,
-                    code: opts.code,
-                },
-                metadata: {
-                    title: opts.title,
-                    description: opts.description,
-                    code: opts.code,
-                    pageTitle: opts.pageTitle,
-                    status: (_b = opts.status) !== null && _b !== void 0 ? _b : 500,
-                },
-            });
-        };
-        // Call the handler
-        try {
-            const results = yield opts.handler({
-                params: output,
-                req,
-                send,
-                next: () => {
-                    responseSent = true;
-                    next();
-                },
-                redirect,
-                renderErrorPage,
-                logServerEvent,
-            });
-            // Send results to client (only if next wasn't called)
-            if (!responseSent) {
-                return handleSuccess$1(res, results !== null && results !== void 0 ? results : undefined);
-            }
-        }
-        catch (err) {
-            // Send error to client (only if next wasn't called)
-            if (!responseSent) {
-                handleError$1(res, err);
-                // Log server-side error
-                logServerEvent({
-                    context: LogBuiltInMetadata.Context.ServerEndpointError,
-                    error: err,
-                });
-                return;
-            }
-            // Log error that was not responded with
-            console.log('Error occurred but could not be sent to client because a response was already sent:', err);
-        }
-    });
-};
-
-/**
- * Stub a server endpoint response
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param [opts.method=GET] http method to stub
- * @param opts.path full pathname to stub
- * @param opts.body body of response if stubbing a successful response
- * @param opts.errorMessage message of error if stubbing a failed response
- * @param [opts.errorCode] error code if stubbing a failed response
- */
-const stubServerEndpoint = _setStubResponse;
-
-/**
- * Start a dynamic wait, call the function once the operation has completed and
- *   the dynamic wait will continue waiting for the rest of the minimum time
- * @author Gabe Abrams
- * @param minWaitMs the minimum number of ms to wait
- * @returns async function to call to finish the wait
- */
-const startMinWait = (minWaitMs) => {
-    const startTimestamp = Date.now();
-    /**
-     * Finish the remaining time to wait
-     * @author Gabe Abrams
-     */
-    return () => __awaiter$1(void 0, void 0, void 0, function* () {
-        const endTimestamp = Date.now();
-        // Calculate remaining time to wait
-        const elapsedTimeMs = (endTimestamp - startTimestamp);
-        const remainingTimeToWaitMs = minWaitMs - elapsedTimeMs;
-        if (remainingTimeToWaitMs <= 0) {
-            return;
-        }
-        // Perform wait
-        yield waitMs(remainingTimeToWaitMs);
-    });
-};
-
-/**
- * Get the current part of day (morning, evening, etc.)
- * @author Gabe Abrams
- */
-const getPartOfDay = () => {
-    // Setup the post-it time of day
-    let partOfDay = 'day';
-    let hours = new Date().getHours();
-    if (hours < 12) {
-        partOfDay = 'morning';
-    }
-    else if (hours >= 12 && hours <= 16) {
-        partOfDay = 'afternoon';
-    }
-    else if (hours > 16 && hours <= 24) {
-        partOfDay = 'evening';
-    }
-    return partOfDay;
-};
-
-/**
- * Create a human readable list from an array of strings.
- *   For example, ['apple', 'orange'] becomes "apple and orange"
- *   and ['apple', 'orange', 'mango'] becomes "apple, orange, and mango"
- * @author Gabe Abrams
- * @param items list of items in the list
- * @returns human-readable list
- */
-const stringsToHumanReadableList = (items) => {
-    // Handle 0-item case
-    if (items.length === 0) {
-        return '';
-    }
-    // Handle 1-item case
-    if (items.length === 1) {
-        return items[0];
-    }
-    // Handle 2-item case
-    if (items.length === 2) {
-        return `${items[0]} and ${items[1]}`;
-    }
-    // Handle 3+ item case
-    let list = '';
-    items.forEach((item, i) => {
-        if (i === items.length - 1) {
-            // Last item
-            list += `, and ${item}`;
-        }
-        // Previous items
-        list += `, ${item}`;
-    });
-    return list;
-};
-
-/**
- * Given a string, only keep the letters inside it
- * @author Gabe Abrams
- * @param str the string to parse
- * @returns only the letters inside of the string
- */
-const onlyKeepLetters = (str) => {
-    return str.replace(/[^a-zA-Z]+/g, '');
-};
-
-/**
- * Run tasks in parallel with a limit on how many tasks can execute at once.
- *   No guarantees are made about the order of task execution
- * @author Gabe Abrams
- * @param taskFunctions functions that start asynchronous tasks and optionally
- *   resolve with values
- * @param [limit=no limit] maximum number of asynchronous tasks to permit to run at
- *   once
- * @returns array of resolved values in the same order as the task functions
- */
-const parallelLimit = (taskFunctions, limit) => __awaiter$1(void 0, void 0, void 0, function* () {
-    const results = [];
-    // Wait until finished with all tasks
-    yield new Promise((resolve) => {
-        /* ------------- Helpers ------------ */
-        let nextTaskIndex = 0;
-        let numFinishedTasks = 0;
-        /**
-         * Start the next task
-         * @author Gabe Abrams
-         */
-        const startTask = () => __awaiter$1(void 0, void 0, void 0, function* () {
-            const taskIndex = nextTaskIndex++;
-            // Get the task
-            const taskFunction = taskFunctions[taskIndex];
-            if (!taskFunction) {
-                return;
-            }
-            // Execute task
-            const result = yield taskFunction();
-            // Add results
-            results[taskIndex] = result;
-            // Tally and finish
-            if (++numFinishedTasks === taskFunctions.length) {
-                return resolve();
-            }
-            // Not finished! Start another task
-            startTask();
-        });
-        /* ----------- Start Tasks ---------- */
-        // If no limit, start all tasks. At least start 1 task
-        const numTasks = Math.max((limit || taskFunctions.length), 1);
-        for (let i = 0; i < numTasks; i++) {
-            startTask();
-        }
-    });
-    return results;
-});
-
-/**
- * Initialize a log collection given the dce-mango Collection class
- * @author Gabe Abrams
- * @param Collection the Collection class from dce-mango
- * @returns initialized logCollection
- */
-const initLogCollection = (Collection) => {
-    return new Collection('Log', {
-        uniqueIndexKey: 'id',
-        indexKeys: [
-            'courseId',
-            'context',
-            'subcontext',
-            'tags',
-        ],
-    });
-};
-
-// Cache user's ability
-let canReview = undefined;
-/**
- * Check if the current user can review logs
- * @author Gabe Abrams
- * @returns true if current user can review logs
- */
-const canReviewLogs = () => __awaiter$1(void 0, void 0, void 0, function* () {
-    // If cached, use that value
-    if (canReview !== undefined) {
-        return canReview;
-    }
-    // Ask on server
-    try {
-        canReview = !!(yield visitServerEndpoint({
-            path: LOG_REVIEW_STATUS_ROUTE,
-            method: 'GET',
-        }));
-    }
-    catch (err) {
-        canReview = false;
-    }
-    return canReview;
-});
-
-/**
- * For every element in an array, extract the value of a prop
- *   (e.g. for all user objects, extract their ages and put that into a new
- *   ages array)
- * @author Gabe Abrams
- * @param arr the array of objects to operate on
- * @param prop the property to extract from each object
- * @returns new array containing the corresponding values, in order, of each
- *   object in the original array
- */
-const extractProp = (arr, prop) => {
-    return arr.map((item) => {
-        return item[prop];
-    });
-};
-
-// Import shared helpers
-/**
- * Compare two arrays of objects by only comparing the values in a specific
- *  property (e.g. compare user arrays by comparing their user.id values)
- * @author Gabe Abrams
- * @param a the first array
- * @param b the second array
- * @param prop the property to compare with
- * @returns true if the arrays contain the same objects as determined by
- *   the values associated with each object's prop
- */
-const compareArraysByProp = (a, b, prop) => {
-    // Extract values for comparison
-    const aVals = new Set(extractProp(a, prop));
-    const bVals = new Set(extractProp(b, prop));
-    // Compare sizes first
-    if (aVals.size !== bVals.size) {
-        return false;
-    }
-    // Same number of items. Make sure every object in aVals appears in bVals
-    // (if so, they should be equivalent since the sizes are the same)
-    // > Create map of items in bVals
-    const inBVals = {}; // item => true if in bVals
-    Array.from(bVals.values()).forEach((item) => {
-        inBVals[item] = true;
-    });
-    // > Loop through aVals and make sure every item is in bVals
-    return Array.from(aVals.values()).every((item) => {
-        return inBVals[item];
-    });
-};
-
-/**
- * Get current time info in local time
- * @author Gabe Abrams
- * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
- * @returns object with timestamp (ms since epoch) and numbers
- *   corresponding to time values for year, month, day, hour, hour12, minute, isPM
- *   where hour is in 24hr time and hour12 is in 12hr time.
- */
-const getLocalTimeInfo = (dateOrTimestamp) => {
-    // Create a time string
-    let d;
-    if (!dateOrTimestamp) {
-        // Use now
-        d = new Date();
-    }
-    else if (typeof dateOrTimestamp === 'number') {
-        // Convert to date
-        d = new Date(dateOrTimestamp);
-    }
-    else {
-        // Already a date
-        d = dateOrTimestamp;
-    }
-    // Create all time numbers
-    const timestamp = d.getTime();
-    const year = d.getFullYear();
-    const month = d.getMonth() + 1;
-    const day = d.getDate();
-    const hour = d.getHours();
-    const isPM = hour >= 12;
-    let hour12 = hour % 12;
-    if (hour12 === 0) {
-        hour12 = 12;
-    }
-    const minute = d.getMinutes();
-    // Return
-    return {
-        timestamp,
-        year,
-        month,
-        day,
-        hour,
-        hour12,
-        isPM,
-        minute,
-    };
-};
-
-/******************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-// Highest error code = DRK10
-/**
- * List of error codes built into the react kit
- * @author Gabe Abrams
- */
-var ReactKitErrorCode;
-(function (ReactKitErrorCode) {
-    ReactKitErrorCode["NoResponse"] = "DRK1";
-    ReactKitErrorCode["NoCode"] = "DRK2";
-    ReactKitErrorCode["SessionExpired"] = "DRK3";
-    ReactKitErrorCode["MissingParameter"] = "DRK4";
-    ReactKitErrorCode["InvalidParameter"] = "DRK5";
-    ReactKitErrorCode["WrongCourse"] = "DRK6";
-    ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
-    ReactKitErrorCode["NoCACCLGetLaunchInfoFunction"] = "DRK8";
-    ReactKitErrorCode["NotTTM"] = "DRK9";
-    ReactKitErrorCode["NotAdmin"] = "DRK10";
-})(ReactKitErrorCode || (ReactKitErrorCode = {}));
-var ReactKitErrorCode$1 = ReactKitErrorCode;
-
-/**
- * Types of buttons in the modal
- * @author Gabe Abrams
- */
-var ModalButtonType;
-(function (ModalButtonType) {
-    ModalButtonType["Okay"] = "okay";
-    ModalButtonType["Cancel"] = "cancel";
-    ModalButtonType["Yes"] = "yes";
-    ModalButtonType["No"] = "no";
-    ModalButtonType["Abandon"] = "abandon";
-    ModalButtonType["GoBack"] = "goBack";
-    ModalButtonType["Continue"] = "continue";
-    ModalButtonType["ImSure"] = "imSure";
-    ModalButtonType["Delete"] = "delete";
-    ModalButtonType["Confirm"] = "confirm";
-})(ModalButtonType || (ModalButtonType = {}));
-var ModalButtonType$1 = ModalButtonType;
-
-/**
- * Types of modals
- * @author Gabe Abrams
- */
-var ModalType;
-(function (ModalType) {
-    ModalType["Okay"] = "okay";
-    ModalType["OkayCancel"] = "okay-cancel";
-    ModalType["YesNo"] = "yes-no";
-    ModalType["YesNoCancel"] = "yes-no-cancel";
-    ModalType["AbandonGoBack"] = "abandon-goBack";
-    ModalType["ImSureCancel"] = "imSure-cancel";
-    ModalType["DeleteCancel"] = "delete-cancel";
-    ModalType["ConfirmCancel"] = "confirm-cancel";
-    ModalType["NoButtons"] = "-";
-})(ModalType || (ModalType = {}));
-var ModalType$1 = ModalType;
-
-/**
- * Bootstrap variants
- * @author Gabe Abrams
- */
-var Variant;
-(function (Variant) {
-    Variant["Primary"] = "primary";
-    Variant["Secondary"] = "secondary";
-    Variant["Success"] = "success";
-    Variant["Warning"] = "warning";
-    Variant["Info"] = "info";
-    Variant["Danger"] = "danger";
-    Variant["Light"] = "light";
-    Variant["Dark"] = "dark";
-})(Variant || (Variant = {}));
-var Variant$1 = Variant;
-
-/**
- * Modal sizes
- * @author Gabe Abrams
- */
-var ModalSize;
-(function (ModalSize) {
-    ModalSize["Small"] = "sm";
-    ModalSize["Medium"] = "md";
-    ModalSize["Large"] = "lg";
-    ModalSize["ExtraLarge"] = "xl";
-})(ModalSize || (ModalSize = {}));
-// Modal type to list of buttons
-({
-    [ModalType$1.Okay]: [
-        ModalButtonType$1.Okay,
-    ],
-    [ModalType$1.OkayCancel]: [
-        ModalButtonType$1.Okay,
-        ModalButtonType$1.Cancel,
-    ],
-    [ModalType$1.YesNo]: [
-        ModalButtonType$1.Yes,
-        ModalButtonType$1.No,
-    ],
-    [ModalType$1.YesNoCancel]: [
-        ModalButtonType$1.Yes,
-        ModalButtonType$1.No,
-        ModalButtonType$1.Cancel,
-    ],
-    [ModalType$1.AbandonGoBack]: [
-        ModalButtonType$1.Abandon,
-        ModalButtonType$1.GoBack,
-    ],
-    [ModalType$1.ImSureCancel]: [
-        ModalButtonType$1.ImSure,
-        ModalButtonType$1.Cancel,
-    ],
-    [ModalType$1.DeleteCancel]: [
-        ModalButtonType$1.Delete,
-        ModalButtonType$1.Cancel,
-    ],
-    [ModalType$1.ConfirmCancel]: [
-        ModalButtonType$1.Confirm,
-        ModalButtonType$1.Cancel,
-    ],
-});
-// Button type styling and labels
-({
-    [ModalButtonType$1.Okay]: {
-        label: 'Okay',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.Cancel]: {
-        label: 'Cancel',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Yes]: {
-        label: 'Yes',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.No]: {
-        label: 'No',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Abandon]: {
-        label: 'Abandon Changes',
-        variant: Variant$1.Warning,
-    },
-    [ModalButtonType$1.GoBack]: {
-        label: 'Go Back',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Continue]: {
-        label: 'Continue',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.ImSure]: {
-        label: 'I am sure',
-        variant: Variant$1.Warning,
-    },
-    [ModalButtonType$1.Delete]: {
-        label: 'Yes, Delete',
-        variant: Variant$1.Danger,
-    },
-    [ModalButtonType$1.Confirm]: {
-        label: 'Confirm',
-        variant: Variant$1.Dark,
-    },
-});
-
-/**
- * An error with a code
- * @author Gabe Abrams
- */
-class ErrorWithCode extends Error {
-    constructor(message, code) {
-        super(message);
-        this.name = 'ErrorWithCode';
-        this.code = code;
-    }
-}
-
-/**
- * Copiable text box
- * @author Gabe Abrams
- */
-/* ------------- Actions ------------ */
-// Types of actions
-var ActionType$1;
-(function (ActionType) {
-    // Indicate that the text was recently copied
-    ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
-    // Clear the status
-    ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType$1 || (ActionType$1 = {}));
-
-/**
- * Reusable nested item picker
- * @author Yuen Ler Chow
- */
-/* ------------- Actions ------------ */
-// Types of actions
-var ActionType;
-(function (ActionType) {
-    // Toggle whether the children are being shown
-    ActionType["ToggleItems"] = "toggle-items";
-})(ActionType || (ActionType = {}));
-
-// Import custom error
-// Stored copy of caccl functions
-let _cacclGetLaunchInfo;
-/*------------------------------------------------------------------------*/
-/*                                 Helpers                                */
-/*------------------------------------------------------------------------*/
-/**
- * Get launch info via CACCL
- * @author Gabe Abrams
- * @param req express request object
- * @returns object { launched, launchInfo }
- */
-const cacclGetLaunchInfo = (req) => {
-    {
-        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
-    }
-};
-
-/**
- * Server-side API param types
- * @author Gabe Abrams
- */
-var ParamType;
-(function (ParamType) {
-    ParamType["Boolean"] = "boolean";
-    ParamType["BooleanOptional"] = "boolean-optional";
-    ParamType["Float"] = "float";
-    ParamType["FloatOptional"] = "float-optional";
-    ParamType["Int"] = "int";
-    ParamType["IntOptional"] = "int-optional";
-    ParamType["JSON"] = "json";
-    ParamType["JSONOptional"] = "json-optional";
-    ParamType["String"] = "string";
-    ParamType["StringOptional"] = "string-optional";
-})(ParamType || (ParamType = {}));
-var ParamType$1 = ParamType;
-
-// Import shared types
-/**
- * Handle an error and respond to the client
- * @author Gabe Abrams
- * @param res express response
- * @param error error info
- * @param opts.err the error to send to the client
- *   or the error message
- * @param [opts.code] an error code (only used if err.code is not
- *   included)
- * @param [opts.status=500] the https status code to use
- *   defined)
- */
-const handleError = (res, error) => {
-    // Get the error message
-    let message;
-    if (error && error.message) {
-        message = (error.message || 'An unknown error occurred.');
-    }
-    else if (typeof error === 'string') {
-        message = (error.trim().length > 0
-            ? error
-            : 'An unknown error occurred.');
-    }
-    else {
-        message = 'An unknown error occurred.';
-    }
-    // Get the error code
-    const code = (error.code || ReactKitErrorCode$1.NoCode);
-    // Get the status code
-    const status = (error.status || 500);
-    // Respond to user
-    res
-        // Set the http status code
-        .status(status)
-        // Send a JSON response
-        .json({
-        // Error message
-        message,
-        // Error code
-        code,
-        // Success = false flag so client can detect server-side errors
-        success: false,
-    });
-    return undefined;
-};
-
-/**
- * Send successful API response
- * @author Gabe Abrams
- * @param res express response
- * @param body the body of the response to send to the client
- */
-const handleSuccess = (res, body) => {
-    // Send a http 200 json response
-    res.json({
-        // Include the body as a parameter
-        body,
-        // Success = true flag so client can detect successful responses
-        success: true,
-    });
-    return undefined;
-};
-
-/**
- * Generate an express API route handler
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.paramTypes map containing the types for each parameter that is
- *   included in the request (map: param name => type)
- * @param opts.handler function that processes the request
- * @returns express route handler that takes the following arguments:
- *   params (map: param name => value), handleSuccess (function for handling
- *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), res (express response object),
- *   next (express next function). Params also has userId, userFirstName,
- *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
- *   are directly added to the session
- */
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -42311,38 +41153,65 @@ const genRouteHandler = (opts) => {
         /*----------------------------------------*/
         // Get launch info
         const { launched, launchInfo } = cacclGetLaunchInfo(req);
-        if (!launched || !launchInfo) {
+        if (
+        // Not launched
+        (!launched || !launchInfo)
+            // Not skipping the session check
+            && !opts.skipSessionCheck) {
             return handleError(res, {
                 message: 'Your session has expired. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.SessionExpired,
-                status: 440,
+                status: 401,
             });
         }
         // Error if user info cannot be found
-        if (!launchInfo.userId
+        if (
+        // User information is incomplete
+        (!launchInfo
+            || !launchInfo.userId
             || !launchInfo.userFirstName
             || !launchInfo.userLastName
             || (launchInfo.notInCourse
                 && !launchInfo.isAdmin)
             || (!launchInfo.isTTM
                 && !launchInfo.isLearner
-                && !launchInfo.isAdmin)) {
+                && !launchInfo.isAdmin))
+            // Not skipping the session check
+            && !opts.skipSessionCheck) {
             return handleError(res, {
                 message: 'Your session was invalid. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.SessionExpired,
-                status: 440,
+                status: 401,
             });
         }
         // Add launch info to output
-        output.userId = launchInfo.userId;
-        output.userFirstName = launchInfo.userFirstName;
-        output.userLastName = launchInfo.userLastName;
-        output.userEmail = launchInfo.userEmail;
-        output.isLearner = !!launchInfo.isLearner;
-        output.isTTM = !!launchInfo.isTTM;
-        output.isAdmin = !!launchInfo.isAdmin;
-        output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
-        output.courseName = launchInfo.contextLabel;
+        output.userId = (launchInfo
+            ? launchInfo.userId
+            : undefined);
+        output.userFirstName = (launchInfo
+            ? launchInfo.userFirstName
+            : undefined);
+        output.userLastName = (launchInfo
+            ? launchInfo.userLastName
+            : undefined);
+        output.userEmail = (launchInfo
+            ? launchInfo.userEmail
+            : undefined);
+        output.isLearner = (launchInfo
+            ? !!launchInfo.isLearner
+            : undefined);
+        output.isTTM = (launchInfo
+            ? !!launchInfo.isTTM
+            : undefined);
+        output.isAdmin = (launchInfo
+            ? !!launchInfo.isAdmin
+            : undefined);
+        output.courseId = (launchInfo
+            ? ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId)
+            : undefined);
+        output.courseName = (launchInfo
+            ? launchInfo.contextLabel
+            : undefined);
         // Add other session variables
         Object.keys(req.session).forEach((propName) => {
             // Skip if prop already in output
@@ -42362,6 +41231,7 @@ const genRouteHandler = (opts) => {
         /*----------------------------------------*/
         // Make sure the user actually launched from the appropriate course
         if (output.courseId
+            && launchInfo
             && launchInfo.courseId
             && output.courseId !== launchInfo.courseId
             && !output.isTTM
@@ -42406,40 +41276,527 @@ const genRouteHandler = (opts) => {
                 status: 401,
             });
         }
+        /*----------------------------------------*/
+        /*               Log Handler              */
+        /*----------------------------------------*/
+        // Create a log handler function
+        /**
+         * Log an event on the server
+         * @author Gabe Abrams
+         */
+        const logServerEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+            var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+            // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
+            // that indicates that this is actually a client event, but we don't
+            // include that in the LogFunction type because this is internal and
+            // hidden from users
+            try {
+                // Parse user agent
+                const { browser, device, } = parseUserAgent(req.headers['user-agent']);
+                // Get time info in ET
+                const { timestamp, year, month, day, hour, minute, } = getTimeInfoInET();
+                // Main log info
+                const mainLogInfo = {
+                    id: `${launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
+                    userFirstName: launchInfo.userFirstName,
+                    userLastName: launchInfo.userLastName,
+                    userEmail: launchInfo.userEmail,
+                    userId: launchInfo.userId,
+                    isLearner: !!launchInfo.isLearner,
+                    isAdmin: !!launchInfo.isAdmin,
+                    isTTM: !!launchInfo.isTTM,
+                    courseId: launchInfo.courseId,
+                    courseName: launchInfo.contextLabel,
+                    browser,
+                    device,
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    timestamp,
+                    context: (typeof opts.context === 'string'
+                        ? opts.context
+                        : ((_d = ((_c = opts.context) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
+                    subcontext: ((_e = opts.subcontext) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized),
+                    tags: ((_f = opts.tags) !== null && _f !== void 0 ? _f : []),
+                    level: ((_g = opts.level) !== null && _g !== void 0 ? _g : LogLevel$1.Info),
+                    metadata: ((_h = opts.metadata) !== null && _h !== void 0 ? _h : {}),
+                };
+                // Type-specific info
+                const typeSpecificInfo = (('error' in opts && opts.error)
+                    ? {
+                        type: LogType$1.Error,
+                        errorMessage: (_j = opts.error.message) !== null && _j !== void 0 ? _j : 'Unknown message',
+                        errorCode: (_k = opts.error.code) !== null && _k !== void 0 ? _k : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_l = opts.error.stack) !== null && _l !== void 0 ? _l : 'No stack',
+                    }
+                    : {
+                        type: LogType$1.Action,
+                        target: ((_m = opts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoTarget),
+                        action: ((_o = opts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
+                    });
+                // Source-specific info
+                const sourceSpecificInfo = (opts.overrideAsClientEvent
+                    ? {
+                        source: LogSource$1.Client,
+                    }
+                    : {
+                        source: LogSource$1.Server,
+                        routePath: req.path,
+                        routeTemplate: req.route.path,
+                    });
+                // Build log event
+                const log = Object.assign(Object.assign(Object.assign({}, mainLogInfo), typeSpecificInfo), sourceSpecificInfo);
+                // Either print to console or save to db
+                const logCollection = internalGetLogCollection();
+                if (logCollection) {
+                    // Store to the log collection
+                    yield logCollection.insert(log);
+                }
+                else {
+                    // Print to console
+                    if (log.type === LogType$1.Error) {
+                        console.error('dce-reactkit error log:', log);
+                    }
+                    else {
+                        console.log('dce-reactkit action log:', log);
+                    }
+                }
+                // Return log entry
+                return log;
+            }
+            catch (err) {
+                // Print because we cannot store the error
+                console.error('Could not log the following:', opts);
+                // Create a dummy log to return
+                const dummyMainInfo = {
+                    id: '-1',
+                    userFirstName: 'Unknown',
+                    userLastName: 'Unknown',
+                    userEmail: 'unknown@harvard.edu',
+                    userId: 1,
+                    isLearner: false,
+                    isAdmin: false,
+                    isTTM: false,
+                    courseId: 1,
+                    courseName: 'Unknown',
+                    browser: {
+                        name: 'Unknown',
+                        version: 'Unknown',
+                    },
+                    device: {
+                        isMobile: false,
+                        os: 'Unknown',
+                    },
+                    year: 1,
+                    month: 1,
+                    day: 1,
+                    hour: 1,
+                    minute: 1,
+                    timestamp: Date.now(),
+                    tags: [],
+                    level: LogLevel$1.Warn,
+                    metadata: {},
+                    context: LogBuiltInMetadata.Context.Uncategorized,
+                    subcontext: LogBuiltInMetadata.Context.Uncategorized,
+                };
+                const dummyTypeSpecificInfo = {
+                    type: LogType$1.Error,
+                    errorMessage: 'Unknown',
+                    errorCode: 'Unknown',
+                    errorStack: 'No Stack',
+                };
+                const dummySourceSpecificInfo = {
+                    source: LogSource$1.Server,
+                    routePath: req.path,
+                    routeTemplate: req.route.path,
+                };
+                const log = Object.assign(Object.assign(Object.assign({}, dummyMainInfo), dummyTypeSpecificInfo), dummySourceSpecificInfo);
+                return log;
+            }
+        });
         /*------------------------------------------------------------------------*/
         /*                              Call handler                              */
         /*------------------------------------------------------------------------*/
+        // Keep track of whether a response was already sent
+        let responseSent = false;
+        /**
+         * Redirect the user to another path or url
+         * @author Gabe Abrams
+         * @param pathOrURL the path or url to redirect to
+         */
+        const redirect = (pathOrURL) => {
+            responseSent = true;
+            res.redirect(pathOrURL);
+        };
+        /**
+         * Send text to the client (with an optional status code)
+         * @author Gabe Abrams
+         * @param text the text to send to the client
+         * @parm [status=200] the http status code to send
+         */
+        const send = (text, status = 200) => {
+            responseSent = true;
+            res.status(status).send(text);
+        };
+        /**
+         * Render an error page
+         * @author Gabe Abrams
+         * @param opts object containing all arguments
+         * @param [opts.title=An Error Occurred] title of the error box
+         * @param [opts.description=An unknown server error occurred. Please contact support.]
+         *   a human-readable description of the error
+         * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
+         * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
+         *   the title of the error
+         * @param [opts.status=500] http status code
+         */
+        const renderErrorPage = (opts = {}) => {
+            var _a, _b;
+            const html = genErrorPage(opts);
+            send(html, (_a = opts.status) !== null && _a !== void 0 ? _a : 500);
+            // Log
+            logServerEvent({
+                context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
+                error: {
+                    message: `${opts.title}: ${opts.description}`,
+                    code: opts.code,
+                },
+                metadata: {
+                    title: opts.title,
+                    description: opts.description,
+                    code: opts.code,
+                    pageTitle: opts.pageTitle,
+                    status: (_b = opts.status) !== null && _b !== void 0 ? _b : 500,
+                },
+            });
+        };
+        // Call the handler
         try {
             const results = yield opts.handler({
                 params: output,
                 req,
-                res,
-                next,
+                send,
+                next: () => {
+                    responseSent = true;
+                    next();
+                },
+                redirect,
+                renderErrorPage,
+                logServerEvent,
             });
-            // Send results to client
-            handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
+            // Send results to client (only if next wasn't called)
+            if (!responseSent) {
+                return handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
+            }
         }
         catch (err) {
-            // Send error to client
-            handleError(res, err);
+            // Send error to client (only if next wasn't called)
+            if (!responseSent) {
+                handleError(res, err);
+                // Log server-side error
+                logServerEvent({
+                    context: LogBuiltInMetadata.Context.ServerEndpointError,
+                    error: err,
+                });
+                return;
+            }
+            // Log error that was not responded with
+            console.log('Error occurred but could not be sent to client because a response was already sent:', err);
         }
     });
 };
 
 /**
- * Days of the week
+ * Stub a server endpoint response
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param [opts.method=GET] http method to stub
+ * @param opts.path full pathname to stub
+ * @param opts.body body of response if stubbing a successful response
+ * @param opts.errorMessage message of error if stubbing a failed response
+ * @param [opts.errorCode] error code if stubbing a failed response
+ */
+const stubServerEndpoint = _setStubResponse;
+
+/**
+ * Start a dynamic wait, call the function once the operation has completed and
+ *   the dynamic wait will continue waiting for the rest of the minimum time
+ * @author Gabe Abrams
+ * @param minWaitMs the minimum number of ms to wait
+ * @returns async function to call to finish the wait
+ */
+const startMinWait = (minWaitMs) => {
+    const startTimestamp = Date.now();
+    /**
+     * Finish the remaining time to wait
+     * @author Gabe Abrams
+     */
+    return () => __awaiter(void 0, void 0, void 0, function* () {
+        const endTimestamp = Date.now();
+        // Calculate remaining time to wait
+        const elapsedTimeMs = (endTimestamp - startTimestamp);
+        const remainingTimeToWaitMs = minWaitMs - elapsedTimeMs;
+        if (remainingTimeToWaitMs <= 0) {
+            return;
+        }
+        // Perform wait
+        yield waitMs(remainingTimeToWaitMs);
+    });
+};
+
+/**
+ * Get the current part of day (morning, evening, etc.)
  * @author Gabe Abrams
  */
-var DayOfWeek$2;
-(function (DayOfWeek) {
-    DayOfWeek["Monday"] = "m";
-    DayOfWeek["Tuesday"] = "t";
-    DayOfWeek["Wednesday"] = "w";
-    DayOfWeek["Thursday"] = "r";
-    DayOfWeek["Friday"] = "f";
-    DayOfWeek["Saturday"] = "s";
-    DayOfWeek["Sunday"] = "u";
-})(DayOfWeek$2 || (DayOfWeek$2 = {}));
+const getPartOfDay = () => {
+    // Setup the post-it time of day
+    let partOfDay = 'day';
+    let hours = new Date().getHours();
+    if (hours < 12) {
+        partOfDay = 'morning';
+    }
+    else if (hours >= 12 && hours <= 16) {
+        partOfDay = 'afternoon';
+    }
+    else if (hours > 16 && hours <= 24) {
+        partOfDay = 'evening';
+    }
+    return partOfDay;
+};
+
+/**
+ * Create a human readable list from an array of strings.
+ *   For example, ['apple', 'orange'] becomes "apple and orange"
+ *   and ['apple', 'orange', 'mango'] becomes "apple, orange, and mango"
+ * @author Gabe Abrams
+ * @param items list of items in the list
+ * @returns human-readable list
+ */
+const stringsToHumanReadableList = (items) => {
+    // Handle 0-item case
+    if (items.length === 0) {
+        return '';
+    }
+    // Handle 1-item case
+    if (items.length === 1) {
+        return items[0];
+    }
+    // Handle 2-item case
+    if (items.length === 2) {
+        return `${items[0]} and ${items[1]}`;
+    }
+    // Handle 3+ item case
+    let list = '';
+    items.forEach((item, i) => {
+        if (i === items.length - 1) {
+            // Last item
+            list += `, and ${item}`;
+        }
+        // Previous items
+        list += `, ${item}`;
+    });
+    return list;
+};
+
+/**
+ * Given a string, only keep the letters inside it
+ * @author Gabe Abrams
+ * @param str the string to parse
+ * @returns only the letters inside of the string
+ */
+const onlyKeepLetters = (str) => {
+    return str.replace(/[^a-zA-Z]+/g, '');
+};
+
+/**
+ * Run tasks in parallel with a limit on how many tasks can execute at once.
+ *   No guarantees are made about the order of task execution
+ * @author Gabe Abrams
+ * @param taskFunctions functions that start asynchronous tasks and optionally
+ *   resolve with values
+ * @param [limit=no limit] maximum number of asynchronous tasks to permit to run at
+ *   once
+ * @returns array of resolved values in the same order as the task functions
+ */
+const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0, function* () {
+    const results = [];
+    // Wait until finished with all tasks
+    yield new Promise((resolve) => {
+        /* ------------- Helpers ------------ */
+        let nextTaskIndex = 0;
+        let numFinishedTasks = 0;
+        /**
+         * Start the next task
+         * @author Gabe Abrams
+         */
+        const startTask = () => __awaiter(void 0, void 0, void 0, function* () {
+            const taskIndex = nextTaskIndex++;
+            // Get the task
+            const taskFunction = taskFunctions[taskIndex];
+            if (!taskFunction) {
+                return;
+            }
+            // Execute task
+            const result = yield taskFunction();
+            // Add results
+            results[taskIndex] = result;
+            // Tally and finish
+            if (++numFinishedTasks === taskFunctions.length) {
+                return resolve();
+            }
+            // Not finished! Start another task
+            startTask();
+        });
+        /* ----------- Start Tasks ---------- */
+        // If no limit, start all tasks. At least start 1 task
+        const numTasks = Math.max((limit || taskFunctions.length), 1);
+        for (let i = 0; i < numTasks; i++) {
+            startTask();
+        }
+    });
+    return results;
+});
+
+/**
+ * Initialize a log collection given the dce-mango Collection class
+ * @author Gabe Abrams
+ * @param Collection the Collection class from dce-mango
+ * @returns initialized logCollection
+ */
+const initLogCollection = (Collection) => {
+    return new Collection('Log', {
+        uniqueIndexKey: 'id',
+        indexKeys: [
+            'courseId',
+            'context',
+            'subcontext',
+            'tags',
+        ],
+    });
+};
+
+// Cache user's ability
+let canReview = undefined;
+/**
+ * Check if the current user can review logs
+ * @author Gabe Abrams
+ * @returns true if current user can review logs
+ */
+const canReviewLogs = () => __awaiter(void 0, void 0, void 0, function* () {
+    // If cached, use that value
+    if (canReview !== undefined) {
+        return canReview;
+    }
+    // Ask on server
+    try {
+        canReview = !!(yield visitServerEndpoint({
+            path: LOG_REVIEW_STATUS_ROUTE,
+            method: 'GET',
+        }));
+    }
+    catch (err) {
+        canReview = false;
+    }
+    return canReview;
+});
+
+/**
+ * For every element in an array, extract the value of a prop
+ *   (e.g. for all user objects, extract their ages and put that into a new
+ *   ages array)
+ * @author Gabe Abrams
+ * @param arr the array of objects to operate on
+ * @param prop the property to extract from each object
+ * @returns new array containing the corresponding values, in order, of each
+ *   object in the original array
+ */
+const extractProp = (arr, prop) => {
+    return arr.map((item) => {
+        return item[prop];
+    });
+};
+
+// Import shared helpers
+/**
+ * Compare two arrays of objects by only comparing the values in a specific
+ *  property (e.g. compare user arrays by comparing their user.id values)
+ * @author Gabe Abrams
+ * @param a the first array
+ * @param b the second array
+ * @param prop the property to compare with
+ * @returns true if the arrays contain the same objects as determined by
+ *   the values associated with each object's prop
+ */
+const compareArraysByProp = (a, b, prop) => {
+    // Extract values for comparison
+    const aVals = new Set(extractProp(a, prop));
+    const bVals = new Set(extractProp(b, prop));
+    // Compare sizes first
+    if (aVals.size !== bVals.size) {
+        return false;
+    }
+    // Same number of items. Make sure every object in aVals appears in bVals
+    // (if so, they should be equivalent since the sizes are the same)
+    // > Create map of items in bVals
+    const inBVals = {}; // item => true if in bVals
+    Array.from(bVals.values()).forEach((item) => {
+        inBVals[item] = true;
+    });
+    // > Loop through aVals and make sure every item is in bVals
+    return Array.from(aVals.values()).every((item) => {
+        return inBVals[item];
+    });
+};
+
+/**
+ * Get current time info in local time
+ * @author Gabe Abrams
+ * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
+ * @returns object with timestamp (ms since epoch) and numbers
+ *   corresponding to time values for year, month, day, hour, hour12, minute, isPM
+ *   where hour is in 24hr time and hour12 is in 12hr time.
+ */
+const getLocalTimeInfo = (dateOrTimestamp) => {
+    // Create a time string
+    let d;
+    if (!dateOrTimestamp) {
+        // Use now
+        d = new Date();
+    }
+    else if (typeof dateOrTimestamp === 'number') {
+        // Convert to date
+        d = new Date(dateOrTimestamp);
+    }
+    else {
+        // Already a date
+        d = dateOrTimestamp;
+    }
+    // Create all time numbers
+    const timestamp = d.getTime();
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const hour = d.getHours();
+    const isPM = hour >= 12;
+    let hour12 = hour % 12;
+    if (hour12 === 0) {
+        hour12 = 12;
+    }
+    const minute = d.getMinutes();
+    // Return
+    return {
+        timestamp,
+        year,
+        month,
+        day,
+        hour,
+        hour12,
+        isPM,
+        minute,
+    };
+};
 
 /**
  * Add all routes for the DBEditor
@@ -42461,7 +41818,7 @@ const addDBEditorEndpoints = (opts) => {
         paramTypes: {
             filterQuery: ParamType$1.JSONOptional,
         },
-        handler: ({ params }) => __awaiter$1(void 0, void 0, void 0, function* () {
+        handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
             var _a;
             const filterQuery = (_a = params.filterQuery) !== null && _a !== void 0 ? _a : {};
             const categories = yield collection.find(filterQuery);
@@ -42477,7 +41834,7 @@ const addDBEditorEndpoints = (opts) => {
         paramTypes: {
             item: ParamType$1.JSON,
         },
-        handler: ({ params, }) => __awaiter$1(void 0, void 0, void 0, function* () {
+        handler: ({ params, }) => __awaiter(void 0, void 0, void 0, function* () {
             // Destructure params
             const { item, } = params;
             yield collection.insert(item);
@@ -42491,7 +41848,7 @@ const addDBEditorEndpoints = (opts) => {
         paramTypes: {
             id: ParamType$1.String,
         },
-        handler: ({ params, }) => __awaiter$1(void 0, void 0, void 0, function* () {
+        handler: ({ params, }) => __awaiter(void 0, void 0, void 0, function* () {
             // Destructure params
             const { id, } = params;
             yield collection.delete({ id });
@@ -42527,7 +41884,7 @@ exports.DayOfWeek = DayOfWeek$1;
 exports.Drawer = Drawer;
 exports.DynamicWord = DynamicWord;
 exports.ErrorBox = ErrorBox;
-exports.ErrorWithCode = ErrorWithCode$1;
+exports.ErrorWithCode = ErrorWithCode;
 exports.HOUR_IN_MS = HOUR_IN_MS;
 exports.IntelliTable = IntelliTable;
 exports.ItemPicker = ItemPicker;
@@ -42539,18 +41896,18 @@ exports.LogSource = LogSource$1;
 exports.LogType = LogType$1;
 exports.MINUTE_IN_MS = MINUTE_IN_MS;
 exports.Modal = Modal;
-exports.ModalButtonType = ModalButtonType$3;
-exports.ModalSize = ModalSize$2;
-exports.ModalType = ModalType$3;
-exports.ParamType = ParamType$3;
+exports.ModalButtonType = ModalButtonType$1;
+exports.ModalSize = ModalSize$1;
+exports.ModalType = ModalType$1;
+exports.ParamType = ParamType$1;
 exports.PopFailureMark = PopFailureMark;
 exports.PopPendingMark = PopPendingMark;
 exports.PopSuccessMark = PopSuccessMark;
 exports.RadioButton = RadioButton;
-exports.ReactKitErrorCode = ReactKitErrorCode$3;
+exports.ReactKitErrorCode = ReactKitErrorCode$1;
 exports.SimpleDateChooser = SimpleDateChooser;
 exports.TabBox = TabBox;
-exports.Variant = Variant$3;
+exports.Variant = Variant$1;
 exports.abbreviate = abbreviate;
 exports.addDBEditorEndpoints = addDBEditorEndpoints;
 exports.alert = alert$1;
@@ -42563,15 +41920,15 @@ exports.extractProp = extractProp;
 exports.floorToNumDecimals = floorToNumDecimals;
 exports.forceNumIntoBounds = forceNumIntoBounds;
 exports.genCSV = genCSV;
-exports.genRouteHandler = genRouteHandler$1;
+exports.genRouteHandler = genRouteHandler;
 exports.getHumanReadableDate = getHumanReadableDate;
 exports.getLocalTimeInfo = getLocalTimeInfo;
 exports.getMonthName = getMonthName;
 exports.getOrdinal = getOrdinal;
 exports.getPartOfDay = getPartOfDay;
 exports.getTimeInfoInET = getTimeInfoInET;
-exports.handleError = handleError$1;
-exports.handleSuccess = handleSuccess$1;
+exports.handleError = handleError;
+exports.handleSuccess = handleSuccess;
 exports.initClient = initClient;
 exports.initLogCollection = initLogCollection;
 exports.initServer = initServer;
