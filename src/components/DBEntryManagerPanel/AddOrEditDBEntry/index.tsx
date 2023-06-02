@@ -10,16 +10,15 @@ import React, { useReducer } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 
-// Import dce-reactkit
-import {
-  CheckboxButton,
-  LoadingSpinner,
-  RadioButton,
-  ButtonInputGroup,
-  alert,
-  showFatalError,
-  visitServerEndpoint,
-} from 'dce-reactkit';
+// Import shared components
+import CheckboxButton from '../../CheckboxButton';
+import LoadingSpinner from '../../LoadingSpinner';
+import RadioButton from '../../RadioButton';
+import ButtonInputGroup from '../../ButtonInputGroup';
+
+// Import shared helpers
+import { alert, showFatalError } from '../../AppWrapper';
+import visitServerEndpoint from '../../../helpers/visitServerEndpoint';
 
 // Import other types
 import DBEntry from '../types/DBEntry';

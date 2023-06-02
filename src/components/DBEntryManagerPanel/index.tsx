@@ -10,13 +10,13 @@ import React, { useReducer, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faCog } from '@fortawesome/free-solid-svg-icons';
 
-// import dce-reactkit components
+// Import shared components
 import TabBox from '../TabBox';
 import visitServerEndpoint from '../../helpers/visitServerEndpoint';
 import { showFatalError, confirm } from '../AppWrapper';
 import LoadingSpinner from '../LoadingSpinner';
 
-// import types
+// Import types
 import DBEntry from './types/DBEntry';
 import DBEntryField from './types/DBEntryField';
 

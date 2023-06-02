@@ -293,7 +293,7 @@ const ModalButtonTypeToLabelAndVariant = {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$9 = `
+const style$8 = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -467,7 +467,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default.createElement("style", null, style$9),
+        React__default.createElement("style", null, style$8),
         React__default.createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter$1(void 0, void 0, void 0, function* () {
@@ -563,7 +563,7 @@ const getSendRequest = () => __awaiter$1(void 0, void 0, void 0, function* () {
         yield initialized;
     // Error if no send request function
     if (timedOut) {
-        showFatalError$1(new ErrorWithCode$1('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$3.NoCACCLSendRequestFunction));
+        showFatalError(new ErrorWithCode$1('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$3.NoCACCLSendRequestFunction));
         // Return dummy function that never resolves
         return (() => {
             return new Promise(() => { });
@@ -602,12 +602,12 @@ const initClient = (opts) => {
 };
 
 // Keep track of whether or not session expiry has already been handled
-let sessionAlreadyExpired$1 = false;
+let sessionAlreadyExpired = false;
 /*------------------------------------------------------------------------*/
 /*                               Stub Logic                               */
 /*------------------------------------------------------------------------*/
 // Stored stub responses
-const stubResponses$1 = {};
+const stubResponses = {};
 /**
  * Add a stub response
  * @author Gabe Abrams
@@ -625,10 +625,10 @@ const _setStubResponse = (opts) => {
     const errorMessage = ((_b = opts.errorMessage) !== null && _b !== void 0 ? _b : 'An unknown error has occurred.');
     const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$3.NoCode);
     // Store to stub responses
-    if (!stubResponses$1[method]) {
-        stubResponses$1[method] = {};
+    if (!stubResponses[method]) {
+        stubResponses[method] = {};
     }
-    stubResponses$1[method][path] = ((opts.errorMessage || opts.errorCode)
+    stubResponses[method][path] = ((opts.errorMessage || opts.errorCode)
         ? {
             success: false,
             errorMessage,
@@ -651,15 +651,15 @@ const _setStubResponse = (opts) => {
  * @param [opts.params] - query/body parameters to include
  * @returns response from server
  */
-const visitServerEndpoint$1 = (opts) => __awaiter$1(void 0, void 0, void 0, function* () {
+const visitServerEndpoint = (opts) => __awaiter$1(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET');
     // Handle stubs
-    const stubResponse = (_b = stubResponses$1[method]) === null || _b === void 0 ? void 0 : _b[opts.path];
+    const stubResponse = (_b = stubResponses[method]) === null || _b === void 0 ? void 0 : _b[opts.path];
     if (stubResponse) {
         // Remove from list
         try {
-            stubResponses$1[method][opts.path] = undefined;
+            stubResponses[method][opts.path] = undefined;
         }
         catch (err) {
             // Ignore
@@ -686,13 +686,13 @@ const visitServerEndpoint$1 = (opts) => __awaiter$1(void 0, void 0, void 0, func
         // Session expired
         if (response.body.code === ReactKitErrorCode$3.SessionExpired) {
             // Skip notice if session was already expired
-            if (sessionAlreadyExpired$1) {
+            if (sessionAlreadyExpired) {
                 // Never return (browser is already reloading)
                 yield new Promise(() => {
                     // Promise that never returns
                 });
             }
-            sessionAlreadyExpired$1 = true;
+            sessionAlreadyExpired = true;
             // Show session expiration message
             {
                 // Fallback to alert
@@ -721,7 +721,7 @@ const visitServerEndpoint$1 = (opts) => __awaiter$1(void 0, void 0, void 0, func
  */
 const logClientEvent = (opts) => __awaiter$1(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g;
-    return visitServerEndpoint$1({
+    return visitServerEndpoint({
         path: LOG_ROUTE_PATH,
         method: 'POST',
         params: {
@@ -771,7 +771,7 @@ let onAlertClosed;
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-const alert$2 = (title, text) => __awaiter$1(void 0, void 0, void 0, function* () {
+const alert$1 = (title, text) => __awaiter$1(void 0, void 0, void 0, function* () {
     // Fallback if alert not available
     if (!setAlertInfo) {
         window.alert(`${title}\n\n${text}`);
@@ -843,7 +843,7 @@ let setFatalErrorTitle;
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-const showFatalError$1 = (error, errorTitle = 'An Error Occurred') => {
+const showFatalError = (error, errorTitle = 'An Error Occurred') => {
     var _a, _b;
     // Determine message and code
     const message = (typeof error === 'string'
@@ -866,7 +866,7 @@ const showFatalError$1 = (error, errorTitle = 'An Error Occurred') => {
     });
     // Handle case where app hasn't loaded
     if (!setFatalErrorMessage || !setFatalErrorCode) {
-        alert$2(errorTitle, `${message} (code: ${code}). Please contact support.`);
+        alert$1(errorTitle, `${message} (code: ${code}). Please contact support.`);
         return undefined;
     }
     // Use setters
@@ -971,7 +971,7 @@ const AppWrapper = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$8 = `
+const style$7 = `
 /* Container fades in */
 .LoadingSpinner-container {
   animation-name: LoadingSpinner-container-fade-in;
@@ -1043,13 +1043,13 @@ const style$8 = `
 /*------------------------------------------------------------------------*/
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
-const LoadingSpinner$1 = () => {
+const LoadingSpinner = () => {
     /*------------------------------------------------------------------------*/
     /*                                 Render                                 */
     /*------------------------------------------------------------------------*/
     // Add all four blips to a container
     return (React__default.createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default.createElement("style", null, style$8),
+        React__default.createElement("style", null, style$7),
         React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-1 me-1" }),
         React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-2 me-1" }),
         React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-3 me-1" }),
@@ -1063,7 +1063,7 @@ const LoadingSpinner$1 = () => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$7 = `
+const style$6 = `
   /* Tab Box */
   .TabBox-box {
     /* Light Border */
@@ -1143,7 +1143,7 @@ const TabBox = (props) => {
     /*----------------------------------------*/
     // Full UI
     return (React__default.createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
-        React__default.createElement("style", null, style$7),
+        React__default.createElement("style", null, style$6),
         React__default.createElement("div", { className: "TabBox-title-container" },
             React__default.createElement("div", { className: "TabBox-title" }, title)),
         React__default.createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },
@@ -1157,7 +1157,7 @@ const TabBox = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
-const RadioButton$1 = (props) => {
+const RadioButton = (props) => {
     /*------------------------------------------------------------------------*/
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
@@ -1185,7 +1185,7 @@ const RadioButton$1 = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
-const CheckboxButton$1 = (props) => {
+const CheckboxButton = (props) => {
     /*------------------------------------------------------------------------*/
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
@@ -1222,7 +1222,7 @@ const CheckboxButton$1 = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                Component                               */
 /*------------------------------------------------------------------------*/
-const ButtonInputGroup$1 = (props) => {
+const ButtonInputGroup = (props) => {
     /*------------------------------------------------------------------------*/
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
@@ -1464,7 +1464,7 @@ const SimpleDateChooser = (props) => {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$6 = `
+const style$5 = `
   .Drawer-container {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -1498,7 +1498,7 @@ const Drawer = (props) => {
     return (React__default.createElement("div", { className: "Drawer-container", style: {
             backgroundColor: (customBackgroundColor !== null && customBackgroundColor !== void 0 ? customBackgroundColor : undefined),
         } },
-        React__default.createElement("style", null, style$6),
+        React__default.createElement("style", null, style$5),
         children));
 };
 
@@ -1836,13 +1836,13 @@ const PopPendingMark = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$7;
+var ActionType$8;
 (function (ActionType) {
     // Indicate that the text was recently copied
     ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
     // Clear the status
     ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType$7 || (ActionType$7 = {}));
+})(ActionType$8 || (ActionType$8 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
@@ -1851,12 +1851,12 @@ var ActionType$7;
  */
 const reducer$6 = (state, action) => {
     switch (action.type) {
-        case ActionType$7.IndicateRecentlyCopied: {
+        case ActionType$8.IndicateRecentlyCopied: {
             return {
                 recentlyCopied: true,
             };
         }
-        case ActionType$7.ClearRecentlyCopiedStatus: {
+        case ActionType$8.ClearRecentlyCopiedStatus: {
             return {
                 recentlyCopied: false,
             };
@@ -1898,17 +1898,17 @@ const CopiableBox = (props) => {
             yield navigator.clipboard.writeText(text);
         }
         catch (err) {
-            return alert$2('Unable to copy', 'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.');
+            return alert$1('Unable to copy', 'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.');
         }
         // Show copied notice
         dispatch({
-            type: ActionType$7.IndicateRecentlyCopied,
+            type: ActionType$8.IndicateRecentlyCopied,
         });
         // Wait a moment
         yield waitMs(4000);
         // Hide copied notice
         dispatch({
-            type: ActionType$7.ClearRecentlyCopiedStatus,
+            type: ActionType$8.ClearRecentlyCopiedStatus,
         });
     });
     /*------------------------------------------------------------------------*/
@@ -1964,11 +1964,11 @@ const CopiableBox = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$6;
+var ActionType$7;
 (function (ActionType) {
     // Toggle whether a child are being shown
     ActionType["ToggleChild"] = "toggle-child";
-})(ActionType$6 || (ActionType$6 = {}));
+})(ActionType$7 || (ActionType$7 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
@@ -1977,7 +1977,7 @@ var ActionType$6;
  */
 const reducer$5 = (state, action) => {
     switch (action.type) {
-        case ActionType$6.ToggleChild: {
+        case ActionType$7.ToggleChild: {
             return Object.assign(Object.assign({}, state), { childExpanded: Object.assign(Object.assign({}, state.childExpanded), { [String(action.id)]: !state.childExpanded[String(action.id)] }) });
         }
         default: {
@@ -2096,12 +2096,12 @@ const NestableItemList = (props) => {
                     backgroundColor: 'transparent',
                 }, type: "button", onClick: () => {
                     dispatch({
-                        type: ActionType$6.ToggleChild,
+                        type: ActionType$7.ToggleChild,
                         id: item.id,
                     });
                 }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}` },
                 React__default.createElement(FontAwesomeIcon, { icon: childExpanded[item.id] ? faChevronDown : faChevronRight })))),
-            React__default.createElement(CheckboxButton$1, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
+            React__default.createElement(CheckboxButton, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
                     onChanged(changeChecked(item.id, checked, items));
                 }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$3.Light }),
             (item.isGroup && childExpanded[item.id]) && (React__default.createElement("div", { className: "NestableItemList-children-container", style: {
@@ -2371,7 +2371,7 @@ var SortType;
 })(SortType || (SortType = {}));
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$5;
+var ActionType$6;
 (function (ActionType) {
     // Toggle sort column param
     ActionType["ToggleSortColumn"] = "toggle-sort-column";
@@ -2383,7 +2383,7 @@ var ActionType$5;
     ActionType["ShowAllColumns"] = "show-all-columns";
     // Hide all columns
     ActionType["HideAllColumns"] = "hide-all-columns";
-})(ActionType$5 || (ActionType$5 = {}));
+})(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
@@ -2392,7 +2392,7 @@ var ActionType$5;
  */
 const reducer$4 = (state, action) => {
     switch (action.type) {
-        case ActionType$5.ToggleSortColumn: {
+        case ActionType$6.ToggleSortColumn: {
             if (action.param !== state.sortColumnParam) {
                 // Different column param
                 return Object.assign(Object.assign({}, state), { sortColumnParam: action.param, sortType: SortType.Ascending });
@@ -2404,22 +2404,22 @@ const reducer$4 = (state, action) => {
             // Stop sorting by column
             return Object.assign(Object.assign({}, state), { sortColumnParam: undefined, sortType: SortType.Ascending });
         }
-        case ActionType$5.UpdateColumnVisibility: {
+        case ActionType$6.UpdateColumnVisibility: {
             const { columnVisibilityMap } = state;
             columnVisibilityMap[action.param] = action.visible;
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$5.ToggleColVisCusModalVisibility: {
+        case ActionType$6.ToggleColVisCusModalVisibility: {
             return Object.assign(Object.assign({}, state), { columnVisibilityCustomizationModalVisible: !state.columnVisibilityCustomizationModalVisible });
         }
-        case ActionType$5.ShowAllColumns: {
+        case ActionType$6.ShowAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = true;
             });
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$5.HideAllColumns: {
+        case ActionType$6.HideAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = false;
@@ -2486,16 +2486,16 @@ const IntelliTable = (props) => {
                     return !isSelected;
                 }));
                 if (noColumnsSelected) {
-                    return alert$2('Choose at least one column', 'To continue, you have to choose at least one column to show');
+                    return alert$1('Choose at least one column', 'To continue, you have to choose at least one column to show');
                 }
                 dispatch({
-                    type: ActionType$5.ToggleColVisCusModalVisibility,
+                    type: ActionType$6.ToggleColVisCusModalVisibility,
                 });
             }, okayVariant: Variant$3.Light },
             columns.map((column) => {
-                return (React__default.createElement(CheckboxButton$1, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
+                return (React__default.createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
                         dispatch({
-                            type: ActionType$5.UpdateColumnVisibility,
+                            type: ActionType$6.UpdateColumnVisibility,
                             param: column.param,
                             visible: checked,
                         });
@@ -2504,12 +2504,12 @@ const IntelliTable = (props) => {
             React__default.createElement("div", { className: "mt-3" }, "Or you can:"),
             React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-select-all-columns`, className: "btn btn-secondary me-2", "aria-label": `show all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$5.ShowAllColumns,
+                        type: ActionType$6.ShowAllColumns,
                     });
                 } }, "Select All"),
             React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-select-none-columns`, className: "btn btn-secondary", "aria-label": `hide all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$5.HideAllColumns,
+                        type: ActionType$6.HideAllColumns,
                     });
                 } }, "Deselect All")));
     }
@@ -2560,7 +2560,7 @@ const IntelliTable = (props) => {
                 React__default.createElement("div", null,
                     React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-sort-by-${column.param}-button`, className: `btn btn-${sortingByThisColumn ? 'light' : 'secondary'} btn-sm ms-1 ps-1 pe-1 pt-0 pb-0`, "aria-label": sortButtonAriaLabel, onClick: () => {
                             dispatch({
-                                type: ActionType$5.ToggleSortColumn,
+                                type: ActionType$6.ToggleSortColumn,
                                 param: column.param,
                             });
                         } },
@@ -2749,7 +2749,7 @@ const IntelliTable = (props) => {
                 React__default.createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: filename, csv: csv }),
                 React__default.createElement("button", { type: "button", className: "btn btn-secondary ms-2", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleColVisCusModalVisibility,
+                            type: ActionType$6.ToggleColVisCusModalVisibility,
                         });
                     } },
                     "Show/Hide Cols",
@@ -3115,7 +3115,7 @@ const genHumanReadableName = (machineReadableName) => {
 };
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$4;
+var ActionType$5;
 (function (ActionType) {
     // Show the loading bar
     ActionType["StartLoading"] = "start-loading";
@@ -3137,7 +3137,7 @@ var ActionType$4;
     ActionType["UpdateActionErrorFilterState"] = "update-action-error-filter-state";
     // Update the advanced filter state
     ActionType["UpdateAdvancedFilterState"] = "update-advanced-filter-state";
-})(ActionType$4 || (ActionType$4 = {}));
+})(ActionType$5 || (ActionType$5 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
@@ -3146,36 +3146,36 @@ var ActionType$4;
  */
 const reducer$3 = (state, action) => {
     switch (action.type) {
-        case ActionType$4.StartLoading: {
+        case ActionType$5.StartLoading: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$4.FinishLoading: {
+        case ActionType$5.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, logMap: action.logMap });
         }
-        case ActionType$4.ToggleFilterDrawer: {
+        case ActionType$5.ToggleFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
                     ? undefined // hide
                     : action.filterDrawer) });
         }
-        case ActionType$4.HideFilterDrawer: {
+        case ActionType$5.HideFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
         }
-        case ActionType$4.ResetFilters: {
+        case ActionType$5.ResetFilters: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState });
         }
-        case ActionType$4.UpdateDateFilterState: {
+        case ActionType$5.UpdateDateFilterState: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
         }
-        case ActionType$4.UpdateContextFilterState: {
+        case ActionType$5.UpdateContextFilterState: {
             return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
         }
-        case ActionType$4.UpdateTagFilterState: {
+        case ActionType$5.UpdateTagFilterState: {
             return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
         }
-        case ActionType$4.UpdateActionErrorFilterState: {
+        case ActionType$5.UpdateActionErrorFilterState: {
             return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
         }
-        case ActionType$4.UpdateAdvancedFilterState: {
+        case ActionType$5.UpdateAdvancedFilterState: {
             return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
         }
         default: {
@@ -3355,7 +3355,7 @@ const LogReviewer = (props) => {
     const handleDateRangeUpdated = (newDateFilterState) => __awaiter$1(void 0, void 0, void 0, function* () {
         // Update state
         dispatch({
-            type: ActionType$4.UpdateDateFilterState,
+            type: ActionType$5.UpdateDateFilterState,
             dateFilterState: newDateFilterState,
         });
         // Check which year/month combos we need to load
@@ -3366,7 +3366,7 @@ const LogReviewer = (props) => {
         }
         // Start loading
         dispatch({
-            type: ActionType$4.StartLoading,
+            type: ActionType$5.StartLoading,
         });
         // Load required months
         try {
@@ -3374,7 +3374,7 @@ const LogReviewer = (props) => {
                 // Destructure
                 const { year, month } = toLoad[i];
                 // Load
-                const logs = yield visitServerEndpoint$1({
+                const logs = yield visitServerEndpoint({
                     path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/${year}/months/${month}`,
                     method: 'GET',
                 });
@@ -3386,11 +3386,11 @@ const LogReviewer = (props) => {
             }
         }
         catch (err) {
-            return showFatalError$1(err);
+            return showFatalError(err);
         }
         // Finish loading
         dispatch({
-            type: ActionType$4.FinishLoading,
+            type: ActionType$5.FinishLoading,
             logMap,
         });
     });
@@ -3416,7 +3416,7 @@ const LogReviewer = (props) => {
     /* ------------- Loading ------------ */
     if (loading) {
         body = (React__default.createElement("div", { className: "text-center p-5" },
-            React__default.createElement(LoadingSpinner$1, null)));
+            React__default.createElement(LoadingSpinner, null)));
     }
     /* ------------ Review UI ----------- */
     if (!loading) {
@@ -3429,7 +3429,7 @@ const LogReviewer = (props) => {
             React__default.createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$4.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Date,
                         });
                     } },
@@ -3437,7 +3437,7 @@ const LogReviewer = (props) => {
                     "Date"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$4.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Context,
                         });
                     } },
@@ -3445,7 +3445,7 @@ const LogReviewer = (props) => {
                     "Context"),
                 (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$4.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Tag,
                         });
                     } },
@@ -3453,7 +3453,7 @@ const LogReviewer = (props) => {
                     "Tag")),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$4.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Action,
                         });
                     } },
@@ -3461,7 +3461,7 @@ const LogReviewer = (props) => {
                     "Action"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle advanced filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$4.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Advanced,
                         });
                     } },
@@ -3469,7 +3469,7 @@ const LogReviewer = (props) => {
                     "Advanced"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
                         dispatch({
-                            type: ActionType$4.ResetFilters,
+                            type: ActionType$5.ResetFilters,
                             initActionErrorFilterState,
                             initAdvancedFilterState,
                             initContextFilterState,
@@ -3499,7 +3499,7 @@ const LogReviewer = (props) => {
                                 || (year === dateFilterState.startDate.year
                                     && month === dateFilterState.startDate.month
                                     && day < dateFilterState.startDate.day)) {
-                                return alert$2('Invalid Start Date', 'The start date cannot be before the end date.');
+                                return alert$1('Invalid Start Date', 'The start date cannot be before the end date.');
                             }
                             dateFilterState.endDate = { month, day, year };
                             handleDateRangeUpdated(dateFilterState);
@@ -3591,7 +3591,7 @@ const LogReviewer = (props) => {
                             }
                         });
                         dispatch({
-                            type: ActionType$4.UpdateContextFilterState,
+                            type: ActionType$5.UpdateContextFilterState,
                             contextFilterState,
                         });
                     } }));
@@ -3603,10 +3603,10 @@ const LogReviewer = (props) => {
                     React__default.createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys((_d = LogMetadata.Tag) !== null && _d !== void 0 ? _d : {})
                         .map((tag) => {
                         const description = genHumanReadableName(tag);
-                        return (React__default.createElement(CheckboxButton$1, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
+                        return (React__default.createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
                                 tagFilterState[tag] = checked;
                                 dispatch({
-                                    type: ActionType$4.UpdateTagFilterState,
+                                    type: ActionType$5.UpdateTagFilterState,
                                     tagFilterState,
                                 });
                             } }));
@@ -3616,47 +3616,47 @@ const LogReviewer = (props) => {
                 // Create filter UI
                 filterDrawer = (React__default.createElement(React__default.Fragment, null,
                     React__default.createElement(TabBox, { title: "Log Type" },
-                        React__default.createElement(RadioButton$1, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
+                        React__default.createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
                                 actionErrorFilterState.type = undefined;
                                 dispatch({
-                                    type: ActionType$4.UpdateActionErrorFilterState,
+                                    type: ActionType$5.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
-                        React__default.createElement(RadioButton$1, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
+                        React__default.createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Action;
                                 dispatch({
-                                    type: ActionType$4.UpdateActionErrorFilterState,
+                                    type: ActionType$5.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
-                        React__default.createElement(RadioButton$1, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
+                        React__default.createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Error;
                                 dispatch({
-                                    type: ActionType$4.UpdateActionErrorFilterState,
+                                    type: ActionType$5.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
                     (actionErrorFilterState.type === undefined
                         || actionErrorFilterState.type === LogType$1.Action) && (React__default.createElement(TabBox, { title: "Action Log Details" },
-                        React__default.createElement(ButtonInputGroup$1, { label: "Action", className: "mb-2", wrapButtonsAndAddGaps: true }, Object.keys(LogAction$1)
+                        React__default.createElement(ButtonInputGroup, { label: "Action", className: "mb-2", wrapButtonsAndAddGaps: true }, Object.keys(LogAction$1)
                             .map((action) => {
                             const description = genHumanReadableName(action);
-                            return (React__default.createElement(CheckboxButton$1, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
+                            return (React__default.createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
                                     dispatch({
-                                        type: ActionType$4.UpdateActionErrorFilterState,
+                                        type: ActionType$5.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
                         })),
-                        React__default.createElement(ButtonInputGroup$1, { label: "Target", wrapButtonsAndAddGaps: true }, Object.keys(targetMap)
+                        React__default.createElement(ButtonInputGroup, { label: "Target", wrapButtonsAndAddGaps: true }, Object.keys(targetMap)
                             .map((target) => {
                             const description = genHumanReadableName(target);
-                            return (React__default.createElement(CheckboxButton$1, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
+                            return (React__default.createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
                                     actionErrorFilterState.target[target] = checked;
                                     dispatch({
-                                        type: ActionType$4.UpdateActionErrorFilterState,
+                                        type: ActionType$5.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -3668,7 +3668,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
                                     actionErrorFilterState.errorMessage = e.target.value;
                                     dispatch({
-                                        type: ActionType$4.UpdateActionErrorFilterState,
+                                        type: ActionType$5.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } })),
@@ -3679,7 +3679,7 @@ const LogReviewer = (props) => {
                                         .trim()
                                         .toUpperCase());
                                     dispatch({
-                                        type: ActionType$4.UpdateActionErrorFilterState,
+                                        type: ActionType$5.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }))))));
@@ -3693,7 +3693,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
                                     advancedFilterState.userFirstName = e.target.value;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3702,7 +3702,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
                                     advancedFilterState.userLastName = e.target.value;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3712,7 +3712,7 @@ const LogReviewer = (props) => {
                                     advancedFilterState.userEmail = ((e.target.value)
                                         .trim());
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3726,29 +3726,29 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
-                        React__default.createElement(ButtonInputGroup$1, { label: "Role" },
-                            React__default.createElement(CheckboxButton$1, { text: "Students", onChanged: (checked) => {
+                        React__default.createElement(ButtonInputGroup, { label: "Role" },
+                            React__default.createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
                                     advancedFilterState.includeLearners = checked;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
-                            React__default.createElement(CheckboxButton$1, { text: "Teaching Team Members", onChanged: (checked) => {
+                            React__default.createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
                                     advancedFilterState.includeTTMs = checked;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
-                            React__default.createElement(CheckboxButton$1, { text: "Admins", onChanged: (checked) => {
+                            React__default.createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
                                     advancedFilterState.includeAdmins = checked;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
@@ -3758,7 +3758,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
                                     advancedFilterState.courseName = e.target.value;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3772,53 +3772,53 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }))),
                     React__default.createElement(TabBox, { title: "Device" },
-                        React__default.createElement(ButtonInputGroup$1, { label: "Device Type" },
-                            React__default.createElement(RadioButton$1, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
+                        React__default.createElement(ButtonInputGroup, { label: "Device Type" },
+                            React__default.createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
                                     advancedFilterState.isMobile = undefined;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
-                            React__default.createElement(RadioButton$1, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
+                            React__default.createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
                                     advancedFilterState.isMobile = true;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
-                            React__default.createElement(RadioButton$1, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
+                            React__default.createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
                                     advancedFilterState.isMobile = false;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true }))),
                     React__default.createElement(TabBox, { title: "Source" },
-                        React__default.createElement(ButtonInputGroup$1, { label: "Source Type" },
-                            React__default.createElement(RadioButton$1, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
+                        React__default.createElement(ButtonInputGroup, { label: "Source Type" },
+                            React__default.createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
                                     advancedFilterState.source = undefined;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
-                            React__default.createElement(RadioButton$1, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
+                            React__default.createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Client;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
-                            React__default.createElement(RadioButton$1, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
+                            React__default.createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Server;
                                     dispatch({
-                                        type: ActionType$4.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true })),
@@ -3829,7 +3829,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$4.UpdateAdvancedFilterState,
+                                            type: ActionType$5.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })),
@@ -3839,7 +3839,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$4.UpdateAdvancedFilterState,
+                                            type: ActionType$5.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })))))));
@@ -4128,969 +4128,6 @@ const LogReviewer = (props) => {
                         React__default.createElement(FontAwesomeIcon, { icon: faTimes })))),
             React__default.createElement("div", { className: "LogReviewer-contents" }, body))));
 };
-
-/******************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-// Highest error code = DRK10
-/**
- * List of error codes built into the react kit
- * @author Gabe Abrams
- */
-var ReactKitErrorCode;
-(function (ReactKitErrorCode) {
-    ReactKitErrorCode["NoResponse"] = "DRK1";
-    ReactKitErrorCode["NoCode"] = "DRK2";
-    ReactKitErrorCode["SessionExpired"] = "DRK3";
-    ReactKitErrorCode["MissingParameter"] = "DRK4";
-    ReactKitErrorCode["InvalidParameter"] = "DRK5";
-    ReactKitErrorCode["WrongCourse"] = "DRK6";
-    ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
-    ReactKitErrorCode["NoCACCLGetLaunchInfoFunction"] = "DRK8";
-    ReactKitErrorCode["NotTTM"] = "DRK9";
-    ReactKitErrorCode["NotAdmin"] = "DRK10";
-})(ReactKitErrorCode || (ReactKitErrorCode = {}));
-var ReactKitErrorCode$1 = ReactKitErrorCode;
-
-/**
- * Types of buttons in the modal
- * @author Gabe Abrams
- */
-var ModalButtonType;
-(function (ModalButtonType) {
-    ModalButtonType["Okay"] = "okay";
-    ModalButtonType["Cancel"] = "cancel";
-    ModalButtonType["Yes"] = "yes";
-    ModalButtonType["No"] = "no";
-    ModalButtonType["Abandon"] = "abandon";
-    ModalButtonType["GoBack"] = "goBack";
-    ModalButtonType["Continue"] = "continue";
-    ModalButtonType["ImSure"] = "imSure";
-    ModalButtonType["Delete"] = "delete";
-    ModalButtonType["Confirm"] = "confirm";
-})(ModalButtonType || (ModalButtonType = {}));
-var ModalButtonType$1 = ModalButtonType;
-
-/**
- * Types of modals
- * @author Gabe Abrams
- */
-var ModalType;
-(function (ModalType) {
-    ModalType["Okay"] = "okay";
-    ModalType["OkayCancel"] = "okay-cancel";
-    ModalType["YesNo"] = "yes-no";
-    ModalType["YesNoCancel"] = "yes-no-cancel";
-    ModalType["AbandonGoBack"] = "abandon-goBack";
-    ModalType["ImSureCancel"] = "imSure-cancel";
-    ModalType["DeleteCancel"] = "delete-cancel";
-    ModalType["ConfirmCancel"] = "confirm-cancel";
-    ModalType["NoButtons"] = "-";
-})(ModalType || (ModalType = {}));
-var ModalType$1 = ModalType;
-
-/**
- * Bootstrap variants
- * @author Gabe Abrams
- */
-var Variant;
-(function (Variant) {
-    Variant["Primary"] = "primary";
-    Variant["Secondary"] = "secondary";
-    Variant["Success"] = "success";
-    Variant["Warning"] = "warning";
-    Variant["Info"] = "info";
-    Variant["Danger"] = "danger";
-    Variant["Light"] = "light";
-    Variant["Dark"] = "dark";
-})(Variant || (Variant = {}));
-var Variant$1 = Variant;
-
-/**
- * Modal sizes
- * @author Gabe Abrams
- */
-var ModalSize;
-(function (ModalSize) {
-    ModalSize["Small"] = "sm";
-    ModalSize["Medium"] = "md";
-    ModalSize["Large"] = "lg";
-    ModalSize["ExtraLarge"] = "xl";
-})(ModalSize || (ModalSize = {}));
-// Modal type to list of buttons
-({
-    [ModalType$1.Okay]: [
-        ModalButtonType$1.Okay,
-    ],
-    [ModalType$1.OkayCancel]: [
-        ModalButtonType$1.Okay,
-        ModalButtonType$1.Cancel,
-    ],
-    [ModalType$1.YesNo]: [
-        ModalButtonType$1.Yes,
-        ModalButtonType$1.No,
-    ],
-    [ModalType$1.YesNoCancel]: [
-        ModalButtonType$1.Yes,
-        ModalButtonType$1.No,
-        ModalButtonType$1.Cancel,
-    ],
-    [ModalType$1.AbandonGoBack]: [
-        ModalButtonType$1.Abandon,
-        ModalButtonType$1.GoBack,
-    ],
-    [ModalType$1.ImSureCancel]: [
-        ModalButtonType$1.ImSure,
-        ModalButtonType$1.Cancel,
-    ],
-    [ModalType$1.DeleteCancel]: [
-        ModalButtonType$1.Delete,
-        ModalButtonType$1.Cancel,
-    ],
-    [ModalType$1.ConfirmCancel]: [
-        ModalButtonType$1.Confirm,
-        ModalButtonType$1.Cancel,
-    ],
-});
-// Button type styling and labels
-({
-    [ModalButtonType$1.Okay]: {
-        label: 'Okay',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.Cancel]: {
-        label: 'Cancel',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Yes]: {
-        label: 'Yes',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.No]: {
-        label: 'No',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Abandon]: {
-        label: 'Abandon Changes',
-        variant: Variant$1.Warning,
-    },
-    [ModalButtonType$1.GoBack]: {
-        label: 'Go Back',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Continue]: {
-        label: 'Continue',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.ImSure]: {
-        label: 'I am sure',
-        variant: Variant$1.Warning,
-    },
-    [ModalButtonType$1.Delete]: {
-        label: 'Yes, Delete',
-        variant: Variant$1.Danger,
-    },
-    [ModalButtonType$1.Confirm]: {
-        label: 'Confirm',
-        variant: Variant$1.Dark,
-    },
-});
-
-/**
- * An error with a code
- * @author Gabe Abrams
- */
-class ErrorWithCode extends Error {
-    constructor(message, code) {
-        super(message);
-        this.name = 'ErrorWithCode';
-        this.code = code;
-    }
-}
-/**
- * Send a request using caccl's send request feature
- * @author Gabe Abrams
- * @param opts send request options
- * @returns send request response
- */
-const cacclSendRequest = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    // Make sure send request has been passed in
-    {
-        throw new ErrorWithCode(`\nThe request could not be sent because the AppWrapper component does not have a copy of sendRequest from CACCL.\nIf you are currently writing tests for your app, this means you did not properly stub the server response.\nMethod: ${opts.method}\nPath: ${opts.path}\n\n`, ReactKitErrorCode$1.NoCACCLSendRequestFunction);
-    }
-});
-/**
- * Show an alert modal with an "Okay" button
- * @author Gabe Abrams
- * @param title the title text to display at the top of the alert
- * @param text the text to display in the alert
- */
-const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
-    // Fallback if alert not available
-    {
-        window.alert(`${title}\n\n${text}`);
-        return undefined;
-    }
-});
-/**
- * Show a fatal error message
- * @author Gabe Abrams
- * @param error the error to show
- * @param [errorTitle] title of the error box
- */
-const showFatalError = (error, errorTitle = 'An Error Occurred') => {
-    var _a, _b;
-    // Determine message and code
-    const message = (typeof error === 'string'
-        ? error.trim()
-        : String((_a = error.message) !== null && _a !== void 0 ? _a : 'An unknown error occurred.'));
-    const code = (typeof error === 'string'
-        ? ReactKitErrorCode$1.NoCode
-        : String((_b = error.code) !== null && _b !== void 0 ? _b : ReactKitErrorCode$1.NoCode));
-    // Handle case where app hasn't loaded
-    {
-        alert$1(errorTitle, `${message} (code: ${code}). Please contact support.`);
-        return undefined;
-    }
-};
-
-/**
- * Loading spinner/indicator
- * @author Gabe Abrams
- */
-/*------------------------------------------------------------------------*/
-/*                                  Style                                 */
-/*------------------------------------------------------------------------*/
-const style$5 = `
-/* Container fades in */
-.LoadingSpinner-container {
-  animation-name: LoadingSpinner-container-fade-in;
-  animation-duration: 0.3s;
-  animation-delay: 0.4s;
-  animation-fill-mode: both;
-  animation-timing-function: ease-out;
-}
-@keyframes LoadingSpinner-container-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Blips */
-.LoadingSpinner-blip-1,
-.LoadingSpinner-blip-2,
-.LoadingSpinner-blip-3,
-.LoadingSpinner-blip-4 {
-  font-size: 1.8rem;
-  opacity: 0.6;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-/* First Blip */
-.LoadingSpinner-blip-1 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-}
-
-/* Second Blip */
-.LoadingSpinner-blip-2 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  -webkit-animation-delay: 0.1s;
-  animation-delay: 0.1s;
-}
-
-/* Third Blip */
-.LoadingSpinner-blip-3 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  animation-delay: 0.2s;
-}
-
-/* Fourth Blip */
-.LoadingSpinner-blip-4 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  animation-delay: 0.3s;
-}
-
-/* Pop Animation for Each Blip */
-@keyframes LoadingSpinner-pop-animation {
-  0%  {
-    transform: scale(1.0);
-  }
-  10% {
-    transform: scale(1.5);
-  }
-  30% {
-    transform: scale(1.0);
-  }
-  100% {
-    transform: scale(1.0);
-  }
-}
-`;
-/*------------------------------------------------------------------------*/
-/*                                Component                               */
-/*------------------------------------------------------------------------*/
-const LoadingSpinner = () => {
-    /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
-    /*------------------------------------------------------------------------*/
-    // Add all four blips to a container
-    return (React__default.createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default.createElement("style", null, style$5),
-        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-1 me-1" }),
-        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-2 me-1" }),
-        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-3 me-1" }),
-        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-4" })));
-};
-
-/**
- * A radio selection button
- * @author Gabe Abrams
- */
-/*------------------------------------------------------------------------*/
-/*                                Component                               */
-/*------------------------------------------------------------------------*/
-const RadioButton = (props) => {
-    /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
-    /*------------------------------------------------------------------------*/
-    /* -------------- Props ------------- */
-    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$1.Secondary, unselectedVariant = Variant$1.Light, small, } = props;
-    /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
-    /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /*                Main UI                 */
-    /*----------------------------------------*/
-    return (React__default.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
-            if (!selected) {
-                onSelected();
-            }
-        } },
-        React__default.createElement(FontAwesomeIcon, { icon: selected ? faDotCircle : faCircle$1, className: "me-1" }),
-        text));
-};
-
-/**
- * A checkbox button
- * @author Gabe Abrams
- */
-/*------------------------------------------------------------------------*/
-/*                                Component                               */
-/*------------------------------------------------------------------------*/
-const CheckboxButton = (props) => {
-    /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
-    /*------------------------------------------------------------------------*/
-    /* -------------- Props ------------- */
-    const { text, onChanged, ariaLabel, title, checked, id, className, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, dashed, } = props;
-    /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
-    /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /*                Main UI                 */
-    /*----------------------------------------*/
-    // Determine the icon
-    let icon;
-    if (checked) {
-        icon = faCheckSquare;
-    }
-    else {
-        icon = (dashed
-            ? faSquareMinus
-            : faSquare);
-    }
-    // Create the button
-    return (React__default.createElement("button", { type: "button", id: id, title: title, className: `CheckboxButton-status-${checked ? 'checked' : 'unchecked'} ${dashed ? 'CheckboxButton-dashed ' : ''}btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'} ${className !== null && className !== void 0 ? className : ''}`, "aria-label": `${ariaLabel}${checked ? ': currently checked' : ''}`, onClick: () => {
-            onChanged(!checked);
-        } },
-        React__default.createElement(FontAwesomeIcon, { icon: icon, className: "me-1" }),
-        text));
-};
-
-/**
- * Input group with a title and space for buttons
- * @author Gabe Abrams
- */
-/*------------------------------------------------------------------------*/
-/*                                Component                               */
-/*------------------------------------------------------------------------*/
-const ButtonInputGroup = (props) => {
-    /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
-    /*------------------------------------------------------------------------*/
-    /* -------------- Props ------------- */
-    // Destructure all props
-    const { label, minLabelWidth, children, } = props;
-    /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
-    /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /*                 Main UI                */
-    /*----------------------------------------*/
-    return (React__default.createElement("div", { className: "input-group" },
-        React__default.createElement("div", { className: "input-group-prepend d-flex w-100" },
-            React__default.createElement("span", { className: "input-group-text", style: {
-                    minWidth: (minLabelWidth !== null && minLabelWidth !== void 0 ? minLabelWidth : undefined),
-                    borderTopRightRadius: 0,
-                    borderBottomRightRadius: 0,
-                } }, label),
-            React__default.createElement("span", { className: "input-group-text flex-grow-1 rounded-right", style: {
-                    backgroundColor: 'white',
-                    borderTopLeftRadius: 0,
-                    borderBottomLeftRadius: 0,
-                    borderLeftWidth: 0,
-                } }, children))));
-};
-
-/**
- * Copiable text box
- * @author Gabe Abrams
- */
-/* ------------- Actions ------------ */
-// Types of actions
-var ActionType$1$1;
-(function (ActionType) {
-    // Indicate that the text was recently copied
-    ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
-    // Clear the status
-    ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType$1$1 || (ActionType$1$1 = {}));
-
-/**
- * Reusable nested item picker
- * @author Yuen Ler Chow
- */
-/* ------------- Actions ------------ */
-// Types of actions
-var ActionType$3;
-(function (ActionType) {
-    // Toggle whether the children are being shown
-    ActionType["ToggleItems"] = "toggle-items";
-})(ActionType$3 || (ActionType$3 = {}));
-
-// Keep track of whether or not session expiry has already been handled
-let sessionAlreadyExpired = false;
-/*------------------------------------------------------------------------*/
-/*                               Stub Logic                               */
-/*------------------------------------------------------------------------*/
-// Stored stub responses
-const stubResponses = {};
-/*------------------------------------------------------------------------*/
-/*                                  Main                                  */
-/*------------------------------------------------------------------------*/
-/**
- * Visit an endpoint on the server [for client only]
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.path - the path of the server endpoint
- * @param [opts.method=GET] - the method of the endpoint
- * @param [opts.params] - query/body parameters to include
- * @returns response from server
- */
-const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
-    const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET');
-    // Handle stubs
-    const stubResponse = (_b = stubResponses[method]) === null || _b === void 0 ? void 0 : _b[opts.path];
-    if (stubResponse) {
-        // Remove from list
-        try {
-            stubResponses[method][opts.path] = undefined;
-        }
-        catch (err) {
-            // Ignore
-        }
-        // Success
-        if (stubResponse.success) {
-            return stubResponse.body;
-        }
-        // Error
-        throw new ErrorWithCode(stubResponse.errorMessage, stubResponse.errorCode);
-    }
-    // Send the request
-    const response = yield cacclSendRequest({
-        path: opts.path,
-        method: (_c = opts.method) !== null && _c !== void 0 ? _c : 'GET',
-        params: opts.params,
-    });
-    // Check for failure
-    if (!response || !response.body) {
-        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
-    }
-    if (!response.body.success) {
-        // Session expired
-        if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
-            // Skip notice if session was already expired
-            if (sessionAlreadyExpired) {
-                // Never return (browser is already reloading)
-                yield new Promise(() => {
-                    // Promise that never returns
-                });
-            }
-            sessionAlreadyExpired = true;
-            // Show session expiration message
-            {
-                // Fallback to alert
-                // eslint-disable-next-line no-alert
-                alert('Your session has expired. Please start over.');
-            }
-            // Never return (don't continue execution)
-            yield new Promise(() => {
-                // Promise that never returns
-            });
-        }
-        // Other errors
-        throw new ErrorWithCode((response.body.message
-            || 'An unknown error occurred. Please contact an admin.'), (response.body.code
-            || ReactKitErrorCode$1.NoCode));
-    }
-    // Success! Extract the body
-    const { body } = response.body;
-    // Return
-    return body;
-});
-
-// Import custom error
-// Stored copy of caccl functions
-let _cacclGetLaunchInfo$1;
-/*------------------------------------------------------------------------*/
-/*                                 Helpers                                */
-/*------------------------------------------------------------------------*/
-/**
- * Get launch info via CACCL
- * @author Gabe Abrams
- * @param req express request object
- * @returns object { launched, launchInfo }
- */
-const cacclGetLaunchInfo$1 = (req) => {
-    {
-        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
-    }
-};
-
-/**
- * Server-side API param types
- * @author Gabe Abrams
- */
-var ParamType;
-(function (ParamType) {
-    ParamType["Boolean"] = "boolean";
-    ParamType["BooleanOptional"] = "boolean-optional";
-    ParamType["Float"] = "float";
-    ParamType["FloatOptional"] = "float-optional";
-    ParamType["Int"] = "int";
-    ParamType["IntOptional"] = "int-optional";
-    ParamType["JSON"] = "json";
-    ParamType["JSONOptional"] = "json-optional";
-    ParamType["String"] = "string";
-    ParamType["StringOptional"] = "string-optional";
-})(ParamType || (ParamType = {}));
-var ParamType$1 = ParamType;
-
-// Import shared types
-/**
- * Handle an error and respond to the client
- * @author Gabe Abrams
- * @param res express response
- * @param error error info
- * @param opts.err the error to send to the client
- *   or the error message
- * @param [opts.code] an error code (only used if err.code is not
- *   included)
- * @param [opts.status=500] the https status code to use
- *   defined)
- */
-const handleError$1 = (res, error) => {
-    // Get the error message
-    let message;
-    if (error && error.message) {
-        message = (error.message || 'An unknown error occurred.');
-    }
-    else if (typeof error === 'string') {
-        message = (error.trim().length > 0
-            ? error
-            : 'An unknown error occurred.');
-    }
-    else {
-        message = 'An unknown error occurred.';
-    }
-    // Get the error code
-    const code = (error.code || ReactKitErrorCode$1.NoCode);
-    // Get the status code
-    const status = (error.status || 500);
-    // Respond to user
-    res
-        // Set the http status code
-        .status(status)
-        // Send a JSON response
-        .json({
-        // Error message
-        message,
-        // Error code
-        code,
-        // Success = false flag so client can detect server-side errors
-        success: false,
-    });
-    return undefined;
-};
-
-/**
- * Send successful API response
- * @author Gabe Abrams
- * @param res express response
- * @param body the body of the response to send to the client
- */
-const handleSuccess$1 = (res, body) => {
-    // Send a http 200 json response
-    res.json({
-        // Include the body as a parameter
-        body,
-        // Success = true flag so client can detect successful responses
-        success: true,
-    });
-    return undefined;
-};
-
-/**
- * Generate an express API route handler
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.paramTypes map containing the types for each parameter that is
- *   included in the request (map: param name => type)
- * @param opts.handler function that processes the request
- * @returns express route handler that takes the following arguments:
- *   params (map: param name => value), handleSuccess (function for handling
- *   successful requests), handleError (function for handling failed requests),
- *   req (express request object), res (express response object),
- *   next (express next function). Params also has userId, userFirstName,
- *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
- *   are directly added to the session
- */
-const genRouteHandler$1 = (opts) => {
-    // Return a route handler
-    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
-        // Output params
-        const output = {};
-        /*----------------------------------------*/
-        /*              Parse Params              */
-        /*----------------------------------------*/
-        // Process items one by one
-        const paramList = Object.entries((_a = opts.paramTypes) !== null && _a !== void 0 ? _a : {});
-        for (let i = 0; i < paramList.length; i++) {
-            const [name, type] = paramList[i];
-            // Find the value as a string
-            const value = (req.params[name]
-                || req.query[name]
-                || req.body[name]);
-            // Parse
-            if (type === ParamType$1.Boolean || type === ParamType$1.BooleanOptional) {
-                // Boolean
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.BooleanOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Simplify value
-                    const simpleVal = (String(value)
-                        .trim()
-                        .toLowerCase());
-                    // Parse
-                    output[name] = ([
-                        'true',
-                        'yes',
-                        'y',
-                        '1',
-                        't',
-                    ].indexOf(simpleVal) >= 0);
-                }
-            }
-            else if (type === ParamType$1.Float || type === ParamType$1.FloatOptional) {
-                // Float
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.FloatOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else if (!Number.isNaN(Number.parseFloat(String(value)))) {
-                    // Value is a number
-                    output[name] = Number.parseFloat(String(value));
-                }
-                else {
-                    // Issue!
-                    return handleError$1(res, {
-                        message: `Request data was malformed: ${name} was not a valid float.`,
-                        code: ReactKitErrorCode$1.InvalidParameter,
-                        status: 422,
-                    });
-                }
-            }
-            else if (type === ParamType$1.Int || type === ParamType$1.IntOptional) {
-                // Int
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.IntOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else if (!Number.isNaN(Number.parseInt(String(value), 10))) {
-                    // Value is a number
-                    output[name] = Number.parseInt(String(value), 10);
-                }
-                else {
-                    // Issue!
-                    return handleError$1(res, {
-                        message: `Request data was malformed: ${name} was not a valid int.`,
-                        code: ReactKitErrorCode$1.InvalidParameter,
-                        status: 422,
-                    });
-                }
-            }
-            else if (type === ParamType$1.JSON || type === ParamType$1.JSONOptional) {
-                // Stringified JSON
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.JSONOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Parse
-                    try {
-                        output[name] = JSON.parse(String(value));
-                    }
-                    catch (err) {
-                        return handleError$1(res, {
-                            message: `Request data was malformed: ${name} was not a valid JSON payload.`,
-                            code: ReactKitErrorCode$1.InvalidParameter,
-                            status: 422,
-                        });
-                    }
-                }
-            }
-            else if (type === ParamType$1.String || type === ParamType$1.StringOptional) {
-                // String
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.StringOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError$1(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Leave as is
-                    output[name] = value;
-                }
-            }
-            else {
-                // No valid data type
-                return handleError$1(res, {
-                    message: `An internal error occurred: we could not determine the type of ${name}.`,
-                    code: ReactKitErrorCode$1.InvalidParameter,
-                    status: 422,
-                });
-            }
-        }
-        /*----------------------------------------*/
-        /*               Launch Info              */
-        /*----------------------------------------*/
-        // Get launch info
-        const { launched, launchInfo } = cacclGetLaunchInfo$1(req);
-        if (!launched || !launchInfo) {
-            return handleError$1(res, {
-                message: 'Your session has expired. Please refresh the page and try again.',
-                code: ReactKitErrorCode$1.SessionExpired,
-                status: 440,
-            });
-        }
-        // Error if user info cannot be found
-        if (!launchInfo.userId
-            || !launchInfo.userFirstName
-            || !launchInfo.userLastName
-            || (launchInfo.notInCourse
-                && !launchInfo.isAdmin)
-            || (!launchInfo.isTTM
-                && !launchInfo.isLearner
-                && !launchInfo.isAdmin)) {
-            return handleError$1(res, {
-                message: 'Your session was invalid. Please refresh the page and try again.',
-                code: ReactKitErrorCode$1.SessionExpired,
-                status: 440,
-            });
-        }
-        // Add launch info to output
-        output.userId = launchInfo.userId;
-        output.userFirstName = launchInfo.userFirstName;
-        output.userLastName = launchInfo.userLastName;
-        output.userEmail = launchInfo.userEmail;
-        output.isLearner = !!launchInfo.isLearner;
-        output.isTTM = !!launchInfo.isTTM;
-        output.isAdmin = !!launchInfo.isAdmin;
-        output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
-        output.courseName = launchInfo.contextLabel;
-        // Add other session variables
-        Object.keys(req.session).forEach((propName) => {
-            // Skip if prop already in output
-            if (output[propName] !== undefined) {
-                return;
-            }
-            // Add to output
-            const value = req.session[propName];
-            if (typeof value === 'string'
-                || typeof value === 'boolean'
-                || typeof value === 'number') {
-                output[propName] = value;
-            }
-        });
-        /*----------------------------------------*/
-        /*       Require Course Consistency       */
-        /*----------------------------------------*/
-        // Make sure the user actually launched from the appropriate course
-        if (output.courseId
-            && launchInfo.courseId
-            && output.courseId !== launchInfo.courseId
-            && !output.isTTM
-            && !output.isAdmin) {
-            // Course of interest is not the launch course
-            return handleError$1(res, {
-                message: 'You switched sessions by opening this app in another tab. Please refresh the page and try again.',
-                code: ReactKitErrorCode$1.WrongCourse,
-                status: 401,
-            });
-        }
-        /*----------------------------------------*/
-        /*       Require Proper Permissions       */
-        /*----------------------------------------*/
-        // Add TTM endpoint security
-        if (
-        // This is a TTM endpoint
-        req.path.startsWith('/api/ttm')
-            // User is not a TTM
-            && (
-            // User is not a TTM
-            !output.isTTM
-                // User is not an admin
-                && !output.isAdmin)) {
-            // User does not have access
-            return handleError$1(res, {
-                message: 'This action is only allowed if you are a teaching team member for the course. Please go back to Canvas, log in as a teaching team member, and try again.',
-                code: ReactKitErrorCode$1.NotTTM,
-                status: 401,
-            });
-        }
-        // Add Admin endpoint security
-        if (
-        // This is an admin endpoint
-        req.path.startsWith('/api/admin')
-            // User is not an admin
-            && !output.isAdmin) {
-            // User does not have access
-            return handleError$1(res, {
-                message: 'This action is only allowed if you are a Canvas admin. Please go back to Canvas, log in as an admin, and try again.',
-                code: ReactKitErrorCode$1.NotAdmin,
-                status: 401,
-            });
-        }
-        /*------------------------------------------------------------------------*/
-        /*                              Call handler                              */
-        /*------------------------------------------------------------------------*/
-        try {
-            const results = yield opts.handler({
-                params: output,
-                req,
-                res,
-                next,
-            });
-            // Send results to client
-            handleSuccess$1(res, results !== null && results !== void 0 ? results : undefined);
-        }
-        catch (err) {
-            // Send error to client
-            handleError$1(res, err);
-        }
-    });
-};
-
-/**
- * Days of the week
- * @author Gabe Abrams
- */
-var DayOfWeek$2;
-(function (DayOfWeek) {
-    DayOfWeek["Monday"] = "m";
-    DayOfWeek["Tuesday"] = "t";
-    DayOfWeek["Wednesday"] = "w";
-    DayOfWeek["Thursday"] = "r";
-    DayOfWeek["Friday"] = "f";
-    DayOfWeek["Saturday"] = "s";
-    DayOfWeek["Sunday"] = "u";
-})(DayOfWeek$2 || (DayOfWeek$2 = {}));
 
 /**
  * Options for field types
@@ -40402,11 +39439,11 @@ var CreatableSelect$1 = CreatableSelect;
 // Import React
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$2;
+var ActionType$4;
 (function (ActionType) {
     // Update the input value
     ActionType["SetInputValue"] = "SetInputValue";
-})(ActionType$2 || (ActionType$2 = {}));
+})(ActionType$4 || (ActionType$4 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -40415,7 +39452,7 @@ var ActionType$2;
  */
 const reducer$2 = (state, action) => {
     switch (action.type) {
-        case ActionType$2.SetInputValue: {
+        case ActionType$4.SetInputValue: {
             return Object.assign(Object.assign({}, state), { inputValue: action.value });
         }
         default: {
@@ -40506,7 +39543,7 @@ const CreatableMultiselect = (props) => {
         }
         // resets text field to empty because the values have been added
         dispatch({
-            type: ActionType$2.SetInputValue,
+            type: ActionType$4.SetInputValue,
             value: '',
         });
     };
@@ -40545,7 +39582,7 @@ const CreatableMultiselect = (props) => {
         else {
             // simply update the input value to the new input value
             dispatch({
-                type: ActionType$2.SetInputValue,
+                type: ActionType$4.SetInputValue,
                 value: newValue,
             });
         }
@@ -40596,13 +39633,13 @@ const style = `
 `;
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$1;
+var ActionType$3;
 (function (ActionType) {
     // Update the DBEntry
     ActionType["UpdateDBEntry"] = "UpdateDBEntry";
     // Start the save spinner
     ActionType["StartSave"] = "StartSave";
-})(ActionType$1 || (ActionType$1 = {}));
+})(ActionType$3 || (ActionType$3 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -40611,10 +39648,10 @@ var ActionType$1;
  */
 const reducer$1 = (state, action) => {
     switch (action.type) {
-        case ActionType$1.UpdateDBEntry: {
+        case ActionType$3.UpdateDBEntry: {
             return Object.assign(Object.assign({}, state), { entry: action.dbEntry });
         }
-        case ActionType$1.StartSave: {
+        case ActionType$3.StartSave: {
             return Object.assign(Object.assign({}, state), { saving: true });
         }
         default: {
@@ -40651,7 +39688,7 @@ const AddOrEditDBEntry = (props) => {
      */
     const save = () => __awaiter$1(void 0, void 0, void 0, function* () {
         // Start the save loading indicator
-        dispatch({ type: ActionType$1.StartSave });
+        dispatch({ type: ActionType$3.StartSave });
         // add all default values to the entry
         entryFields.forEach((field) => {
             if (field.defaultValue && !entry[field.objectKey]) {
@@ -40812,7 +39849,7 @@ const AddOrEditDBEntry = (props) => {
                                 return (React__default.createElement(RadioButton, { key: choice.value, text: choice.title, selected: entry[field.objectKey] === choice.value, onSelected: () => {
                                         entry[field.objectKey] = choice.value;
                                         dispatch({
-                                            type: ActionType$1.UpdateDBEntry,
+                                            type: ActionType$3.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -40824,7 +39861,7 @@ const AddOrEditDBEntry = (props) => {
                         React__default.createElement("input", { disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value);
                                 dispatch({
-                                    type: ActionType$1.UpdateDBEntry,
+                                    type: ActionType$3.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -40837,7 +39874,7 @@ const AddOrEditDBEntry = (props) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^0-9]/g, ''));
                                 dispatch({
-                                    type: ActionType$1.UpdateDBEntry,
+                                    type: ActionType$3.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -40867,7 +39904,7 @@ const AddOrEditDBEntry = (props) => {
                                         }
                                         // Save
                                         dispatch({
-                                            type: ActionType$1.UpdateDBEntry,
+                                            type: ActionType$3.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -40882,7 +39919,7 @@ const AddOrEditDBEntry = (props) => {
                                     // Update entry and save
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$1.UpdateDBEntry,
+                                        type: ActionType$3.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -40895,7 +39932,7 @@ const AddOrEditDBEntry = (props) => {
                             React__default.createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.NumberArray, values: entry[field.objectKey] || [], onChange: (values) => {
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$1.UpdateDBEntry,
+                                        type: ActionType$3.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -40950,6 +39987,7 @@ const AddOrEditDBEntry = (props) => {
  * @author Yuen Ler Chow
  * @param collectionName the name of the collection
  * @param [adminsOnly] true if the endpoint is for admins only
+ * @returns the endpoint path
  */
 const generateEndpointPath = (collectionName, adminsOnly) => {
     // Determine prefix based on whether the endpoint is for admins only
@@ -40964,7 +40002,7 @@ const generateEndpointPath = (collectionName, adminsOnly) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType;
+var ActionType$2;
 (function (ActionType) {
     // Show adder
     ActionType["ShowAdder"] = "ShowAdder";
@@ -40978,7 +40016,7 @@ var ActionType;
     ActionType["StartDelete"] = "StartDelete";
     // Finish deletion process
     ActionType["FinishDelete"] = "FinishDelete";
-})(ActionType || (ActionType = {}));
+})(ActionType$2 || (ActionType$2 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -40987,16 +40025,16 @@ var ActionType;
  */
 const reducer = (state, action) => {
     switch (action.type) {
-        case ActionType.FinishLoading: {
+        case ActionType$2.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, dbEntries: action.dbEntries });
         }
-        case ActionType.ShowAdder: {
+        case ActionType$2.ShowAdder: {
             return Object.assign(Object.assign({}, state), { adding: true, dbEntryToEdit: undefined });
         }
-        case ActionType.ShowEditor: {
+        case ActionType$2.ShowEditor: {
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: action.dbEntry });
         }
-        case ActionType.FinishAdd: {
+        case ActionType$2.FinishAdd: {
             // Handle cancel
             const finishedEntry = action.dbEntry;
             if (!finishedEntry) {
@@ -41020,10 +40058,10 @@ const reducer = (state, action) => {
             // Update the state
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: undefined, dbEntries: updatedDbEntries });
         }
-        case ActionType.StartDelete: {
+        case ActionType$2.StartDelete: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType.FinishDelete: {
+        case ActionType$2.FinishDelete: {
             return Object.assign(Object.assign({}, state), { loading: false, 
                 // Remove the deleted entry from the list
                 dbEntries: state.dbEntries.filter((entry) => {
@@ -41075,22 +40113,22 @@ const DBEntryManagerPanel = (props) => {
         try {
             // Start loader
             dispatch({
-                type: ActionType.StartDelete,
+                type: ActionType$2.StartDelete,
             });
             // Perform deletion
-            yield visitServerEndpoint$1({
+            yield visitServerEndpoint({
                 path: `${endpoint}/${entry[idPropName]}`,
                 method: 'DELETE',
             });
             // Finish loader
             dispatch({
-                type: ActionType.FinishDelete,
+                type: ActionType$2.FinishDelete,
                 dbEntry: entry,
                 idPropName,
             });
         }
         catch (err) {
-            return showFatalError$1(err);
+            return showFatalError(err);
         }
     });
     /*------------------------------------------------------------------------*/
@@ -41104,7 +40142,7 @@ const DBEntryManagerPanel = (props) => {
         (() => __awaiter$1(void 0, void 0, void 0, function* () {
             // Load list of database entries
             try {
-                const data = yield visitServerEndpoint$1({
+                const data = yield visitServerEndpoint({
                     path: endpoint,
                     method: 'GET',
                     params: {
@@ -41113,12 +40151,12 @@ const DBEntryManagerPanel = (props) => {
                 });
                 // Save loaded data
                 dispatch({
-                    type: ActionType.FinishLoading,
+                    type: ActionType$2.FinishLoading,
                     dbEntries: data,
                 });
             }
             catch (err) {
-                return showFatalError$1(err);
+                return showFatalError(err);
             }
         }))();
     }, []);
@@ -41131,7 +40169,7 @@ const DBEntryManagerPanel = (props) => {
     let body;
     /* ------------- Loading ------------ */
     if (loading) {
-        body = (React__default.createElement(LoadingSpinner$1, null));
+        body = (React__default.createElement(LoadingSpinner, null));
     }
     /* ------------- List of entries ------------ */
     if (!loading && !adding && !dbEntryToEdit) {
@@ -41156,7 +40194,7 @@ const DBEntryManagerPanel = (props) => {
                                 React__default.createElement("span", { className: "d-none d-md-inline ms-1" }, "Remove")),
                             !disableEdit && (React__default.createElement("button", { type: "button", id: `DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
                                     dispatch({
-                                        type: ActionType.ShowEditor,
+                                        type: ActionType$2.ShowEditor,
                                         dbEntry: entry,
                                     });
                                 } },
@@ -41166,7 +40204,7 @@ const DBEntryManagerPanel = (props) => {
                 React__default.createElement("div", { className: "d-grid" },
                     React__default.createElement("button", { type: "button", id: "DBEntryManagerPanel-add-entry", className: "btn btn-lg btn-primary", "aria-label": `add a new ${itemName} entry to the list of entries`, onClick: () => {
                             dispatch({
-                                type: ActionType.ShowAdder,
+                                type: ActionType$2.ShowAdder,
                             });
                         } },
                         React__default.createElement(FontAwesomeIcon, { icon: faPlus, className: "me-2" }),
@@ -41178,7 +40216,7 @@ const DBEntryManagerPanel = (props) => {
     if (!loading && (adding || dbEntryToEdit)) {
         body = (React__default.createElement(AddOrEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, onFinished: (entry) => {
                 dispatch({
-                    type: ActionType.FinishAdd,
+                    type: ActionType$2.FinishAdd,
                     dbEntry: entry,
                     idPropName,
                 });
@@ -41401,7 +40439,7 @@ const padZerosLeft = (num, numDigits) => {
 const LOG_REVIEW_STATUS_ROUTE = `${ROUTE_PATH_PREFIX}/logs/access_allowed`;
 
 // Stored copy of caccl functions
-let _cacclGetLaunchInfo;
+let _cacclGetLaunchInfo$1;
 // Stored copy of dce-mango log collection
 let _logCollection;
 /*------------------------------------------------------------------------*/
@@ -41413,11 +40451,11 @@ let _logCollection;
  * @param req express request object
  * @returns object { launched, launchInfo }
  */
-const cacclGetLaunchInfo = (req) => {
-    if (!_cacclGetLaunchInfo) {
+const cacclGetLaunchInfo$1 = (req) => {
+    if (!_cacclGetLaunchInfo$1) {
         throw new ErrorWithCode$1('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$3.NoCACCLGetLaunchInfoFunction);
     }
-    return _cacclGetLaunchInfo(req);
+    return _cacclGetLaunchInfo$1(req);
 };
 /**
  * Get log collection
@@ -41449,7 +40487,7 @@ const internalGetLogCollection = () => {
  *   to review logs
  */
 const initServer = (opts) => {
-    _cacclGetLaunchInfo = opts.getLaunchInfo;
+    _cacclGetLaunchInfo$1 = opts.getLaunchInfo;
     _logCollection = opts.logCollection;
     /*----------------------------------------*/
     /*                Logging                 */
@@ -41473,7 +40511,7 @@ const initServer = (opts) => {
      * @param {LogAction} [action] the type of action performed on the target
      * @returns {Log}
      */
-    opts.app.post(LOG_ROUTE_PATH, genRouteHandler({
+    opts.app.post(LOG_ROUTE_PATH, genRouteHandler$1({
         paramTypes: {
             context: ParamType$3.String,
             subcontext: ParamType$3.String,
@@ -41562,7 +40600,7 @@ const initServer = (opts) => {
      * @author Gabe Abrams
      * @returns {boolean} true if user has access
      */
-    opts.app.get(LOG_REVIEW_STATUS_ROUTE, genRouteHandler({
+    opts.app.get(LOG_REVIEW_STATUS_ROUTE, genRouteHandler$1({
         handler: ({ params }) => __awaiter$1(void 0, void 0, void 0, function* () {
             const { userId, isAdmin } = params;
             const canReview = yield canReviewLogs(userId, isAdmin);
@@ -41576,7 +40614,7 @@ const initServer = (opts) => {
      * @param {number} month the month to query (e.g. 1 = January)
      * @returns {Log[]} list of logs from the given month
      */
-    opts.app.get(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler({
+    opts.app.get(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler$1({
         paramTypes: {
             year: ParamType$3.Int,
             month: ParamType$3.Int,
@@ -41613,7 +40651,7 @@ const initServer = (opts) => {
  * @param [opts.status=500] the https status code to use
  *   defined)
  */
-const handleError = (res, error) => {
+const handleError$1 = (res, error) => {
     // Get the error message
     let message;
     if (error && error.message) {
@@ -41653,7 +40691,7 @@ const handleError = (res, error) => {
  * @param res express response
  * @param body the body of the response to send to the client
  */
-const handleSuccess = (res, body) => {
+const handleSuccess$1 = (res, body) => {
     // Send a http 200 json response
     res.json({
         // Include the body as a parameter
@@ -41919,7 +40957,7 @@ const parseUserAgent = (userAgent) => {
  *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
  *   are directly added to the session, if the user does have a session.
  */
-const genRouteHandler = (opts) => {
+const genRouteHandler$1 = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter$1(void 0, void 0, void 0, function* () {
         var _a, _b;
@@ -41945,7 +40983,7 @@ const genRouteHandler = (opts) => {
                         output[name] = undefined;
                     }
                     else {
-                        return handleError(res, {
+                        return handleError$1(res, {
                             message: `Parameter ${name} is required, but it was not included.`,
                             code: ReactKitErrorCode$3.MissingParameter,
                             status: 422,
@@ -41976,7 +41014,7 @@ const genRouteHandler = (opts) => {
                         output[name] = undefined;
                     }
                     else {
-                        return handleError(res, {
+                        return handleError$1(res, {
                             message: `Parameter ${name} is required, but it was not included.`,
                             code: ReactKitErrorCode$3.MissingParameter,
                             status: 422,
@@ -41989,7 +41027,7 @@ const genRouteHandler = (opts) => {
                 }
                 else {
                     // Issue!
-                    return handleError(res, {
+                    return handleError$1(res, {
                         message: `Request data was malformed: ${name} was not a valid float.`,
                         code: ReactKitErrorCode$3.InvalidParameter,
                         status: 422,
@@ -42004,7 +41042,7 @@ const genRouteHandler = (opts) => {
                         output[name] = undefined;
                     }
                     else {
-                        return handleError(res, {
+                        return handleError$1(res, {
                             message: `Parameter ${name} is required, but it was not included.`,
                             code: ReactKitErrorCode$3.MissingParameter,
                             status: 422,
@@ -42017,7 +41055,7 @@ const genRouteHandler = (opts) => {
                 }
                 else {
                     // Issue!
-                    return handleError(res, {
+                    return handleError$1(res, {
                         message: `Request data was malformed: ${name} was not a valid int.`,
                         code: ReactKitErrorCode$3.InvalidParameter,
                         status: 422,
@@ -42032,7 +41070,7 @@ const genRouteHandler = (opts) => {
                         output[name] = undefined;
                     }
                     else {
-                        return handleError(res, {
+                        return handleError$1(res, {
                             message: `Parameter ${name} is required, but it was not included.`,
                             code: ReactKitErrorCode$3.MissingParameter,
                             status: 422,
@@ -42046,7 +41084,7 @@ const genRouteHandler = (opts) => {
                         output[name] = JSON.parse(String(value));
                     }
                     catch (err) {
-                        return handleError(res, {
+                        return handleError$1(res, {
                             message: `Request data was malformed: ${name} was not a valid JSON payload.`,
                             code: ReactKitErrorCode$3.InvalidParameter,
                             status: 422,
@@ -42062,7 +41100,7 @@ const genRouteHandler = (opts) => {
                         output[name] = undefined;
                     }
                     else {
-                        return handleError(res, {
+                        return handleError$1(res, {
                             message: `Parameter ${name} is required, but it was not included.`,
                             code: ReactKitErrorCode$3.MissingParameter,
                             status: 422,
@@ -42077,7 +41115,7 @@ const genRouteHandler = (opts) => {
             }
             else {
                 // No valid data type
-                return handleError(res, {
+                return handleError$1(res, {
                     message: `An internal error occurred: we could not determine the type of ${name}.`,
                     code: ReactKitErrorCode$3.InvalidParameter,
                     status: 422,
@@ -42088,13 +41126,13 @@ const genRouteHandler = (opts) => {
         /*               Launch Info              */
         /*----------------------------------------*/
         // Get launch info
-        const { launched, launchInfo } = cacclGetLaunchInfo(req);
+        const { launched, launchInfo } = cacclGetLaunchInfo$1(req);
         if (
         // Not launched
         (!launched || !launchInfo)
             // Not skipping the session check
             && !opts.skipSessionCheck) {
-            return handleError(res, {
+            return handleError$1(res, {
                 message: 'Your session has expired. Please refresh the page and try again.',
                 code: ReactKitErrorCode$3.SessionExpired,
                 status: 401,
@@ -42114,7 +41152,7 @@ const genRouteHandler = (opts) => {
                 && !launchInfo.isAdmin))
             // Not skipping the session check
             && !opts.skipSessionCheck) {
-            return handleError(res, {
+            return handleError$1(res, {
                 message: 'Your session was invalid. Please refresh the page and try again.',
                 code: ReactKitErrorCode$3.SessionExpired,
                 status: 401,
@@ -42173,7 +41211,7 @@ const genRouteHandler = (opts) => {
             && !output.isTTM
             && !output.isAdmin) {
             // Course of interest is not the launch course
-            return handleError(res, {
+            return handleError$1(res, {
                 message: 'You switched sessions by opening this app in another tab. Please refresh the page and try again.',
                 code: ReactKitErrorCode$3.WrongCourse,
                 status: 401,
@@ -42193,7 +41231,7 @@ const genRouteHandler = (opts) => {
                 // User is not an admin
                 && !output.isAdmin)) {
             // User does not have access
-            return handleError(res, {
+            return handleError$1(res, {
                 message: 'This action is only allowed if you are a teaching team member for the course. Please go back to Canvas, log in as a teaching team member, and try again.',
                 code: ReactKitErrorCode$3.NotTTM,
                 status: 401,
@@ -42206,7 +41244,7 @@ const genRouteHandler = (opts) => {
             // User is not an admin
             && !output.isAdmin) {
             // User does not have access
-            return handleError(res, {
+            return handleError$1(res, {
                 message: 'This action is only allowed if you are a Canvas admin. Please go back to Canvas, log in as an admin, and try again.',
                 code: ReactKitErrorCode$3.NotAdmin,
                 status: 401,
@@ -42424,13 +41462,13 @@ const genRouteHandler = (opts) => {
             });
             // Send results to client (only if next wasn't called)
             if (!responseSent) {
-                return handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
+                return handleSuccess$1(res, results !== null && results !== void 0 ? results : undefined);
             }
         }
         catch (err) {
             // Send error to client (only if next wasn't called)
             if (!responseSent) {
-                handleError(res, err);
+                handleError$1(res, err);
                 // Log server-side error
                 logServerEvent({
                     context: LogBuiltInMetadata.Context.ServerEndpointError,
@@ -42627,7 +41665,7 @@ const canReviewLogs = () => __awaiter$1(void 0, void 0, void 0, function* () {
     }
     // Ask on server
     try {
-        canReview = !!(yield visitServerEndpoint$1({
+        canReview = !!(yield visitServerEndpoint({
             path: LOG_REVIEW_STATUS_ROUTE,
             method: 'GET',
         }));
@@ -42734,6 +41772,649 @@ const getLocalTimeInfo = (dateOrTimestamp) => {
     };
 };
 
+/******************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+// Highest error code = DRK10
+/**
+ * List of error codes built into the react kit
+ * @author Gabe Abrams
+ */
+var ReactKitErrorCode;
+(function (ReactKitErrorCode) {
+    ReactKitErrorCode["NoResponse"] = "DRK1";
+    ReactKitErrorCode["NoCode"] = "DRK2";
+    ReactKitErrorCode["SessionExpired"] = "DRK3";
+    ReactKitErrorCode["MissingParameter"] = "DRK4";
+    ReactKitErrorCode["InvalidParameter"] = "DRK5";
+    ReactKitErrorCode["WrongCourse"] = "DRK6";
+    ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
+    ReactKitErrorCode["NoCACCLGetLaunchInfoFunction"] = "DRK8";
+    ReactKitErrorCode["NotTTM"] = "DRK9";
+    ReactKitErrorCode["NotAdmin"] = "DRK10";
+})(ReactKitErrorCode || (ReactKitErrorCode = {}));
+var ReactKitErrorCode$1 = ReactKitErrorCode;
+
+/**
+ * Types of buttons in the modal
+ * @author Gabe Abrams
+ */
+var ModalButtonType;
+(function (ModalButtonType) {
+    ModalButtonType["Okay"] = "okay";
+    ModalButtonType["Cancel"] = "cancel";
+    ModalButtonType["Yes"] = "yes";
+    ModalButtonType["No"] = "no";
+    ModalButtonType["Abandon"] = "abandon";
+    ModalButtonType["GoBack"] = "goBack";
+    ModalButtonType["Continue"] = "continue";
+    ModalButtonType["ImSure"] = "imSure";
+    ModalButtonType["Delete"] = "delete";
+    ModalButtonType["Confirm"] = "confirm";
+})(ModalButtonType || (ModalButtonType = {}));
+var ModalButtonType$1 = ModalButtonType;
+
+/**
+ * Types of modals
+ * @author Gabe Abrams
+ */
+var ModalType;
+(function (ModalType) {
+    ModalType["Okay"] = "okay";
+    ModalType["OkayCancel"] = "okay-cancel";
+    ModalType["YesNo"] = "yes-no";
+    ModalType["YesNoCancel"] = "yes-no-cancel";
+    ModalType["AbandonGoBack"] = "abandon-goBack";
+    ModalType["ImSureCancel"] = "imSure-cancel";
+    ModalType["DeleteCancel"] = "delete-cancel";
+    ModalType["ConfirmCancel"] = "confirm-cancel";
+    ModalType["NoButtons"] = "-";
+})(ModalType || (ModalType = {}));
+var ModalType$1 = ModalType;
+
+/**
+ * Bootstrap variants
+ * @author Gabe Abrams
+ */
+var Variant;
+(function (Variant) {
+    Variant["Primary"] = "primary";
+    Variant["Secondary"] = "secondary";
+    Variant["Success"] = "success";
+    Variant["Warning"] = "warning";
+    Variant["Info"] = "info";
+    Variant["Danger"] = "danger";
+    Variant["Light"] = "light";
+    Variant["Dark"] = "dark";
+})(Variant || (Variant = {}));
+var Variant$1 = Variant;
+
+/**
+ * Modal sizes
+ * @author Gabe Abrams
+ */
+var ModalSize;
+(function (ModalSize) {
+    ModalSize["Small"] = "sm";
+    ModalSize["Medium"] = "md";
+    ModalSize["Large"] = "lg";
+    ModalSize["ExtraLarge"] = "xl";
+})(ModalSize || (ModalSize = {}));
+// Modal type to list of buttons
+({
+    [ModalType$1.Okay]: [
+        ModalButtonType$1.Okay,
+    ],
+    [ModalType$1.OkayCancel]: [
+        ModalButtonType$1.Okay,
+        ModalButtonType$1.Cancel,
+    ],
+    [ModalType$1.YesNo]: [
+        ModalButtonType$1.Yes,
+        ModalButtonType$1.No,
+    ],
+    [ModalType$1.YesNoCancel]: [
+        ModalButtonType$1.Yes,
+        ModalButtonType$1.No,
+        ModalButtonType$1.Cancel,
+    ],
+    [ModalType$1.AbandonGoBack]: [
+        ModalButtonType$1.Abandon,
+        ModalButtonType$1.GoBack,
+    ],
+    [ModalType$1.ImSureCancel]: [
+        ModalButtonType$1.ImSure,
+        ModalButtonType$1.Cancel,
+    ],
+    [ModalType$1.DeleteCancel]: [
+        ModalButtonType$1.Delete,
+        ModalButtonType$1.Cancel,
+    ],
+    [ModalType$1.ConfirmCancel]: [
+        ModalButtonType$1.Confirm,
+        ModalButtonType$1.Cancel,
+    ],
+});
+// Button type styling and labels
+({
+    [ModalButtonType$1.Okay]: {
+        label: 'Okay',
+        variant: Variant$1.Dark,
+    },
+    [ModalButtonType$1.Cancel]: {
+        label: 'Cancel',
+        variant: Variant$1.Secondary,
+    },
+    [ModalButtonType$1.Yes]: {
+        label: 'Yes',
+        variant: Variant$1.Dark,
+    },
+    [ModalButtonType$1.No]: {
+        label: 'No',
+        variant: Variant$1.Secondary,
+    },
+    [ModalButtonType$1.Abandon]: {
+        label: 'Abandon Changes',
+        variant: Variant$1.Warning,
+    },
+    [ModalButtonType$1.GoBack]: {
+        label: 'Go Back',
+        variant: Variant$1.Secondary,
+    },
+    [ModalButtonType$1.Continue]: {
+        label: 'Continue',
+        variant: Variant$1.Dark,
+    },
+    [ModalButtonType$1.ImSure]: {
+        label: 'I am sure',
+        variant: Variant$1.Warning,
+    },
+    [ModalButtonType$1.Delete]: {
+        label: 'Yes, Delete',
+        variant: Variant$1.Danger,
+    },
+    [ModalButtonType$1.Confirm]: {
+        label: 'Confirm',
+        variant: Variant$1.Dark,
+    },
+});
+
+/**
+ * An error with a code
+ * @author Gabe Abrams
+ */
+class ErrorWithCode extends Error {
+    constructor(message, code) {
+        super(message);
+        this.name = 'ErrorWithCode';
+        this.code = code;
+    }
+}
+
+/**
+ * Copiable text box
+ * @author Gabe Abrams
+ */
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType$1;
+(function (ActionType) {
+    // Indicate that the text was recently copied
+    ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
+    // Clear the status
+    ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
+})(ActionType$1 || (ActionType$1 = {}));
+
+/**
+ * Reusable nested item picker
+ * @author Yuen Ler Chow
+ */
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType;
+(function (ActionType) {
+    // Toggle whether the children are being shown
+    ActionType["ToggleItems"] = "toggle-items";
+})(ActionType || (ActionType = {}));
+
+// Import custom error
+// Stored copy of caccl functions
+let _cacclGetLaunchInfo;
+/*------------------------------------------------------------------------*/
+/*                                 Helpers                                */
+/*------------------------------------------------------------------------*/
+/**
+ * Get launch info via CACCL
+ * @author Gabe Abrams
+ * @param req express request object
+ * @returns object { launched, launchInfo }
+ */
+const cacclGetLaunchInfo = (req) => {
+    {
+        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
+    }
+};
+
+/**
+ * Server-side API param types
+ * @author Gabe Abrams
+ */
+var ParamType;
+(function (ParamType) {
+    ParamType["Boolean"] = "boolean";
+    ParamType["BooleanOptional"] = "boolean-optional";
+    ParamType["Float"] = "float";
+    ParamType["FloatOptional"] = "float-optional";
+    ParamType["Int"] = "int";
+    ParamType["IntOptional"] = "int-optional";
+    ParamType["JSON"] = "json";
+    ParamType["JSONOptional"] = "json-optional";
+    ParamType["String"] = "string";
+    ParamType["StringOptional"] = "string-optional";
+})(ParamType || (ParamType = {}));
+var ParamType$1 = ParamType;
+
+// Import shared types
+/**
+ * Handle an error and respond to the client
+ * @author Gabe Abrams
+ * @param res express response
+ * @param error error info
+ * @param opts.err the error to send to the client
+ *   or the error message
+ * @param [opts.code] an error code (only used if err.code is not
+ *   included)
+ * @param [opts.status=500] the https status code to use
+ *   defined)
+ */
+const handleError = (res, error) => {
+    // Get the error message
+    let message;
+    if (error && error.message) {
+        message = (error.message || 'An unknown error occurred.');
+    }
+    else if (typeof error === 'string') {
+        message = (error.trim().length > 0
+            ? error
+            : 'An unknown error occurred.');
+    }
+    else {
+        message = 'An unknown error occurred.';
+    }
+    // Get the error code
+    const code = (error.code || ReactKitErrorCode$1.NoCode);
+    // Get the status code
+    const status = (error.status || 500);
+    // Respond to user
+    res
+        // Set the http status code
+        .status(status)
+        // Send a JSON response
+        .json({
+        // Error message
+        message,
+        // Error code
+        code,
+        // Success = false flag so client can detect server-side errors
+        success: false,
+    });
+    return undefined;
+};
+
+/**
+ * Send successful API response
+ * @author Gabe Abrams
+ * @param res express response
+ * @param body the body of the response to send to the client
+ */
+const handleSuccess = (res, body) => {
+    // Send a http 200 json response
+    res.json({
+        // Include the body as a parameter
+        body,
+        // Success = true flag so client can detect successful responses
+        success: true,
+    });
+    return undefined;
+};
+
+/**
+ * Generate an express API route handler
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.paramTypes map containing the types for each parameter that is
+ *   included in the request (map: param name => type)
+ * @param opts.handler function that processes the request
+ * @returns express route handler that takes the following arguments:
+ *   params (map: param name => value), handleSuccess (function for handling
+ *   successful requests), handleError (function for handling failed requests),
+ *   req (express request object), res (express response object),
+ *   next (express next function). Params also has userId, userFirstName,
+ *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
+ *   are directly added to the session
+ */
+const genRouteHandler = (opts) => {
+    // Return a route handler
+    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        // Output params
+        const output = {};
+        /*----------------------------------------*/
+        /*              Parse Params              */
+        /*----------------------------------------*/
+        // Process items one by one
+        const paramList = Object.entries((_a = opts.paramTypes) !== null && _a !== void 0 ? _a : {});
+        for (let i = 0; i < paramList.length; i++) {
+            const [name, type] = paramList[i];
+            // Find the value as a string
+            const value = (req.params[name]
+                || req.query[name]
+                || req.body[name]);
+            // Parse
+            if (type === ParamType$1.Boolean || type === ParamType$1.BooleanOptional) {
+                // Boolean
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.BooleanOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Simplify value
+                    const simpleVal = (String(value)
+                        .trim()
+                        .toLowerCase());
+                    // Parse
+                    output[name] = ([
+                        'true',
+                        'yes',
+                        'y',
+                        '1',
+                        't',
+                    ].indexOf(simpleVal) >= 0);
+                }
+            }
+            else if (type === ParamType$1.Float || type === ParamType$1.FloatOptional) {
+                // Float
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.FloatOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else if (!Number.isNaN(Number.parseFloat(String(value)))) {
+                    // Value is a number
+                    output[name] = Number.parseFloat(String(value));
+                }
+                else {
+                    // Issue!
+                    return handleError(res, {
+                        message: `Request data was malformed: ${name} was not a valid float.`,
+                        code: ReactKitErrorCode$1.InvalidParameter,
+                        status: 422,
+                    });
+                }
+            }
+            else if (type === ParamType$1.Int || type === ParamType$1.IntOptional) {
+                // Int
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.IntOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else if (!Number.isNaN(Number.parseInt(String(value), 10))) {
+                    // Value is a number
+                    output[name] = Number.parseInt(String(value), 10);
+                }
+                else {
+                    // Issue!
+                    return handleError(res, {
+                        message: `Request data was malformed: ${name} was not a valid int.`,
+                        code: ReactKitErrorCode$1.InvalidParameter,
+                        status: 422,
+                    });
+                }
+            }
+            else if (type === ParamType$1.JSON || type === ParamType$1.JSONOptional) {
+                // Stringified JSON
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.JSONOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Parse
+                    try {
+                        output[name] = JSON.parse(String(value));
+                    }
+                    catch (err) {
+                        return handleError(res, {
+                            message: `Request data was malformed: ${name} was not a valid JSON payload.`,
+                            code: ReactKitErrorCode$1.InvalidParameter,
+                            status: 422,
+                        });
+                    }
+                }
+            }
+            else if (type === ParamType$1.String || type === ParamType$1.StringOptional) {
+                // String
+                // Handle case where value doesn't exist
+                if (value === undefined) {
+                    if (type === ParamType$1.StringOptional) {
+                        output[name] = undefined;
+                    }
+                    else {
+                        return handleError(res, {
+                            message: `Parameter ${name} is required, but it was not included.`,
+                            code: ReactKitErrorCode$1.MissingParameter,
+                            status: 422,
+                        });
+                    }
+                }
+                else {
+                    // Value exists
+                    // Leave as is
+                    output[name] = value;
+                }
+            }
+            else {
+                // No valid data type
+                return handleError(res, {
+                    message: `An internal error occurred: we could not determine the type of ${name}.`,
+                    code: ReactKitErrorCode$1.InvalidParameter,
+                    status: 422,
+                });
+            }
+        }
+        /*----------------------------------------*/
+        /*               Launch Info              */
+        /*----------------------------------------*/
+        // Get launch info
+        const { launched, launchInfo } = cacclGetLaunchInfo(req);
+        if (!launched || !launchInfo) {
+            return handleError(res, {
+                message: 'Your session has expired. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.SessionExpired,
+                status: 440,
+            });
+        }
+        // Error if user info cannot be found
+        if (!launchInfo.userId
+            || !launchInfo.userFirstName
+            || !launchInfo.userLastName
+            || (launchInfo.notInCourse
+                && !launchInfo.isAdmin)
+            || (!launchInfo.isTTM
+                && !launchInfo.isLearner
+                && !launchInfo.isAdmin)) {
+            return handleError(res, {
+                message: 'Your session was invalid. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.SessionExpired,
+                status: 440,
+            });
+        }
+        // Add launch info to output
+        output.userId = launchInfo.userId;
+        output.userFirstName = launchInfo.userFirstName;
+        output.userLastName = launchInfo.userLastName;
+        output.userEmail = launchInfo.userEmail;
+        output.isLearner = !!launchInfo.isLearner;
+        output.isTTM = !!launchInfo.isTTM;
+        output.isAdmin = !!launchInfo.isAdmin;
+        output.courseId = ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId);
+        output.courseName = launchInfo.contextLabel;
+        // Add other session variables
+        Object.keys(req.session).forEach((propName) => {
+            // Skip if prop already in output
+            if (output[propName] !== undefined) {
+                return;
+            }
+            // Add to output
+            const value = req.session[propName];
+            if (typeof value === 'string'
+                || typeof value === 'boolean'
+                || typeof value === 'number') {
+                output[propName] = value;
+            }
+        });
+        /*----------------------------------------*/
+        /*       Require Course Consistency       */
+        /*----------------------------------------*/
+        // Make sure the user actually launched from the appropriate course
+        if (output.courseId
+            && launchInfo.courseId
+            && output.courseId !== launchInfo.courseId
+            && !output.isTTM
+            && !output.isAdmin) {
+            // Course of interest is not the launch course
+            return handleError(res, {
+                message: 'You switched sessions by opening this app in another tab. Please refresh the page and try again.',
+                code: ReactKitErrorCode$1.WrongCourse,
+                status: 401,
+            });
+        }
+        /*----------------------------------------*/
+        /*       Require Proper Permissions       */
+        /*----------------------------------------*/
+        // Add TTM endpoint security
+        if (
+        // This is a TTM endpoint
+        req.path.startsWith('/api/ttm')
+            // User is not a TTM
+            && (
+            // User is not a TTM
+            !output.isTTM
+                // User is not an admin
+                && !output.isAdmin)) {
+            // User does not have access
+            return handleError(res, {
+                message: 'This action is only allowed if you are a teaching team member for the course. Please go back to Canvas, log in as a teaching team member, and try again.',
+                code: ReactKitErrorCode$1.NotTTM,
+                status: 401,
+            });
+        }
+        // Add Admin endpoint security
+        if (
+        // This is an admin endpoint
+        req.path.startsWith('/api/admin')
+            // User is not an admin
+            && !output.isAdmin) {
+            // User does not have access
+            return handleError(res, {
+                message: 'This action is only allowed if you are a Canvas admin. Please go back to Canvas, log in as an admin, and try again.',
+                code: ReactKitErrorCode$1.NotAdmin,
+                status: 401,
+            });
+        }
+        /*------------------------------------------------------------------------*/
+        /*                              Call handler                              */
+        /*------------------------------------------------------------------------*/
+        try {
+            const results = yield opts.handler({
+                params: output,
+                req,
+                res,
+                next,
+            });
+            // Send results to client
+            handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
+        }
+        catch (err) {
+            // Send error to client
+            handleError(res, err);
+        }
+    });
+};
+
+/**
+ * Days of the week
+ * @author Gabe Abrams
+ */
+var DayOfWeek$2;
+(function (DayOfWeek) {
+    DayOfWeek["Monday"] = "m";
+    DayOfWeek["Tuesday"] = "t";
+    DayOfWeek["Wednesday"] = "w";
+    DayOfWeek["Thursday"] = "r";
+    DayOfWeek["Friday"] = "f";
+    DayOfWeek["Saturday"] = "s";
+    DayOfWeek["Sunday"] = "u";
+})(DayOfWeek$2 || (DayOfWeek$2 = {}));
+
 /**
  * Add all routes for the DBEditor
  * @author Yuen Ler Chow
@@ -42750,7 +42431,7 @@ const addDBEditorEndpoints = (opts) => {
      * @author Yuen Ler Chow
      * @returns {any[]} the list of items in the collection
      */
-    app.get(endpointPath, genRouteHandler$1({
+    app.get(endpointPath, genRouteHandler({
         paramTypes: {
             filterQuery: ParamType$1.JSONOptional,
         },
@@ -42766,7 +42447,7 @@ const addDBEditorEndpoints = (opts) => {
      * @author Yuen Ler Chow
      * @param {any} item the item to create
      */
-    app.post(endpointPath, genRouteHandler$1({
+    app.post(endpointPath, genRouteHandler({
         paramTypes: {
             item: ParamType$1.JSON,
         },
@@ -42780,7 +42461,7 @@ const addDBEditorEndpoints = (opts) => {
      * Remove an item from the collection by id
      * @author Yuen Ler Chow
      */
-    app.delete(`${endpointPath}/:id`, genRouteHandler$1({
+    app.delete(`${endpointPath}/:id`, genRouteHandler({
         paramTypes: {
             id: ParamType$1.String,
         },
@@ -42808,5 +42489,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, ButtonInputGroup$1 as ButtonInputGroup, CSVDownloadButton, CheckboxButton$1 as CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode$1 as ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner$1 as LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$3 as ModalButtonType, ModalSize$2 as ModalSize, ModalType$3 as ModalType, ParamType$3 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton$1 as RadioButton, ReactKitErrorCode$3 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$3 as Variant, abbreviate, addDBEditorEndpoints, alert$2 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError$1 as showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint$1 as visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode$1 as ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$3 as ModalButtonType, ModalSize$2 as ModalSize, ModalType$3 as ModalType, ParamType$3 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$3 as ReactKitErrorCode, SimpleDateChooser, TabBox, Variant$3 as Variant, abbreviate, addDBEditorEndpoints, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler$1 as genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError$1 as handleError, handleSuccess$1 as handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map
