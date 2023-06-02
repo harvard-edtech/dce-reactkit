@@ -553,22 +553,17 @@ let storedSendRequest;
  * @returns sendRequest function
  */
 const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
-    // Track timeout
-    let timedOut = false;
+    // Show timeout error if too much time passes
+    let successful = false;
     (() => __awaiter(void 0, void 0, void 0, function* () {
         yield waitMs(5000);
-        timedOut = true;
+        if (!successful) {
+            showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
+        }
     }))(),
         // Wait for initialization
         yield initialized;
-    // Error if no send request function
-    if (timedOut) {
-        showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
-        // Return dummy function that never resolves
-        return (() => {
-            return new Promise(() => { });
-        });
-    }
+    successful = true;
     // Return
     return storedSendRequest;
 });
