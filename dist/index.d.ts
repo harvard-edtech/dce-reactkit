@@ -25,8 +25,27 @@ declare enum Variant {
 
 declare type Props$h = {
     children: React.ReactNode;
+    sendRequest: SendRequestFunction$1;
     dark?: boolean;
+    sessionExpiredMessage?: string;
 };
+declare type SendRequestFunction$1 = (opts: {
+    path: string;
+    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
+    params?: {
+        [x: string]: any;
+    } | undefined;
+    headers?: {
+        [x: string]: any;
+    } | undefined;
+    numRetries?: number | undefined;
+}) => Promise<{
+    body: any;
+    status: number;
+    headers: {
+        [x: string]: any;
+    };
+}>;
 /**
  * Show an alert modal with an "Okay" button
  * @author Gabe Abrams
