@@ -196,7 +196,6 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
    * @param event keyboard event
    */
   const handleKeyDown: KeyboardEventHandler = (event) => {
-    event.preventDefault();
 
     // Skip if no input value
     if (!inputValue) {
@@ -205,6 +204,7 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
 
     // Add values if enter or tab is pressed
     if (['Enter', 'Tab'].includes(event.key)) {
+      event.preventDefault();
       addValues(inputValue);
     }
   };
