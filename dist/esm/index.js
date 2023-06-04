@@ -145,6 +145,24 @@ var ModalType;
 var ModalType$1 = ModalType;
 
 /**
+ * Built-in metadata for logs
+ * @author Gabe Abrams
+ */
+const LogBuiltInMetadata = {
+    // Contexts
+    Context: {
+        Uncategorized: 'Uncategorized',
+        ServerRenderedErrorPage: 'ServerRenderedErrorPage',
+        ServerEndpointError: 'ServerEndpointError',
+        ClientFatalError: 'ClientFatalError',
+    },
+    // Targets
+    Target: {
+        NoTarget: 'NoTarget',
+    },
+};
+
+/**
  * Wait for a certain number of ms
  * @author Gabe Abrams
  * @param ms number of ms to wait
@@ -508,24 +526,6 @@ const ROUTE_PATH_PREFIX = '/dce-reactkit';
 const LOG_ROUTE_PATH = `${ROUTE_PATH_PREFIX}/log`;
 
 /**
- * Built-in metadata for logs
- * @author Gabe Abrams
- */
-const LogBuiltInMetadata = {
-    // Contexts
-    Context: {
-        Uncategorized: 'Uncategorized',
-        ServerRenderedErrorPage: 'ServerRenderedErrorPage',
-        ServerEndpointError: 'ServerEndpointError',
-        ClientFatalError: 'ClientFatalError',
-    },
-    // Targets
-    Target: {
-        NoTarget: 'NoTarget',
-    },
-};
-
-/**
  * Allowed log levels
  * @author Gabe Abrams
  */
@@ -567,6 +567,17 @@ const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
     // Return
     return storedSendRequest;
 });
+/* ----- Session Expired Message ---- */
+let sessionExpiredMessage;
+/**
+ * Get the custom session expired message
+ * @author Gabe Abrams
+ * @returns session expired message
+ */
+const getSessionExpiredMessage = () => {
+    // Return
+    return (sessionExpiredMessage !== null && sessionExpiredMessage !== void 0 ? sessionExpiredMessage : 'Your session has expired. Please go back to Canvas and start over.');
+};
 /*----------------------------------------*/
 /* ---------------- Init ---------------- */
 /*----------------------------------------*/
@@ -580,11 +591,11 @@ const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
 const initClient = (opts) => {
     // Store values
     storedSendRequest = opts.sendRequest;
+    sessionExpiredMessage = opts.sessionExpiredMessage;
     // Mark as initialized
     onInitialized(null);
 };
 
-// // Import custom error
 // Keep track of whether or not session expiry has already been handled
 let sessionAlreadyExpired = false;
 /*------------------------------------------------------------------------*/
@@ -735,7 +746,14 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
     });
 });
 
-// /**
+/**
+ * A wrapper for the entire React app that adds global functionality like
+ *   handling for fatal error messages, adds bootstrap support
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/*                             Static Helpers                             */
+/*------------------------------------------------------------------------*/
 /*----------------------------------------*/
 /*                  Alert                 */
 /*----------------------------------------*/
@@ -860,7 +878,7 @@ const AppWrapper = (props) => {
     /*                                  Setup                                 */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { children, sendRequest, dark, sessionExpiredMessage = 'Your session has expired. Please go back to Canvas and start over.', } = props;
+    const { children, dark, } = props;
     /* -------------- State ------------- */
     // Fatal error
     const [fatalErrorMessage, setFatalErrorMessageInner,] = useState();
@@ -913,7 +931,7 @@ const AppWrapper = (props) => {
     if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
-            ? new ErrorWithCode(sessionExpiredMessage, ReactKitErrorCode$1.SessionExpired)
+            ? new ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
             : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode)));
         // Build error screen
         body = (React__default.createElement("div", { style: {
