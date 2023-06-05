@@ -19,7 +19,13 @@ const validateEmail = (email: string): ValidationResult => {
   const cleanedValue: string = email.replace(/^\s+|\s+$/g, '');
 
   return ( 
-    validateRegex(cleanedValue, emailRegex).isValid // validate email with regex
+     // validate email with regex
+    validateRegex(
+      { 
+        input: cleanedValue, 
+        regex: emailRegex,
+      }
+    ).isValid
       ? { isValid: true, cleanedValue }
       : { isValid: false, errorMessage: 'Please provide a valid email address.'}
   );

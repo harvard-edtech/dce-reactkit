@@ -15,7 +15,7 @@ test(
     }
     expect(validateEmail(validEmail)).toStrictEqual(expectedResponse);
   },
-);
+); // TODO: combine functionally similar tests
 
 test(
   'Returns true for a given valid email. No change to returned email value.',

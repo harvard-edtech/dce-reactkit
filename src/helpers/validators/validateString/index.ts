@@ -7,14 +7,14 @@ import StringValidationRequirements from './StringValidationRequirements';
 
 /** 
  * Determines whether a given input string is considered valid based on 
- * the provided requirements.
+ *   the provided requirements.
  * @author Austen Money
  * @param input input string
  * @param reqs requirements that the provided string should conform to 
  * @returns whether input is considered valid according to reqs - if 
- *          valid, returns a cleaned version of input; if invalid, returns 
- *          a string containing error messages describing which requirements 
- *          were not met.
+ *   valid, returns a cleaned version of input; if invalid, returns 
+ *   a string containing error messages describing which requirements 
+ *   were not met.
  */
 const validateString = (input: string, reqs: StringValidationRequirements): ValidationResult => {
 
@@ -65,10 +65,23 @@ const validateString = (input: string, reqs: StringValidationRequirements): Vali
     const regex = new RegExp(reqs.regexTest);
     let result: ValidationResult; 
 
+    let opts;
+
     // validate and create customized error message if description is provided
     reqs.regexDescription 
-      ? result = validateRegex(cleanedValue, regex, reqs.regexDescription)
-      : result = validateRegex(cleanedValue, regex)
+      ? result = validateRegex( 
+        {
+          input: cleanedValue, 
+          regex, 
+          regexDescription: reqs.regexDescription, 
+        }
+      )
+      : result = validateRegex(
+        {
+          input: cleanedValue, 
+          regex, 
+        }
+      )
 
     if (result.isValid === false) { // string did not pass regex validation
       errorMessages.push(result.errorMessage);
