@@ -8,13 +8,14 @@ import ValidationResult from './shared/types/ValidationResult';
  * @author Austen Money
  * @param phoneNumber phone number to validate 
  * @returns whether phone number is considered valid - if valid, also returns 
- *          a cleaned version of the number without any formatting (without
- *          parentheses, dashes, or whitespace); if invalid, returns an
- *          error message.
+ *   a cleaned version of the number without any formatting (without
+ *   parentheses, dashes, or whitespace); if invalid, returns an
+ *   error message.
  */
 const validatePhoneNumber = (phoneNumber: string): ValidationResult => {
   
-  const validationRegex = new RegExp(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/); // regex to validate phone number
+  // regex to validate phone number
+  const validationRegex = new RegExp(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/); 
   
   // validate phone number with regex
   const validationResponse = validateRegex(
@@ -23,13 +24,20 @@ const validatePhoneNumber = (phoneNumber: string): ValidationResult => {
       regex: validationRegex,
     }  
   );
+  
   // remove all non-digits from number 
   const cleanedValue: string = phoneNumber.replace(/\D/g,''); 
 
   return (
     validationResponse.isValid 
-      ? { isValid: true, cleanedValue }
-      : { isValid: false, errorMessage: 'Please provide a valid phone number.' }
+      ? { 
+          isValid: true, 
+          cleanedValue, 
+        }
+      : { 
+          isValid: false, 
+          errorMessage: 'Please provide a valid phone number.',
+        }
   );
 };
 

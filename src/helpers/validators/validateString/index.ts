@@ -18,31 +18,38 @@ import StringValidationRequirements from './StringValidationRequirements';
  */
 const validateString = (input: string, reqs: StringValidationRequirements): ValidationResult => {
 
-  const errorMessages: Array<string> = []; // stores all invalid input errors
-  let cleanedValue: string = input; // version of input that will be returned
+  // stores all invalid input errors
+  const errorMessages: Array<string> = []; 
+  // contains version of input that will be returned
+  let cleanedValue: string = input;
 
-  if (reqs.ignoreWhitespace) { // remove whitespace if required
+  // remove whitespace if required
+  if (reqs.ignoreWhitespace) { 
     cleanedValue = input.replace(/\s+/g, '');
   }
   
-  if (reqs.minLen) { // apply max char requirement
+   // apply max char requirement
+  if (reqs.minLen) {
     if (cleanedValue.length < reqs.minLen) { 
       errorMessages.push(`Input must not be under ${reqs.minLen} character(s).`);
     }
   }
 
-  if (reqs.maxLen) { // apply max char requirement
+  // apply max char requirement
+  if (reqs.maxLen) { 
     if (cleanedValue.length > reqs.maxLen) { 
       errorMessages.push(`Input must not be over ${reqs.maxLen} character(s).`);
     }
   }
 
-  if (reqs.lettersOnly) { // apply alphabetical requirement
+  // apply alphabetical requirement
+  if (reqs.lettersOnly) { 
     for (let i = 0, len = cleanedValue.length; i < len; i++) {
       let curr = cleanedValue.charCodeAt(i);
 
-      if (!(curr > 64 && curr < 91) && // upper alpha
-          !(curr > 96 && curr < 123)) { // lower alpha
+      // check that char is an upper or lower-case letter
+      if (!(curr > 64 && curr < 91) && 
+          !(curr > 96 && curr < 123)) { 
 
         errorMessages.push(`Input must not contain non-letters.`);
         break;
@@ -50,22 +57,23 @@ const validateString = (input: string, reqs: StringValidationRequirements): Vali
     }
   }
 
-  if (reqs.numbersOnly) { // apply numerical requirement
+  // apply numerical requirement
+  if (reqs.numbersOnly) { 
     for (let i = 0, len = cleanedValue.length; i < len; i++) {
       let curr = cleanedValue.charCodeAt(i);
 
-      if (!(curr > 47 && curr < 58)) { // digits 0-9
+      // check that char is a digit
+      if (!(curr > 47 && curr < 58)) {
         errorMessages.push(`Input must not contain non-numbers.`);
         break;
       }
     }
   }
 
-  if (reqs.regexTest) { // check against regex requirement
+  // apply regex requirement
+  if (reqs.regexTest) { 
     const regex = new RegExp(reqs.regexTest);
     let result: ValidationResult; 
-
-    let opts;
 
     // validate and create customized error message if description is provided
     reqs.regexDescription 
@@ -83,21 +91,29 @@ const validateString = (input: string, reqs: StringValidationRequirements): Vali
         }
       )
 
-    if (result.isValid === false) { // string did not pass regex validation
+    // if string did not pass regex validation, add error message
+    if (result.isValid === false) { 
       errorMessages.push(result.errorMessage);
     }
   }
 
-  let errorMessage = "The following errors occurred:";
   // combine all error messages into one string to return
+  let errorMessage = "The following errors occurred: ";
   for (let i = 0; i < errorMessages.length; i++) { 
-    errorMessage = `${errorMessage}\n\t${errorMessages[i]}`;
+    errorMessage = `${errorMessage}${errorMessages[i]}, `;
   }
 
   return (
-    errorMessages.length === 0 // if no error messages, string is valid
-      ? { isValid: true, cleanedValue }
-      : { isValid: false, errorMessage }
+    // if no error messages, string is valid
+    errorMessages.length === 0 
+      ? { 
+          isValid: true, 
+          cleanedValue,
+        }
+      : { 
+          isValid: false, 
+          errorMessage, 
+        }
   );
 };
 
