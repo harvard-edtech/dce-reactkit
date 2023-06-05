@@ -39574,13 +39574,13 @@ const CreatableMultiselect = (props) => {
      * @param event keyboard event
      */
     const handleKeyDown = (event) => {
-        event.preventDefault();
         // Skip if no input value
         if (!inputValue) {
             return;
         }
         // Add values if enter or tab is pressed
         if (['Enter', 'Tab'].includes(event.key)) {
+            event.preventDefault();
             addValues(inputValue);
         }
     };
