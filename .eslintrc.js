@@ -2,8 +2,6 @@ const config = {
   extends: [
     'airbnb',
     'airbnb/hooks',
-    'react-app',
-    'react-app/jest',
   ],
   overrides: [
     {
@@ -92,9 +90,4 @@ const config = {
   },
 };
 
-module.exports = {
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
-  root: true,
-};
+module.exports = config;

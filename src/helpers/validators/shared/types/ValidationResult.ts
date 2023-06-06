@@ -4,12 +4,16 @@
  */
 type ValidationResult = (
   | {
-    isValid: true, // if true, the validation was successful
-    cleanedValue: string, // the cleaned version of the value
+    // if true, the validation was successful
+    isValid: true,
+    // the cleaned version of the value
+    cleanedValue: string,
   }
   | {
-    isValid: false, // if false, the validation was not successful
-    errorMessage: string, // describes why the validation failed
+    // if false, the validation was not successful
+    isValid: false,
+    // describes why the validation failed
+    errorMessage: string,
   }
 );
 
