@@ -1,4 +1,4 @@
-// import types
+// Import types
 import ValidationResult from '../types/ValidationResult';
 
 /**
@@ -20,12 +20,12 @@ const validateRegex = (
     regexDescription?: string,
   },
 ): ValidationResult => {
-  let errorMessage: string;
-
   // customize error message in case of invalid input
-  opts.regexDescription
-    ? errorMessage = `Input does not follow the requested format: ${opts.regexDescription}.`
-    : errorMessage = 'Input does not follow the requested format.';
+  const errorMessage = `Input does not follow the requested format${
+    opts.regexDescription
+      ? ': '
+      : ''
+  }${opts.regexDescription}`;
 
   // return error message if test is invalid, or input string if valid
   return (

@@ -15,11 +15,9 @@
     "allowSyntheticDefaultImports": true,
     "emitDeclarationOnly": true
   },
-
   "include": [
     "./src/**/*"
   ],
-
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"

@@ -1,47 +1,77 @@
+// Import types
 import ValidationResult from '../shared/types/ValidationResult';
+
+// Import function
 import validateEmail from '../validateEmail';
 
-/*
- * VALID TESTS - should all return isValid === true
- */
+/*------------------------------------------------------------------------*/
+/* ---------------------------- Valid Tests --------------------------- */
+/*------------------------------------------------------------------------*/
 
-const validEmails: string[] = [
-  'username@gmail.com',
-  'u@hotmail.org',
-  '   username@gmail.com',
-  'username@gmail.com        ',
-  ' username@gmail.com ',
-  'username@harvard.edu',
-  'username@harvard.subdomain.edu',
-];
-
-const validCleanedEmails: string[] = [
-  'username@gmail.com',
-  'u@hotmail.org',
-  'username@gmail.com',
-  'username@gmail.com',
-  'username@gmail.com',
-  'username@harvard.edu',
-  'username@harvard.subdomain.edu',
+const validEmailPairs: { input: string, cleaned: string }[] = [
+  {
+    input: 'username@gmail.com',
+    cleaned: 'username@gmail.com',
+  },
+  {
+    input: 'u@hotmail.org',
+    cleaned: 'u@hotmail.org',
+  },
+  {
+    input: '   username@gmail.com',
+    cleaned: 'username@gmail.com',
+  },
+  {
+    input: 'username@gmail.com        ',
+    cleaned: 'username@gmail.com',
+  },
+  {
+    input: ' username@gmail.com ',
+    cleaned: 'username@gmail.com',
+  },
+  {
+    input: 'username@harvard.edu',
+    cleaned: 'username@harvard.edu',
+  },
+  {
+    input: 'username@harvard.subdomain.edu',
+    cleaned: 'username@harvard.subdomain.edu',
+  },
+  {
+    input: '\nusername@harvard.subdomain.edu',
+    cleaned: 'username@harvard.subdomain.edu',
+  },
+  {
+    input: '\n\tusername@harvard.subdomain.edu',
+    cleaned: 'username@harvard.subdomain.edu',
+  },
+  {
+    input: 'username@harvard.subdomain.edu\n',
+    cleaned: 'username@harvard.subdomain.edu',
+  },
+  {
+    input: 'username@harvard.subdomain.edu\n\t',
+    cleaned: 'username@harvard.subdomain.edu',
+  },
 ];
 
 test(
   'Returns true for a given valid email and removes any leading or trailing whitespace.',
   async () => {
-    validEmails.forEach((email, idx) => {
+    validEmailPairs.forEach((pair) => {
       const validResponse: ValidationResult = {
         isValid: true,
-        cleanedValue: validCleanedEmails[idx],
+        cleanedValue: pair.cleaned,
       };
 
-      expect(validateEmail(email)).toStrictEqual(validResponse);
+      expect(validateEmail(pair.input)).toStrictEqual(validResponse);
     });
   },
 );
 
-/*
- * INVALID TESTS - should all return isValid === false
- */
+/*------------------------------------------------------------------------*/
+/* ---------------------------- Invalid Tests --------------------------- */
+/*------------------------------------------------------------------------*/
 
 const invalidEmails: string[] = [
   '',
@@ -54,6 +84,12 @@ const invalidEmails: string[] = [
   'username @gmail.com',
   'username@ gmail.com',
   'username@gmail .com',
+  'username\t@gmail.com',
+  'username\n@gmail.com',
+  'username@gmail\n.com',
+  'username@gmail.\tcom',
+  'user\nname@gmail.com',
+  'user\tname@gmail.com',
 ];
 
 const invalidResponse: ValidationResult = {

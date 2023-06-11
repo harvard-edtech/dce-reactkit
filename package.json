@@ -6,7 +6,6 @@
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "eslint --ext .ts,.js --ignore-path .gitignore .",
     "build": "rm -rf dist && rollup -c",
     "test": "jest"
   },

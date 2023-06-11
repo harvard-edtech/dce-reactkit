@@ -1,10 +1,13 @@
+// Import types
 import ValidationResult from '../shared/types/ValidationResult';
-import validateString from '../validateString';
 import StringValidationRequirements from '../validateString/StringValidationRequirements';
 
-/*
- * VALID TESTS - should all return isValid === true
- */
+// Import function
+import validateString from '../validateString';
+
+/*------------------------------------------------------------------------*/
+/* ---------------------------- Valid Tests --------------------------- */
+/*------------------------------------------------------------------------*/
 
 const validStrings: string[] = [
   'users',
@@ -74,55 +77,58 @@ test(
   },
 );
 
-/*
- * INVALID TESTS - should all return isValid === false
- */
+/*------------------------------------------------------------------------*/
+/* ---------------------------- Invalid Tests --------------------------- */
+/*------------------------------------------------------------------------*/
 
-const invalidStrings: string[] = [
-  'user',
-  '123456789',
-  'String with non-letters!!',
-  '12345678',
-];
-
-const invalidReqs: StringValidationRequirements[] = [
+const invalidStrings: { input: string, reqs: StringValidationRequirements, error: string }[] = [
   {
-    minLen: 5,
+    input: 'ûšër',
+    reqs: {
+      minLen: 5,
+      lettersOnly: true,
+    },
+    error: 'The following error(s) occurred: Input must not be under 5 character(s).',
   },
   {
-    minLen: 10,
-    maxLen: 5,
-    lettersOnly: true,
+    input: '123456789',
+    reqs: {
+      minLen: 10,
+      maxLen: 5,
+      lettersOnly: true,
+    },
+    error: 'The following error(s) occurred: Input must not be under 10 character(s), Input must not be over 5 character(s), Input must only contain letters.',
   },
   {
-    lettersOnly: true,
-    numbersOnly: true,
-    ignoreWhitespace: true,
+    input: 'String with non-letters!!',
+    reqs: {
+      lettersOnly: true,
+      numbersOnly: true,
+      ignoreWhitespace: true,
+    },
+    error: 'The following error(s) occurred: Input must only contain letters, Input must only contain numbers.',
   },
   {
-    lettersOnly: true,
-    regexTest: /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
-    regexDescription: 'Should be a phone number',
+    input: '12345678',
+    reqs: {
+      lettersOnly: true,
+      regexTest: /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
+      regexDescription: 'Should be a phone number',
+    },
+    error: 'The following error(s) occurred: Input must only contain letters, Input does not follow the requested format: Should be a phone number.',
   },
-];
-
-const invalidErrors: string[] = [
-  'The following error(s) occurred: Input must not be under 5 character(s).',
-  'The following error(s) occurred: Input must not be under 10 character(s). Input must not be over 5 character(s). Input must not contain non-letters.',
-  'The following error(s) occurred: Input must not contain non-letters. Input must not contain non-numbers.',
-  'The following error(s) occurred: Input must not contain non-letters. Input does not follow the requested format: Should be a phone number.',
 ];
 
 test(
   'Returns false for a given invalid string.',
   async () => {
-    invalidStrings.forEach((invalidString, idx) => {
+    invalidStrings.forEach((triple) => {
       const invalidResponse: ValidationResult = {
         isValid: false,
-        errorMessage: invalidErrors[idx],
+        errorMessage: triple.error,
       };
 
-      expect(validateString(invalidString, invalidReqs[idx])).toStrictEqual(invalidResponse);
+      expect(validateString(triple.input, triple.reqs)).toStrictEqual(invalidResponse);
     });
   },
 );

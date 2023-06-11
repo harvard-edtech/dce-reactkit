@@ -1,9 +1,25 @@
-// import helpers
+// Import helpers
 import validateRegex from '../shared/helpers/validateRegex';
-import ValidationResult from '../shared/types/ValidationResult';
 
-// import types
+// Import types
+import ValidationResult from '../shared/types/ValidationResult';
 import StringValidationRequirements from './StringValidationRequirements';
+
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Constants ----------------------------- */
+/*------------------------------------------------------------------------*/
+
+// define minimum and maximum range for lowercase ASCII chars
+const LOWERCASE_MIN = 65;
+const LOWERCASE_MAX = 90;
+
+// define minimum and maximum range for uppercase ASCII chars
+const UPPERCASE_MIN = 97;
+const UPPERCASE_MAX = 122;
+
+// define minimum and maximum range for ASCII digits
+const DIGIT_MIN = 48;
+const DIGIT_MAX = 57;
 
 /**
  * Determines whether a given input string is considered valid based on
@@ -21,7 +37,8 @@ const validateString = (
   reqs: StringValidationRequirements,
 ): ValidationResult => {
   // stores all invalid input errors
-  const errorMessages: Array<string> = [];
+  const errorMessages: string[] = [];
+
   // contains version of input that will be returned
   let cleanedValue: string = input;
 
@@ -33,26 +50,29 @@ const validateString = (
   // apply max char requirement
   if (reqs.minLen) {
     if (cleanedValue.length < reqs.minLen) {
-      errorMessages.push(`Input must not be under ${reqs.minLen} character(s).`);
+      errorMessages.push(`Input must not be under ${reqs.minLen} character(s)`);
     }
   }
 
   // apply max char requirement
   if (reqs.maxLen) {
     if (cleanedValue.length > reqs.maxLen) {
-      errorMessages.push(`Input must not be over ${reqs.maxLen} character(s).`);
+      errorMessages.push(`Input must not be over ${reqs.maxLen} character(s)`);
     }
   }
 
   // apply alphabetical requirement
   if (reqs.lettersOnly) {
+    // remove diacritics
+    cleanedValue = cleanedValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
     for (let i = 0, len = cleanedValue.length; i < len; i++) {
       const curr = cleanedValue.charCodeAt(i);
 
       // check that char is an upper or lower-case letter
-      if (!(curr > 64 && curr < 91) && 
-          !(curr > 96 && curr < 123)) {
-        errorMessages.push('Input must not contain non-letters.');
+      if (!(curr >= LOWERCASE_MIN && curr <= LOWERCASE_MAX)
+        && !(curr >= UPPERCASE_MIN && curr <= UPPERCASE_MAX)) {
+        errorMessages.push('Input must only contain letters');
         break;
       }
     }
@@ -64,8 +84,8 @@ const validateString = (
       const curr = cleanedValue.charCodeAt(i);
 
       // check that char is a digit
-      if (!(curr > 47 && curr < 58)) {
-        errorMessages.push('Input must not contain non-numbers.');
+      if (!(curr >= DIGIT_MIN && curr <= DIGIT_MAX)) {
+        errorMessages.push('Input must only contain numbers');
         break;
       }
     }
@@ -73,24 +93,14 @@ const validateString = (
 
   // apply regex requirement
   if (reqs.regexTest) {
-    const regex = new RegExp(reqs.regexTest);
-    let result: ValidationResult;
+    const regex = reqs.regexTest;
 
     // validate and create customized error message if description is provided
-    reqs.regexDescription
-      ? result = validateRegex(
-        {
-          input: cleanedValue,
-          regex,
-          regexDescription: reqs.regexDescription,
-        },
-      )
-      : result = validateRegex(
-        {
-          input: cleanedValue,
-          regex,
-        },
-      );
+    const result = validateRegex({
+      input: cleanedValue,
+      regex,
+      regexDescription: reqs.regexDescription,
+    });
 
     // if string did not pass regex validation, add error message
     if (result.isValid === false) {
@@ -99,10 +109,7 @@ const validateString = (
   }
 
   // combine all error messages into one string to return
-  let errorMessage = 'The following error(s) occurred:';
-  for (let i = 0; i < errorMessages.length; i++) {
-    errorMessage = `${errorMessage} ${errorMessages[i]}`;
-  }
+  const errorMessage = `The following error(s) occurred: ${errorMessages.join(', ')}.`;
 
   return (
     // if no error messages, string is valid; if not, it is invalid

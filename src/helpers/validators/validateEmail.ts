@@ -1,6 +1,7 @@
-// import helpers
+// Import helpers
 import validateRegex from './shared/helpers/validateRegex';
-// import types
+
+// Import types
 import ValidationResult from './shared/types/ValidationResult';
 
 /**
