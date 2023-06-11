@@ -8,7 +8,6 @@ import { MultiValue } from 'react-select';
 // Import other types
 import DBEntryFieldType from '../types/DBEntryFieldType';
 
-
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -87,7 +86,6 @@ const reducer = (state: State, action: Action): State => {
 /*------------------------------------------------------------------------*/
 
 const CreatableMultiselect: React.FC<Props> = (props) => {
-
   // Destructure all props
   const {
     type,
@@ -108,7 +106,6 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
 
   // Destructure common state
   const { inputValue } = state;
-
 
   /*------------------------------------------------------------------------*/
   /* ------------------------- Component Functions ------------------------ */
@@ -178,7 +175,7 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
           .filter((val) => {
             return !values.some((value) => {
               return value === val;
-            })
+            });
           })
       );
       onChange([...values, ...newValues] as string[]);
@@ -196,7 +193,6 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
    * @param event keyboard event
    */
   const handleKeyDown: KeyboardEventHandler = (event) => {
-
     // Skip if no input value
     if (!inputValue) {
       return;

@@ -26,6 +26,7 @@ declare type Props = {
     entryFields: DBEntryField[];
     dbEntryToEdit?: DBEntry;
     idPropName: string;
+    itemName: string;
     saveEndpointPath: string;
     entries: DBEntry[];
 };

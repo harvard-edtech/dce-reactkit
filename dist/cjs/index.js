@@ -39574,13 +39574,13 @@ const CreatableMultiselect = (props) => {
      * @param event keyboard event
      */
     const handleKeyDown = (event) => {
-        event.preventDefault();
         // Skip if no input value
         if (!inputValue) {
             return;
         }
         // Add values if enter or tab is pressed
         if (['Enter', 'Tab'].includes(event.key)) {
+            event.preventDefault();
             addValues(inputValue);
         }
     };
@@ -39689,7 +39689,7 @@ const AddOrEditDBEntry = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { onFinished, entryFields, dbEntryToEdit, validateEntry, modifyEntry, idPropName, saveEndpointPath, entries, } = props;
+    const { onFinished, entryFields, dbEntryToEdit, validateEntry, modifyEntry, idPropName, saveEndpointPath, entries, itemName, } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
@@ -39717,6 +39717,8 @@ const AddOrEditDBEntry = (props) => {
             }
         });
         const modifiedEntry = modifyEntry ? modifyEntry(entry) : entry;
+        // add id key to entry so that when we delete the item, the key will always be "id"
+        modifiedEntry.id = modifiedEntry[idPropName];
         // Send to server
         try {
             yield visitServerEndpoint({
@@ -39740,41 +39742,31 @@ const AddOrEditDBEntry = (props) => {
     const cancel = () => {
         onFinished(undefined);
     };
-    /*------------------------------------------------------------------------*/
-    /* ------------------------------- Render ------------------------------- */
-    /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /* ---------------- Views --------------- */
-    /*----------------------------------------*/
-    // Body
-    let body;
-    /* ------------- Loading ------------ */
-    if (saving) {
-        body = (React__default["default"].createElement(LoadingSpinner, null));
-    }
-    /* -------------- Form -------------- */
-    // If not saving, validate what the user has entered
-    if (!saving) {
-        // Validation error if there is one
-        let validationError = undefined;
-        // Validate each field
-        for (let i = 0; i < entryFields.length; i += 1) {
-            const field = entryFields[i];
+    /**
+     * Create validation error message for the DBEntry
+     * @author Yuen Ler Chow
+     * @param fields the fields to validate
+     * @returns the validation error message, or an empty string if no error
+     */
+    const validate = (fields) => {
+        let validationError = '';
+        for (let i = 0; i < fields.length; i += 1) {
+            const field = fields[i];
             const value = entry[field.objectKey];
-            // Check if required field is empty
-            if (field.required && !value) {
+            // Check if required field is empty. Field is automatically required if it is the idPropName
+            if ((field.required || (field.objectKey === idPropName)) && !value) {
                 validationError = `Please fill in the ${field.label} field`;
-                break;
+                return validationError;
             }
             // Check if unique field is unique
             if (field.objectKey === idPropName) {
                 if (entries.find((e) => { return e[idPropName] === value; })) {
                     validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
-                    break;
+                    return validationError;
                 }
             }
             // If they have entered a value for the field, check if it is valid
-            if (value) {
+            if (value || field.type === DBEntryFieldType$1.Object) {
                 // String validation
                 if (field.type === DBEntryFieldType$1.String) {
                     if (
@@ -39835,24 +39827,46 @@ const AddOrEditDBEntry = (props) => {
                                 // Value is too small
                                 && value[j] < field.minNumber) {
                                 validationError = `${field.label} values must be at least ${field.minNumber}`;
-                                break;
+                                return validationError;
                             }
-                            else if (
+                            if (
                             // Maximum value requirement is defined
                             field.maxNumber
                                 // Value is too large
                                 && value[j] > field.maxNumber) {
                                 validationError = `${field.label} values must be at most ${field.maxNumber}`;
-                                break;
+                                return validationError;
                             }
                         }
                     }
                 }
+                else if (field.type === DBEntryFieldType$1.Object) {
+                    validationError = validate(field.subfields);
+                }
             }
             if (validationError) {
-                break;
+                return validationError;
             }
         }
+        return validationError;
+    };
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* ---------------- Views --------------- */
+    /*----------------------------------------*/
+    // Body
+    let body;
+    /* ------------- Loading ------------ */
+    if (saving) {
+        body = (React__default["default"].createElement(LoadingSpinner, null));
+    }
+    /* -------------- Form -------------- */
+    // If not saving, validate what the user has entered
+    if (!saving) {
+        // Validation error if there is one
+        const validationError = validate(entryFields);
         /**
          * Render a single entry field
          * @author Yuen Ler Chow
@@ -39958,19 +39972,20 @@ const AddOrEditDBEntry = (props) => {
                                     });
                                 } })))));
             }
-            if (field.type == DBEntryFieldType$1.Object) {
+            if (field.type === DBEntryFieldType$1.Object) {
                 return (React__default["default"].createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default["default"].createElement("div", { className: "input-group" },
                         React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text" }, field.label),
-                        field.subfields.map((subfield) => {
-                            return renderEntryField(subfield, disabled);
-                        }))));
+                        React__default["default"].createElement("div", { className: "flex-grow-1 p-2 form-control" }, field.subfields.map((subfield) => {
+                            return React__default["default"].createElement("div", null, renderEntryField(subfield, disabled));
+                        })))));
             }
             // This should never happen
             return null;
         };
         // UI
         body = (React__default["default"].createElement("div", null,
+            React__default["default"].createElement("h1", null, dbEntryToEdit ? `Edit ${itemName}` : `Create ${itemName}`),
             entryFields.map((field) => {
                 const disabled = (idPropName === field.objectKey && dbEntryToEdit !== undefined)
                     || (field.lockAfterCreation !== undefined && dbEntryToEdit !== undefined);
@@ -39978,12 +39993,12 @@ const AddOrEditDBEntry = (props) => {
             }),
             React__default["default"].createElement("div", { className: "text-center mt-2" },
                 React__default["default"].createElement("button", { type: "button", id: "AddOrEditDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "Save changes", onClick: () => __awaiter(void 0, void 0, void 0, function* () {
-                        if (validationError) {
+                        if (validationError && validationError.length > 0) {
                             return alert$1('Please fix the following error', validationError);
                         }
                         if (validateEntry) {
                             try {
-                                validateEntry(entry);
+                                yield validateEntry(entry);
                             }
                             catch (error) {
                                 return alert$1('Please fix the following error', String(error));
@@ -40099,7 +40114,7 @@ const reducer = (state, action) => {
 /*------------------------------------------------------------------------*/
 const DBEntryManagerPanel = (props) => {
     // Destructure all props
-    const { entryFields, titlePropName, descriptionPropName, idPropName, itemListTitle, itemName, validateEntry, modifyEntry, disableEdit, collectionName, adminsOnly, filterQuery } = props;
+    const { entryFields, titlePropName, descriptionPropName, idPropName, itemListTitle, itemName, validateEntry, modifyEntry, disableEdit, collectionName, adminsOnly, filterQuery, } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
@@ -40235,7 +40250,7 @@ const DBEntryManagerPanel = (props) => {
     }
     /* --------- Create or edit entry -------- */
     if (!loading && (adding || dbEntryToEdit)) {
-        body = (React__default["default"].createElement(AddOrEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, onFinished: (entry) => {
+        body = (React__default["default"].createElement(AddOrEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, itemName: itemName, onFinished: (entry) => {
                 dispatch({
                     type: ActionType.FinishAdd,
                     dbEntry: entry,

@@ -28,6 +28,7 @@ import DBEntryFieldType from '../types/DBEntryFieldType';
 // Import other components
 import CreatableMultiselect from './CreatableMultiselect';
 
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -42,12 +43,12 @@ type Props = {
   onFinished: (dbEntry?: DBEntry) => void,
   /**
    * Function to validate the DBEntry before saving
-   * @param dbEntry 
+   * @param dbEntry
    */
   validateEntry?: (dbEntry: DBEntry) => Promise<void>,
   /**
    * Function to modify the DBEntry before saving
-   * @param dbEntry 
+   * @param dbEntry
    * @returns the modified DBEntry
    */
   modifyEntry?: (dbEntry: DBEntry) => DBEntry,
@@ -57,6 +58,8 @@ type Props = {
   dbEntryToEdit?: DBEntry,
   // The unique object key of the DBEntry
   idPropName: string,
+  // item name
+  itemName: string,
   // Server endpoint path to save the DBEntry
   saveEndpointPath: string,
   // All entries in the database
@@ -159,6 +162,7 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
     idPropName,
     saveEndpointPath,
     entries,
+    itemName,
   } = props;
 
   /* -------------- State ------------- */
@@ -199,6 +203,9 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
 
     const modifiedEntry = modifyEntry ? modifyEntry(entry) : entry;
 
+    // add id key to entry so that when we delete the item, the key will always be "id"
+    modifiedEntry.id = modifiedEntry[idPropName];
+
     // Send to server
     try {
       await visitServerEndpoint({
@@ -224,53 +231,35 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
     onFinished(undefined);
   };
 
-  /*------------------------------------------------------------------------*/
-  /* ------------------------------- Render ------------------------------- */
-  /*------------------------------------------------------------------------*/
+  /**
+   * Create validation error message for the DBEntry
+   * @author Yuen Ler Chow
+   * @param fields the fields to validate
+   * @returns the validation error message, or an empty string if no error
+   */
 
-  /*----------------------------------------*/
-  /* ---------------- Views --------------- */
-  /*----------------------------------------*/
-
-  // Body
-  let body: React.ReactNode;
-
-  /* ------------- Loading ------------ */
-
-  if (saving) {
-    body = (
-      <LoadingSpinner />
-    );
-  }
-
-  /* -------------- Form -------------- */
-
-  // If not saving, validate what the user has entered
-  if (!saving) {
-    // Validation error if there is one
-    let validationError: string | undefined = undefined;
-
-    // Validate each field
-    for (let i = 0; i < entryFields.length; i += 1) {
-      const field = entryFields[i];
+  const validate = (fields: DBEntryField[]) => {
+    let validationError = '';
+    for (let i = 0; i < fields.length; i += 1) {
+      const field = fields[i];
       const value = entry[field.objectKey];
 
-      // Check if required field is empty
-      if (field.required && !value) {
+      // Check if required field is empty. Field is automatically required if it is the idPropName
+      if ((field.required || (field.objectKey === idPropName)) && !value) {
         validationError = `Please fill in the ${field.label} field`;
-        break;
+        return validationError;
       }
 
       // Check if unique field is unique
       if (field.objectKey === idPropName) {
         if (entries.find((e) => { return e[idPropName] === value; })) {
           validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
-          break;
+          return validationError;
         }
       }
 
       // If they have entered a value for the field, check if it is valid
-      if (value) {
+      if (value || field.type === DBEntryFieldType.Object) {
         // String validation
         if (field.type === DBEntryFieldType.String) {
           if (
@@ -334,24 +323,54 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
                 && value[j] < field.minNumber
               ) {
                 validationError = `${field.label} values must be at least ${field.minNumber}`;
-                break;
-              } else if (
+                return validationError;
+              } if (
                 // Maximum value requirement is defined
                 field.maxNumber
                 // Value is too large
                 && value[j] > field.maxNumber
               ) {
                 validationError = `${field.label} values must be at most ${field.maxNumber}`;
-                break;
+                return validationError;
               }
             }
           }
+        } else if (field.type === DBEntryFieldType.Object) {
+          validationError = validate(field.subfields);
         }
       }
       if (validationError) {
-        break;
+        return validationError;
       }
     }
+    return validationError;
+  };
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------------- Render ------------------------------- */
+  /*------------------------------------------------------------------------*/
+
+  /*----------------------------------------*/
+  /* ---------------- Views --------------- */
+  /*----------------------------------------*/
+
+  // Body
+  let body: React.ReactNode;
+
+  /* ------------- Loading ------------ */
+
+  if (saving) {
+    body = (
+      <LoadingSpinner />
+    );
+  }
+
+  /* -------------- Form -------------- */
+
+  // If not saving, validate what the user has entered
+  if (!saving) {
+    // Validation error if there is one
+    const validationError = validate(entryFields);
 
     /**
      * Render a single entry field
@@ -367,7 +386,8 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
               key={field.objectKey}
               className="mb-2"
             >
-              <div className="input-group"
+              <div
+                className="input-group"
                 style={{
                   pointerEvents: (disabled ? 'none' : 'auto'),
                 }}
@@ -475,7 +495,8 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
               key={field.objectKey}
               className="mb-2"
             >
-              <div className="input-group"
+              <div
+                className="input-group"
                 style={{
                   pointerEvents: (disabled ? 'none' : 'auto'),
                 }}
@@ -589,7 +610,7 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
         );
       }
 
-      if (field.type == DBEntryFieldType.Object) {
+      if (field.type === DBEntryFieldType.Object) {
         return (
           <div
             key={field.objectKey}
@@ -603,11 +624,13 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
                 {field.label}
               </span>
               {/* Add each subfield */}
-              {
-                field.subfields.map((subfield: DBEntryField) => {
-                  return renderEntryField(subfield, disabled);
-                })
-              }
+              <div className="flex-grow-1 p-2 form-control">
+                {
+                  field.subfields.map((subfield: DBEntryField) => {
+                    return <div>{renderEntryField(subfield, disabled)}</div>;
+                  })
+                }
+              </div>
             </div>
           </div>
         );
@@ -615,11 +638,12 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
 
       // This should never happen
       return null;
-    }
+    };
 
     // UI
     body = (
       <div>
+        <h1>{dbEntryToEdit ? `Edit ${itemName}` : `Create ${itemName}`}</h1>
         {/* Entry fields */}
         {
           entryFields.map((field: DBEntryField) => {
@@ -637,7 +661,7 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
             className="btn btn-primary btn-lg me-1"
             aria-label="Save changes"
             onClick={async () => {
-              if (validationError) {
+              if (validationError && validationError.length > 0) {
                 return alert(
                   'Please fix the following error',
                   validationError,
@@ -645,7 +669,7 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
               }
               if (validateEntry) {
                 try {
-                  validateEntry(entry);
+                  await validateEntry(entry);
                 } catch (error) {
                   return alert(
                     'Please fix the following error',
@@ -672,7 +696,7 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
             Cancel
           </button>
         </div>
-      </div >
+      </div>
     );
   }
 

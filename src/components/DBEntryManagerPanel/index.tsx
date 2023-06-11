@@ -224,7 +224,6 @@ const reducer = (state: State, action: Action): State => {
 /*------------------------------------------------------------------------*/
 
 const DBEntryManagerPanel: React.FC<Props> = (props) => {
-
   // Destructure all props
   const {
     entryFields,
@@ -238,7 +237,7 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
     disableEdit,
     collectionName,
     adminsOnly,
-    filterQuery
+    filterQuery,
   } = props;
 
   /* -------------- State ------------- */
@@ -481,6 +480,7 @@ const DBEntryManagerPanel: React.FC<Props> = (props) => {
         dbEntryToEdit={dbEntryToEdit}
         idPropName={idPropName}
         entries={dbEntries}
+        itemName={itemName}
         onFinished={(entry?: DBEntry) => {
           dispatch({
             type: ActionType.FinishAdd,
