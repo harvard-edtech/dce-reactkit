@@ -251,7 +251,7 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
       }
 
       // Check if unique field is unique
-      if (field.objectKey === idPropName) {
+      if (field.objectKey === idPropName && !dbEntryToEdit) {
         if (entries.find((e) => { return e[idPropName] === value; })) {
           validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
           return validationError;
