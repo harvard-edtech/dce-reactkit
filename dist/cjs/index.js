@@ -39976,7 +39976,7 @@ const AddOrEditDBEntry = (props) => {
                 return (React__default["default"].createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default["default"].createElement("div", { className: "input-group" },
                         React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text" }, field.label),
-                        React__default["default"].createElement("div", { className: "flex-grow-1 p-2 form-control" }, field.subfields.map((subfield) => {
+                        React__default["default"].createElement("div", { className: "flex-grow-1 ps-2 pe-2 pt-2 form-control" }, field.subfields.map((subfield) => {
                             return React__default["default"].createElement("div", null, renderEntryField(subfield, disabled));
                         })))));
             }
