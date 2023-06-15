@@ -1,13 +1,13 @@
 {
   "name": "dce-reactkit",
-  "version": "3.3.6",
+  "version": "3.3.7",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && rollup -c",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "jest": {
     "preset": "ts-jest",

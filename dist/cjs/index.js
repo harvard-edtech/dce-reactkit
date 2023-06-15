@@ -1287,6 +1287,7 @@ const getMonthName = (month) => {
     return ((_a = monthNames[month - 1]) !== null && _a !== void 0 ? _a : monthNames[0]);
 };
 
+// Constants
 const ORDINALS = ['th', 'st', 'nd', 'rd'];
 /**
  * Get a number's ordinal
@@ -2282,12 +2283,13 @@ const roundToNumDecimals = (num, numDecimals) => {
  * @returns escaped cell text
  */
 const escapeCellText = (text) => {
-    if (!String(text).includes(',')) {
+    if (!String(text).includes(',')
+        && !String(text).includes('"')) {
         // No need to escape
         return String(text);
     }
     // Perform escape
-    return `"${String(text).replace(/"/g, '""')}`;
+    return `"${String(text).replace(/"/g, '""')}"`;
 };
 /**
  * Generate a CSV file
@@ -5559,8 +5561,14 @@ const initLogCollection = (Collection) => {
     });
 };
 
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Cache ------------------------------- */
+/*------------------------------------------------------------------------*/
 // Cache user's ability
 let canReview = undefined;
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Main -------------------------------- */
+/*------------------------------------------------------------------------*/
 /**
  * Check if the current user can review logs
  * @author Gabe Abrams

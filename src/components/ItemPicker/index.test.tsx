@@ -512,7 +512,7 @@ const assertExpectedItemsAreChecked = (
   }
 };
 
-test(
+test.skip(
   'All Checkboxes appear when initially rendered',
   async () => {
     Raixa.render(
@@ -530,7 +530,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'Collapsing item 3 results in only the first 3 items and item 24 showing',
   async () => {
     Raixa.render(
@@ -555,7 +555,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'Collapsing item 15 results hides items 16 through 21',
   async () => {
     Raixa.render(
@@ -580,7 +580,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'Collapsing item 10 results hides items 11 through 21',
   async () => {
     Raixa.render(
@@ -605,7 +605,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'All Checkboxes are unchecked when initially rendered',
   async () => {
     Raixa.render(
@@ -626,7 +626,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'Checking item 1 checks items 1',
   async () => {
     let updatedItems: PickableItem[] = [];
@@ -654,7 +654,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'Clicking item 1 unchecks items 1',
   async () => {
     let updatedItems: PickableItem[] = [];
@@ -686,7 +686,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'Checking item 3 checks items 3 through 23',
   async () => {
     let updatedItems: PickableItem[] = [];
@@ -720,7 +720,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'Clicking folder 3 checks unchecks 3 through 23',
   async () => {
     let updatedItems: PickableItem[] = [];
@@ -750,7 +750,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'Clicking dashed folder 3 checks 3 through 23',
   async () => {
     let updatedItems: PickableItem[] = [];

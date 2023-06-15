@@ -63,7 +63,7 @@ import canReviewLogs from './helpers/canReviewLogs';
 import isMobileOrTablet from './helpers/isMobileOrTablet';
 import extractProp from './helpers/extractProp';
 import compareArraysByProp from './helpers/compareArraysByProp';
-import getLocalTimeInfo from './helpers/getLocalTimeInfo';
+import getLocalTimeInfo from './helpers/getLocalTimeInfo';  
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
