@@ -1,6 +1,9 @@
 // Import types
 import ValidationResult from '../shared/types/ValidationResult';
 
+// Import constants
+import { INVALID_PHONE_ERROR } from '../shared/constants/ERROR_MESSAGES';
+
 // Import function
 import validatePhoneNumber from '../validatePhoneNumber';
 
@@ -54,7 +57,7 @@ test(
   'Returns true for a given valid phone number and removes any non-digit characters.',
   async () => {
     validPhoneNumbers.forEach((pair) => {
-      const validResponse: ValidationResult = {
+      const validResponse: ValidationResult<string> = {
         isValid: true,
         cleanedValue: pair.cleaned,
       };
@@ -76,9 +79,9 @@ const invalidPhoneNumbers: string[] = [
   '123 4567 890',
 ];
 
-const invalidResponse: ValidationResult = {
+const invalidResponse: ValidationResult<string> = {
   isValid: false,
-  errorMessage: 'Please provide a valid phone number.',
+  errorMessage: INVALID_PHONE_ERROR,
 };
 
 test(

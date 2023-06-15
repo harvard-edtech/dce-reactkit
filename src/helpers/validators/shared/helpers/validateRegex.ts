@@ -1,6 +1,9 @@
 // Import types
 import ValidationResult from '../types/ValidationResult';
 
+// Import constants
+import { INVALID_REGEX_ERROR } from '../constants/ERROR_MESSAGES';
+
 /**
  * Determines whether a given input string is considered valid based on
  *   the provided regex.
@@ -19,9 +22,9 @@ const validateRegex = (
     regex: RegExp,
     regexDescription?: string,
   },
-): ValidationResult => {
+): ValidationResult<string> => {
   // customize error message in case of invalid input
-  const errorMessage = `Input does not follow the requested format${
+  const errorMessage = `${INVALID_REGEX_ERROR}${
     opts.regexDescription
       ? ': '
       : ''

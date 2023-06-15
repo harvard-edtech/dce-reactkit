@@ -1,8 +1,12 @@
 // Import helpers
 import validateRegex from './shared/helpers/validateRegex';
 
+// Import constants
+import { INVALID_PHONE_ERROR } from './shared/constants/ERROR_MESSAGES';
+
 // Import types
 import ValidationResult from './shared/types/ValidationResult';
+
 
 /**
  * Determines whether a given phone number is valid.
@@ -12,7 +16,9 @@ import ValidationResult from './shared/types/ValidationResult';
  *   a cleaned version of the number without any formatting. If invalid,
  *   returns an error message.
  */
-const validatePhoneNumber = (phoneNumber: string): ValidationResult => {
+const validatePhoneNumber = (
+  phoneNumber: string,
+): ValidationResult<string> => {
   // regex to validate phone number
   const validationRegex = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
 
@@ -36,7 +42,7 @@ const validatePhoneNumber = (phoneNumber: string): ValidationResult => {
       }
       : {
         isValid: false,
-        errorMessage: 'Please provide a valid phone number.',
+        errorMessage: INVALID_PHONE_ERROR,
       }
   );
 };

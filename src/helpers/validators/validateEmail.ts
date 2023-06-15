@@ -1,6 +1,9 @@
 // Import helpers
 import validateRegex from './shared/helpers/validateRegex';
 
+// Import constants
+import { INVALID_EMAIL_ERROR } from './shared/constants/ERROR_MESSAGES';
+
 // Import types
 import ValidationResult from './shared/types/ValidationResult';
 
@@ -12,8 +15,10 @@ import ValidationResult from './shared/types/ValidationResult';
  *   cleaned version of the address without leading or trailing
  *   whitespace if valid or an error message if invalid.
  */
-const validateEmail = (email: string): ValidationResult => {
-  // validation regex, sourced from HTML living standard
+const validateEmail = (
+  email: string,
+): ValidationResult<string> => {
+  // validation regex, sourced from HTML living standard: http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#e-mail-state-(type=email)
   // eslint-disable-next-line max-len
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
@@ -34,7 +39,7 @@ const validateEmail = (email: string): ValidationResult => {
       }
       : {
         isValid: false,
-        errorMessage: 'Please provide a valid email address.',
+        errorMessage: INVALID_EMAIL_ERROR,
       }
   );
 };

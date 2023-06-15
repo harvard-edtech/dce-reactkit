@@ -1,9 +1,11 @@
 // Import helpers
 import validateRegex from '../shared/helpers/validateRegex';
 
+// Import constants
+import { INVALID_STRING_ERRORS } from '../shared/constants/ERROR_MESSAGES';
+
 // Import types
 import ValidationResult from '../shared/types/ValidationResult';
-import StringValidationRequirements from './StringValidationRequirements';
 
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Constants ----------------------------- */
@@ -21,12 +23,16 @@ const UPPERCASE_MAX = 122;
 const DIGIT_MIN = 48;
 const DIGIT_MAX = 57;
 
+/*------------------------------------------------------------------------*/
+/* ---------------------------- Main Function --------------------------- */
+/*------------------------------------------------------------------------*/
+
 /**
  * Determines whether a given input string is considered valid based on
  *   the provided requirements.
  * @author Austen Money
  * @param input input string
- * @param reqs requirements that the provided string should conform to
+ * @param opts options for validation
  * @returns whether input is considered valid according to reqs - if
  *   valid, returns a cleaned version of input; if invalid, returns
  *   a string containing error messages describing which requirements
@@ -34,8 +40,23 @@ const DIGIT_MAX = 57;
  */
 const validateString = (
   input: string,
-  reqs: StringValidationRequirements,
-): ValidationResult => {
+  opts: {
+    // whitespace is removed from input before checking and returning
+    ignoreWhitespace?: boolean,
+    // input length must be at least minLen
+    minLen?: number,
+    // input length must be at most maxLen
+    maxLen?: number,
+    // input must only contain letters
+    lettersOnly?: boolean,
+    // input must only contain numbers
+    numbersOnly?: boolean,
+    // input must match given regExp
+    regexTest?: RegExp,
+    // description of regExp test, used to customize error messages
+    regexDescription?: string,
+  },
+): ValidationResult<string> => {
   // stores all invalid input errors
   const errorMessages: string[] = [];
 
@@ -43,63 +64,67 @@ const validateString = (
   let cleanedValue: string = input;
 
   // remove whitespace if required
-  if (reqs.ignoreWhitespace) {
+  if (opts.ignoreWhitespace) {
     cleanedValue = input.replace(/\s+/g, '');
   }
 
   // apply max char requirement
-  if (reqs.minLen) {
-    if (cleanedValue.length < reqs.minLen) {
-      errorMessages.push(`Input must not be under ${reqs.minLen} character(s)`);
+  if (opts.minLen) {
+    if (cleanedValue.length < opts.minLen) {
+      errorMessages.push(INVALID_STRING_ERRORS.MIN_LEN(opts.minLen));
     }
   }
 
   // apply max char requirement
-  if (reqs.maxLen) {
-    if (cleanedValue.length > reqs.maxLen) {
-      errorMessages.push(`Input must not be over ${reqs.maxLen} character(s)`);
+  if (opts.maxLen) {
+    if (cleanedValue.length > opts.maxLen) {
+      errorMessages.push(INVALID_STRING_ERRORS.MAX_LEN(opts.maxLen));
     }
   }
 
   // apply alphabetical requirement
-  if (reqs.lettersOnly) {
+  if (opts.lettersOnly) {
     // remove diacritics
     cleanedValue = cleanedValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-    for (let i = 0, len = cleanedValue.length; i < len; i++) {
-      const curr = cleanedValue.charCodeAt(i);
-
+    const containsNonLetters = cleanedValue.split('').some((curr) => {
       // check that char is an upper or lower-case letter
-      if (!(curr >= LOWERCASE_MIN && curr <= LOWERCASE_MAX)
-        && !(curr >= UPPERCASE_MIN && curr <= UPPERCASE_MAX)) {
-        errorMessages.push('Input must only contain letters');
-        break;
-      }
+      const currCode = curr.charCodeAt(0);
+      return (
+        !(currCode >= LOWERCASE_MIN && currCode <= LOWERCASE_MAX)
+        && !(currCode >= UPPERCASE_MIN && currCode <= UPPERCASE_MAX)
+      );
+    });
+
+    if (containsNonLetters) {
+      errorMessages.push(INVALID_STRING_ERRORS.LETTERS_ONLY);
     }
   }
 
   // apply numerical requirement
-  if (reqs.numbersOnly) {
-    for (let i = 0, len = cleanedValue.length; i < len; i++) {
-      const curr = cleanedValue.charCodeAt(i);
-
+  if (opts.numbersOnly) {
+    const containsNonNumbers = cleanedValue.split('').some((curr) => {
       // check that char is a digit
-      if (!(curr >= DIGIT_MIN && curr <= DIGIT_MAX)) {
-        errorMessages.push('Input must only contain numbers');
-        break;
-      }
+      const currCode = curr.charCodeAt(0);
+      return (
+        !(currCode >= DIGIT_MIN && currCode <= DIGIT_MAX)
+      );
+    });
+
+    if (containsNonNumbers) {
+      errorMessages.push(INVALID_STRING_ERRORS.NUMBERS_ONLY);
     }
   }
 
   // apply regex requirement
-  if (reqs.regexTest) {
-    const regex = reqs.regexTest;
+  if (opts.regexTest) {
+    const regex = opts.regexTest;
 
     // validate and create customized error message if description is provided
     const result = validateRegex({
       input: cleanedValue,
       regex,
-      regexDescription: reqs.regexDescription,
+      regexDescription: opts.regexDescription,
     });
 
     // if string did not pass regex validation, add error message
@@ -109,7 +134,7 @@ const validateString = (
   }
 
   // combine all error messages into one string to return
-  const errorMessage = `The following error(s) occurred: ${errorMessages.join(', ')}.`;
+  const errorMessage = `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${errorMessages.join(', ')}.`;
 
   return (
     // if no error messages, string is valid; if not, it is invalid

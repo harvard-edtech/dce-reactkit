@@ -1,6 +1,8 @@
 // Import types
 import ValidationResult from '../shared/types/ValidationResult';
-import StringValidationRequirements from '../validateString/StringValidationRequirements';
+
+// Import constants
+import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from '../shared/constants/ERROR_MESSAGES';
 
 // Import function
 import validateString from '../validateString';
@@ -17,7 +19,22 @@ const validStrings: string[] = [
   'WoahAnotherValidStringIsHere',
 ];
 
-const validReqs: StringValidationRequirements[] = [
+const validReqs: {
+  // whitespace is removed from input before checking and returning
+  ignoreWhitespace?: boolean,
+  // input length must be at least minLen
+  minLen?: number,
+  // input length must be at most maxLen
+  maxLen?: number,
+  // input must only contain letters
+  lettersOnly?: boolean,
+  // input must only contain numbers
+  numbersOnly?: boolean,
+  // input must match given regExp
+  regexTest?: RegExp,
+  // description of regExp test, used to customize error messages
+  regexDescription?: string,
+}[] = [
   {
   },
   {
@@ -52,7 +69,7 @@ test(
   async () => {
     validStrings.forEach((validString) => {
       validReqs.forEach((validReq) => {
-        const validResponse: ValidationResult = {
+        const validResponse: ValidationResult<string> = {
           isValid: true,
           cleanedValue: validString,
         };
@@ -63,17 +80,17 @@ test(
 
     const validString = 'A string with whitespace!';
 
-    const validResponse: ValidationResult = {
+    const validResponse: ValidationResult<string> = {
       isValid: true,
       cleanedValue: 'Astringwithwhitespace!',
     };
 
-    const validReq: StringValidationRequirements = {
+    const validOpt = {
       maxLen: 22,
       ignoreWhitespace: true,
     };
 
-    expect(validateString(validString, validReq)).toStrictEqual(validResponse);
+    expect(validateString(validString, validOpt)).toStrictEqual(validResponse);
   },
 );
 
@@ -81,14 +98,33 @@ test(
 /* ---------------------------- Invalid Tests --------------------------- */
 /*------------------------------------------------------------------------*/
 
-const invalidStrings: { input: string, reqs: StringValidationRequirements, error: string }[] = [
+const invalidStrings: {
+  input: string,
+  reqs: {
+    // whitespace is removed from input before checking and returning
+    ignoreWhitespace?: boolean,
+    // input length must be at least minLen
+    minLen?: number,
+    // input length must be at most maxLen
+    maxLen?: number,
+    // input must only contain letters
+    lettersOnly?: boolean,
+    // input must only contain numbers
+    numbersOnly?: boolean,
+    // input must match given regExp
+    regexTest?: RegExp,
+    // description of regExp test, used to customize error messages
+    regexDescription?: string,
+  },
+  error: string
+}[] = [
   {
     input: 'ûšër',
     reqs: {
       minLen: 5,
       lettersOnly: true,
     },
-    error: 'The following error(s) occurred: Input must not be under 5 character(s).',
+    error: `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${INVALID_STRING_ERRORS.MIN_LEN(5)}.`,
   },
   {
     input: '123456789',
@@ -97,7 +133,7 @@ const invalidStrings: { input: string, reqs: StringValidationRequirements, error
       maxLen: 5,
       lettersOnly: true,
     },
-    error: 'The following error(s) occurred: Input must not be under 10 character(s), Input must not be over 5 character(s), Input must only contain letters.',
+    error: `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${INVALID_STRING_ERRORS.MIN_LEN(10)}, ${INVALID_STRING_ERRORS.MAX_LEN(5)}, ${INVALID_STRING_ERRORS.LETTERS_ONLY}.`,
   },
   {
     input: 'String with non-letters!!',
@@ -106,7 +142,7 @@ const invalidStrings: { input: string, reqs: StringValidationRequirements, error
       numbersOnly: true,
       ignoreWhitespace: true,
     },
-    error: 'The following error(s) occurred: Input must only contain letters, Input must only contain numbers.',
+    error: `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${INVALID_STRING_ERRORS.LETTERS_ONLY}, ${INVALID_STRING_ERRORS.NUMBERS_ONLY}.`,
   },
   {
     input: '12345678',
@@ -115,7 +151,7 @@ const invalidStrings: { input: string, reqs: StringValidationRequirements, error
       regexTest: /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
       regexDescription: 'Should be a phone number',
     },
-    error: 'The following error(s) occurred: Input must only contain letters, Input does not follow the requested format: Should be a phone number.',
+    error: `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${INVALID_STRING_ERRORS.LETTERS_ONLY}, ${INVALID_REGEX_ERROR}: Should be a phone number.`,
   },
 ];
 
@@ -123,7 +159,7 @@ test(
   'Returns false for a given invalid string.',
   async () => {
     invalidStrings.forEach((triple) => {
-      const invalidResponse: ValidationResult = {
+      const invalidResponse: ValidationResult<string> = {
         isValid: false,
         errorMessage: triple.error,
       };

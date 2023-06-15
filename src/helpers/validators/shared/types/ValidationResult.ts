@@ -2,12 +2,12 @@
  * Result of a validation function.
  * @author Austen Money
  */
-type ValidationResult = (
+type ValidationResult<CleanedValueType> = (
   | {
     // if true, the validation was successful
     isValid: true,
     // the cleaned version of the value
-    cleanedValue: string,
+    cleanedValue: CleanedValueType,
   }
   | {
     // if false, the validation was not successful

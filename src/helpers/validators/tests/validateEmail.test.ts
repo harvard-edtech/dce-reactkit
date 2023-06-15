@@ -1,6 +1,9 @@
 // Import types
 import ValidationResult from '../shared/types/ValidationResult';
 
+// Import constants
+import { INVALID_EMAIL_ERROR } from '../shared/constants/ERROR_MESSAGES';
+
 // Import function
 import validateEmail from '../validateEmail';
 
@@ -59,7 +62,7 @@ test(
   'Returns true for a given valid email and removes any leading or trailing whitespace.',
   async () => {
     validEmailPairs.forEach((pair) => {
-      const validResponse: ValidationResult = {
+      const validResponse: ValidationResult<string> = {
         isValid: true,
         cleanedValue: pair.cleaned,
       };
@@ -92,9 +95,9 @@ const invalidEmails: string[] = [
   'user\tname@gmail.com',
 ];
 
-const invalidResponse: ValidationResult = {
+const invalidResponse: ValidationResult<string> = {
   isValid: false,
-  errorMessage: 'Please provide a valid email address.',
+  errorMessage: INVALID_EMAIL_ERROR,
 };
 
 test(
