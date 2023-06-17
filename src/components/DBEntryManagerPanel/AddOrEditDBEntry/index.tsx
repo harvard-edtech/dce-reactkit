@@ -624,7 +624,7 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
                 {field.label}
               </span>
               {/* Add each subfield */}
-              <div className="flex-grow-1 ps-2 pe-2 pt-2 form-control">
+              <div className="flex-grow-1 ps-2 pe-2 pt-2 pb-0 form-control">
                 {
                   field.subfields.map((subfield: DBEntryField) => {
                     return <div>{renderEntryField(subfield, disabled)}</div>;
@@ -643,7 +643,7 @@ const AddOrEditDBEntry: React.FC<Props> = (props) => {
     // UI
     body = (
       <div>
-        <h1>{dbEntryToEdit ? `Edit ${itemName}` : `Create ${itemName}`}</h1>
+        <h3 className="text-center">{dbEntryToEdit ? `Edit ${itemName}` : `Create ${itemName}`}</h3>
         {/* Entry fields */}
         {
           entryFields.map((field: DBEntryField) => {
