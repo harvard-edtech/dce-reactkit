@@ -1,11 +1,12 @@
 // Import helpers
-import validateRegex from '../shared/helpers/validateRegex';
+import validateRegex from './shared/helpers/validateRegex';
+import genCommaList from '../genCommaList';
 
 // Import constants
-import { INVALID_STRING_ERRORS } from '../shared/constants/ERROR_MESSAGES';
+import { INVALID_STRING_ERRORS } from './shared/constants/ERROR_MESSAGES';
 
 // Import types
-import ValidationResult from '../shared/types/ValidationResult';
+import ValidationResult from './shared/types/ValidationResult';
 
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Constants ----------------------------- */
@@ -134,7 +135,7 @@ const validateString = (
   }
 
   // combine all error messages into one string to return
-  const errorMessage = `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${errorMessages.join(', ')}.`;
+  const errorMessage = `${INVALID_STRING_ERRORS.MESSAGE_INTRO}${genCommaList(errorMessages)}.`;
 
   return (
     // if no error messages, string is valid; if not, it is invalid

@@ -7,7 +7,6 @@ import { INVALID_PHONE_ERROR } from './shared/constants/ERROR_MESSAGES';
 // Import types
 import ValidationResult from './shared/types/ValidationResult';
 
-
 /**
  * Determines whether a given phone number is valid.
  * @author Austen Money

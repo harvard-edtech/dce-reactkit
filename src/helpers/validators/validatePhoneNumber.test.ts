@@ -1,11 +1,11 @@
 // Import types
-import ValidationResult from '../shared/types/ValidationResult';
+import ValidationResult from './shared/types/ValidationResult';
 
 // Import constants
-import { INVALID_PHONE_ERROR } from '../shared/constants/ERROR_MESSAGES';
+import { INVALID_PHONE_ERROR } from './shared/constants/ERROR_MESSAGES';
 
 // Import function
-import validatePhoneNumber from '../validatePhoneNumber';
+import validatePhoneNumber from './validatePhoneNumber';
 
 /*------------------------------------------------------------------------*/
 /* ---------------------------- Valid Tests --------------------------- */

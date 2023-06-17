@@ -1,11 +1,11 @@
 // Import types
-import ValidationResult from '../shared/types/ValidationResult';
+import ValidationResult from './shared/types/ValidationResult';
 
 // Import constants
-import { INVALID_EMAIL_ERROR } from '../shared/constants/ERROR_MESSAGES';
+import { INVALID_EMAIL_ERROR } from './shared/constants/ERROR_MESSAGES';
 
 // Import function
-import validateEmail from '../validateEmail';
+import validateEmail from './validateEmail';
 
 /*------------------------------------------------------------------------*/
 /* ---------------------------- Valid Tests --------------------------- */

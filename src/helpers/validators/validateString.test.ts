@@ -1,11 +1,14 @@
+// Import helpers
+import genCommaList from '../genCommaList';
+
 // Import types
-import ValidationResult from '../shared/types/ValidationResult';
+import ValidationResult from './shared/types/ValidationResult';
 
 // Import constants
-import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from '../shared/constants/ERROR_MESSAGES';
+import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from './shared/constants/ERROR_MESSAGES';
 
 // Import function
-import validateString from '../validateString';
+import validateString from './validateString';
 
 /*------------------------------------------------------------------------*/
 /* ---------------------------- Valid Tests --------------------------- */
@@ -116,7 +119,7 @@ const invalidStrings: {
     // description of regExp test, used to customize error messages
     regexDescription?: string,
   },
-  error: string
+  error: string[]
 }[] = [
   {
     input: 'ûšër',
@@ -124,7 +127,7 @@ const invalidStrings: {
       minLen: 5,
       lettersOnly: true,
     },
-    error: `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${INVALID_STRING_ERRORS.MIN_LEN(5)}.`,
+    error: [INVALID_STRING_ERRORS.MIN_LEN(5)],
   },
   {
     input: '123456789',
@@ -133,7 +136,7 @@ const invalidStrings: {
       maxLen: 5,
       lettersOnly: true,
     },
-    error: `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${INVALID_STRING_ERRORS.MIN_LEN(10)}, ${INVALID_STRING_ERRORS.MAX_LEN(5)}, ${INVALID_STRING_ERRORS.LETTERS_ONLY}.`,
+    error: [INVALID_STRING_ERRORS.MIN_LEN(10), INVALID_STRING_ERRORS.MAX_LEN(5), INVALID_STRING_ERRORS.LETTERS_ONLY],
   },
   {
     input: 'String with non-letters!!',
@@ -142,16 +145,16 @@ const invalidStrings: {
       numbersOnly: true,
       ignoreWhitespace: true,
     },
-    error: `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${INVALID_STRING_ERRORS.LETTERS_ONLY}, ${INVALID_STRING_ERRORS.NUMBERS_ONLY}.`,
+    error: [INVALID_STRING_ERRORS.LETTERS_ONLY, INVALID_STRING_ERRORS.NUMBERS_ONLY],
   },
   {
     input: '12345678',
     reqs: {
       lettersOnly: true,
       regexTest: /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
-      regexDescription: 'Should be a phone number',
+      regexDescription: 'should be a phone number',
     },
-    error: `${INVALID_STRING_ERRORS.MESSAGE_INTRO} ${INVALID_STRING_ERRORS.LETTERS_ONLY}, ${INVALID_REGEX_ERROR}: Should be a phone number.`,
+    error: [INVALID_STRING_ERRORS.LETTERS_ONLY, `${INVALID_REGEX_ERROR}: should be a phone number`],
   },
 ];
 
@@ -161,8 +164,10 @@ test(
     invalidStrings.forEach((triple) => {
       const invalidResponse: ValidationResult<string> = {
         isValid: false,
-        errorMessage: triple.error,
+        errorMessage: `${INVALID_STRING_ERRORS.MESSAGE_INTRO}${genCommaList(triple.error)}.`,
       };
+
+      console.log(invalidResponse.errorMessage);
 
       expect(validateString(triple.input, triple.reqs)).toStrictEqual(invalidResponse);
     });

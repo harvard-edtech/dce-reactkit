@@ -63,6 +63,10 @@ import canReviewLogs from './helpers/canReviewLogs';
 import isMobileOrTablet from './helpers/isMobileOrTablet';
 import extractProp from './helpers/extractProp';
 import compareArraysByProp from './helpers/compareArraysByProp';
+import genCommaList from './helpers/genCommaList';
+import validateEmail from './helpers/validators/validateEmail';
+import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
+import validateString from './helpers/validators/validateString';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -142,6 +146,10 @@ export {
   isMobileOrTablet,
   extractProp,
   compareArraysByProp,
+  genCommaList,
+  validateEmail,
+  validatePhoneNumber,
+  validateString,
   // Client helpers
   initClient,
   visitServerEndpoint,
