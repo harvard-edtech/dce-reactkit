@@ -39976,7 +39976,7 @@ const AddOrEditDBEntry = (props) => {
                 return (React__default["default"].createElement("div", { key: field.objectKey, className: "mb-2" },
                     React__default["default"].createElement("div", { className: "input-group" },
                         React__default["default"].createElement("span", { className: "AddOrEditDBEntry-input-label input-group-text" }, field.label),
-                        React__default["default"].createElement("div", { className: "flex-grow-1 ps-2 pe-2 pt-2 form-control" }, field.subfields.map((subfield) => {
+                        React__default["default"].createElement("div", { className: "flex-grow-1 ps-2 pe-2 pt-2 pb-0 form-control" }, field.subfields.map((subfield) => {
                             return React__default["default"].createElement("div", null, renderEntryField(subfield, disabled));
                         })))));
             }
@@ -39985,7 +39985,7 @@ const AddOrEditDBEntry = (props) => {
         };
         // UI
         body = (React__default["default"].createElement("div", null,
-            React__default["default"].createElement("h1", null, dbEntryToEdit ? `Edit ${itemName}` : `Create ${itemName}`),
+            React__default["default"].createElement("h3", { className: "text-center" }, dbEntryToEdit ? `Edit ${itemName}` : `Create ${itemName}`),
             entryFields.map((field) => {
                 const disabled = (idPropName === field.objectKey && dbEntryToEdit !== undefined)
                     || (field.lockAfterCreation !== undefined && dbEntryToEdit !== undefined);
