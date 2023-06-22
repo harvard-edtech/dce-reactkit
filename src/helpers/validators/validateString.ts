@@ -88,14 +88,22 @@ const validateString = (
     // remove diacritics
     cleanedValue = cleanedValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-    const containsNonLetters = cleanedValue.split('').some((curr) => {
-      // check that char is an upper or lower-case letter
-      const currCode = curr.charCodeAt(0);
-      return (
-        !(currCode >= LOWERCASE_MIN && currCode <= LOWERCASE_MAX)
-        && !(currCode >= UPPERCASE_MIN && currCode <= UPPERCASE_MAX)
-      );
-    });
+    const containsNonLetters = (
+      cleanedValue
+        // split into characters
+        .split('')
+        // convert into character codes
+        .map((curr) => {
+          return curr.charCodeAt(0);
+        })
+        // check for non-letters
+        .some((currCode) => {
+          return (
+            !(currCode >= LOWERCASE_MIN && currCode <= LOWERCASE_MAX)
+            && !(currCode >= UPPERCASE_MIN && currCode <= UPPERCASE_MAX)
+          );
+        })
+    );
 
     if (containsNonLetters) {
       errorMessages.push(INVALID_STRING_ERRORS.LETTERS_ONLY);
@@ -104,13 +112,21 @@ const validateString = (
 
   // apply numerical requirement
   if (opts.numbersOnly) {
-    const containsNonNumbers = cleanedValue.split('').some((curr) => {
-      // check that char is a digit
-      const currCode = curr.charCodeAt(0);
-      return (
-        !(currCode >= DIGIT_MIN && currCode <= DIGIT_MAX)
-      );
-    });
+    const containsNonNumbers = (
+      cleanedValue
+        // split into characters
+        .split('')
+        // convert into character codes
+        .map((curr) => {
+          return curr.charCodeAt(0);
+        })
+        // check for non-numbers
+        .some((currCode) => {
+          return (
+            !(currCode >= DIGIT_MIN && currCode <= DIGIT_MAX)
+          );
+        })
+    );
 
     if (containsNonNumbers) {
       errorMessages.push(INVALID_STRING_ERRORS.NUMBERS_ONLY);
