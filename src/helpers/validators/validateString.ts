@@ -49,6 +49,7 @@ const validateString = (
     // input length must be at most maxLen
     maxLen?: number,
     // input must only contain letters
+    // (future TODO: add option for passing in an array of permitted chars)
     lettersOnly?: boolean,
     // input must only contain numbers
     numbersOnly?: boolean,
