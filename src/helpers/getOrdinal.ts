@@ -1,3 +1,4 @@
+// Constants
 const ORDINALS = ['th', 'st', 'nd', 'rd'];
 
 /**

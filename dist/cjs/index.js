@@ -1287,6 +1287,7 @@ const getMonthName = (month) => {
     return ((_a = monthNames[month - 1]) !== null && _a !== void 0 ? _a : monthNames[0]);
 };
 
+// Constants
 const ORDINALS = ['th', 'st', 'nd', 'rd'];
 /**
  * Get a number's ordinal
@@ -1303,9 +1304,10 @@ const getOrdinal = (num) => {
  * Get current time info in US Boston Eastern Time, independent of machine
  *   timezone
  * @author Gabe Abrams
- * @param [date=now] the date to get info on or a ms since epoch timestamp
+ * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
  * @returns object with timestamp (ms since epoch) and numbers
- *   corresponding to ET time values for year, month, day, hour, minute
+ *   corresponding to ET time values for year, month, day, hour, hour12, minute, isPM
+ *   where hour is in 24hr time and hour12 is in 12hr time.
  */
 const getTimeInfoInET = (dateOrTimestamp) => {
     // Create a time string
@@ -1335,14 +1337,15 @@ const getTimeInfoInET = (dateOrTimestamp) => {
     const month = Number.parseInt(monthStr, 10);
     const day = Number.parseInt(dayStr, 10);
     const minute = Number.parseInt(minStr, 10);
-    let hour = Number.parseInt(hourStr, 10);
+    let hour12 = Number.parseInt(hourStr, 10);
     // Convert from am/pm to 24hr
     const isAM = ending.toLowerCase().includes('am');
     const isPM = !isAM;
-    if (isPM && hour !== 12) {
+    let hour = hour12;
+    if (isPM && hour12 !== 12) {
         hour += 12;
     }
-    else if (isAM && hour === 12) {
+    else if (isAM && hour12 === 12) {
         hour = 0;
     }
     // Return
@@ -1352,6 +1355,8 @@ const getTimeInfoInET = (dateOrTimestamp) => {
         month,
         day,
         hour,
+        hour12,
+        isPM,
         minute,
     };
 };
@@ -2278,12 +2283,13 @@ const roundToNumDecimals = (num, numDecimals) => {
  * @returns escaped cell text
  */
 const escapeCellText = (text) => {
-    if (!String(text).includes(',')) {
+    if (!String(text).includes(',')
+        && !String(text).includes('"')) {
         // No need to escape
         return String(text);
     }
     // Perform escape
-    return `"${String(text).replace(/"/g, '""')}`;
+    return `"${String(text).replace(/"/g, '""')}"`;
 };
 /**
  * Generate a CSV file
@@ -5555,8 +5561,14 @@ const initLogCollection = (Collection) => {
     });
 };
 
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Cache ------------------------------- */
+/*------------------------------------------------------------------------*/
 // Cache user's ability
 let canReview = undefined;
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Main -------------------------------- */
+/*------------------------------------------------------------------------*/
 /**
  * Check if the current user can review logs
  * @author Gabe Abrams
@@ -5629,6 +5641,54 @@ const compareArraysByProp = (a, b, prop) => {
 };
 
 /**
+ * Get current time info in local time
+ * @author Gabe Abrams
+ * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
+ * @returns object with timestamp (ms since epoch) and numbers
+ *   corresponding to time values for year, month, day, hour, hour12, minute, isPM
+ *   where hour is in 24hr time and hour12 is in 12hr time.
+ */
+const getLocalTimeInfo = (dateOrTimestamp) => {
+    // Create a time string
+    let d;
+    if (!dateOrTimestamp) {
+        // Use now
+        d = new Date();
+    }
+    else if (typeof dateOrTimestamp === 'number') {
+        // Convert to date
+        d = new Date(dateOrTimestamp);
+    }
+    else {
+        // Already a date
+        d = dateOrTimestamp;
+    }
+    // Create all time numbers
+    const timestamp = d.getTime();
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const hour = d.getHours();
+    const isPM = hour >= 12;
+    let hour12 = hour % 12;
+    if (hour12 === 0) {
+        hour12 = 12;
+    }
+    const minute = d.getMinutes();
+    // Return
+    return {
+        timestamp,
+        year,
+        month,
+        day,
+        hour,
+        hour12,
+        isPM,
+        minute,
+    };
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -5691,6 +5751,7 @@ exports.forceNumIntoBounds = forceNumIntoBounds;
 exports.genCSV = genCSV;
 exports.genRouteHandler = genRouteHandler;
 exports.getHumanReadableDate = getHumanReadableDate;
+exports.getLocalTimeInfo = getLocalTimeInfo;
 exports.getMonthName = getMonthName;
 exports.getOrdinal = getOrdinal;
 exports.getPartOfDay = getPartOfDay;

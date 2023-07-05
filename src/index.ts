@@ -67,6 +67,7 @@ import genCommaList from './helpers/genCommaList';
 import validateEmail from './helpers/validators/validateEmail';
 import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
 import validateString from './helpers/validators/validateString';
+import getLocalTimeInfo from './helpers/getLocalTimeInfo';  
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -150,6 +151,7 @@ export {
   validateEmail,
   validatePhoneNumber,
   validateString,
+  getLocalTimeInfo,
   // Client helpers
   initClient,
   visitServerEndpoint,
