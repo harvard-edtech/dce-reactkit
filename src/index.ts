@@ -63,6 +63,10 @@ import canReviewLogs from './helpers/canReviewLogs';
 import isMobileOrTablet from './helpers/isMobileOrTablet';
 import extractProp from './helpers/extractProp';
 import compareArraysByProp from './helpers/compareArraysByProp';
+import genCommaList from './helpers/genCommaList';
+import validateEmail from './helpers/validators/validateEmail';
+import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
+import validateString from './helpers/validators/validateString';
 import getLocalTimeInfo from './helpers/getLocalTimeInfo';  
 
 // Import types
@@ -143,6 +147,10 @@ export {
   isMobileOrTablet,
   extractProp,
   compareArraysByProp,
+  genCommaList,
+  validateEmail,
+  validatePhoneNumber,
+  validateString,
   getLocalTimeInfo,
   // Client helpers
   initClient,

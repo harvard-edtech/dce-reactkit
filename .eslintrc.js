@@ -2,8 +2,6 @@ const config = {
   extends: [
     'airbnb',
     'airbnb/hooks',
-    'react-app',
-    'react-app/jest',
   ],
   overrides: [
     {
