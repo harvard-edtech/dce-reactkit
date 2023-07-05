@@ -2,7 +2,7 @@
  * Result of a validation function.
  * @author Austen Money
  */
-type ValidationResult<CleanedValueType> = ({
+declare type ValidationResult<CleanedValueType> = ({
     isValid: true;
     cleanedValue: CleanedValueType;
 } | {

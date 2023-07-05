@@ -1067,6 +1067,71 @@ declare const extractProp: (arr: any[], prop: string) => any[];
 declare const compareArraysByProp: (a: any[], b: any[], prop: string) => boolean;
 
 /**
+ * Given an array of strings, create a single comma-separated string that includes
+ * 'and' as well as an oxford comma.
+ *   Ex: ['apples'] => 'apples'
+ *   Ex: ['apples', 'bananas'] => 'apples and bananas'
+ *   Ex: ['apples', 'bananas', 'grapes'] => 'apples, bananas, and grapes'
+ * @author Austen Money
+ * @param list an array of elements to be made into a single comma-separated string.
+ * @returns a comma-separated string.
+ */
+declare const genCommaList: (list: string[]) => string;
+
+/**
+ * Result of a validation function.
+ * @author Austen Money
+ */
+declare type ValidationResult<CleanedValueType> = ({
+    isValid: true;
+    cleanedValue: CleanedValueType;
+} | {
+    isValid: false;
+    errorMessage: string;
+});
+
+/**
+ * Determines whether a given email address is valid.
+ * @author Austen Money
+ * @param email email address to validate
+ * @returns whether email fulfills proper formatting requirements, includes a
+ *   cleaned version of the address without leading or trailing
+ *   whitespace if valid or an error message if invalid.
+ */
+declare const validateEmail: (email: string) => ValidationResult<string>;
+
+/**
+ * Determines whether a given phone number is valid.
+ * @author Austen Money
+ * @param phoneNumber phone number to validate
+ * @returns whether phone number is considered valid - if valid, also returns
+ *   a cleaned version of the number without any formatting. If invalid,
+ *   returns an error message.
+ */
+declare const validatePhoneNumber: (phoneNumber: string) => ValidationResult<string>;
+
+/**
+ * Determines whether a given input string is considered valid based on
+ *   the provided requirements.
+ * @author Austen Money
+ * @param input input string
+ * @param opts options for validation
+ * @returns whether input is considered valid according to reqs - if
+ *   valid, returns a cleaned version of input; if invalid, returns
+ *   a string containing error messages describing which requirements
+ *   were not met.
+ */
+declare const validateString: (input: string, opts: {
+    ignoreWhitespace?: boolean;
+    minLen?: number;
+    maxLen?: number;
+    lettersOnly?: boolean;
+    numbersOnly?: boolean;
+    regexTest?: RegExp;
+    regexDescription?: string;
+}) => ValidationResult<string>;
+
+/**
  * Get current time info in local time
  * @author Gabe Abrams
  * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
@@ -1135,4 +1200,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };

@@ -5641,6 +5641,246 @@ const compareArraysByProp = (a, b, prop) => {
 };
 
 /**
+ * Given an array of strings, create a single comma-separated string that includes
+ * 'and' as well as an oxford comma.
+ *   Ex: ['apples'] => 'apples'
+ *   Ex: ['apples', 'bananas'] => 'apples and bananas'
+ *   Ex: ['apples', 'bananas', 'grapes'] => 'apples, bananas, and grapes'
+ * @author Austen Money
+ * @param list an array of elements to be made into a single comma-separated string.
+ * @returns a comma-separated string.
+ */
+const genCommaList = (list) => {
+    const { length } = list;
+    return (length < 2
+        ? list.join('')
+        : `${list.slice(0, length - 1).join(', ')}${length < 3 ? ' and ' : ', and '}${list[length - 1]}`);
+};
+
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Constants ----------------------------- */
+/*------------------------------------------------------------------------*/
+const INVALID_REGEX_ERROR = 'input does not follow the requested format';
+const INVALID_EMAIL_ERROR = 'Please provide a valid email address.';
+const INVALID_PHONE_ERROR = 'Please provide a valid phone number.';
+const INVALID_STRING_ERRORS = {
+    MIN_LEN: (minLen) => {
+        return `input must not be under ${minLen} character(s)`;
+    },
+    MAX_LEN: (maxLen) => {
+        return `input must not be over ${maxLen} character(s)`;
+    },
+    LETTERS_ONLY: 'input must only contain letters',
+    NUMBERS_ONLY: 'input must only contain numbers',
+    MESSAGE_INTRO: 'The following error(s) occurred: ',
+};
+
+// Import constants
+/**
+ * Determines whether a given input string is considered valid based on
+ *   the provided regex.
+ * @author Austen Money
+ * @param opts object containing all args
+ * @param opts.input user-provided input to validate
+ * @param opts.regex regular expression to check against input
+ * @param [opts.regexDescription] description of what regexString is checking
+ *   for, used to customize error message
+ * @returns the unchanged input if valid, or a customized error message if
+ *   invalid
+ */
+const validateRegex = (opts) => {
+    // customize error message in case of invalid input
+    const errorMessage = `${INVALID_REGEX_ERROR}${opts.regexDescription
+        ? ': '
+        : ''}${opts.regexDescription}`;
+    // return error message if test is invalid, or input string if valid
+    return (opts.regex.test(opts.input)
+        ? {
+            isValid: true,
+            cleanedValue: opts.input,
+        }
+        : {
+            isValid: false,
+            errorMessage,
+        });
+};
+
+// Import helpers
+/**
+ * Determines whether a given email address is valid.
+ * @author Austen Money
+ * @param email email address to validate
+ * @returns whether email fulfills proper formatting requirements, includes a
+ *   cleaned version of the address without leading or trailing
+ *   whitespace if valid or an error message if invalid.
+ */
+const validateEmail = (email) => {
+    // validation regex, sourced from HTML living standard: http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#e-mail-state-(type=email)
+    // eslint-disable-next-line max-len
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    // remove leading and trailing whitespace
+    const cleanedValue = email.replace(/^\s+|\s+$/g, '');
+    // validate email with regex, and return error if not valid
+    return (validateRegex({
+        input: cleanedValue,
+        regex: emailRegex,
+    }).isValid
+        ? {
+            isValid: true,
+            cleanedValue,
+        }
+        : {
+            isValid: false,
+            errorMessage: INVALID_EMAIL_ERROR,
+        });
+};
+
+// Import helpers
+/**
+ * Determines whether a given phone number is valid.
+ * @author Austen Money
+ * @param phoneNumber phone number to validate
+ * @returns whether phone number is considered valid - if valid, also returns
+ *   a cleaned version of the number without any formatting. If invalid,
+ *   returns an error message.
+ */
+const validatePhoneNumber = (phoneNumber) => {
+    // regex to validate phone number
+    const validationRegex = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
+    // validate phone number with regex
+    const validationResponse = validateRegex({
+        input: phoneNumber,
+        regex: validationRegex,
+    });
+    // remove all non-digits from number
+    const cleanedValue = phoneNumber.replace(/\D/g, '');
+    // return cleaned value if valid, or error message if invalid
+    return (validationResponse.isValid
+        ? {
+            isValid: true,
+            cleanedValue,
+        }
+        : {
+            isValid: false,
+            errorMessage: INVALID_PHONE_ERROR,
+        });
+};
+
+// Import helpers
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Constants ----------------------------- */
+/*------------------------------------------------------------------------*/
+// define minimum and maximum range for lowercase ASCII chars
+const LOWERCASE_MIN = 65;
+const LOWERCASE_MAX = 90;
+// define minimum and maximum range for uppercase ASCII chars
+const UPPERCASE_MIN = 97;
+const UPPERCASE_MAX = 122;
+// define minimum and maximum range for ASCII digits
+const DIGIT_MIN = 48;
+const DIGIT_MAX = 57;
+/*------------------------------------------------------------------------*/
+/* ---------------------------- Main Function --------------------------- */
+/*------------------------------------------------------------------------*/
+/**
+ * Determines whether a given input string is considered valid based on
+ *   the provided requirements.
+ * @author Austen Money
+ * @param input input string
+ * @param opts options for validation
+ * @returns whether input is considered valid according to reqs - if
+ *   valid, returns a cleaned version of input; if invalid, returns
+ *   a string containing error messages describing which requirements
+ *   were not met.
+ */
+const validateString = (input, opts) => {
+    // stores all invalid input errors
+    const errorMessages = [];
+    // contains version of input that will be returned
+    let cleanedValue = input;
+    // remove whitespace if required
+    if (opts.ignoreWhitespace) {
+        cleanedValue = input.replace(/\s+/g, '');
+    }
+    // apply max char requirement
+    if (opts.minLen) {
+        if (cleanedValue.length < opts.minLen) {
+            errorMessages.push(INVALID_STRING_ERRORS.MIN_LEN(opts.minLen));
+        }
+    }
+    // apply max char requirement
+    if (opts.maxLen) {
+        if (cleanedValue.length > opts.maxLen) {
+            errorMessages.push(INVALID_STRING_ERRORS.MAX_LEN(opts.maxLen));
+        }
+    }
+    // apply alphabetical requirement
+    if (opts.lettersOnly) {
+        // remove diacritics
+        cleanedValue = cleanedValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const containsNonLetters = (cleanedValue
+            // split into characters
+            .split('')
+            // convert into character codes
+            .map((curr) => {
+            return curr.charCodeAt(0);
+        })
+            // check for non-letters
+            .some((currCode) => {
+            return (!(currCode >= LOWERCASE_MIN && currCode <= LOWERCASE_MAX)
+                && !(currCode >= UPPERCASE_MIN && currCode <= UPPERCASE_MAX));
+        }));
+        if (containsNonLetters) {
+            errorMessages.push(INVALID_STRING_ERRORS.LETTERS_ONLY);
+        }
+    }
+    // apply numerical requirement
+    if (opts.numbersOnly) {
+        const containsNonNumbers = (cleanedValue
+            // split into characters
+            .split('')
+            // convert into character codes
+            .map((curr) => {
+            return curr.charCodeAt(0);
+        })
+            // check for non-numbers
+            .some((currCode) => {
+            return (!(currCode >= DIGIT_MIN && currCode <= DIGIT_MAX));
+        }));
+        if (containsNonNumbers) {
+            errorMessages.push(INVALID_STRING_ERRORS.NUMBERS_ONLY);
+        }
+    }
+    // apply regex requirement
+    if (opts.regexTest) {
+        const regex = opts.regexTest;
+        // validate and create customized error message if description is provided
+        const result = validateRegex({
+            input: cleanedValue,
+            regex,
+            regexDescription: opts.regexDescription,
+        });
+        // if string did not pass regex validation, add error message
+        if (result.isValid === false) {
+            errorMessages.push(result.errorMessage);
+        }
+    }
+    // combine all error messages into one string to return
+    const errorMessage = `${INVALID_STRING_ERRORS.MESSAGE_INTRO}${genCommaList(errorMessages)}.`;
+    return (
+    // if no error messages, string is valid; if not, it is invalid
+    errorMessages.length === 0
+        ? {
+            isValid: true,
+            cleanedValue,
+        }
+        : {
+            isValid: false,
+            errorMessage,
+        });
+};
+
+/**
  * Get current time info in local time
  * @author Gabe Abrams
  * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
@@ -5749,6 +5989,7 @@ exports.extractProp = extractProp;
 exports.floorToNumDecimals = floorToNumDecimals;
 exports.forceNumIntoBounds = forceNumIntoBounds;
 exports.genCSV = genCSV;
+exports.genCommaList = genCommaList;
 exports.genRouteHandler = genRouteHandler;
 exports.getHumanReadableDate = getHumanReadableDate;
 exports.getLocalTimeInfo = getLocalTimeInfo;
@@ -5773,6 +6014,9 @@ exports.startMinWait = startMinWait;
 exports.stringsToHumanReadableList = stringsToHumanReadableList;
 exports.stubServerEndpoint = stubServerEndpoint;
 exports.sum = sum;
+exports.validateEmail = validateEmail;
+exports.validatePhoneNumber = validatePhoneNumber;
+exports.validateString = validateString;
 exports.visitServerEndpoint = visitServerEndpoint;
 exports.waitMs = waitMs;
 //# sourceMappingURL=index.js.map
