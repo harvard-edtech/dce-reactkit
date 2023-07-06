@@ -12,4 +12,5 @@ const generateEndpointPath = (collectionName: string, adminsOnly?: boolean) => {
   // Return the endpoint path
   return `/api/${userPath}/dce-reactkit/dbeditor/${collectionName}`;
 };
+
 export default generateEndpointPath;

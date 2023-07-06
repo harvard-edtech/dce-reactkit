@@ -1,3 +1,10 @@
+/**
+ * Multiselect component that allows the user to type in values and add them to
+ *   the multiselect component
+ * @author Yuen Ler Chow
+ * @author Gabe Abrams
+ */
+
 // Import React
 import React, { KeyboardEventHandler, useReducer } from 'react';
 
@@ -15,21 +22,21 @@ import DBEntryFieldType from '../types/DBEntryFieldType';
 // Props definition
 type Props = {
   // Type of the field
-  type: DBEntryFieldType.StringArray | DBEntryFieldType.NumberArray;
+  type: DBEntryFieldType.StringArray | DBEntryFieldType.NumberArray,
   // The values entered by the user
-  values: string[] | number[];
+  values: string[] | number[],
   // Function to call when the values change
-  onChange: (values: string[] | number[]) => void;
+  onChange: (values: string[] | number[]) => void,
   // True if the field is disabled
-  disabled?: boolean;
+  disabled?: boolean,
 };
 
 // An option for the multiselect component
 type Option = {
   // What the user sees and types in for the option
-  label: string;
+  label: string,
   // Lowercase, no spaces, no special characters of the label
-  value: string;
+  value: string,
 };
 
 /*------------------------------------------------------------------------*/
@@ -55,9 +62,9 @@ enum ActionType {
 type Action = (
   | {
     // Action type
-    type: ActionType.SetInputValue;
+    type: ActionType.SetInputValue,
     // New value
-    value: string
+    value: string,
   }
 );
 
@@ -66,6 +73,7 @@ type Action = (
  * @author Yuen Ler Chow
  * @param state current state
  * @param action action to execute
+ * @returns updated state
  */
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -115,6 +123,7 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
    * Creates an option for the multiselect component
    * @author Yuen Ler Chow
    * @param label label of the option
+   * @returns the new option
    */
   const createOption = (label: string): Option => {
     // set the value to the label without special characters and spaces, and lowercase
@@ -122,8 +131,11 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
       label,
       value: (
         label
+          // Make lowercase
           .toLowerCase()
+          // Replace special characters with nothing
           .replace(/\W/g, '')
+          // Replace spaces with dashes
           .replace(' ', '-')
       ),
     };
@@ -157,6 +169,8 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
             });
           })
       );
+
+      // Notify parent of new values
       onChange([...values, ...newValues] as number[]);
     } else {
       const newValues = (
@@ -178,9 +192,12 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
             });
           })
       );
+
+      // Notify parent of new values
       onChange([...values, ...newValues] as string[]);
     }
-    // resets text field to empty because the values have been added
+
+    // Reset text field to empty because the values have been added
     dispatch({
       type: ActionType.SetInputValue,
       value: '',
@@ -245,7 +262,7 @@ const CreatableMultiselect: React.FC<Props> = (props) => {
     // Update values based on type
     if (type === DBEntryFieldType.NumberArray) {
       const numberValues: number[] = newValues.map((val) => {
-        return Number(val.value);
+        return Number.parseFloat(val.value);
       });
       onChange(numberValues);
     } else {

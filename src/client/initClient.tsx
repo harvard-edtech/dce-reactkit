@@ -17,22 +17,22 @@ import ReactKitErrorCode from '../types/ReactKitErrorCode';
  */
 type SendRequestFunction = (
   opts: {
-    path: string;
-    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
+    path: string,
+    method: ('GET' | 'POST' | 'DELETE' | 'PUT'),
     params?: {
-      [x: string]: any;
-    } | undefined;
+      [x: string]: any
+    } | undefined,
     headers?: {
-      [x: string]: any;
-    } | undefined;
-    numRetries?: number | undefined;
+      [x: string]: any,
+    } | undefined,
+    numRetries?: number | undefined,
   },
 ) => Promise<{
-  body: any;
-  status: number;
+  body: any,
+  status: number,
   headers: {
-    [x: string]: any;
-  };
+    [x: string]: any
+  },
 }>;
 
 /*----------------------------------------*/

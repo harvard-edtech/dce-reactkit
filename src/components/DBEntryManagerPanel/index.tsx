@@ -1,6 +1,7 @@
 /**
  * DB Entry Manager Panel
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 
 // Import React
@@ -42,10 +43,18 @@ type Props = {
   itemListTitle: string,
   // the phrase you want when you say "add a new [itemName]"
   itemName: string,
-  // Function to validate the db entry before sending to the server
+  /**
+   * Function to validate the db entry before sending to the server
+   *   (throws an error if not validate)
+   * @param dbEntry the db entry to validate
+   */
   validateEntry?: (dbEntry: DBEntry) => Promise<void>,
-  // Function to modify the db entry before sending to the server
-  modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry>,
+  /**
+   * Function to modify the db entry before sending to the server
+   * @param dbEntry the db entry to modify
+   * @returns the modified db entry
+   */
+  modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry> | DBEntry,
   // True if editing is disabled
   disableEdit?: boolean,
   // Name of the collection in the database
@@ -107,15 +116,10 @@ type Action = (
   }
   | {
     // Action type
-    type: (
-      | ActionType.ShowAdder
-    ),
-  }
-  | {
-    // Action type
     type: ActionType.FinishAdd,
     // DB entry that was added
     dbEntry?: DBEntry,
+    // unique id prop name
     idPropName: string,
   }
   | {
@@ -130,6 +134,12 @@ type Action = (
     // unique id prop name
     idPropName: string,
   }
+  | {
+    // Action type
+    type: (
+      | ActionType.ShowAdder
+    ),
+  }
 );
 
 /**
@@ -137,6 +147,7 @@ type Action = (
  * @author Yuen Ler Chow
  * @param state current state
  * @param action action to execute
+ * @returns updated state
  */
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {

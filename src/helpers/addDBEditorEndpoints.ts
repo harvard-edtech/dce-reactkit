@@ -1,3 +1,4 @@
+// Import express
 import express from 'express';
 
 // Import shared helpers
@@ -11,7 +12,7 @@ import ParamType from '../types/ParamType';
  * Interface for a collection in the database
  * @author Yuen Ler Chow
  */
-interface Collection {
+type DCEMangoCollection = {
   /**
    * Find all items in the collection that match the filter query
    * @param filterQuery 
@@ -28,7 +29,7 @@ interface Collection {
    * @param id the id of the item to delete
    */
   delete: (filterQuery: { id: string }) => Promise<void>,
-}
+};
 
 /**
  * Add all routes for the DBEditor
@@ -37,13 +38,15 @@ interface Collection {
  * @param opts.app express app to add routes too
  * @param opts.collectionName the name of the collection
  * @param opts.adminsOnly true if the endpoint is for admins only
+ * @param opts.collection dce-mango db collection
  */
-const addDBEditorEndpoints = (opts: {
-  app: express.Application,
-  collectionName: string,
-  adminsOnly: boolean,
-  collection: Collection
-},
+const addDBEditorEndpoints = (
+  opts: {
+    app: express.Application,
+    collectionName: string,
+    adminsOnly: boolean,
+    collection: DCEMangoCollection,
+  },
 ) => {
   const {
     app,
@@ -52,6 +55,7 @@ const addDBEditorEndpoints = (opts: {
     collection,
   } = opts;
 
+  // Generate the endpoint path
   const endpointPath = generateEndpointPath(collectionName, adminsOnly);
 
   /**
