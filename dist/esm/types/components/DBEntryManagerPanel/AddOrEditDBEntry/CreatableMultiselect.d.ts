@@ -6,7 +6,7 @@
  */
 import React from 'react';
 import DBEntryFieldType from '../types/DBEntryFieldType';
-declare type Props = {
+type Props = {
     type: DBEntryFieldType.StringArray | DBEntryFieldType.NumberArray;
     values: string[] | number[];
     onChange: (values: string[] | number[]) => void;

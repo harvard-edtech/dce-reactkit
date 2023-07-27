@@ -5,7 +5,7 @@ import LogLevel from './LogLevel';
  * Type of a log action function
  * @author Gabe Abrams
  */
-declare type LogFunction = (opts: ({
+type LogFunction = (opts: ({
     context: string | {
         _: string;
     };

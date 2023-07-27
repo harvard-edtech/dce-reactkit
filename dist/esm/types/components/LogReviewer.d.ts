@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import LogMetadataType from '../types/LogMetadataType';
-declare type Props = {
+type Props = {
     LogMetadata: LogMetadataType;
     onClose: () => void;
 };

@@ -5,7 +5,7 @@ import LogMetadataTargetMap from './LogMetadataTargetMap';
  * Type of a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataType = {
+type LogMetadataType = {
     Context?: LogMetadataContextMap;
     Tag?: LogMetadataTagMap;
     Target?: LogMetadataTargetMap;

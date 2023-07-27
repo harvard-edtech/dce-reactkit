@@ -7,7 +7,7 @@ import Variant from '../types/Variant';
 import ModalButtonType from '../types/ModalButtonType';
 import ModalSize from '../types/ModalSize';
 import ModalType from '../types/ModalType';
-declare type Props = {
+type Props = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;

@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import IntelliTableColumn from '../types/IntelliTableColumn';
-declare type Props = {
+type Props = {
     title: string;
     id: string;
     data: {

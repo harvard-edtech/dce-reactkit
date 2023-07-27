@@ -6,7 +6,7 @@
 import React from 'react';
 import DBEntry from '../types/DBEntry';
 import DBEntryField from '../types/DBEntryField';
-declare type Props = {
+type Props = {
     /**
      * Handler for when the user finishes adding the DBEntry
      * (if no DBEntry is returned, process was cancelled)

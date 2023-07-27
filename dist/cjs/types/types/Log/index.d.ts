@@ -6,5 +6,5 @@ import LogTypeSpecificInfo from './LogTypeSpecificInfo';
  *   error encountered by a user
  * @author Gabe Abrams
  */
-declare type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
+type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
 export default Log;

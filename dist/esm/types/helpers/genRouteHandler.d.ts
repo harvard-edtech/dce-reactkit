@@ -33,14 +33,14 @@ declare const genRouteHandler: (opts: {
         req: any;
         next: () => void;
         redirect: (pathOrURL: string) => void;
-        send: (text: string, status?: number | undefined) => void;
+        send: (text: string, status?: number) => void;
         renderErrorPage: (opts?: {
-            title?: string | undefined;
-            description?: string | undefined;
-            code?: string | undefined;
-            pageTitle?: string | undefined;
-            status?: number | undefined;
-        } | undefined) => void;
+            title?: string;
+            description?: string;
+            code?: string;
+            pageTitle?: string;
+            status?: number;
+        }) => void;
         logServerEvent: LogFunction;
     }) => any;
     skipSessionCheck?: boolean | undefined;

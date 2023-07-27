@@ -5,5 +5,5 @@
  * @param [adminsOnly] true if the endpoint is for admins only
  * @returns the endpoint path
  */
-declare const generateEndpointPath: (collectionName: string, adminsOnly?: boolean | undefined) => string;
+declare const generateEndpointPath: (collectionName: string, adminsOnly?: boolean) => string;
 export default generateEndpointPath;

@@ -3,7 +3,7 @@ import DBEntryFieldType from './DBEntryFieldType';
  * A database entry input field
  * @author Yuen Ler Chow
  */
-declare type DBEntryField = ({
+type DBEntryField = ({
     label: string;
     objectKey: string;
     placeholder: string;

@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PickableItem from './types/PickableItem';
-declare type Props = {
+type Props = {
     title: string;
     items: PickableItem[];
     /**

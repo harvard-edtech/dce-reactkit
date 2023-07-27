@@ -3,7 +3,7 @@ import LogLevel from '../LogLevel';
  * Main information in a log event
  * @author Gabe Abrams
  */
-declare type LogMainInfo = {
+type LogMainInfo = {
     id: string;
     userFirstName: string;
     userLastName: string;

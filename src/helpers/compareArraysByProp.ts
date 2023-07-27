@@ -33,9 +33,9 @@ const compareArraysByProp = (
     // Find matching element in b
     const matchingIndex = bCloned.findIndex((bItem) => {
       // Compare based on all props
-      return props.every((prop) => {
-        const aVal = extractProp(a[i], prop);
-        const bVal = extractProp(bItem, prop);
+      return props.every((propToCompareBy) => {
+        const aVal = extractProp(a[i], propToCompareBy);
+        const bVal = extractProp(bItem, propToCompareBy);
         return aVal === bVal;
       });
     });

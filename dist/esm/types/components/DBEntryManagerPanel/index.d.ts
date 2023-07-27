@@ -6,7 +6,7 @@
 import React from 'react';
 import DBEntry from './types/DBEntry';
 import DBEntryField from './types/DBEntryField';
-declare type Props = {
+type Props = {
     entryFields: DBEntryField[];
     idPropName: string;
     titlePropName: string;

@@ -23,7 +23,7 @@ declare enum Variant {
  * @author Gabe Abrams
  */
 
-declare type Props$h = {
+type Props$h = {
     children: React.ReactNode;
     dark?: boolean;
 };
@@ -50,11 +50,11 @@ declare const alert: (title: string, text: string) => Promise<undefined>;
  * @returns true if the user confirmed
  */
 declare const confirm: (title: string, text: string, opts?: {
-    confirmButtonText?: string | undefined;
-    confirmButtonVariant?: Variant | undefined;
-    cancelButtonText?: string | undefined;
-    cancelButtonVariant?: Variant | undefined;
-} | undefined) => Promise<boolean>;
+    confirmButtonText?: string;
+    confirmButtonVariant?: Variant;
+    cancelButtonText?: string;
+    cancelButtonVariant?: Variant;
+}) => Promise<boolean>;
 /**
  * Show a fatal error message
  * @author Gabe Abrams
@@ -75,7 +75,7 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-declare type Props$g = {
+type Props$g = {
     error: any;
     title?: string;
     onClose?: () => void;
@@ -131,7 +131,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-declare type Props$f = {
+type Props$f = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -167,7 +167,7 @@ declare const Modal: React.FC<Props$f>;
  * @author Gabe Abrams
  */
 
-declare type Props$e = {
+type Props$e = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomMargin?: boolean;
@@ -180,7 +180,7 @@ declare const TabBox: React.FC<Props$e>;
  * @author Gabe Abrams
  */
 
-declare type Props$d = {
+type Props$d = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;
@@ -199,7 +199,7 @@ declare const RadioButton: React.FC<Props$d>;
  * @author Gabe Abrams
  */
 
-declare type Props$c = {
+type Props$c = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -220,7 +220,7 @@ declare const CheckboxButton: React.FC<Props$c>;
  * @author Gabe Abrams
  */
 
-declare type Props$b = {
+type Props$b = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;
@@ -234,7 +234,7 @@ declare const ButtonInputGroup: React.FC<Props$b>;
  * @author Gabe Abrams
  */
 
-declare type Props$a = {
+type Props$a = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -257,7 +257,7 @@ declare const SimpleDateChooser: React.FC<Props$a>;
  * @author Gabe Abrams
  */
 
-declare type Props$9 = {
+type Props$9 = {
     customBackgroundColor?: string;
     children: React.ReactNode;
 };
@@ -268,7 +268,7 @@ declare const Drawer: React.FC<Props$9>;
  * @author Gabe Abrams
  */
 
-declare type Props$8 = {
+type Props$8 = {
     sizeRem?: number;
     circleVariant?: string;
     checkVariant?: string;
@@ -280,7 +280,7 @@ declare const PopSuccessMark: React.FC<Props$8>;
  * @author Gabe Abrams
  */
 
-declare type Props$7 = {
+type Props$7 = {
     sizeRem?: number;
     circleVariant?: string;
     xVariant?: string;
@@ -292,7 +292,7 @@ declare const PopFailureMark: React.FC<Props$7>;
  * @author Gabe Abrams
  */
 
-declare type Props$6 = {
+type Props$6 = {
     sizeRem?: number;
     circleVariant?: string;
     hourglassVariant?: string;
@@ -304,7 +304,7 @@ declare const PopPendingMark: React.FC<Props$6>;
  * @author Gabe Abrams
  */
 
-declare type Props$5 = {
+type Props$5 = {
     text: string;
     maxTextWidthRem?: number;
     label?: string;
@@ -322,7 +322,7 @@ declare const CopiableBox: React.FC<Props$5>;
  * An item that can be chosen (for use within ItemPicker)
  * @author Gabe Abrams
  */
-declare type PickableItem = ({
+type PickableItem = ({
     id: number | string;
     name: string;
     link?: string;
@@ -339,7 +339,7 @@ declare type PickableItem = ({
  * @author Yuen Ler Chow
  */
 
-declare type Props$4 = {
+type Props$4 = {
     title: string;
     items: PickableItem[];
     /**
@@ -356,7 +356,7 @@ declare const ItemPicker: React.FC<Props$4>;
  * Type of the context map in a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataContextMap = {
+type LogMetadataContextMap = {
     [k: string]: (string | {
         _: string;
         [k: string]: string;
@@ -367,7 +367,7 @@ declare type LogMetadataContextMap = {
  * Type of the tag map inside a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataTagMap = {
+type LogMetadataTagMap = {
     [k: string]: string;
 };
 
@@ -375,7 +375,7 @@ declare type LogMetadataTagMap = {
  * Type of the target map inside a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataTargetMap = {
+type LogMetadataTargetMap = {
     [k: string]: string;
 };
 
@@ -383,7 +383,7 @@ declare type LogMetadataTargetMap = {
  * Type of a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataType = {
+type LogMetadataType = {
     Context?: LogMetadataContextMap;
     Tag?: LogMetadataTagMap;
     Target?: LogMetadataTargetMap;
@@ -395,7 +395,7 @@ declare type LogMetadataType = {
  * @author Gabe Abrams
  */
 
-declare type Props$3 = {
+type Props$3 = {
     LogMetadata: LogMetadataType;
     onClose: () => void;
 };
@@ -422,7 +422,7 @@ declare enum ParamType {
  * Column description for a column in the IntelliTable
  * @author Gabe Abrams
  */
-declare type IntelliTableColumn = {
+type IntelliTableColumn = {
     title: string;
     param: string;
     type: (ParamType.Boolean | ParamType.Float | ParamType.Int | ParamType.String | ParamType.JSON);
@@ -434,7 +434,7 @@ declare type IntelliTableColumn = {
  * @author Gabe Abrams
  */
 
-declare type Props$2 = {
+type Props$2 = {
     title: string;
     id: string;
     data: {
@@ -451,7 +451,7 @@ declare const IntelliTable: React.FC<Props$2>;
  * @author Gabe Abrams
  */
 
-declare type Props$1 = {
+type Props$1 = {
     filename: string;
     csv: string;
     id?: string;
@@ -469,7 +469,7 @@ declare const CSVDownloadButton: React.FC<Props$1>;
  * Generic type for an object
  * @author Yuen Ler Chow
  */
-declare type DBEntry = {
+type DBEntry = {
     [k: string]: any;
 };
 
@@ -489,7 +489,7 @@ declare enum DBEntryFieldType {
  * A database entry input field
  * @author Yuen Ler Chow
  */
-declare type DBEntryField = ({
+type DBEntryField = ({
     label: string;
     objectKey: string;
     placeholder: string;
@@ -539,7 +539,7 @@ declare type DBEntryField = ({
  * @author Gabe Abrams
  */
 
-declare type Props = {
+type Props = {
     entryFields: DBEntryField[];
     idPropName: string;
     titlePropName: string;
@@ -611,7 +611,7 @@ declare const DynamicWord: {
  * Type of CACCL's send request function
  * @author Gabe Abrams
  */
-declare type SendRequestFunction = (opts: {
+type SendRequestFunction = (opts: {
     path: string;
     method: ('GET' | 'POST' | 'DELETE' | 'PUT');
     params?: {
@@ -760,7 +760,7 @@ declare enum LogLevel {
  * Main information in a log event
  * @author Gabe Abrams
  */
-declare type LogMainInfo = {
+type LogMainInfo = {
     id: string;
     userFirstName: string;
     userLastName: string;
@@ -807,7 +807,7 @@ declare enum LogSource {
  * Log info that is specific to the type of source
  * @author Gabe Abrams
  */
-declare type LogSourceSpecificInfo = ({
+type LogSourceSpecificInfo = ({
     source: LogSource.Client;
 } | {
     source: LogSource.Server;
@@ -851,7 +851,7 @@ declare enum LogType {
  * Log info that is specific to the type of log
  * @author Gabe Abrams
  */
-declare type LogTypeSpecificInfo = ({
+type LogTypeSpecificInfo = ({
     type: LogType.Error;
     errorMessage: string;
     errorCode: string;
@@ -867,13 +867,13 @@ declare type LogTypeSpecificInfo = ({
  *   error encountered by a user
  * @author Gabe Abrams
  */
-declare type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
+type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
 
 /**
  * Type of a log action function
  * @author Gabe Abrams
  */
-declare type LogFunction = (opts: ({
+type LogFunction = (opts: ({
     context: string | {
         _: string;
     };
@@ -923,14 +923,14 @@ declare const genRouteHandler: (opts: {
         req: any;
         next: () => void;
         redirect: (pathOrURL: string) => void;
-        send: (text: string, status?: number | undefined) => void;
+        send: (text: string, status?: number) => void;
         renderErrorPage: (opts?: {
-            title?: string | undefined;
-            description?: string | undefined;
-            code?: string | undefined;
-            pageTitle?: string | undefined;
-            status?: number | undefined;
-        } | undefined) => void;
+            title?: string;
+            description?: string;
+            code?: string;
+            pageTitle?: string;
+            status?: number;
+        }) => void;
         logServerEvent: LogFunction;
     }) => any;
     skipSessionCheck?: boolean | undefined;
@@ -962,7 +962,7 @@ declare const handleError: (res: any, error: ({
  */
 declare const handleSuccess: (res: any, body: any) => undefined;
 
-declare type GetLaunchInfoFunction = (req: any) => {
+type GetLaunchInfoFunction = (req: any) => {
     launched: boolean;
     launchInfo?: any;
 };
@@ -1007,7 +1007,7 @@ declare const getOrdinal: (num: number) => string;
  *   corresponding to ET time values for year, month, day, hour, hour12, minute, isPM
  *   where hour is in 24hr time and hour12 is in 12hr time.
  */
-declare const getTimeInfoInET: (dateOrTimestamp?: number | Date | undefined) => {
+declare const getTimeInfoInET: (dateOrTimestamp?: Date | number) => {
     timestamp: number;
     year: number;
     month: number;
@@ -1051,7 +1051,7 @@ declare const startMinWait: (minWaitMs: number) => () => Promise<void>;
  * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
  * @returns human-readable description of the date
  */
-declare const getHumanReadableDate: (dateOrTimestamp?: number | Date | undefined) => string;
+declare const getHumanReadableDate: (dateOrTimestamp?: Date | number) => string;
 
 /**
  * Get the current part of day (morning, evening, etc.)
@@ -1087,7 +1087,7 @@ declare const onlyKeepLetters: (str: string) => string;
  *   once
  * @returns array of resolved values in the same order as the task functions
  */
-declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number | undefined) => Promise<any[]>;
+declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number) => Promise<any[]>;
 
 /**
  * Log a user action on the client (cannot be used on the server)
@@ -1178,7 +1178,7 @@ declare const compareArraysByProp: (a: any[], b: any[], prop: string | string[])
  *   corresponding to time values for year, month, day, hour, hour12, minute, isPM
  *   where hour is in 24hr time and hour12 is in 12hr time.
  */
-declare const getLocalTimeInfo: (dateOrTimestamp?: number | Date | undefined) => {
+declare const getLocalTimeInfo: (dateOrTimestamp?: Date | number) => {
     timestamp: number;
     year: number;
     month: number;
@@ -1193,7 +1193,7 @@ declare const getLocalTimeInfo: (dateOrTimestamp?: number | Date | undefined) =>
  * Interface for a collection in the database
  * @author Yuen Ler Chow
  */
-declare type DCEMangoCollection = {
+type DCEMangoCollection = {
     /**
      * Find all items in the collection that match the filter query
      * @param filterQuery
@@ -1228,6 +1228,71 @@ declare const addDBEditorEndpoints: (opts: {
     adminsOnly: boolean;
     collection: DCEMangoCollection;
 }) => void;
+
+/**
+ * Given an array of strings, create a single comma-separated string that includes
+ * 'and' as well as an oxford comma.
+ *   Ex: ['apples'] => 'apples'
+ *   Ex: ['apples', 'bananas'] => 'apples and bananas'
+ *   Ex: ['apples', 'bananas', 'grapes'] => 'apples, bananas, and grapes'
+ * @author Austen Money
+ * @param list an array of elements to be made into a single comma-separated string.
+ * @returns a comma-separated string.
+ */
+declare const genCommaList: (list: string[]) => string;
+
+/**
+ * Result of a validation function.
+ * @author Austen Money
+ */
+type ValidationResult<CleanedValueType> = ({
+    isValid: true;
+    cleanedValue: CleanedValueType;
+} | {
+    isValid: false;
+    errorMessage: string;
+});
+
+/**
+ * Determines whether a given email address is valid.
+ * @author Austen Money
+ * @param email email address to validate
+ * @returns whether email fulfills proper formatting requirements, includes a
+ *   cleaned version of the address without leading or trailing
+ *   whitespace if valid or an error message if invalid.
+ */
+declare const validateEmail: (email: string) => ValidationResult<string>;
+
+/**
+ * Determines whether a given phone number is valid.
+ * @author Austen Money
+ * @param phoneNumber phone number to validate
+ * @returns whether phone number is considered valid - if valid, also returns
+ *   a cleaned version of the number without any formatting. If invalid,
+ *   returns an error message.
+ */
+declare const validatePhoneNumber: (phoneNumber: string) => ValidationResult<string>;
+
+/**
+ * Determines whether a given input string is considered valid based on
+ *   the provided requirements.
+ * @author Austen Money
+ * @param input input string
+ * @param opts options for validation
+ * @returns whether input is considered valid according to reqs - if
+ *   valid, returns a cleaned version of input; if invalid, returns
+ *   a string containing error messages describing which requirements
+ *   were not met.
+ */
+declare const validateString: (input: string, opts: {
+    ignoreWhitespace?: boolean;
+    minLen?: number;
+    maxLen?: number;
+    lettersOnly?: boolean;
+    numbersOnly?: boolean;
+    regexTest?: RegExp;
+    regexDescription?: string;
+}) => ValidationResult<string>;
 
 /**
  * List of error codes built into the react kit
@@ -1279,4 +1344,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, addDBEditorEndpoints, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, addDBEditorEndpoints, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };

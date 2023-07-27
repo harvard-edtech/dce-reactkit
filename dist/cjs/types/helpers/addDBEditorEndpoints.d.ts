@@ -3,7 +3,7 @@ import express from 'express';
  * Interface for a collection in the database
  * @author Yuen Ler Chow
  */
-declare type DCEMangoCollection = {
+type DCEMangoCollection = {
     /**
      * Find all items in the collection that match the filter query
      * @param filterQuery

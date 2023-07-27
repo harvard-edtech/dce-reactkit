@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import Variant from '../types/Variant';
-declare type Props = {
+type Props = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;

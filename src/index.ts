@@ -66,6 +66,10 @@ import extractProp from './helpers/extractProp';
 import compareArraysByProp from './helpers/compareArraysByProp';
 import getLocalTimeInfo from './helpers/getLocalTimeInfo';
 import addDBEditorEndpoints from './helpers/addDBEditorEndpoints';
+import genCommaList from './helpers/genCommaList';
+import validateEmail from './helpers/validators/validateEmail';
+import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
+import validateString from './helpers/validators/validateString';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -149,6 +153,10 @@ export {
   isMobileOrTablet,
   extractProp,
   compareArraysByProp,
+  genCommaList,
+  validateEmail,
+  validatePhoneNumber,
+  validateString,
   getLocalTimeInfo,
   // Client helpers
   initClient,

@@ -3,7 +3,7 @@
  * @author Gabe Abrams
  */
 import React from 'react';
-declare type Props = {
+type Props = {
     ariaLabel: string;
     name: string;
     month: number;
