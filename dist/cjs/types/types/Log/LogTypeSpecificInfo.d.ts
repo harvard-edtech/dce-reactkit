@@ -4,7 +4,7 @@ import LogType from '../LogType';
  * Log info that is specific to the type of log
  * @author Gabe Abrams
  */
-declare type LogTypeSpecificInfo = ({
+type LogTypeSpecificInfo = ({
     type: LogType.Error;
     errorMessage: string;
     errorCode: string;

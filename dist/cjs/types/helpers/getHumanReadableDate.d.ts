@@ -4,5 +4,5 @@
  * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
  * @returns human-readable description of the date
  */
-declare const getHumanReadableDate: (dateOrTimestamp?: number | Date | undefined) => string;
+declare const getHumanReadableDate: (dateOrTimestamp?: Date | number) => string;
 export default getHumanReadableDate;

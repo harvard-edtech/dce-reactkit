@@ -17,6 +17,7 @@ import ItemPicker from './components/ItemPicker';
 import LogReviewer from './components/LogReviewer';
 import IntelliTable from './components/IntelliTable';
 import CSVDownloadButton from './components/CSVDownloadButton';
+import DBEntryManagerPanel from './components/DBEntryManagerPanel';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -63,11 +64,12 @@ import canReviewLogs from './helpers/canReviewLogs';
 import isMobileOrTablet from './helpers/isMobileOrTablet';
 import extractProp from './helpers/extractProp';
 import compareArraysByProp from './helpers/compareArraysByProp';
+import getLocalTimeInfo from './helpers/getLocalTimeInfo';
+import addDBEditorEndpoints from './helpers/addDBEditorEndpoints';
 import genCommaList from './helpers/genCommaList';
 import validateEmail from './helpers/validators/validateEmail';
 import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
 import validateString from './helpers/validators/validateString';
-import getLocalTimeInfo from './helpers/getLocalTimeInfo';  
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -87,6 +89,9 @@ import IntelliTableColumn from './types/IntelliTableColumn';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
+import DBEntry from './components/DBEntryManagerPanel/types/DBEntry';
+import DBEntryField from './components/DBEntryManagerPanel/types/DBEntryField';
+import DBEntryFieldType from './components/DBEntryManagerPanel/types/DBEntryFieldType';
 
 // Export each item
 export {
@@ -109,6 +114,7 @@ export {
   LogReviewer,
   IntelliTable,
   CSVDownloadButton,
+  DBEntryManagerPanel,
   // Global functions
   alert,
   confirm,
@@ -162,6 +168,7 @@ export {
   handleError,
   handleSuccess,
   initLogCollection,
+  addDBEditorEndpoints,
   // Types
   ModalButtonType,
   ModalSize,
@@ -178,6 +185,9 @@ export {
   IntelliTableColumn,
   // Component-specific-types
   PickableItem,
+  DBEntry,
+  DBEntryField,
+  DBEntryFieldType,
   // Server types
   ParamType,
 };

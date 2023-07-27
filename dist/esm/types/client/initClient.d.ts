@@ -2,7 +2,7 @@
  * Type of CACCL's send request function
  * @author Gabe Abrams
  */
-declare type SendRequestFunction = (opts: {
+type SendRequestFunction = (opts: {
     path: string;
     method: ('GET' | 'POST' | 'DELETE' | 'PUT');
     params?: {

@@ -7,7 +7,7 @@
  *   corresponding to ET time values for year, month, day, hour, hour12, minute, isPM
  *   where hour is in 24hr time and hour12 is in 12hr time.
  */
-declare const getTimeInfoInET: (dateOrTimestamp?: number | Date | undefined) => {
+declare const getTimeInfoInET: (dateOrTimestamp?: Date | number) => {
     timestamp: number;
     year: number;
     month: number;

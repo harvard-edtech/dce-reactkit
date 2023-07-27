@@ -17,22 +17,22 @@ import ReactKitErrorCode from '../types/ReactKitErrorCode';
  */
 type SendRequestFunction = (
   opts: {
-    path: string;
-    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
+    path: string,
+    method: ('GET' | 'POST' | 'DELETE' | 'PUT'),
     params?: {
-      [x: string]: any;
-    } | undefined;
+      [x: string]: any
+    } | undefined,
     headers?: {
-      [x: string]: any;
-    } | undefined;
-    numRetries?: number | undefined;
+      [x: string]: any,
+    } | undefined,
+    numRetries?: number | undefined,
   },
 ) => Promise<{
-  body: any;
-  status: number;
+  body: any,
+  status: number,
   headers: {
-    [x: string]: any;
-  };
+    [x: string]: any
+  },
 }>;
 
 /*----------------------------------------*/
@@ -56,32 +56,24 @@ let storedSendRequest: SendRequestFunction;
  * @returns sendRequest function
  */
 export const getSendRequest = async () => {
-  // Track timeout
-  let timedOut = false;
+  // Show timeout error if too much time passes
+  let successful = false;
   (async () => {
     await waitMs(5000);
-    timedOut = true;
+    
+    if (!successful) {
+      showFatalError(
+        new ErrorWithCode(
+          'Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.',
+          ReactKitErrorCode.NoCACCLSendRequestFunction,
+        ),
+      );
+    }
   })(),
 
   // Wait for initialization
   await initialized;
-
-  // Error if no send request function
-  if (timedOut) {
-    showFatalError(
-      new ErrorWithCode(
-        'Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.',
-        ReactKitErrorCode.NoCACCLSendRequestFunction,
-      ),
-    );
-
-    // Return dummy function that never resolves
-    return (
-      () => {
-        return new Promise(() => {});
-      }
-    ) as SendRequestFunction;
-  }
+  successful = true;
 
   // Return
   return storedSendRequest;

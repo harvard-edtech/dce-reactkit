@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PickableItem from './types/PickableItem';
-declare type Props = {
+type Props = {
     items: PickableItem[];
     /**
      * Handler to call when item selection is changed

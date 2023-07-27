@@ -7,31 +7,53 @@ import extractProp from './extractProp';
  * @author Gabe Abrams
  * @param a the first array
  * @param b the second array
- * @param prop the property to compare with
+ * @param prop the property to compare with, or an array of props to compare
+ *   with (if array, all values associated with those props must match)
  * @returns true if the arrays contain the same objects as determined by
  *   the values associated with each object's prop
  */
-const compareArraysByProp = (a: any[], b: any[], prop: string): boolean => {
-  // Extract values for comparison
-  const aVals = new Set(extractProp(a, prop));
-  const bVals = new Set(extractProp(b, prop));
-
-  // Compare sizes first
-  if (aVals.size !== bVals.size) {
+const compareArraysByProp = (
+  a: any[],
+  b: any[],
+  prop: string | string[],
+): boolean => {
+  // Immediately return if size of arrays is different
+  if (a.length !== b.length) {
     return false;
   }
 
-  // Same number of items. Make sure every object in aVals appears in bVals
-  // (if so, they should be equivalent since the sizes are the same)
-  // > Create map of items in bVals
-  const inBVals: { [k: string]: boolean } = {}; // item => true if in bVals
-  Array.from(bVals.values()).forEach((item) => {
-    inBVals[item] = true;
-  });
-  // > Loop through aVals and make sure every item is in bVals
-  return Array.from(aVals.values()).every((item) => {
-    return inBVals[item];
-  });
+  // Get all props
+  const props = (Array.isArray(prop) ? prop : [prop]);
+
+  // Clone second array so we can work on it
+  const bCloned = [...b];
+
+  // Remove elements from b as we find them in a
+  for (let i = 0; i < a.length; i++) {
+    // Find matching element in b
+    const matchingIndex = bCloned.findIndex((bItem) => {
+      // Compare based on all props
+      return props.every((propToCompareBy) => {
+        const aVal = extractProp(a[i], propToCompareBy);
+        const bVal = extractProp(bItem, propToCompareBy);
+        return aVal === bVal;
+      });
+    });
+
+    // Check if no match
+    const noMatch = (matchingIndex < 0);
+
+    // If no match, there's no corresponding element in b
+    if (noMatch) {
+      return false;
+    }
+
+    // Remove the matching element
+    bCloned.splice(matchingIndex, 1);
+  }
+
+  // If we made it here, all elements in a have a corresponding element in b
+  return true;
 };
 
 export default compareArraysByProp;

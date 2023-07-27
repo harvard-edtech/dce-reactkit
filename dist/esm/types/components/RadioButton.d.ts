@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import Variant from '../types/Variant';
-declare type Props = {
+type Props = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;

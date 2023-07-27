@@ -8,5 +8,5 @@
  *   once
  * @returns array of resolved values in the same order as the task functions
  */
-declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number | undefined) => Promise<any[]>;
+declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number) => Promise<any[]>;
 export default parallelLimit;

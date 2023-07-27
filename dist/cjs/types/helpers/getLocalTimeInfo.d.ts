@@ -6,7 +6,7 @@
  *   corresponding to time values for year, month, day, hour, hour12, minute, isPM
  *   where hour is in 24hr time and hour12 is in 12hr time.
  */
-declare const getLocalTimeInfo: (dateOrTimestamp?: number | Date | undefined) => {
+declare const getLocalTimeInfo: (dateOrTimestamp?: Date | number) => {
     timestamp: number;
     year: number;
     month: number;

@@ -2,7 +2,7 @@
  * Type of the context map in a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataContextMap = {
+type LogMetadataContextMap = {
     [k: string]: (string | {
         _: string;
         [k: string]: string;

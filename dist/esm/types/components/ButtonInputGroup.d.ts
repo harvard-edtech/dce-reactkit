@@ -3,7 +3,7 @@
  * @author Gabe Abrams
  */
 import React from 'react';
-declare type Props = {
+type Props = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;

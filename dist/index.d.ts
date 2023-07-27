@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import React from 'react';
+import express from 'express';
 
 /**
  * Bootstrap variants
@@ -22,7 +23,7 @@ declare enum Variant {
  * @author Gabe Abrams
  */
 
-declare type Props$g = {
+type Props$h = {
     children: React.ReactNode;
     dark?: boolean;
 };
@@ -49,11 +50,11 @@ declare const alert: (title: string, text: string) => Promise<undefined>;
  * @returns true if the user confirmed
  */
 declare const confirm: (title: string, text: string, opts?: {
-    confirmButtonText?: string | undefined;
-    confirmButtonVariant?: Variant | undefined;
-    cancelButtonText?: string | undefined;
-    cancelButtonVariant?: Variant | undefined;
-} | undefined) => Promise<boolean>;
+    confirmButtonText?: string;
+    confirmButtonVariant?: Variant;
+    cancelButtonText?: string;
+    cancelButtonVariant?: Variant;
+}) => Promise<boolean>;
 /**
  * Show a fatal error message
  * @author Gabe Abrams
@@ -61,7 +62,7 @@ declare const confirm: (title: string, text: string, opts?: {
  * @param [errorTitle] title of the error box
  */
 declare const showFatalError: (error: any, errorTitle?: string) => undefined;
-declare const AppWrapper: React.FC<Props$g>;
+declare const AppWrapper: React.FC<Props$h>;
 
 /**
  * Loading spinner/indicator
@@ -74,12 +75,12 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-declare type Props$f = {
+type Props$g = {
     error: any;
     title?: string;
     onClose?: () => void;
 };
-declare const ErrorBox: React.FC<Props$f>;
+declare const ErrorBox: React.FC<Props$g>;
 
 /**
  * Types of buttons in the modal
@@ -130,7 +131,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-declare type Props$e = {
+type Props$f = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -159,27 +160,27 @@ declare type Props$e = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props$e>;
+declare const Modal: React.FC<Props$f>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
  * @author Gabe Abrams
  */
 
-declare type Props$d = {
+type Props$e = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props$d>;
+declare const TabBox: React.FC<Props$e>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-declare type Props$c = {
+type Props$d = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;
@@ -191,14 +192,14 @@ declare type Props$c = {
     unselectedVariant?: Variant;
     small?: boolean;
 };
-declare const RadioButton: React.FC<Props$c>;
+declare const RadioButton: React.FC<Props$d>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-declare type Props$b = {
+type Props$c = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -212,28 +213,28 @@ declare type Props$b = {
     small?: boolean;
     dashed?: boolean;
 };
-declare const CheckboxButton: React.FC<Props$b>;
+declare const CheckboxButton: React.FC<Props$c>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-declare type Props$a = {
+type Props$b = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;
     className?: string;
     wrapButtonsAndAddGaps?: boolean;
 };
-declare const ButtonInputGroup: React.FC<Props$a>;
+declare const ButtonInputGroup: React.FC<Props$b>;
 
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
  */
 
-declare type Props$9 = {
+type Props$a = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -249,61 +250,61 @@ declare type Props$9 = {
     numMonthsToShow?: number;
     chooseFromPast?: boolean;
 };
-declare const SimpleDateChooser: React.FC<Props$9>;
+declare const SimpleDateChooser: React.FC<Props$a>;
 
 /**
  * Drawer container
  * @author Gabe Abrams
  */
 
-declare type Props$8 = {
+type Props$9 = {
     customBackgroundColor?: string;
     children: React.ReactNode;
 };
-declare const Drawer: React.FC<Props$8>;
+declare const Drawer: React.FC<Props$9>;
 
 /**
  * Success checkmark that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$7 = {
+type Props$8 = {
     sizeRem?: number;
     circleVariant?: string;
     checkVariant?: string;
 };
-declare const PopSuccessMark: React.FC<Props$7>;
+declare const PopSuccessMark: React.FC<Props$8>;
 
 /**
  * Failure x mark that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$6 = {
+type Props$7 = {
     sizeRem?: number;
     circleVariant?: string;
     xVariant?: string;
 };
-declare const PopFailureMark: React.FC<Props$6>;
+declare const PopFailureMark: React.FC<Props$7>;
 
 /**
  * Failure pending that pops into view
  * @author Gabe Abrams
  */
 
-declare type Props$5 = {
+type Props$6 = {
     sizeRem?: number;
     circleVariant?: string;
     hourglassVariant?: string;
 };
-declare const PopPendingMark: React.FC<Props$5>;
+declare const PopPendingMark: React.FC<Props$6>;
 
 /**
  * Copiable text box
  * @author Gabe Abrams
  */
 
-declare type Props$4 = {
+type Props$5 = {
     text: string;
     maxTextWidthRem?: number;
     label?: string;
@@ -315,13 +316,13 @@ declare type Props$4 = {
     textAreaId?: string;
     copyButtonId?: string;
 };
-declare const CopiableBox: React.FC<Props$4>;
+declare const CopiableBox: React.FC<Props$5>;
 
 /**
  * An item that can be chosen (for use within ItemPicker)
  * @author Gabe Abrams
  */
-declare type PickableItem = ({
+type PickableItem = ({
     id: number | string;
     name: string;
     link?: string;
@@ -338,7 +339,7 @@ declare type PickableItem = ({
  * @author Yuen Ler Chow
  */
 
-declare type Props$3 = {
+type Props$4 = {
     title: string;
     items: PickableItem[];
     /**
@@ -349,13 +350,13 @@ declare type Props$3 = {
     onChanged: (updatedItems: PickableItem[]) => void;
     noBottomMargin?: boolean;
 };
-declare const ItemPicker: React.FC<Props$3>;
+declare const ItemPicker: React.FC<Props$4>;
 
 /**
  * Type of the context map in a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataContextMap = {
+type LogMetadataContextMap = {
     [k: string]: (string | {
         _: string;
         [k: string]: string;
@@ -366,7 +367,7 @@ declare type LogMetadataContextMap = {
  * Type of the tag map inside a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataTagMap = {
+type LogMetadataTagMap = {
     [k: string]: string;
 };
 
@@ -374,7 +375,7 @@ declare type LogMetadataTagMap = {
  * Type of the target map inside a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataTargetMap = {
+type LogMetadataTargetMap = {
     [k: string]: string;
 };
 
@@ -382,7 +383,7 @@ declare type LogMetadataTargetMap = {
  * Type of a LogMetadata file
  * @author Gabe Abrams
  */
-declare type LogMetadataType = {
+type LogMetadataType = {
     Context?: LogMetadataContextMap;
     Tag?: LogMetadataTagMap;
     Target?: LogMetadataTargetMap;
@@ -394,11 +395,11 @@ declare type LogMetadataType = {
  * @author Gabe Abrams
  */
 
-declare type Props$2 = {
+type Props$3 = {
     LogMetadata: LogMetadataType;
     onClose: () => void;
 };
-declare const LogReviewer: React.FC<Props$2>;
+declare const LogReviewer: React.FC<Props$3>;
 
 /**
  * Server-side API param types
@@ -421,7 +422,7 @@ declare enum ParamType {
  * Column description for a column in the IntelliTable
  * @author Gabe Abrams
  */
-declare type IntelliTableColumn = {
+type IntelliTableColumn = {
     title: string;
     param: string;
     type: (ParamType.Boolean | ParamType.Float | ParamType.Int | ParamType.String | ParamType.JSON);
@@ -433,7 +434,7 @@ declare type IntelliTableColumn = {
  * @author Gabe Abrams
  */
 
-declare type Props$1 = {
+type Props$2 = {
     title: string;
     id: string;
     data: {
@@ -443,14 +444,14 @@ declare type Props$1 = {
     columns: IntelliTableColumn[];
     csvName?: string;
 };
-declare const IntelliTable: React.FC<Props$1>;
+declare const IntelliTable: React.FC<Props$2>;
 
 /**
  * Button for downloading a csv file
  * @author Gabe Abrams
  */
 
-declare type Props = {
+type Props$1 = {
     filename: string;
     csv: string;
     id?: string;
@@ -462,7 +463,109 @@ declare type Props = {
     onClick?: () => void;
     children?: React.ReactNode;
 };
-declare const CSVDownloadButton: React.FC<Props>;
+declare const CSVDownloadButton: React.FC<Props$1>;
+
+/**
+ * Generic type for an object
+ * @author Yuen Ler Chow
+ */
+type DBEntry = {
+    [k: string]: any;
+};
+
+/**
+ * Options for field types
+ * @author Yuen Ler Chow
+ */
+declare enum DBEntryFieldType {
+    String = "String",
+    Number = "Number",
+    Object = "Object",
+    StringArray = "StringArray",
+    NumberArray = "NumberArray"
+}
+
+/**
+ * A database entry input field
+ * @author Yuen Ler Chow
+ */
+type DBEntryField = ({
+    label: string;
+    objectKey: string;
+    placeholder: string;
+    lockAfterCreation?: boolean;
+    required?: boolean;
+} & ({
+    type: DBEntryFieldType.String;
+    minNumChars?: number;
+    maxNumChars?: number;
+    defaultValue?: string;
+    choices?: {
+        title: string;
+        value: string;
+    }[];
+} | {
+    type: DBEntryFieldType.Number;
+    minNumber?: number;
+    maxNumber?: number;
+    defaultValue?: number;
+} | {
+    type: DBEntryFieldType.StringArray;
+    minNumElements?: number;
+    maxNumElements?: number;
+    defaultValue?: string[];
+    choices?: {
+        title: string;
+        value: string;
+    }[];
+} | {
+    type: DBEntryFieldType.NumberArray;
+    minNumElements?: number;
+    maxNumElements?: number;
+    minNumber?: number;
+    maxNumber?: number;
+    defaultValue?: number[];
+} | {
+    type: DBEntryFieldType.Object;
+    defaultValue?: {
+        [k: string]: any;
+    };
+    subfields: DBEntryField[];
+}));
+
+/**
+ * DB Entry Manager Panel
+ * @author Yuen Ler Chow
+ * @author Gabe Abrams
+ */
+
+type Props = {
+    entryFields: DBEntryField[];
+    idPropName: string;
+    titlePropName: string;
+    descriptionPropName: string;
+    itemListTitle: string;
+    itemName: string;
+    /**
+     * Function to validate the db entry before sending to the server
+     *   (throws an error if not validate)
+     * @param dbEntry the db entry to validate
+     */
+    validateEntry?: (dbEntry: DBEntry) => Promise<void>;
+    /**
+     * Function to modify the db entry before sending to the server
+     * @param dbEntry the db entry to modify
+     * @returns the modified db entry
+     */
+    modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry> | DBEntry;
+    disableEdit?: boolean;
+    collectionName: string;
+    adminsOnly?: boolean;
+    filterQuery?: {
+        [k: string]: any;
+    };
+};
+declare const DBEntryManagerPanel: React.FC<Props>;
 
 /**
  * An error with a code
@@ -508,7 +611,7 @@ declare const DynamicWord: {
  * Type of CACCL's send request function
  * @author Gabe Abrams
  */
-declare type SendRequestFunction = (opts: {
+type SendRequestFunction = (opts: {
     path: string;
     method: ('GET' | 'POST' | 'DELETE' | 'PUT');
     params?: {
@@ -657,7 +760,7 @@ declare enum LogLevel {
  * Main information in a log event
  * @author Gabe Abrams
  */
-declare type LogMainInfo = {
+type LogMainInfo = {
     id: string;
     userFirstName: string;
     userLastName: string;
@@ -704,7 +807,7 @@ declare enum LogSource {
  * Log info that is specific to the type of source
  * @author Gabe Abrams
  */
-declare type LogSourceSpecificInfo = ({
+type LogSourceSpecificInfo = ({
     source: LogSource.Client;
 } | {
     source: LogSource.Server;
@@ -748,7 +851,7 @@ declare enum LogType {
  * Log info that is specific to the type of log
  * @author Gabe Abrams
  */
-declare type LogTypeSpecificInfo = ({
+type LogTypeSpecificInfo = ({
     type: LogType.Error;
     errorMessage: string;
     errorCode: string;
@@ -764,13 +867,13 @@ declare type LogTypeSpecificInfo = ({
  *   error encountered by a user
  * @author Gabe Abrams
  */
-declare type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
+type Log = (LogMainInfo & LogSourceSpecificInfo & LogTypeSpecificInfo);
 
 /**
  * Type of a log action function
  * @author Gabe Abrams
  */
-declare type LogFunction = (opts: ({
+type LogFunction = (opts: ({
     context: string | {
         _: string;
     };
@@ -820,14 +923,14 @@ declare const genRouteHandler: (opts: {
         req: any;
         next: () => void;
         redirect: (pathOrURL: string) => void;
-        send: (text: string, status?: number | undefined) => void;
+        send: (text: string, status?: number) => void;
         renderErrorPage: (opts?: {
-            title?: string | undefined;
-            description?: string | undefined;
-            code?: string | undefined;
-            pageTitle?: string | undefined;
-            status?: number | undefined;
-        } | undefined) => void;
+            title?: string;
+            description?: string;
+            code?: string;
+            pageTitle?: string;
+            status?: number;
+        }) => void;
         logServerEvent: LogFunction;
     }) => any;
     skipSessionCheck?: boolean | undefined;
@@ -859,7 +962,7 @@ declare const handleError: (res: any, error: ({
  */
 declare const handleSuccess: (res: any, body: any) => undefined;
 
-declare type GetLaunchInfoFunction = (req: any) => {
+type GetLaunchInfoFunction = (req: any) => {
     launched: boolean;
     launchInfo?: any;
 };
@@ -904,7 +1007,7 @@ declare const getOrdinal: (num: number) => string;
  *   corresponding to ET time values for year, month, day, hour, hour12, minute, isPM
  *   where hour is in 24hr time and hour12 is in 12hr time.
  */
-declare const getTimeInfoInET: (dateOrTimestamp?: number | Date | undefined) => {
+declare const getTimeInfoInET: (dateOrTimestamp?: Date | number) => {
     timestamp: number;
     year: number;
     month: number;
@@ -948,7 +1051,7 @@ declare const startMinWait: (minWaitMs: number) => () => Promise<void>;
  * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
  * @returns human-readable description of the date
  */
-declare const getHumanReadableDate: (dateOrTimestamp?: number | Date | undefined) => string;
+declare const getHumanReadableDate: (dateOrTimestamp?: Date | number) => string;
 
 /**
  * Get the current part of day (morning, evening, etc.)
@@ -984,7 +1087,7 @@ declare const onlyKeepLetters: (str: string) => string;
  *   once
  * @returns array of resolved values in the same order as the task functions
  */
-declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number | undefined) => Promise<any[]>;
+declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number) => Promise<any[]>;
 
 /**
  * Log a user action on the client (cannot be used on the server)
@@ -1060,11 +1163,71 @@ declare const extractProp: (arr: any[], prop: string) => any[];
  * @author Gabe Abrams
  * @param a the first array
  * @param b the second array
- * @param prop the property to compare with
+ * @param prop the property to compare with, or an array of props to compare
+ *   with (if array, all values associated with those props must match)
  * @returns true if the arrays contain the same objects as determined by
  *   the values associated with each object's prop
  */
-declare const compareArraysByProp: (a: any[], b: any[], prop: string) => boolean;
+declare const compareArraysByProp: (a: any[], b: any[], prop: string | string[]) => boolean;
+
+/**
+ * Get current time info in local time
+ * @author Gabe Abrams
+ * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
+ * @returns object with timestamp (ms since epoch) and numbers
+ *   corresponding to time values for year, month, day, hour, hour12, minute, isPM
+ *   where hour is in 24hr time and hour12 is in 12hr time.
+ */
+declare const getLocalTimeInfo: (dateOrTimestamp?: Date | number) => {
+    timestamp: number;
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    hour12: number;
+    minute: number;
+    isPM: boolean;
+};
+
+/**
+ * Interface for a collection in the database
+ * @author Yuen Ler Chow
+ */
+type DCEMangoCollection = {
+    /**
+     * Find all items in the collection that match the filter query
+     * @param filterQuery
+     * @returns list of items that match the filter query
+     */
+    find: (filterQuery: any) => Promise<any[]>;
+    /**
+     * Insert an item into the collection
+     * @param item the item to insert
+     */
+    insert: (item: any) => Promise<void>;
+    /**
+     * Delete an item in the collection
+     * @param id the id of the item to delete
+     */
+    delete: (filterQuery: {
+        id: string;
+    }) => Promise<void>;
+};
+/**
+ * Add all routes for the DBEditor
+ * @author Yuen Ler Chow
+ * @param opts object containing all arguments
+ * @param opts.app express app to add routes too
+ * @param opts.collectionName the name of the collection
+ * @param opts.adminsOnly true if the endpoint is for admins only
+ * @param opts.collection dce-mango db collection
+ */
+declare const addDBEditorEndpoints: (opts: {
+    app: express.Application;
+    collectionName: string;
+    adminsOnly: boolean;
+    collection: DCEMangoCollection;
+}) => void;
 
 /**
  * Given an array of strings, create a single comma-separated string that includes
@@ -1082,7 +1245,7 @@ declare const genCommaList: (list: string[]) => string;
  * Result of a validation function.
  * @author Austen Money
  */
-declare type ValidationResult<CleanedValueType> = ({
+type ValidationResult<CleanedValueType> = ({
     isValid: true;
     cleanedValue: CleanedValueType;
 } | {
@@ -1130,25 +1293,6 @@ declare const validateString: (input: string, opts: {
     regexTest?: RegExp;
     regexDescription?: string;
 }) => ValidationResult<string>;
-
-/**
- * Get current time info in local time
- * @author Gabe Abrams
- * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
- * @returns object with timestamp (ms since epoch) and numbers
- *   corresponding to time values for year, month, day, hour, hour12, minute, isPM
- *   where hour is in 24hr time and hour12 is in 12hr time.
- */
-declare const getLocalTimeInfo: (dateOrTimestamp?: number | Date | undefined) => {
-    timestamp: number;
-    year: number;
-    month: number;
-    day: number;
-    hour: number;
-    hour12: number;
-    minute: number;
-    isPM: boolean;
-};
 
 /**
  * List of error codes built into the react kit
@@ -1200,4 +1344,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, addDBEditorEndpoints, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };

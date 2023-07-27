@@ -2,7 +2,7 @@
  * An item that can be chosen (for use within ItemPicker)
  * @author Gabe Abrams
  */
-declare type PickableItem = ({
+type PickableItem = ({
     id: number | string;
     name: string;
     link?: string;

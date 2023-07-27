@@ -1,4 +1,4 @@
-declare type GetLaunchInfoFunction = (req: any) => {
+type GetLaunchInfoFunction = (req: any) => {
     launched: boolean;
     launchInfo?: any;
 };

@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import Variant from '../types/Variant';
-declare type Props = {
+type Props = {
     children: React.ReactNode;
     dark?: boolean;
 };
@@ -32,11 +32,11 @@ export declare const alert: (title: string, text: string) => Promise<undefined>;
  * @returns true if the user confirmed
  */
 export declare const confirm: (title: string, text: string, opts?: {
-    confirmButtonText?: string | undefined;
-    confirmButtonVariant?: Variant | undefined;
-    cancelButtonText?: string | undefined;
-    cancelButtonVariant?: Variant | undefined;
-} | undefined) => Promise<boolean>;
+    confirmButtonText?: string;
+    confirmButtonVariant?: Variant;
+    cancelButtonText?: string;
+    cancelButtonVariant?: Variant;
+}) => Promise<boolean>;
 /**
  * Show a fatal error message
  * @author Gabe Abrams
