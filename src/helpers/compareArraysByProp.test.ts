@@ -99,4 +99,49 @@ describe('compareArraysByProp', () => {
     const result = compareArraysByProp(a, b, 'id');
     expect(result).toEqual(false);
   });
+
+  it('should return true for two arrays with the same objects with multiple properties and multiple props', () => {
+    const a = [
+      { id: 1, name: 'Alice', age: 25 },
+      { id: 2, name: 'Bob', age: 30 },
+      { id: 3, name: 'Charlie', age: 35 },
+    ];
+    const b = [
+      { id: 1, name: 'Alice', age: 25 },
+      { id: 2, name: 'Bob', age: 30 },
+      { id: 3, name: 'Charlie', age: 35 },
+    ];
+    const result = compareArraysByProp(a, b, ['id', 'name']);
+    expect(result).toEqual(true);
+  });
+
+  it('should return true for two arrays with the same objects with multiple properties and multiple props in a different order', () => {
+    const a = [
+      { id: 1, name: 'Alice', age: 25 },
+      { id: 2, name: 'Bob', age: 30 },
+      { id: 3, name: 'Charlie', age: 35 },
+    ];
+    const b = [
+      { id: 3, name: 'Charlie', age: 35 },
+      { id: 1, name: 'Alice', age: 25 },
+      { id: 2, name: 'Bob', age: 30 },
+    ];
+    const result = compareArraysByProp(a, b, ['id', 'name']);
+    expect(result).toEqual(true);
+  });
+
+  it('should return false for two arrays with different objects with multiple properties and multiple props', () => {
+    const a = [
+      { id: 1, name: 'Alice', age: 25 },
+      { id: 2, name: 'Bob', age: 30 },
+      { id: 3, name: 'Charlie', age: 35 },
+    ];
+    const b = [
+      { id: 1, name: 'Bob', age: 40 },
+      { id: 2, name: 'Alice', age: 45 },
+      { id: 3, name: 'Charlie', age: 50 },
+    ];
+    const result = compareArraysByProp(a, b, ['id', 'name']);
+    expect(result).toEqual(false);
+  });
 });

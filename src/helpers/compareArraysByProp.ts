@@ -1,6 +1,3 @@
-// Import shared helpers
-import extractProp from './extractProp';
-
 /**
  * Compare two arrays of objects by only comparing the values in a specific
  *  property (e.g. compare user arrays by comparing their user.id values)
@@ -34,8 +31,8 @@ const compareArraysByProp = (
     const matchingIndex = bCloned.findIndex((bItem) => {
       // Compare based on all props
       return props.every((propToCompareBy) => {
-        const aVal = extractProp(a[i], propToCompareBy);
-        const bVal = extractProp(bItem, propToCompareBy);
+        const aVal = (a[i] ?? {})[propToCompareBy];
+        const bVal = (bItem ?? {})[propToCompareBy];
         return aVal === bVal;
       });
     });

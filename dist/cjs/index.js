@@ -41762,7 +41762,6 @@ const extractProp = (arr, prop) => {
     });
 };
 
-// Import shared helpers
 /**
  * Compare two arrays of objects by only comparing the values in a specific
  *  property (e.g. compare user arrays by comparing their user.id values)
@@ -41789,8 +41788,9 @@ const compareArraysByProp = (a, b, prop) => {
         const matchingIndex = bCloned.findIndex((bItem) => {
             // Compare based on all props
             return props.every((propToCompareBy) => {
-                const aVal = extractProp(a[i], propToCompareBy);
-                const bVal = extractProp(bItem, propToCompareBy);
+                var _a;
+                const aVal = ((_a = a[i]) !== null && _a !== void 0 ? _a : {})[propToCompareBy];
+                const bVal = (bItem !== null && bItem !== void 0 ? bItem : {})[propToCompareBy];
                 return aVal === bVal;
             });
         });

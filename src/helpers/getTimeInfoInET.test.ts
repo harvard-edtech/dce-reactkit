@@ -38,7 +38,7 @@ describe('getTimeInfoInET', () => {
     const expectedHour = 19;
     const expectedHour12 = 7;
     const expectedMinute = 0;
-    const expectedIsPM = false;
+    const expectedIsPM = true;
     expect(result.timestamp).toEqual(expectedTimestamp);
     expect(result.year).toEqual(expectedYear);
     expect(result.month).toEqual(expectedMonth);
@@ -59,7 +59,7 @@ describe('getTimeInfoInET', () => {
     const expectedHour = 19;
     const expectedHour12 = 7;
     const expectedMinute = 0;
-    const expectedIsPM = false;
+    const expectedIsPM = true;
     expect(result.timestamp).toEqual(expectedTimestamp);
     expect(result.year).toEqual(expectedYear);
     expect(result.month).toEqual(expectedMonth);

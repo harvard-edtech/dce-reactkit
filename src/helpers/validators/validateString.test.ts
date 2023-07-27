@@ -167,8 +167,6 @@ test(
         errorMessage: `${INVALID_STRING_ERRORS.MESSAGE_INTRO}${genCommaList(triple.error)}.`,
       };
 
-      console.log(invalidResponse.errorMessage);
-
       expect(validateString(triple.input, triple.reqs)).toStrictEqual(invalidResponse);
     });
   },
