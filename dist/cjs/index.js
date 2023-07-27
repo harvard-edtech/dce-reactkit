@@ -39457,7 +39457,12 @@ var CreatableSelect = /*#__PURE__*/React.forwardRef(function (props, ref) {
 });
 var CreatableSelect$1 = CreatableSelect;
 
-// Import React
+/**
+ * Multiselect component that allows the user to type in values and add them to
+ *   the multiselect component
+ * @author Yuen Ler Chow
+ * @author Gabe Abrams
+ */
 /* ------------- Actions ------------ */
 // Types of actions
 var ActionType$2;
@@ -39470,6 +39475,7 @@ var ActionType$2;
  * @author Yuen Ler Chow
  * @param state current state
  * @param action action to execute
+ * @returns updated state
  */
 const reducer$2 = (state, action) => {
     switch (action.type) {
@@ -39503,14 +39509,18 @@ const CreatableMultiselect = (props) => {
      * Creates an option for the multiselect component
      * @author Yuen Ler Chow
      * @param label label of the option
+     * @returns the new option
      */
     const createOption = (label) => {
         // set the value to the label without special characters and spaces, and lowercase
         return {
             label,
             value: (label
+                // Make lowercase
                 .toLowerCase()
+                // Replace special characters with nothing
                 .replace(/\W/g, '')
+                // Replace spaces with dashes
                 .replace(' ', '-')),
         };
     };
@@ -39540,6 +39550,7 @@ const CreatableMultiselect = (props) => {
                     return value === numberVal;
                 });
             }));
+            // Notify parent of new values
             onChange([...values, ...newValues]);
         }
         else {
@@ -39560,9 +39571,10 @@ const CreatableMultiselect = (props) => {
                     return value === val;
                 });
             }));
+            // Notify parent of new values
             onChange([...values, ...newValues]);
         }
-        // resets text field to empty because the values have been added
+        // Reset text field to empty because the values have been added
         dispatch({
             type: ActionType$2.SetInputValue,
             value: '',
@@ -39621,7 +39633,7 @@ const CreatableMultiselect = (props) => {
         // Update values based on type
         if (type === DBEntryFieldType$1.NumberArray) {
             const numberValues = newValues.map((val) => {
-                return Number(val.value);
+                return Number.parseFloat(val.value);
             });
             onChange(numberValues);
         }
@@ -39643,6 +39655,7 @@ const CreatableMultiselect = (props) => {
 /**
  * Panel for adding a DBEntry to the database
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
@@ -39666,6 +39679,7 @@ var ActionType$1;
  * @author Yuen Ler Chow
  * @param state current state
  * @param action action to execute
+ * @returns updated state
  */
 const reducer$1 = (state, action) => {
     switch (action.type) {
@@ -39716,7 +39730,10 @@ const AddOrEditDBEntry = (props) => {
                 entry[field.objectKey] = field.defaultValue;
             }
         });
-        const modifiedEntry = modifyEntry ? modifyEntry(entry) : entry;
+        // Modify entry if needed
+        const modifiedEntry = (modifyEntry
+            ? yield modifyEntry(entry)
+            : entry);
         // add id key to entry so that when we delete the item, the key will always be "id"
         modifiedEntry.id = modifiedEntry[idPropName];
         // Send to server
@@ -39753,14 +39770,18 @@ const AddOrEditDBEntry = (props) => {
         for (let i = 0; i < fields.length; i += 1) {
             const field = fields[i];
             const value = entry[field.objectKey];
-            // Check if required field is empty. Field is automatically required if it is the idPropName
+            // Check if required field is empty. Field is automatically required if
+            // it is the idPropName
             if ((field.required || (field.objectKey === idPropName)) && !value) {
                 validationError = `Please fill in the ${field.label} field`;
                 return validationError;
             }
             // Check if unique field is unique
             if (field.objectKey === idPropName && !dbEntryToEdit) {
-                if (entries.find((e) => { return e[idPropName] === value; })) {
+                const notUnique = entries.find((e) => {
+                    return e[idPropName] === value;
+                });
+                if (notUnique) {
                     validationError = `An item with the ${field.label} ${value} already exists. ${field.label} must be unique.`;
                     return validationError;
                 }
@@ -39872,6 +39893,7 @@ const AddOrEditDBEntry = (props) => {
          * @author Yuen Ler Chow
          * @param field the entry field to render
          * @param disabled true if the field should be disabled
+         * @returns rendered entry field
          */
         const renderEntryField = (field, disabled) => {
             if (field.type === DBEntryFieldType$1.String) {
@@ -39993,9 +40015,11 @@ const AddOrEditDBEntry = (props) => {
             }),
             React__default["default"].createElement("div", { className: "text-center mt-2" },
                 React__default["default"].createElement("button", { type: "button", id: "AddOrEditDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "Save changes", onClick: () => __awaiter(void 0, void 0, void 0, function* () {
+                        // Show validation errors
                         if (validationError && validationError.length > 0) {
                             return alert$1('Please fix the following error', validationError);
                         }
+                        // Run the included validator if it exists
                         if (validateEntry) {
                             try {
                                 yield validateEntry(entry);
@@ -40008,7 +40032,7 @@ const AddOrEditDBEntry = (props) => {
                     }) },
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faSave, className: "me-1" }),
                     "Save"),
-                React__default["default"].createElement("button", { type: "button", id: "AddOrEditDBEntry-cancel-button", className: "btn btn-secondary btn-lg me-1", "aria-label": "save changes", onClick: cancel }, "Cancel"))));
+                React__default["default"].createElement("button", { type: "button", id: "AddOrEditDBEntry-cancel-button", className: "btn btn-secondary btn-lg", "aria-label": "save changes", onClick: cancel }, "Cancel"))));
     }
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
@@ -40035,6 +40059,7 @@ const generateEndpointPath = (collectionName, adminsOnly) => {
 /**
  * DB Entry Manager Panel
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 /* ------------- Actions ------------ */
 // Types of actions
@@ -40058,6 +40083,7 @@ var ActionType;
  * @author Yuen Ler Chow
  * @param state current state
  * @param action action to execute
+ * @returns updated state
  */
 const reducer = (state, action) => {
     switch (action.type) {
@@ -41735,29 +41761,42 @@ const extractProp = (arr, prop) => {
  * @author Gabe Abrams
  * @param a the first array
  * @param b the second array
- * @param prop the property to compare with
+ * @param prop the property to compare with, or an array of props to compare
+ *   with (if array, all values associated with those props must match)
  * @returns true if the arrays contain the same objects as determined by
  *   the values associated with each object's prop
  */
 const compareArraysByProp = (a, b, prop) => {
-    // Extract values for comparison
-    const aVals = new Set(extractProp(a, prop));
-    const bVals = new Set(extractProp(b, prop));
-    // Compare sizes first
-    if (aVals.size !== bVals.size) {
+    // Immediately return if size of arrays is different
+    if (a.length !== b.length) {
         return false;
     }
-    // Same number of items. Make sure every object in aVals appears in bVals
-    // (if so, they should be equivalent since the sizes are the same)
-    // > Create map of items in bVals
-    const inBVals = {}; // item => true if in bVals
-    Array.from(bVals.values()).forEach((item) => {
-        inBVals[item] = true;
-    });
-    // > Loop through aVals and make sure every item is in bVals
-    return Array.from(aVals.values()).every((item) => {
-        return inBVals[item];
-    });
+    // Get all props
+    const props = (Array.isArray(prop) ? prop : [prop]);
+    // Clone second array so we can work on it
+    const bCloned = [...b];
+    // Remove elements from b as we find them in a
+    for (let i = 0; i < a.length; i++) {
+        // Find matching element in b
+        const matchingIndex = bCloned.findIndex((bItem) => {
+            // Compare based on all props
+            return props.every((prop) => {
+                const aVal = extractProp(a[i], prop);
+                const bVal = extractProp(bItem, prop);
+                return aVal === bVal;
+            });
+        });
+        // Check if no match
+        const noMatch = (matchingIndex < 0);
+        // If no match, there's no corresponding element in b
+        if (noMatch) {
+            return false;
+        }
+        // Remove the matching element
+        bCloned.splice(matchingIndex, 1);
+    }
+    // If we made it here, all elements in a have a corresponding element in b
+    return true;
 };
 
 /**
@@ -41815,9 +41854,11 @@ const getLocalTimeInfo = (dateOrTimestamp) => {
  * @param opts.app express app to add routes too
  * @param opts.collectionName the name of the collection
  * @param opts.adminsOnly true if the endpoint is for admins only
+ * @param opts.collection dce-mango db collection
  */
 const addDBEditorEndpoints = (opts) => {
     const { app, collectionName, adminsOnly, collection, } = opts;
+    // Generate the endpoint path
     const endpointPath = generateEndpointPath(collectionName, adminsOnly);
     /**
      * List all items in the collection

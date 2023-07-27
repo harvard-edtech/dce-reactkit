@@ -3,7 +3,7 @@ import express from 'express';
  * Interface for a collection in the database
  * @author Yuen Ler Chow
  */
-interface Collection {
+declare type DCEMangoCollection = {
     /**
      * Find all items in the collection that match the filter query
      * @param filterQuery
@@ -22,7 +22,7 @@ interface Collection {
     delete: (filterQuery: {
         id: string;
     }) => Promise<void>;
-}
+};
 /**
  * Add all routes for the DBEditor
  * @author Yuen Ler Chow
@@ -30,11 +30,12 @@ interface Collection {
  * @param opts.app express app to add routes too
  * @param opts.collectionName the name of the collection
  * @param opts.adminsOnly true if the endpoint is for admins only
+ * @param opts.collection dce-mango db collection
  */
 declare const addDBEditorEndpoints: (opts: {
     app: express.Application;
     collectionName: string;
     adminsOnly: boolean;
-    collection: Collection;
+    collection: DCEMangoCollection;
 }) => void;
 export default addDBEditorEndpoints;

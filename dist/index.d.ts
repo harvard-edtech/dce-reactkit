@@ -536,6 +536,7 @@ declare type DBEntryField = ({
 /**
  * DB Entry Manager Panel
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 
 declare type Props = {
@@ -545,8 +546,18 @@ declare type Props = {
     descriptionPropName: string;
     itemListTitle: string;
     itemName: string;
+    /**
+     * Function to validate the db entry before sending to the server
+     *   (throws an error if not validate)
+     * @param dbEntry the db entry to validate
+     */
     validateEntry?: (dbEntry: DBEntry) => Promise<void>;
-    modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry>;
+    /**
+     * Function to modify the db entry before sending to the server
+     * @param dbEntry the db entry to modify
+     * @returns the modified db entry
+     */
+    modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry> | DBEntry;
     disableEdit?: boolean;
     collectionName: string;
     adminsOnly?: boolean;
@@ -1152,11 +1163,12 @@ declare const extractProp: (arr: any[], prop: string) => any[];
  * @author Gabe Abrams
  * @param a the first array
  * @param b the second array
- * @param prop the property to compare with
+ * @param prop the property to compare with, or an array of props to compare
+ *   with (if array, all values associated with those props must match)
  * @returns true if the arrays contain the same objects as determined by
  *   the values associated with each object's prop
  */
-declare const compareArraysByProp: (a: any[], b: any[], prop: string) => boolean;
+declare const compareArraysByProp: (a: any[], b: any[], prop: string | string[]) => boolean;
 
 /**
  * Get current time info in local time
@@ -1181,7 +1193,7 @@ declare const getLocalTimeInfo: (dateOrTimestamp?: number | Date | undefined) =>
  * Interface for a collection in the database
  * @author Yuen Ler Chow
  */
-interface Collection {
+declare type DCEMangoCollection = {
     /**
      * Find all items in the collection that match the filter query
      * @param filterQuery
@@ -1200,7 +1212,7 @@ interface Collection {
     delete: (filterQuery: {
         id: string;
     }) => Promise<void>;
-}
+};
 /**
  * Add all routes for the DBEditor
  * @author Yuen Ler Chow
@@ -1208,12 +1220,13 @@ interface Collection {
  * @param opts.app express app to add routes too
  * @param opts.collectionName the name of the collection
  * @param opts.adminsOnly true if the endpoint is for admins only
+ * @param opts.collection dce-mango db collection
  */
 declare const addDBEditorEndpoints: (opts: {
     app: express.Application;
     collectionName: string;
     adminsOnly: boolean;
-    collection: Collection;
+    collection: DCEMangoCollection;
 }) => void;
 
 /**

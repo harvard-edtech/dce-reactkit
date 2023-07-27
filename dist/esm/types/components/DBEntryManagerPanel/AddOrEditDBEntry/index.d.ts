@@ -1,6 +1,7 @@
 /**
  * Panel for adding a DBEntry to the database
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 import React from 'react';
 import DBEntry from '../types/DBEntry';
@@ -14,15 +15,15 @@ declare type Props = {
     onFinished: (dbEntry?: DBEntry) => void;
     /**
      * Function to validate the DBEntry before saving
-     * @param dbEntry
+     * @param dbEntry the DBEntry to validate
      */
     validateEntry?: (dbEntry: DBEntry) => Promise<void>;
     /**
      * Function to modify the DBEntry before saving
-     * @param dbEntry
+     * @param dbEntry the DBEntry to modify
      * @returns the modified DBEntry
      */
-    modifyEntry?: (dbEntry: DBEntry) => DBEntry;
+    modifyEntry?: (dbEntry: DBEntry) => Promise<DBEntry> | DBEntry;
     entryFields: DBEntryField[];
     dbEntryToEdit?: DBEntry;
     idPropName: string;
