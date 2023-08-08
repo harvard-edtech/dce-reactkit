@@ -18,6 +18,7 @@ import LogReviewer from './components/LogReviewer';
 import IntelliTable from './components/IntelliTable';
 import CSVDownloadButton from './components/CSVDownloadButton';
 import DBEntryManagerPanel from './components/DBEntryManagerPanel';
+import Tooltip from './components/Tooltip';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -115,6 +116,7 @@ export {
   IntelliTable,
   CSVDownloadButton,
   DBEntryManagerPanel,
+  Tooltip,
   // Global functions
   alert,
   confirm,

@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import React from 'react';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import express from 'express';
 
 /**
@@ -23,7 +24,7 @@ declare enum Variant {
  * @author Gabe Abrams
  */
 
-type Props$h = {
+type Props$i = {
     children: React.ReactNode;
     dark?: boolean;
 };
@@ -62,7 +63,7 @@ declare const confirm: (title: string, text: string, opts?: {
  * @param [errorTitle] title of the error box
  */
 declare const showFatalError: (error: any, errorTitle?: string) => undefined;
-declare const AppWrapper: React.FC<Props$h>;
+declare const AppWrapper: React.FC<Props$i>;
 
 /**
  * Loading spinner/indicator
@@ -75,12 +76,12 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-type Props$g = {
+type Props$h = {
     error: any;
     title?: string;
     onClose?: () => void;
 };
-declare const ErrorBox: React.FC<Props$g>;
+declare const ErrorBox: React.FC<Props$h>;
 
 /**
  * Types of buttons in the modal
@@ -131,7 +132,7 @@ declare enum ModalType {
  * @author Gabe Abrams
  */
 
-type Props$f = {
+type Props$g = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -160,27 +161,27 @@ type Props$f = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props$f>;
+declare const Modal: React.FC<Props$g>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
  * @author Gabe Abrams
  */
 
-type Props$e = {
+type Props$f = {
     title: React.ReactNode;
     children: React.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props$e>;
+declare const TabBox: React.FC<Props$f>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-type Props$d = {
+type Props$e = {
     text: string;
     onSelected: () => void;
     ariaLabel: string;
@@ -192,14 +193,14 @@ type Props$d = {
     unselectedVariant?: Variant;
     small?: boolean;
 };
-declare const RadioButton: React.FC<Props$d>;
+declare const RadioButton: React.FC<Props$e>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-type Props$c = {
+type Props$d = {
     text: string;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -213,28 +214,28 @@ type Props$c = {
     small?: boolean;
     dashed?: boolean;
 };
-declare const CheckboxButton: React.FC<Props$c>;
+declare const CheckboxButton: React.FC<Props$d>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-type Props$b = {
+type Props$c = {
     label: string;
     minLabelWidth?: string;
     children: React.ReactNode;
     className?: string;
     wrapButtonsAndAddGaps?: boolean;
 };
-declare const ButtonInputGroup: React.FC<Props$b>;
+declare const ButtonInputGroup: React.FC<Props$c>;
 
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
  */
 
-type Props$a = {
+type Props$b = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -250,61 +251,61 @@ type Props$a = {
     numMonthsToShow?: number;
     chooseFromPast?: boolean;
 };
-declare const SimpleDateChooser: React.FC<Props$a>;
+declare const SimpleDateChooser: React.FC<Props$b>;
 
 /**
  * Drawer container
  * @author Gabe Abrams
  */
 
-type Props$9 = {
+type Props$a = {
     customBackgroundColor?: string;
     children: React.ReactNode;
 };
-declare const Drawer: React.FC<Props$9>;
+declare const Drawer: React.FC<Props$a>;
 
 /**
  * Success checkmark that pops into view
  * @author Gabe Abrams
  */
 
-type Props$8 = {
+type Props$9 = {
     sizeRem?: number;
     circleVariant?: string;
     checkVariant?: string;
 };
-declare const PopSuccessMark: React.FC<Props$8>;
+declare const PopSuccessMark: React.FC<Props$9>;
 
 /**
  * Failure x mark that pops into view
  * @author Gabe Abrams
  */
 
-type Props$7 = {
+type Props$8 = {
     sizeRem?: number;
     circleVariant?: string;
     xVariant?: string;
 };
-declare const PopFailureMark: React.FC<Props$7>;
+declare const PopFailureMark: React.FC<Props$8>;
 
 /**
  * Failure pending that pops into view
  * @author Gabe Abrams
  */
 
-type Props$6 = {
+type Props$7 = {
     sizeRem?: number;
     circleVariant?: string;
     hourglassVariant?: string;
 };
-declare const PopPendingMark: React.FC<Props$6>;
+declare const PopPendingMark: React.FC<Props$7>;
 
 /**
  * Copiable text box
  * @author Gabe Abrams
  */
 
-type Props$5 = {
+type Props$6 = {
     text: string;
     maxTextWidthRem?: number;
     label?: string;
@@ -316,7 +317,7 @@ type Props$5 = {
     textAreaId?: string;
     copyButtonId?: string;
 };
-declare const CopiableBox: React.FC<Props$5>;
+declare const CopiableBox: React.FC<Props$6>;
 
 /**
  * An item that can be chosen (for use within ItemPicker)
@@ -339,7 +340,7 @@ type PickableItem = ({
  * @author Yuen Ler Chow
  */
 
-type Props$4 = {
+type Props$5 = {
     title: string;
     items: PickableItem[];
     /**
@@ -350,7 +351,7 @@ type Props$4 = {
     onChanged: (updatedItems: PickableItem[]) => void;
     noBottomMargin?: boolean;
 };
-declare const ItemPicker: React.FC<Props$4>;
+declare const ItemPicker: React.FC<Props$5>;
 
 /**
  * Type of the context map in a LogMetadata file
@@ -395,11 +396,11 @@ type LogMetadataType = {
  * @author Gabe Abrams
  */
 
-type Props$3 = {
+type Props$4 = {
     LogMetadata: LogMetadataType;
     onClose: () => void;
 };
-declare const LogReviewer: React.FC<Props$3>;
+declare const LogReviewer: React.FC<Props$4>;
 
 /**
  * Server-side API param types
@@ -434,7 +435,7 @@ type IntelliTableColumn = {
  * @author Gabe Abrams
  */
 
-type Props$2 = {
+type Props$3 = {
     title: string;
     id: string;
     data: {
@@ -444,14 +445,14 @@ type Props$2 = {
     columns: IntelliTableColumn[];
     csvName?: string;
 };
-declare const IntelliTable: React.FC<Props$2>;
+declare const IntelliTable: React.FC<Props$3>;
 
 /**
  * Button for downloading a csv file
  * @author Gabe Abrams
  */
 
-type Props$1 = {
+type Props$2 = {
     filename: string;
     csv: string;
     id?: string;
@@ -463,7 +464,7 @@ type Props$1 = {
     onClick?: () => void;
     children?: React.ReactNode;
 };
-declare const CSVDownloadButton: React.FC<Props$1>;
+declare const CSVDownloadButton: React.FC<Props$2>;
 
 /**
  * Generic type for an object
@@ -539,7 +540,7 @@ type DBEntryField = ({
  * @author Gabe Abrams
  */
 
-type Props = {
+type Props$1 = {
     entryFields: DBEntryField[];
     idPropName: string;
     titlePropName: string;
@@ -565,7 +566,21 @@ type Props = {
         [k: string]: any;
     };
 };
-declare const DBEntryManagerPanel: React.FC<Props>;
+declare const DBEntryManagerPanel: React.FC<Props$1>;
+
+/**
+ * Simple tooltip component
+ * @author Gabe Abrams
+ */
+
+type Props = {
+    icon?: IconProp;
+    text: string;
+    children: React.ReactNode;
+    wide?: boolean;
+    thin?: boolean;
+};
+declare const Tooltip: React.FC<Props>;
 
 /**
  * An error with a code
@@ -1344,4 +1359,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Variant, abbreviate, addDBEditorEndpoints, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, Tooltip, Variant, abbreviate, addDBEditorEndpoints, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };

@@ -6,12 +6,13 @@
 // Import React
 import React, { useReducer } from 'react';
 
-// Import other reactkit functions
-import { alert, waitMs } from '..';
-
 // Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
+
+// Import other reactkit functions
+import { alert } from './AppWrapper';
+import waitMs from '../helpers/waitMs';
 
 /*------------------------------------------------------------------------*/
 /*                                  Types                                 */
@@ -260,7 +261,7 @@ const CopiableBox: React.FC<Props> = (props) => {
             />
           )
       }
-      
+
       <button
         id={copyButtonId}
         className="btn btn-secondary"
