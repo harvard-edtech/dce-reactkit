@@ -1,5 +1,10 @@
 // Import components
-import AppWrapper, { alert, confirm, showFatalError } from './components/AppWrapper';
+import AppWrapper, {
+  alert,
+  confirm,
+  showFatalError,
+  addFatalErrorHandler,
+} from './components/AppWrapper';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBox from './components/ErrorBox';
 import Modal from './components/Modal';
@@ -19,6 +24,7 @@ import IntelliTable from './components/IntelliTable';
 import CSVDownloadButton from './components/CSVDownloadButton';
 import DBEntryManagerPanel from './components/DBEntryManagerPanel';
 import Tooltip from './components/Tooltip';
+import ToggleSwitch from './components/ToggleSwitch';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -117,6 +123,7 @@ export {
   CSVDownloadButton,
   DBEntryManagerPanel,
   Tooltip,
+  ToggleSwitch,
   // Global functions
   alert,
   confirm,
@@ -164,6 +171,7 @@ export {
   initClient,
   visitServerEndpoint,
   logClientEvent,
+  addFatalErrorHandler,
   // Server helpers
   initServer,
   genRouteHandler,

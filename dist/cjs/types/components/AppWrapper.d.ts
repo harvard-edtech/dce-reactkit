@@ -45,6 +45,11 @@ export declare const confirm: (title: string, text: string, opts?: {
  */
 export declare const showFatalError: (error: any, errorTitle?: string) => undefined;
 /**
+ * Add a handler for when a fatal error occurs
+ * @author Gabe Abrams
+ */
+export declare const addFatalErrorHandler: (handler: () => void) => void;
+/**
  * Show the "session expired" message
  * @author Gabe Abrams
  */

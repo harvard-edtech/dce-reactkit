@@ -752,10 +752,10 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                             Static Helpers                             */
+/* --------------------------- Static Helpers --------------------------- */
 /*------------------------------------------------------------------------*/
 /*----------------------------------------*/
-/*                  Alert                 */
+/* ---------------- Alert --------------- */
 /*----------------------------------------*/
 // Stored copies of setters
 let setAlertInfo;
@@ -769,6 +769,7 @@ let onAlertClosed;
 const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
     // Fallback if alert not available
     if (!setAlertInfo) {
+        // eslint-disable-next-line no-alert
         window.alert(`${title}\n\n${text}`);
         return undefined;
     }
@@ -786,7 +787,7 @@ const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () 
     });
 });
 /*----------------------------------------*/
-/*                 Confirm                */
+/* --------------- Confirm -------------- */
 /*----------------------------------------*/
 // Stored copies of setters
 let setConfirmInfo;
@@ -809,6 +810,7 @@ let onConfirmClosed;
 const confirm = (title, text, opts) => __awaiter(void 0, void 0, void 0, function* () {
     // Fallback if confirm is not available
     if (!setConfirmInfo) {
+        // eslint-disable-next-line no-alert
         return window.confirm(`${title}\n\n${text}`);
     }
     // Return promise that resolves with result of confirmation
@@ -826,12 +828,14 @@ const confirm = (title, text, opts) => __awaiter(void 0, void 0, void 0, functio
     });
 });
 /*----------------------------------------*/
-/*               Fatal Error              */
+/* ------------- Fatal Error ------------ */
 /*----------------------------------------*/
 // Stored copies of setters
 let setFatalErrorMessage;
 let setFatalErrorCode;
 let setFatalErrorTitle;
+// Fatal error listeners
+const fatalErrorHandlers = [];
 /**
  * Show a fatal error message
  * @author Gabe Abrams
@@ -847,6 +851,15 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
     const code = (typeof error === 'string'
         ? ReactKitErrorCode$1.NoCode
         : String((_b = error.code) !== null && _b !== void 0 ? _b : ReactKitErrorCode$1.NoCode));
+    // Call all fatal error listeners
+    try {
+        fatalErrorHandlers.forEach((handler) => {
+            handler();
+        });
+    }
+    catch (err) {
+        // Ignore listener errors
+    }
     // Add log
     logClientEvent({
         context: LogBuiltInMetadata.Context.ClientFatalError,
@@ -870,12 +883,19 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
     setFatalErrorTitle(errorTitle);
     return undefined;
 };
+/**
+ * Add a handler for when a fatal error occurs
+ * @author Gabe Abrams
+ */
+const addFatalErrorHandler = (handler) => {
+    fatalErrorHandlers.push(handler);
+};
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const AppWrapper = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     const { children, dark, } = props;
@@ -896,10 +916,10 @@ const AppWrapper = (props) => {
     // Session expired
     const [sessionHasExpired, setSessionHasExpiredInner,] = useState(false);
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                  Modal                 */
+    /* ---------------- Modal --------------- */
     /*----------------------------------------*/
     // Modal that may be defined
     let modal;
@@ -923,7 +943,7 @@ const AppWrapper = (props) => {
             }, dontAllowBackdropExit: true }, confirmInfo.text));
     }
     /*----------------------------------------*/
-    /*                  Views                 */
+    /* ---------------- Views --------------- */
     /*----------------------------------------*/
     // Body that will be filled with the current view
     let body;
@@ -949,7 +969,7 @@ const AppWrapper = (props) => {
     }
     /* --------------- App -------------- */
     if (!body) {
-        body = (React__default.createElement(React__default.Fragment, null, children));
+        body = children;
     }
     /*----------------------------------------*/
     /*                 Main UI                */
@@ -40631,6 +40651,39 @@ const Tooltip = (props) => {
 };
 
 /**
+ * A toggle switch that toggles on or off
+ * @author Alessandra De Lucas
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const ToggleSwitch = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { isOn, onToggle, id, description, backgroundVariantWhenOn = Variant$1.Info, } = props;
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    const backgroundVariant = (isOn
+        ? backgroundVariantWhenOn
+        : 'secondary');
+    return (React__default.createElement("button", { id: id, "aria-label": `If on, ${description}. Currently ${isOn ? 'on' : 'off'}. Click to turn ${isOn ? 'off' : 'on'}.`, className: `alert alert-${backgroundVariant} bg-${backgroundVariant} mb-0 rounded-pill d-inline-block pt-0 pb-0 px-3`, onClick: () => {
+            onToggle(!isOn);
+        }, type: "button" },
+        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "text-light", style: {
+                transform: `translateX(${isOn ? '' : '-'}0.7rem)`,
+                transition: '0.3s transform ease-in-out',
+            } })));
+};
+
+/**
  * One minute in ms
  * @author Gabe Abrams
  */
@@ -42509,5 +42562,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

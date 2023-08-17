@@ -30,7 +30,7 @@ import {
 } from '../client/initClient';
 
 /*------------------------------------------------------------------------*/
-/*                                  Props                                 */
+/* -------------------------------- Props ------------------------------- */
 /*------------------------------------------------------------------------*/
 
 type Props = {
@@ -41,11 +41,11 @@ type Props = {
 };
 
 /*------------------------------------------------------------------------*/
-/*                             Static Helpers                             */
+/* --------------------------- Static Helpers --------------------------- */
 /*------------------------------------------------------------------------*/
 
 /*----------------------------------------*/
-/*                  Alert                 */
+/* ---------------- Alert --------------- */
 /*----------------------------------------*/
 
 // Stored copies of setters
@@ -61,6 +61,7 @@ let onAlertClosed: () => void;
 export const alert = async (title: string, text: string): Promise<undefined> => {
   // Fallback if alert not available
   if (!setAlertInfo) {
+    // eslint-disable-next-line no-alert
     window.alert(`${title}\n\n${text}`);
     return undefined;
   }
@@ -81,7 +82,7 @@ export const alert = async (title: string, text: string): Promise<undefined> => 
 };
 
 /*----------------------------------------*/
-/*                 Confirm                */
+/* --------------- Confirm -------------- */
 /*----------------------------------------*/
 
 // Stored copies of setters
@@ -129,6 +130,7 @@ export const confirm = async (
 ): Promise<boolean> => {
   // Fallback if confirm is not available
   if (!setConfirmInfo) {
+    // eslint-disable-next-line no-alert
     return window.confirm(`${title}\n\n${text}`);
   }
 
@@ -136,7 +138,7 @@ export const confirm = async (
   return new Promise((resolve) => {
     // Setup handler
     onConfirmClosed = (confirmed: boolean) => {
-      resolve(confirmed)
+      resolve(confirmed);
     };
 
     // Show the confirm
@@ -149,13 +151,16 @@ export const confirm = async (
 };
 
 /*----------------------------------------*/
-/*               Fatal Error              */
+/* ------------- Fatal Error ------------ */
 /*----------------------------------------*/
 
 // Stored copies of setters
 let setFatalErrorMessage: (message: string) => void;
 let setFatalErrorCode: (code: string) => void;
 let setFatalErrorTitle: (title: string) => void;
+
+// Fatal error listeners
+const fatalErrorHandlers: (() => void)[] = [];
 
 /**
  * Show a fatal error message
@@ -178,6 +183,15 @@ export const showFatalError = (
       ? ReactKitErrorCode.NoCode
       : String(error.code ?? ReactKitErrorCode.NoCode)
   );
+
+  // Call all fatal error listeners
+  try {
+    fatalErrorHandlers.forEach((handler) => {
+      handler();
+    });
+  } catch (err) {
+    // Ignore listener errors
+  }
 
   // Add log
   logClientEvent({
@@ -209,8 +223,16 @@ export const showFatalError = (
   return undefined;
 };
 
+/**
+ * Add a handler for when a fatal error occurs
+ * @author Gabe Abrams
+ */
+export const addFatalErrorHandler = (handler: () => void) => {
+  fatalErrorHandlers.push(handler);
+};
+
 /*----------------------------------------*/
-/*             Session Expired            */
+/* ----------- Session Expired ---------- */
 /*----------------------------------------*/
 
 // Stored copies of setters
@@ -226,12 +248,12 @@ export const showSessionExpiredMessage = (): undefined => {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
 const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   /*------------------------------------------------------------------------*/
-  /*                                  Setup                                 */
+  /* -------------------------------- Setup ------------------------------- */
   /*------------------------------------------------------------------------*/
 
   /* -------------- Props ------------- */
@@ -265,11 +287,11 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
     alertInfo,
     setAlertInfoInner,
   ] = useState<
-    undefined
-    | {
-      title: string,
-      text: string,
-    }
+  undefined
+  | {
+    title: string,
+    text: string,
+  }
   >(undefined);
   setAlertInfo = setAlertInfoInner;
 
@@ -278,17 +300,17 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
     confirmInfo,
     setConfirmInfoInner,
   ] = useState<
-    undefined
-    | {
-      title: string,
-      text: string,
-      opts: {
-        confirmButtonText?: string,
-        confirmButtonVariant?: Variant,
-        cancelButtonText?: string,
-        cancelButtonVariant?: Variant,
-      },
-    }
+  undefined
+  | {
+    title: string,
+    text: string,
+    opts: {
+      confirmButtonText?: string,
+      confirmButtonVariant?: Variant,
+      cancelButtonText?: string,
+      cancelButtonVariant?: Variant,
+    },
+  }
   >(undefined);
   setConfirmInfo = setConfirmInfoInner;
 
@@ -300,11 +322,11 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   setSessionHasExpired = setSessionHasExpiredInner;
 
   /*------------------------------------------------------------------------*/
-  /*                                 Render                                 */
+  /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
 
   /*----------------------------------------*/
-  /*                  Modal                 */
+  /* ---------------- Modal --------------- */
   /*----------------------------------------*/
 
   // Modal that may be defined
@@ -358,7 +380,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   }
 
   /*----------------------------------------*/
-  /*                  Views                 */
+  /* ---------------- Views --------------- */
   /*----------------------------------------*/
 
   // Body that will be filled with the current view
@@ -410,11 +432,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   /* --------------- App -------------- */
 
   if (!body) {
-    body = (
-      <>
-        {children}
-      </>
-    );
+    body = children;
   }
 
   /*----------------------------------------*/

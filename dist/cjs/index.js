@@ -778,10 +778,10 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                             Static Helpers                             */
+/* --------------------------- Static Helpers --------------------------- */
 /*------------------------------------------------------------------------*/
 /*----------------------------------------*/
-/*                  Alert                 */
+/* ---------------- Alert --------------- */
 /*----------------------------------------*/
 // Stored copies of setters
 let setAlertInfo;
@@ -795,6 +795,7 @@ let onAlertClosed;
 const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
     // Fallback if alert not available
     if (!setAlertInfo) {
+        // eslint-disable-next-line no-alert
         window.alert(`${title}\n\n${text}`);
         return undefined;
     }
@@ -812,7 +813,7 @@ const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () 
     });
 });
 /*----------------------------------------*/
-/*                 Confirm                */
+/* --------------- Confirm -------------- */
 /*----------------------------------------*/
 // Stored copies of setters
 let setConfirmInfo;
@@ -835,6 +836,7 @@ let onConfirmClosed;
 const confirm = (title, text, opts) => __awaiter(void 0, void 0, void 0, function* () {
     // Fallback if confirm is not available
     if (!setConfirmInfo) {
+        // eslint-disable-next-line no-alert
         return window.confirm(`${title}\n\n${text}`);
     }
     // Return promise that resolves with result of confirmation
@@ -852,12 +854,14 @@ const confirm = (title, text, opts) => __awaiter(void 0, void 0, void 0, functio
     });
 });
 /*----------------------------------------*/
-/*               Fatal Error              */
+/* ------------- Fatal Error ------------ */
 /*----------------------------------------*/
 // Stored copies of setters
 let setFatalErrorMessage;
 let setFatalErrorCode;
 let setFatalErrorTitle;
+// Fatal error listeners
+const fatalErrorHandlers = [];
 /**
  * Show a fatal error message
  * @author Gabe Abrams
@@ -873,6 +877,15 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
     const code = (typeof error === 'string'
         ? ReactKitErrorCode$1.NoCode
         : String((_b = error.code) !== null && _b !== void 0 ? _b : ReactKitErrorCode$1.NoCode));
+    // Call all fatal error listeners
+    try {
+        fatalErrorHandlers.forEach((handler) => {
+            handler();
+        });
+    }
+    catch (err) {
+        // Ignore listener errors
+    }
     // Add log
     logClientEvent({
         context: LogBuiltInMetadata.Context.ClientFatalError,
@@ -896,12 +909,19 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
     setFatalErrorTitle(errorTitle);
     return undefined;
 };
+/**
+ * Add a handler for when a fatal error occurs
+ * @author Gabe Abrams
+ */
+const addFatalErrorHandler = (handler) => {
+    fatalErrorHandlers.push(handler);
+};
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const AppWrapper = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     const { children, dark, } = props;
@@ -922,10 +942,10 @@ const AppWrapper = (props) => {
     // Session expired
     const [sessionHasExpired, setSessionHasExpiredInner,] = React.useState(false);
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                  Modal                 */
+    /* ---------------- Modal --------------- */
     /*----------------------------------------*/
     // Modal that may be defined
     let modal;
@@ -949,7 +969,7 @@ const AppWrapper = (props) => {
             }, dontAllowBackdropExit: true }, confirmInfo.text));
     }
     /*----------------------------------------*/
-    /*                  Views                 */
+    /* ---------------- Views --------------- */
     /*----------------------------------------*/
     // Body that will be filled with the current view
     let body;
@@ -975,7 +995,7 @@ const AppWrapper = (props) => {
     }
     /* --------------- App -------------- */
     if (!body) {
-        body = (React__default["default"].createElement(React__default["default"].Fragment, null, children));
+        body = children;
     }
     /*----------------------------------------*/
     /*                 Main UI                */
@@ -40657,6 +40677,39 @@ const Tooltip = (props) => {
 };
 
 /**
+ * A toggle switch that toggles on or off
+ * @author Alessandra De Lucas
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const ToggleSwitch = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { isOn, onToggle, id, description, backgroundVariantWhenOn = Variant$1.Info, } = props;
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    const backgroundVariant = (isOn
+        ? backgroundVariantWhenOn
+        : 'secondary');
+    return (React__default["default"].createElement("button", { id: id, "aria-label": `If on, ${description}. Currently ${isOn ? 'on' : 'off'}. Click to turn ${isOn ? 'off' : 'on'}.`, className: `alert alert-${backgroundVariant} bg-${backgroundVariant} mb-0 rounded-pill d-inline-block pt-0 pb-0 px-3`, onClick: () => {
+            onToggle(!isOn);
+        }, type: "button" },
+        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "text-light", style: {
+                transform: `translateX(${isOn ? '' : '-'}0.7rem)`,
+                transition: '0.3s transform ease-in-out',
+            } })));
+};
+
+/**
  * One minute in ms
  * @author Gabe Abrams
  */
@@ -42570,10 +42623,12 @@ exports.RadioButton = RadioButton;
 exports.ReactKitErrorCode = ReactKitErrorCode$1;
 exports.SimpleDateChooser = SimpleDateChooser;
 exports.TabBox = TabBox;
+exports.ToggleSwitch = ToggleSwitch;
 exports.Tooltip = Tooltip;
 exports.Variant = Variant$1;
 exports.abbreviate = abbreviate;
 exports.addDBEditorEndpoints = addDBEditorEndpoints;
+exports.addFatalErrorHandler = addFatalErrorHandler;
 exports.alert = alert$1;
 exports.avg = avg;
 exports.canReviewLogs = canReviewLogs;
