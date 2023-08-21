@@ -25,6 +25,7 @@ import CSVDownloadButton from './components/CSVDownloadButton';
 import DBEntryManagerPanel from './components/DBEntryManagerPanel';
 import Tooltip from './components/Tooltip';
 import ToggleSwitch from './components/ToggleSwitch';
+import ScrollLockToBottom from './components/ScrollLockToBottomContainer';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -77,6 +78,7 @@ import genCommaList from './helpers/genCommaList';
 import validateEmail from './helpers/validators/validateEmail';
 import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
 import validateString from './helpers/validators/validateString';
+import idify from './helpers/idify';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -124,6 +126,7 @@ export {
   DBEntryManagerPanel,
   Tooltip,
   ToggleSwitch,
+  ScrollLockToBottom,
   // Global functions
   alert,
   confirm,
@@ -167,6 +170,7 @@ export {
   validatePhoneNumber,
   validateString,
   getLocalTimeInfo,
+  idify,
   // Client helpers
   initClient,
   visitServerEndpoint,
