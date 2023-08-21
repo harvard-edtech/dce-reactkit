@@ -40707,20 +40707,22 @@ const idify = (str) => {
 /**
  * Container that automatically scrolls when new items are added,
  *   lets the user scroll up to see old items, but resumes
- *   autoscroll when the user scrolls back to the bottom
+ *   autoscroll when the user scrolls back to the bottom.
+ *   Note: takes up full height of parent, so parent should
+ *   have a determined height for the scroll to work.
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style = `
-  .ScrollLockToBottom-outer-container {
+  .AutoscrollToBottomContainer-outer-container {
     /* Take up all space */
     height: 100%;
     position: relative;
   }
 
-  .ScrollLockToBottom-scrollable-container {
+  .AutoscrollToBottomContainer-scrollable-container {
     /* Take up max 100% height, don't take it up if not needed */
     /* (so column-reverse layout doesn't start at the bottom) */
     max-height: 100%;
@@ -40735,7 +40737,7 @@ const style = `
     flex-direction: column-reverse;
   }
 
-  .ScrollLockToBottom-jump-to-bottom-container {
+  .AutoscrollToBottomContainer-jump-to-bottom-container {
     /* Don't take any space in parent */
     height: 0;
     overflow: visible;
@@ -40752,7 +40754,7 @@ const style = `
     text-align: center;
   }
 
-  .ScrollLockToBottom-item-container {
+  .AutoscrollToBottomContainer-item-container {
     /* Normal Height */
     position: relative;
     z-index: 1;
@@ -40824,7 +40826,7 @@ const reducer = (state, action) => {
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
-const ScrollLockToBottom = (props) => {
+const AutoscrollToBottomContainer = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -40960,22 +40962,22 @@ const ScrollLockToBottom = (props) => {
     // Jump to Bottom button
     let jumpToBottomButton;
     if (jumpToBottomButtonVisible) {
-        jumpToBottomButton = (React__default.createElement("div", { className: `ScrollLockToBottom-jump-to-bottom-container ScrollLockToBottom-for-${idify(itemsName !== null && itemsName !== void 0 ? itemsName : 'items')}` },
-            React__default.createElement("button", { type: "button", className: `ScrollLockToBottom-jump-to-bottom-button ScrollLockToBottom-jump-to-bottom-button-for-${idify(itemsName !== null && itemsName !== void 0 ? itemsName : 'items')} btn btn-sm btn-${jumpToBottomButtonVariant} pt-0 pb-0`, onClick: scrollToBottom, "aria-label": "scroll back to bottom and show new content" },
+        jumpToBottomButton = (React__default.createElement("div", { className: `AutoscrollToBottomContainer-jump-to-bottom-container AutoscrollToBottomContainer-for-${idify(itemsName !== null && itemsName !== void 0 ? itemsName : 'items')}` },
+            React__default.createElement("button", { type: "button", className: `AutoscrollToBottomContainer-jump-to-bottom-button AutoscrollToBottomContainer-jump-to-bottom-button-for-${idify(itemsName !== null && itemsName !== void 0 ? itemsName : 'items')} btn btn-sm btn-${jumpToBottomButtonVariant} pt-0 pb-0`, onClick: scrollToBottom, "aria-label": "scroll back to bottom and show new content" },
                 "New",
                 ' ', itemsName !== null && itemsName !== void 0 ? itemsName : 'Content',
                 React__default.createElement(FontAwesomeIcon, { icon: faChevronDown, className: "ms-1" }))));
     }
     // Main UI
-    return (React__default.createElement("div", { className: "ScrollLockToBottom-outer-container bg-warning" },
+    return (React__default.createElement("div", { className: "AutoscrollToBottomContainer-outer-container" },
         React__default.createElement("style", null, style),
         jumpToBottomButton,
-        React__default.createElement("div", { className: "ScrollLockToBottom-scrollable-container", onScroll: () => {
+        React__default.createElement("div", { className: "AutoscrollToBottomContainer-scrollable-container", onScroll: () => {
                 handleScroll();
             }, ref: container }, items
             // Render each item with a key
             .map((item) => {
-            return (React__default.createElement("div", { className: "ScrollLockToBottom-item-container", key: item.id }, item.item));
+            return (React__default.createElement("div", { className: "AutoscrollToBottomContainer-item-container", key: item.id }, item.item));
         })
             // Reverse order because flex column is reverse
             .reverse())));
@@ -42860,5 +42862,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, ScrollLockToBottom, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

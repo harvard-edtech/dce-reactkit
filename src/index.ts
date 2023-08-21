@@ -25,7 +25,7 @@ import CSVDownloadButton from './components/CSVDownloadButton';
 import DBEntryManagerPanel from './components/DBEntryManagerPanel';
 import Tooltip from './components/Tooltip';
 import ToggleSwitch from './components/ToggleSwitch';
-import ScrollLockToBottom from './components/ScrollLockToBottomContainer';
+import AutoscrollToBottomContainer from './components/AutoscrollToBottomContainer';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -126,7 +126,7 @@ export {
   DBEntryManagerPanel,
   Tooltip,
   ToggleSwitch,
-  ScrollLockToBottom,
+  AutoscrollToBottomContainer,
   // Global functions
   alert,
   confirm,

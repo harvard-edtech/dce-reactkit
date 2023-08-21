@@ -1,7 +1,9 @@
 /**
  * Container that automatically scrolls when new items are added,
  *   lets the user scroll up to see old items, but resumes
- *   autoscroll when the user scrolls back to the bottom
+ *   autoscroll when the user scrolls back to the bottom.
+ *   Note: takes up full height of parent, so parent should
+ *   have a determined height for the scroll to work.
  * @author Gabe Abrams
  */
 
@@ -48,13 +50,13 @@ type AutoScrollItem = {
 /*------------------------------------------------------------------------*/
 
 const style = `
-  .ScrollLockToBottom-outer-container {
+  .AutoscrollToBottomContainer-outer-container {
     /* Take up all space */
     height: 100%;
     position: relative;
   }
 
-  .ScrollLockToBottom-scrollable-container {
+  .AutoscrollToBottomContainer-scrollable-container {
     /* Take up max 100% height, don't take it up if not needed */
     /* (so column-reverse layout doesn't start at the bottom) */
     max-height: 100%;
@@ -69,7 +71,7 @@ const style = `
     flex-direction: column-reverse;
   }
 
-  .ScrollLockToBottom-jump-to-bottom-container {
+  .AutoscrollToBottomContainer-jump-to-bottom-container {
     /* Don't take any space in parent */
     height: 0;
     overflow: visible;
@@ -86,7 +88,7 @@ const style = `
     text-align: center;
   }
 
-  .ScrollLockToBottom-item-container {
+  .AutoscrollToBottomContainer-item-container {
     /* Normal Height */
     position: relative;
     z-index: 1;
@@ -197,7 +199,7 @@ const reducer = (state: State, action: Action): State => {
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-const ScrollLockToBottom: React.FC<Props> = (props) => {
+const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
   /* -------------------------------- Setup ------------------------------- */
   /*------------------------------------------------------------------------*/
@@ -385,10 +387,10 @@ const ScrollLockToBottom: React.FC<Props> = (props) => {
   let jumpToBottomButton: React.ReactNode;
   if (jumpToBottomButtonVisible) {
     jumpToBottomButton = (
-      <div className={`ScrollLockToBottom-jump-to-bottom-container ScrollLockToBottom-for-${idify(itemsName ?? 'items')}`}>
+      <div className={`AutoscrollToBottomContainer-jump-to-bottom-container AutoscrollToBottomContainer-for-${idify(itemsName ?? 'items')}`}>
         <button
           type="button"
-          className={`ScrollLockToBottom-jump-to-bottom-button ScrollLockToBottom-jump-to-bottom-button-for-${idify(itemsName ?? 'items')} btn btn-sm btn-${jumpToBottomButtonVariant} pt-0 pb-0`}
+          className={`AutoscrollToBottomContainer-jump-to-bottom-button AutoscrollToBottomContainer-jump-to-bottom-button-for-${idify(itemsName ?? 'items')} btn btn-sm btn-${jumpToBottomButtonVariant} pt-0 pb-0`}
           onClick={scrollToBottom}
           aria-label="scroll back to bottom and show new content"
         >
@@ -406,7 +408,7 @@ const ScrollLockToBottom: React.FC<Props> = (props) => {
 
   // Main UI
   return (
-    <div className="ScrollLockToBottom-outer-container bg-warning">
+    <div className="AutoscrollToBottomContainer-outer-container">
       {/* Style */}
       <style>
         {style}
@@ -417,7 +419,7 @@ const ScrollLockToBottom: React.FC<Props> = (props) => {
 
       {/* Scrollable Item Container */}
       <div
-        className="ScrollLockToBottom-scrollable-container"
+        className="AutoscrollToBottomContainer-scrollable-container"
         onScroll={() => {
           handleScroll();
         }}
@@ -430,7 +432,7 @@ const ScrollLockToBottom: React.FC<Props> = (props) => {
             .map((item) => {
               return (
                 <div
-                  className="ScrollLockToBottom-item-container"
+                  className="AutoscrollToBottomContainer-item-container"
                   key={item.id}
                 >
                   {item.item}
@@ -450,4 +452,4 @@ const ScrollLockToBottom: React.FC<Props> = (props) => {
 /*------------------------------------------------------------------------*/
 
 // Export component
-export default ScrollLockToBottom;
+export default AutoscrollToBottomContainer;

@@ -609,7 +609,9 @@ declare const ToggleSwitch: React.FC<Props$1>;
 /**
  * Container that automatically scrolls when new items are added,
  *   lets the user scroll up to see old items, but resumes
- *   autoscroll when the user scrolls back to the bottom
+ *   autoscroll when the user scrolls back to the bottom.
+ *   Note: takes up full height of parent, so parent should
+ *   have a determined height for the scroll to work.
  * @author Gabe Abrams
  */
 
@@ -622,7 +624,7 @@ type AutoScrollItem = {
     id: string | number;
     item: React.ReactNode;
 };
-declare const ScrollLockToBottom: React.FC<Props>;
+declare const AutoscrollToBottomContainer: React.FC<Props>;
 
 /**
  * An error with a code
@@ -1410,4 +1412,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, ScrollLockToBottom, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
