@@ -40724,17 +40724,11 @@ const style = `
 
   .AutoscrollToBottomContainer-scrollable-container {
     /* Take up max 100% height, don't take it up if not needed */
-    /* (so column-reverse layout doesn't start at the bottom) */
     max-height: 100%;
     overflow-y: auto;
 
     /* Allow children to position */
     position: relative;
-
-    /* Reverse order of children so scroll starts at bottom */
-    /* (but children will have to be rendered in reverse order) */
-    display: flex;
-    flex-direction: column-reverse;
   }
 
   .AutoscrollToBottomContainer-jump-to-bottom-container {
@@ -40765,7 +40759,7 @@ const style = `
 /*------------------------------------------------------------------------*/
 // Scrolled to bottom threshold
 // (how close you have to be to the bottom for it to count as the bottom)
-const SCROLLED_TO_BOTTOM_THRESHOLD_REMS = 2;
+const SCROLLED_TO_BOTTOM_THRESHOLD_REMS = 1.5;
 /*------------------------------------------------------------------------*/
 /* -------------------------- Static Functions -------------------------- */
 /*------------------------------------------------------------------------*/
@@ -40786,8 +40780,6 @@ var ActionType;
 (function (ActionType) {
     // Identify that the user is now scrolled to the bottom
     ActionType["NowScrolledToBottom"] = "NowScrolledToBottom";
-    // Identify that the user scrolled away from the bottom
-    ActionType["NowScrolledAwayFromBottom"] = "NowScrolledAwayFromBottom";
     // Identify that new content appeared at the bottom but is not visible
     ActionType["NewContentAtBottom"] = "NewContentAtBottom";
 })(ActionType || (ActionType = {}));
@@ -40801,20 +40793,11 @@ const reducer = (state, action) => {
     switch (action.type) {
         case ActionType.NowScrolledToBottom: {
             return Object.assign(Object.assign({}, state), { 
-                // Store the event
-                wasScrolledToBottom: true, 
                 // Hide the "jump to bottom" button
                 jumpToBottomButtonVisible: false });
         }
-        case ActionType.NowScrolledAwayFromBottom: {
-            return Object.assign(Object.assign({}, state), { 
-                // Store the event
-                wasScrolledToBottom: false });
-        }
         case ActionType.NewContentAtBottom: {
             return Object.assign(Object.assign({}, state), { 
-                // Store the event
-                wasScrolledToBottom: false, 
                 // Show the "jump to bottom" button
                 jumpToBottomButtonVisible: true });
         }
@@ -40836,17 +40819,17 @@ const AutoscrollToBottomContainer = (props) => {
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
-        wasScrolledToBottom: true,
         jumpToBottomButtonVisible: false,
     };
     // Initialize state
     const [state, dispatch] = useReducer(reducer, initialState);
     // Destructure common state
-    const { wasScrolledToBottom, jumpToBottomButtonVisible, } = state;
+    const { jumpToBottomButtonVisible, } = state;
     /* -------------- Refs -------------- */
     // Initialize refs
     const lastItemIds = useRef([]);
     const container = useRef(null);
+    const wasScrolledToBottomBeforeItemsUpdate = useRef(true);
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
@@ -40907,11 +40890,6 @@ const AutoscrollToBottomContainer = (props) => {
                 type: ActionType.NowScrolledToBottom,
             });
         }
-        else {
-            dispatch({
-                type: ActionType.NowScrolledAwayFromBottom,
-            });
-        }
     };
     /*------------------------------------------------------------------------*/
     /* ------------------------- Lifecycle Functions ------------------------ */
@@ -40925,7 +40903,7 @@ const AutoscrollToBottomContainer = (props) => {
         scrollToBottom();
     }, []);
     /**
-     * Update (also called on mount)
+     * Update (also called on mount): autoscroll
      * @author Gabe Abrams
      */
     useEffect(() => {
@@ -40940,7 +40918,7 @@ const AutoscrollToBottomContainer = (props) => {
             return;
         }
         // Check if used to be scrolled to the bottom
-        if (wasScrolledToBottom) {
+        if (wasScrolledToBottomBeforeItemsUpdate.current) {
             // Was scrolled to the bottom! Autoscroll.
             scrollToBottom();
         }
@@ -40952,6 +40930,10 @@ const AutoscrollToBottomContainer = (props) => {
         }
         // Update last item ids
         lastItemIds.current = currentItemIds;
+        // Remember if we were scrolled to the bottom before the update
+        return () => {
+            wasScrolledToBottomBeforeItemsUpdate.current = isScrolledToBottom();
+        };
     }, [items]);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
@@ -40972,15 +40954,11 @@ const AutoscrollToBottomContainer = (props) => {
     return (React__default.createElement("div", { className: "AutoscrollToBottomContainer-outer-container" },
         React__default.createElement("style", null, style),
         jumpToBottomButton,
-        React__default.createElement("div", { className: "AutoscrollToBottomContainer-scrollable-container", onScroll: () => {
-                handleScroll();
-            }, ref: container }, items
+        React__default.createElement("div", { className: "AutoscrollToBottomContainer-scrollable-container", onScroll: handleScroll, ref: container }, items
             // Render each item with a key
             .map((item) => {
             return (React__default.createElement("div", { className: "AutoscrollToBottomContainer-item-container", key: item.id }, item.item));
-        })
-            // Reverse order because flex column is reverse
-            .reverse())));
+        }))));
 };
 
 /**
