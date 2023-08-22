@@ -128,10 +128,10 @@ type State = {
 
 // Types of actions
 enum ActionType {
-  // Identify that the user is now scrolled to the bottom
-  NowScrolledToBottom = 'NowScrolledToBottom',
-  // Identify that new content appeared at the bottom but is not visible
-  NewContentAtBottom = 'NewContentAtBottom',
+  // Hide the "jump to bottom" button
+  HideJumpToBottomButton = 'HideJumpToBottomButton',
+  // Show the "jump to bottom" button
+  ShowJumpToBottomButton = 'ShowJumpToBottomButton',
 }
 
 // Action definitions
@@ -139,8 +139,8 @@ type Action = (
   | {
     // Action type
     type: (
-      | ActionType.NowScrolledToBottom
-      | ActionType.NewContentAtBottom
+      | ActionType.HideJumpToBottomButton
+      | ActionType.ShowJumpToBottomButton
     ),
   }
 );
@@ -153,17 +153,15 @@ type Action = (
  */
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case ActionType.NowScrolledToBottom: {
+    case ActionType.HideJumpToBottomButton: {
       return {
         ...state,
-        // Hide the "jump to bottom" button
         jumpToBottomButtonVisible: false,
       };
     }
-    case ActionType.NewContentAtBottom: {
+    case ActionType.ShowJumpToBottomButton: {
       return {
         ...state,
-        // Show the "jump to bottom" button
         jumpToBottomButtonVisible: true,
       };
     }
@@ -235,6 +233,8 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
     // Get info about container
     const {
       scrollTop,
+      scrollHeight,
+      clientHeight,
     } = container.current;
 
     // Distance to bottom
@@ -242,7 +242,9 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
       getComputedStyle(document.documentElement).fontSize,
       10,
     );
-    const distanceToBottomRems = Math.abs(scrollTop / rootFontSizePx);
+    const distanceToBottomRems = Math.abs(
+      (scrollTop + clientHeight - scrollHeight) / rootFontSizePx,
+    );
 
     // Figure out if we're scrolled to the bottom
     return (distanceToBottomRems < SCROLLED_TO_BOTTOM_THRESHOLD_REMS);
@@ -260,11 +262,11 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
 
     // Update state
     dispatch({
-      type: ActionType.NowScrolledToBottom,
+      type: ActionType.HideJumpToBottomButton,
     });
 
     // Scroll to bottom
-    container.current.scrollTop = 0;
+    container.current.scrollTop = container.current.scrollHeight;
   };
 
   /*----------------------------------------*/
@@ -281,13 +283,10 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
       return;
     }
 
-    // Check if now scrolled to bottom
-    const nowScrolledToBottom = isScrolledToBottom();
-
-    // Remember if now no longer scrolled to bottom
-    if (nowScrolledToBottom) {
+    // If scrolled to bottom, hide the button
+    if (isScrolledToBottom()) {
       dispatch({
-        type: ActionType.NowScrolledToBottom,
+        type: ActionType.HideJumpToBottomButton,
       });
     }
   };
@@ -318,7 +317,7 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
       const currentItemIds = getItemIds(items);
 
       // Check if new content appeared at bottom
-      const newContentAtBottom = (
+      const newContentAppeared = (
         currentItemIds.length > 0
         && (
           currentItemIds[currentItemIds.length - 1]
@@ -327,7 +326,7 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
       );
 
       // Do nothing if no new content
-      if (!newContentAtBottom) {
+      if (!newContentAppeared) {
         return;
       }
 
@@ -338,7 +337,7 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
       } else {
         // Not scrolled to bottom. Show "jump to bottom" button.
         dispatch({
-          type: ActionType.NewContentAtBottom,
+          type: ActionType.ShowJumpToBottomButton,
         });
       }
 

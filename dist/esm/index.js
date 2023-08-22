@@ -40778,10 +40778,10 @@ const getItemIds = (items) => {
 // Types of actions
 var ActionType;
 (function (ActionType) {
-    // Identify that the user is now scrolled to the bottom
-    ActionType["NowScrolledToBottom"] = "NowScrolledToBottom";
-    // Identify that new content appeared at the bottom but is not visible
-    ActionType["NewContentAtBottom"] = "NewContentAtBottom";
+    // Hide the "jump to bottom" button
+    ActionType["HideJumpToBottomButton"] = "HideJumpToBottomButton";
+    // Show the "jump to bottom" button
+    ActionType["ShowJumpToBottomButton"] = "ShowJumpToBottomButton";
 })(ActionType || (ActionType = {}));
 /**
  * Reducer that executes actions
@@ -40791,15 +40791,11 @@ var ActionType;
  */
 const reducer = (state, action) => {
     switch (action.type) {
-        case ActionType.NowScrolledToBottom: {
-            return Object.assign(Object.assign({}, state), { 
-                // Hide the "jump to bottom" button
-                jumpToBottomButtonVisible: false });
+        case ActionType.HideJumpToBottomButton: {
+            return Object.assign(Object.assign({}, state), { jumpToBottomButtonVisible: false });
         }
-        case ActionType.NewContentAtBottom: {
-            return Object.assign(Object.assign({}, state), { 
-                // Show the "jump to bottom" button
-                jumpToBottomButtonVisible: true });
+        case ActionType.ShowJumpToBottomButton: {
+            return Object.assign(Object.assign({}, state), { jumpToBottomButtonVisible: true });
         }
         default: {
             return state;
@@ -40847,10 +40843,10 @@ const AutoscrollToBottomContainer = (props) => {
             return true;
         }
         // Get info about container
-        const { scrollTop, } = container.current;
+        const { scrollTop, scrollHeight, clientHeight, } = container.current;
         // Distance to bottom
         const rootFontSizePx = Number.parseInt(getComputedStyle(document.documentElement).fontSize, 10);
-        const distanceToBottomRems = Math.abs(scrollTop / rootFontSizePx);
+        const distanceToBottomRems = Math.abs((scrollTop + clientHeight - scrollHeight) / rootFontSizePx);
         // Figure out if we're scrolled to the bottom
         return (distanceToBottomRems < SCROLLED_TO_BOTTOM_THRESHOLD_REMS);
     };
@@ -40865,10 +40861,10 @@ const AutoscrollToBottomContainer = (props) => {
         }
         // Update state
         dispatch({
-            type: ActionType.NowScrolledToBottom,
+            type: ActionType.HideJumpToBottomButton,
         });
         // Scroll to bottom
-        container.current.scrollTop = 0;
+        container.current.scrollTop = container.current.scrollHeight;
     };
     /*----------------------------------------*/
     /* -------------- Handlers -------------- */
@@ -40882,12 +40878,10 @@ const AutoscrollToBottomContainer = (props) => {
         if (!container.current) {
             return;
         }
-        // Check if now scrolled to bottom
-        const nowScrolledToBottom = isScrolledToBottom();
-        // Remember if now no longer scrolled to bottom
-        if (nowScrolledToBottom) {
+        // If scrolled to bottom, hide the button
+        if (isScrolledToBottom()) {
             dispatch({
-                type: ActionType.NowScrolledToBottom,
+                type: ActionType.HideJumpToBottomButton,
             });
         }
     };
@@ -40910,11 +40904,11 @@ const AutoscrollToBottomContainer = (props) => {
         // Check if new content appeared
         const currentItemIds = getItemIds(items);
         // Check if new content appeared at bottom
-        const newContentAtBottom = (currentItemIds.length > 0
+        const newContentAppeared = (currentItemIds.length > 0
             && (currentItemIds[currentItemIds.length - 1]
                 !== lastItemIds.current[lastItemIds.current.length - 1]));
         // Do nothing if no new content
-        if (!newContentAtBottom) {
+        if (!newContentAppeared) {
             return;
         }
         // Check if used to be scrolled to the bottom
@@ -40925,7 +40919,7 @@ const AutoscrollToBottomContainer = (props) => {
         else {
             // Not scrolled to bottom. Show "jump to bottom" button.
             dispatch({
-                type: ActionType.NewContentAtBottom,
+                type: ActionType.ShowJumpToBottomButton,
             });
         }
         // Update last item ids
