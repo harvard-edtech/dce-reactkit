@@ -215,7 +215,7 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
   // Initialize refs
   const lastItemIds = useRef<(string | number)[]>([]);
   const container = useRef<HTMLDivElement | null>(null);
-  const wasScrolledToBottomBeforeItemsUpdate = useRef<boolean>(true);
+  const wasLastScrolledToBottom = useRef<boolean>(true);
 
   /*------------------------------------------------------------------------*/
   /* ------------------------- Component Functions ------------------------ */
@@ -253,7 +253,12 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
     );
 
     // Figure out if we're scrolled to the bottom
-    return (distanceToBottomRems < SCROLLED_TO_BOTTOM_THRESHOLD_REMS);
+    const atBottom = (distanceToBottomRems < SCROLLED_TO_BOTTOM_THRESHOLD_REMS);
+
+    // Remember if we scrolled to the bottom
+    wasLastScrolledToBottom.current = atBottom;
+
+    return atBottom;
   };
 
   /**
@@ -272,7 +277,13 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
     });
 
     // Scroll to bottom
-    container.current.scrollTop = container.current.scrollHeight;
+    container.current.scrollTop = (
+      container.current.scrollHeight
+      - container.current.clientHeight
+    );
+
+    // Remember that we scrolled to the bottom
+    wasLastScrolledToBottom.current = true;
   };
 
   /*----------------------------------------*/
@@ -289,8 +300,9 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
       return;
     }
 
-    // If scrolled to bottom, hide the button
+    // If scrolled to bottom, hide the button and remember position
     if (isScrolledToBottom()) {
+      // Hide button
       dispatch({
         type: ActionType.HideJumpToBottomButton,
       });
@@ -324,14 +336,16 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
 
       // Check if new content appeared at bottom
       const newContentAppeared = (
+        // There are items
         currentItemIds.length > 0
-        && lastItemIds.current
-        && lastItemIds.current.length > 0
-        && (
-          currentItemIds[currentItemIds.length - 1]
-          !== lastItemIds.current[lastItemIds.current.length - 1]
+        // The last item is new
+        && !lastItemIds.current.includes(
+          currentItemIds[currentItemIds.length - 1],
         )
       );
+
+      // Update last item ids
+      lastItemIds.current = currentItemIds;
 
       // Do nothing if no new content
       if (!newContentAppeared) {
@@ -339,7 +353,7 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
       }
 
       // Check if used to be scrolled to the bottom
-      if (wasScrolledToBottomBeforeItemsUpdate.current) {
+      if (wasLastScrolledToBottom.current) {
         // Was scrolled to the bottom! Autoscroll.
         scrollToBottom();
       } else {
@@ -348,14 +362,6 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
           type: ActionType.ShowJumpToBottomButton,
         });
       }
-
-      // Update last item ids
-      lastItemIds.current = currentItemIds;
-
-      // Remember if we were scrolled to the bottom before the update
-      return () => {
-        wasScrolledToBottomBeforeItemsUpdate.current = isScrolledToBottom();
-      };
     },
     [items],
   );
