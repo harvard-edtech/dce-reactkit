@@ -40837,7 +40837,7 @@ const AutoscrollToBottomContainer = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { itemsName, items, jumpToBottomButtonVariant = Variant$1.Danger, } = props;
+    const { itemsName, items, jumpToBottomButtonVariant = Variant$1.Danger, messageBeforeItems, messageAfterItems, } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
@@ -40931,6 +40931,8 @@ const AutoscrollToBottomContainer = (props) => {
         const currentItemIds = getItemIds(items);
         // Check if new content appeared at bottom
         const newContentAppeared = (currentItemIds.length > 0
+            && lastItemIds.current
+            && lastItemIds.current.length > 0
             && (currentItemIds[currentItemIds.length - 1]
                 !== lastItemIds.current[lastItemIds.current.length - 1]));
         // Do nothing if no new content
@@ -40974,11 +40976,14 @@ const AutoscrollToBottomContainer = (props) => {
     return (React__default["default"].createElement("div", { className: "AutoscrollToBottomContainer-outer-container" },
         React__default["default"].createElement("style", null, style),
         jumpToBottomButton,
-        React__default["default"].createElement("div", { className: "AutoscrollToBottomContainer-scrollable-container", onScroll: handleScroll, ref: container }, items
-            // Render each item with a key
-            .map((item) => {
-            return (React__default["default"].createElement("div", { className: "AutoscrollToBottomContainer-item-container", key: item.id }, item.item));
-        }))));
+        React__default["default"].createElement("div", { className: "AutoscrollToBottomContainer-scrollable-container", onScroll: handleScroll, ref: container },
+            messageBeforeItems,
+            items
+                // Render each item with a key
+                .map((item) => {
+                return (React__default["default"].createElement("div", { className: "AutoscrollToBottomContainer-item-container", key: item.id }, item.item));
+            }),
+            messageAfterItems)));
 };
 
 /**

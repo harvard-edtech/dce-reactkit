@@ -619,6 +619,8 @@ type Props = {
     itemsName?: string;
     items: AutoScrollItem[];
     jumpToBottomButtonVariant?: Variant;
+    messageBeforeItems?: React.ReactNode;
+    messageAfterItems?: React.ReactNode;
 };
 type AutoScrollItem = {
     id: string | number;

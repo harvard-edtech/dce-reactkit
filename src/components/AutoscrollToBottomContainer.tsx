@@ -35,6 +35,10 @@ type Props = {
   items: AutoScrollItem[],
   // Custom variant for the "Jump to Bottom" button
   jumpToBottomButtonVariant?: Variant,
+  // Optional element to display before last item (but within the scrollpane)
+  messageBeforeItems?: React.ReactNode,
+  // Optional element to display after the last item (but within the scrollpane)
+  messageAfterItems?: React.ReactNode,
 };
 
 // AutoScrollItem definition
@@ -187,6 +191,8 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
     itemsName,
     items,
     jumpToBottomButtonVariant = Variant.Danger,
+    messageBeforeItems,
+    messageAfterItems,
   } = props;
 
   /* -------------- State ------------- */
@@ -319,6 +325,8 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
       // Check if new content appeared at bottom
       const newContentAppeared = (
         currentItemIds.length > 0
+        && lastItemIds.current
+        && lastItemIds.current.length > 0
         && (
           currentItemIds[currentItemIds.length - 1]
           !== lastItemIds.current[lastItemIds.current.length - 1]
@@ -400,6 +408,9 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
         onScroll={handleScroll}
         ref={container}
       >
+        {/* Message before items */}
+        {messageBeforeItems}
+
         {/* Items */}
         {
           items
@@ -415,6 +426,9 @@ const AutoscrollToBottomContainer: React.FC<Props> = (props) => {
               );
             })
         }
+
+        {/* Message after items */}
+        {messageAfterItems}
       </div>
     </div>
   );
