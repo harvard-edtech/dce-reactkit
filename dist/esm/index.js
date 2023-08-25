@@ -293,7 +293,7 @@ const ModalButtonTypeToLabelAndVariant = {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$a = `
+const style$b = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -467,7 +467,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default.createElement("style", null, style$a),
+        React__default.createElement("style", null, style$b),
         React__default.createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -755,6 +755,39 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
 /* --------------------------- Static Helpers --------------------------- */
 /*------------------------------------------------------------------------*/
 /*----------------------------------------*/
+/* ----------- Redirect/Leave ----------- */
+/*----------------------------------------*/
+// Stored copy of setter for url to leave to
+let setURLToLeaveTo;
+/**
+ * Redirect to a new page
+ * @author Gabe Abrams
+ * @param url the url to redirect to
+ * @param destination the destination of the redirect, for example "YouTube"
+ *   and will be used in the following text: `Redirecting to ${destination}...`
+ */
+const leaveToURL = (url, destination) => __awaiter(void 0, void 0, void 0, function* () {
+    if (setURLToLeaveTo) {
+        // Beautiful redirect
+        setURLToLeaveTo({ url, destination });
+    }
+    else {
+        // Overwrite page in a janky way
+        window.document.body.innerHTML = `
+      <div>
+        <h1>
+          Redirecting to ${destination}...
+        </h1>
+        <p>
+          If you are not redirected in 5 seconds, please <a href="${url}">click here</a>.
+        </p>
+      </div>
+    `;
+    }
+    // Redirect to location
+    window.location.href = url;
+});
+/*----------------------------------------*/
 /* ---------------- Alert --------------- */
 /*----------------------------------------*/
 // Stored copies of setters
@@ -891,6 +924,30 @@ const addFatalErrorHandler = (handler) => {
     fatalErrorHandlers.push(handler);
 };
 /*------------------------------------------------------------------------*/
+/* -------------------------------- Style ------------------------------- */
+/*------------------------------------------------------------------------*/
+const style$a = `
+  .AppWrapper-leave-to-url-notice {
+    opacity: 0;
+
+    animation-name: AppWrapper-leave-to-url-notice-appear;
+    animation-duration: 0.5s;
+    animation-delay: 1s;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+  }
+
+  @keyframes AppWrapper-leave-to-url-notice-appear {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+`;
+/*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const AppWrapper = (props) => {
@@ -900,6 +957,9 @@ const AppWrapper = (props) => {
     /* -------------- Props ------------- */
     const { children, dark, } = props;
     /* -------------- State ------------- */
+    // Leave to URL
+    const [urlToLeaveTo, setURLToLeaveToInner,] = useState();
+    setURLToLeaveTo = setURLToLeaveToInner;
     // Fatal error
     const [fatalErrorMessage, setFatalErrorMessageInner,] = useState();
     setFatalErrorMessage = setFatalErrorMessageInner;
@@ -947,8 +1007,27 @@ const AppWrapper = (props) => {
     /*----------------------------------------*/
     // Body that will be filled with the current view
     let body;
+    /* ---------- Leave to URL ---------- */
+    if (!body && urlToLeaveTo) {
+        // Destructure url info
+        const { url, destination, } = urlToLeaveTo;
+        // Show pretty redirect screen
+        body = (React__default.createElement("div", { className: "AppWrapper-leave-to-url-container p-5 text-center" },
+            React__default.createElement("div", { className: "AppWrapper-leave-to-url-notice d-inline-block" },
+                React__default.createElement("h3", { className: "text-start m-0" },
+                    "Redirecting to",
+                    ' ',
+                    destination,
+                    "..."),
+                React__default.createElement("div", { className: "text-start" },
+                    "If you are not automatically redirected in 5 seconds, please",
+                    ' ',
+                    React__default.createElement("a", { href: url, "aria-label": `Click here to leave to ${destination}` }, "click here"),
+                    "."))));
+    }
     /* ----------- Fatal Error ---------- */
-    if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
+    if (!body
+        && (fatalErrorMessage || fatalErrorCode || sessionHasExpired)) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
             ? new ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
@@ -975,6 +1054,7 @@ const AppWrapper = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     return (React__default.createElement(React__default.Fragment, null,
+        React__default.createElement("style", null, style$a),
         modal,
         body));
 };
@@ -42842,5 +42922,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

@@ -45,6 +45,47 @@ type Props = {
 /*------------------------------------------------------------------------*/
 
 /*----------------------------------------*/
+/* ----------- Redirect/Leave ----------- */
+/*----------------------------------------*/
+
+// Stored copy of setter for url to leave to
+let setURLToLeaveTo: (
+  opts: {
+    url: string,
+    destination: string,
+  },
+) => void;
+
+/**
+ * Redirect to a new page
+ * @author Gabe Abrams
+ * @param url the url to redirect to
+ * @param destination the destination of the redirect, for example "YouTube"
+ *   and will be used in the following text: `Redirecting to ${destination}...`
+ */
+export const leaveToURL = async (url: string, destination: string) => {
+  if (setURLToLeaveTo) {
+    // Beautiful redirect
+    setURLToLeaveTo({ url, destination });
+  } else {
+    // Overwrite page in a janky way
+    window.document.body.innerHTML = `
+      <div>
+        <h1>
+          Redirecting to ${destination}...
+        </h1>
+        <p>
+          If you are not redirected in 5 seconds, please <a href="${url}">click here</a>.
+        </p>
+      </div>
+    `;
+  }
+
+  // Redirect to location
+  window.location.href = url;
+};
+
+/*----------------------------------------*/
 /* ---------------- Alert --------------- */
 /*----------------------------------------*/
 
@@ -248,6 +289,32 @@ export const showSessionExpiredMessage = (): undefined => {
 };
 
 /*------------------------------------------------------------------------*/
+/* -------------------------------- Style ------------------------------- */
+/*------------------------------------------------------------------------*/
+
+const style = `
+  .AppWrapper-leave-to-url-notice {
+    opacity: 0;
+
+    animation-name: AppWrapper-leave-to-url-notice-appear;
+    animation-duration: 0.5s;
+    animation-delay: 1s;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+  }
+
+  @keyframes AppWrapper-leave-to-url-notice-appear {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+`;
+
+/*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
@@ -264,6 +331,13 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   } = props;
 
   /* -------------- State ------------- */
+
+  // Leave to URL
+  const [
+    urlToLeaveTo,
+    setURLToLeaveToInner,
+  ] = useState<{ url: string, destination: string } | undefined>();
+  setURLToLeaveTo = setURLToLeaveToInner;
 
   // Fatal error
   const [
@@ -386,9 +460,47 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   // Body that will be filled with the current view
   let body: React.ReactNode;
 
+  /* ---------- Leave to URL ---------- */
+
+  if (!body && urlToLeaveTo) {
+    // Destructure url info
+    const {
+      url,
+      destination,
+    } = urlToLeaveTo;
+
+    // Show pretty redirect screen
+    body = (
+      <div className="AppWrapper-leave-to-url-container p-5 text-center">
+        <div className="AppWrapper-leave-to-url-notice d-inline-block">
+          <h3 className="text-start m-0">
+            Redirecting to
+            {' '}
+            {destination}
+            ...
+          </h3>
+          <div className="text-start">
+            If you are not automatically redirected in 5 seconds, please
+            {' '}
+            <a
+              href={url}
+              aria-label={`Click here to leave to ${destination}`}
+            >
+              click here
+            </a>
+            .
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   /* ----------- Fatal Error ---------- */
 
-  if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
+  if (
+    !body
+    && (fatalErrorMessage || fatalErrorCode || sessionHasExpired)
+  ) {
     // Re-encapsulate in an error
     const error = (
       sessionHasExpired
@@ -441,6 +553,9 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   return (
     <>
+      <style>
+        {style}
+      </style>
       {modal}
       {body}
     </>

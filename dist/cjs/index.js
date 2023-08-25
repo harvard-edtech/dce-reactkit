@@ -319,7 +319,7 @@ const ModalButtonTypeToLabelAndVariant = {
 /*------------------------------------------------------------------------*/
 /*                                  Style                                 */
 /*------------------------------------------------------------------------*/
-const style$a = `
+const style$b = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -493,7 +493,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default["default"].createElement("style", null, style$a),
+        React__default["default"].createElement("style", null, style$b),
         React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -781,6 +781,39 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
 /* --------------------------- Static Helpers --------------------------- */
 /*------------------------------------------------------------------------*/
 /*----------------------------------------*/
+/* ----------- Redirect/Leave ----------- */
+/*----------------------------------------*/
+// Stored copy of setter for url to leave to
+let setURLToLeaveTo;
+/**
+ * Redirect to a new page
+ * @author Gabe Abrams
+ * @param url the url to redirect to
+ * @param destination the destination of the redirect, for example "YouTube"
+ *   and will be used in the following text: `Redirecting to ${destination}...`
+ */
+const leaveToURL = (url, destination) => __awaiter(void 0, void 0, void 0, function* () {
+    if (setURLToLeaveTo) {
+        // Beautiful redirect
+        setURLToLeaveTo({ url, destination });
+    }
+    else {
+        // Overwrite page in a janky way
+        window.document.body.innerHTML = `
+      <div>
+        <h1>
+          Redirecting to ${destination}...
+        </h1>
+        <p>
+          If you are not redirected in 5 seconds, please <a href="${url}">click here</a>.
+        </p>
+      </div>
+    `;
+    }
+    // Redirect to location
+    window.location.href = url;
+});
+/*----------------------------------------*/
 /* ---------------- Alert --------------- */
 /*----------------------------------------*/
 // Stored copies of setters
@@ -917,6 +950,30 @@ const addFatalErrorHandler = (handler) => {
     fatalErrorHandlers.push(handler);
 };
 /*------------------------------------------------------------------------*/
+/* -------------------------------- Style ------------------------------- */
+/*------------------------------------------------------------------------*/
+const style$a = `
+  .AppWrapper-leave-to-url-notice {
+    opacity: 0;
+
+    animation-name: AppWrapper-leave-to-url-notice-appear;
+    animation-duration: 0.5s;
+    animation-delay: 1s;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+  }
+
+  @keyframes AppWrapper-leave-to-url-notice-appear {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+`;
+/*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const AppWrapper = (props) => {
@@ -926,6 +983,9 @@ const AppWrapper = (props) => {
     /* -------------- Props ------------- */
     const { children, dark, } = props;
     /* -------------- State ------------- */
+    // Leave to URL
+    const [urlToLeaveTo, setURLToLeaveToInner,] = React.useState();
+    setURLToLeaveTo = setURLToLeaveToInner;
     // Fatal error
     const [fatalErrorMessage, setFatalErrorMessageInner,] = React.useState();
     setFatalErrorMessage = setFatalErrorMessageInner;
@@ -973,8 +1033,27 @@ const AppWrapper = (props) => {
     /*----------------------------------------*/
     // Body that will be filled with the current view
     let body;
+    /* ---------- Leave to URL ---------- */
+    if (!body && urlToLeaveTo) {
+        // Destructure url info
+        const { url, destination, } = urlToLeaveTo;
+        // Show pretty redirect screen
+        body = (React__default["default"].createElement("div", { className: "AppWrapper-leave-to-url-container p-5 text-center" },
+            React__default["default"].createElement("div", { className: "AppWrapper-leave-to-url-notice d-inline-block" },
+                React__default["default"].createElement("h3", { className: "text-start m-0" },
+                    "Redirecting to",
+                    ' ',
+                    destination,
+                    "..."),
+                React__default["default"].createElement("div", { className: "text-start" },
+                    "If you are not automatically redirected in 5 seconds, please",
+                    ' ',
+                    React__default["default"].createElement("a", { href: url, "aria-label": `Click here to leave to ${destination}` }, "click here"),
+                    "."))));
+    }
     /* ----------- Fatal Error ---------- */
-    if (fatalErrorMessage || fatalErrorCode || sessionHasExpired) {
+    if (!body
+        && (fatalErrorMessage || fatalErrorCode || sessionHasExpired)) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
             ? new ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
@@ -1001,6 +1080,7 @@ const AppWrapper = (props) => {
     /*                 Main UI                */
     /*----------------------------------------*/
     return (React__default["default"].createElement(React__default["default"].Fragment, null,
+        React__default["default"].createElement("style", null, style$a),
         modal,
         body));
 };
@@ -42935,6 +43015,7 @@ exports.initClient = initClient;
 exports.initLogCollection = initLogCollection;
 exports.initServer = initServer;
 exports.isMobileOrTablet = isMobileOrTablet;
+exports.leaveToURL = leaveToURL;
 exports.logClientEvent = logClientEvent;
 exports.onlyKeepLetters = onlyKeepLetters;
 exports.padDecimalZeros = padDecimalZeros;

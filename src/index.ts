@@ -4,6 +4,7 @@ import AppWrapper, {
   confirm,
   showFatalError,
   addFatalErrorHandler,
+  leaveToURL,
 } from './components/AppWrapper';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBox from './components/ErrorBox';
@@ -176,6 +177,7 @@ export {
   visitServerEndpoint,
   logClientEvent,
   addFatalErrorHandler,
+  leaveToURL,
   // Server helpers
   initServer,
   genRouteHandler,

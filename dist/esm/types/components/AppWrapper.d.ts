@@ -10,6 +10,14 @@ type Props = {
     dark?: boolean;
 };
 /**
+ * Redirect to a new page
+ * @author Gabe Abrams
+ * @param url the url to redirect to
+ * @param destination the destination of the redirect, for example "YouTube"
+ *   and will be used in the following text: `Redirecting to ${destination}...`
+ */
+export declare const leaveToURL: (url: string, destination: string) => Promise<void>;
+/**
  * Show an alert modal with an "Okay" button
  * @author Gabe Abrams
  * @param title the title text to display at the top of the alert
