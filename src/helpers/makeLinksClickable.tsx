@@ -10,8 +10,9 @@ const urlRegex = /(https?:\/\/)?([a-z0-9-]+\.)+[a-z0-9]{2,6}(:[0-9]{1,5})?(\/\S*
  * @param text the text to process
  * @param [opts] options to customize behavior
  * @param [opts.newTab] if true, links will open in a new tab
- * @param [opts.preventPropagation] if true, clicks to link will prevent default
- *   and propagation
+ * @param [opts.preventPropagation] if true, clicks to link will prevent
+ *   propagation
+ * @param [opts.inheritColor] if true, inherit text color for links
  * @returns the processed text
  */
 const makeLinksClickable = (
@@ -19,6 +20,7 @@ const makeLinksClickable = (
   opts?: {
     newTab?: boolean,
     preventPropagation?: boolean,
+    inheritColor?: boolean,
   },
 ): React.ReactNode => {
   // Search text for links
@@ -61,11 +63,11 @@ const makeLinksClickable = (
         rel={newTab ? 'noopener noreferrer' : undefined}
         style={{
           textDecoration: 'underline',
+          color: opts?.inheritColor ? 'inherit' : undefined,
         }}
         onClick={(e) => {
-          // Prevent default and propagation if requested
+          // Prevent propagation if requested
           if (opts?.preventPropagation) {
-            e.preventDefault();
             e.stopPropagation();
           }
         }}
