@@ -42338,11 +42338,12 @@ const startMinWait = (minWaitMs) => {
 /**
  * Get the current part of day (morning, evening, etc.)
  * @author Gabe Abrams
+ * @returns the part of day (morning, evening, etc.)
  */
 const getPartOfDay = () => {
     // Setup the post-it time of day
     let partOfDay = 'day';
-    let hours = new Date().getHours();
+    const hours = new Date().getHours();
     if (hours < 12) {
         partOfDay = 'morning';
     }
@@ -42906,6 +42907,64 @@ const validateString = (input, opts) => {
         });
 };
 
+// Import React
+// Regular express that matches urls
+const urlRegex = /(https?:\/\/)?([a-z0-9-]+\.)+[a-z0-9]{2,6}(:[0-9]{1,5})?(\/\S*)?/g;
+/**
+ * Given some text, make the links clickable
+ * @author Gabe Abrams
+ * @param text the text to process
+ * @param [opts] options to customize behavior
+ * @param [opts.newTab] if true, links will open in a new tab
+ * @param [opts.preventPropagation] if true, clicks to link will prevent default
+ *   and propagation
+ * @returns the processed text
+ */
+const makeLinksClickable = (text, opts) => {
+    // Search text for links
+    let matches = urlRegex.exec(text);
+    // If no matches, just return the text
+    if (!matches) {
+        return text;
+    }
+    // Check if using new tab
+    const newTab = opts === null || opts === void 0 ? void 0 : opts.newTab;
+    // Next element key
+    let nextKey = 0;
+    // Process each link
+    const elements = [];
+    let lastIndex = 0;
+    while (matches) {
+        // Get the link
+        const link = matches[0];
+        // Get the index of the link
+        const { index } = matches;
+        // Add the text before the link
+        elements.push(React__default.createElement("span", { key: nextKey += 1 }, text.substring(lastIndex, index)));
+        // Add the link
+        elements.push(React__default.createElement("a", { key: nextKey += 1, href: link, target: newTab ? '_blank' : undefined, rel: newTab ? 'noopener noreferrer' : undefined, style: {
+                textDecoration: 'underline',
+            }, onClick: (e) => {
+                // Prevent default and propagation if requested
+                if (opts === null || opts === void 0 ? void 0 : opts.preventPropagation) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            } }, link));
+        // Update the last index
+        lastIndex = index + link.length;
+        // Get the next match
+        matches = urlRegex.exec(text);
+    }
+    // Add the last bit of text
+    const remainingText = text.substring(lastIndex);
+    if (remainingText && remainingText.length > 0) {
+        elements.push(React__default.createElement("span", { key: nextKey += 1 }, remainingText));
+    }
+    // Return the elements
+    return elements;
+};
+
 /**
  * Days of the week
  * @author Gabe Abrams
@@ -42922,5 +42981,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

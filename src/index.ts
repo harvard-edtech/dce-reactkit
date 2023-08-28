@@ -80,6 +80,7 @@ import validateEmail from './helpers/validators/validateEmail';
 import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
 import validateString from './helpers/validators/validateString';
 import idify from './helpers/idify';
+import makeLinksClickable from './helpers/makeLinksClickable';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -172,6 +173,7 @@ export {
   validateString,
   getLocalTimeInfo,
   idify,
+  makeLinksClickable,
   // Client helpers
   initClient,
   visitServerEndpoint,

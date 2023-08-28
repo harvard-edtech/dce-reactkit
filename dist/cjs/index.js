@@ -42364,11 +42364,12 @@ const startMinWait = (minWaitMs) => {
 /**
  * Get the current part of day (morning, evening, etc.)
  * @author Gabe Abrams
+ * @returns the part of day (morning, evening, etc.)
  */
 const getPartOfDay = () => {
     // Setup the post-it time of day
     let partOfDay = 'day';
-    let hours = new Date().getHours();
+    const hours = new Date().getHours();
     if (hours < 12) {
         partOfDay = 'morning';
     }
@@ -42932,6 +42933,64 @@ const validateString = (input, opts) => {
         });
 };
 
+// Import React
+// Regular express that matches urls
+const urlRegex = /(https?:\/\/)?([a-z0-9-]+\.)+[a-z0-9]{2,6}(:[0-9]{1,5})?(\/\S*)?/g;
+/**
+ * Given some text, make the links clickable
+ * @author Gabe Abrams
+ * @param text the text to process
+ * @param [opts] options to customize behavior
+ * @param [opts.newTab] if true, links will open in a new tab
+ * @param [opts.preventPropagation] if true, clicks to link will prevent default
+ *   and propagation
+ * @returns the processed text
+ */
+const makeLinksClickable = (text, opts) => {
+    // Search text for links
+    let matches = urlRegex.exec(text);
+    // If no matches, just return the text
+    if (!matches) {
+        return text;
+    }
+    // Check if using new tab
+    const newTab = opts === null || opts === void 0 ? void 0 : opts.newTab;
+    // Next element key
+    let nextKey = 0;
+    // Process each link
+    const elements = [];
+    let lastIndex = 0;
+    while (matches) {
+        // Get the link
+        const link = matches[0];
+        // Get the index of the link
+        const { index } = matches;
+        // Add the text before the link
+        elements.push(React__default["default"].createElement("span", { key: nextKey += 1 }, text.substring(lastIndex, index)));
+        // Add the link
+        elements.push(React__default["default"].createElement("a", { key: nextKey += 1, href: link, target: newTab ? '_blank' : undefined, rel: newTab ? 'noopener noreferrer' : undefined, style: {
+                textDecoration: 'underline',
+            }, onClick: (e) => {
+                // Prevent default and propagation if requested
+                if (opts === null || opts === void 0 ? void 0 : opts.preventPropagation) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            } }, link));
+        // Update the last index
+        lastIndex = index + link.length;
+        // Get the next match
+        matches = urlRegex.exec(text);
+    }
+    // Add the last bit of text
+    const remainingText = text.substring(lastIndex);
+    if (remainingText && remainingText.length > 0) {
+        elements.push(React__default["default"].createElement("span", { key: nextKey += 1 }, remainingText));
+    }
+    // Return the elements
+    return elements;
+};
+
 /**
  * Days of the week
  * @author Gabe Abrams
@@ -43017,6 +43076,7 @@ exports.initServer = initServer;
 exports.isMobileOrTablet = isMobileOrTablet;
 exports.leaveToURL = leaveToURL;
 exports.logClientEvent = logClientEvent;
+exports.makeLinksClickable = makeLinksClickable;
 exports.onlyKeepLetters = onlyKeepLetters;
 exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;
