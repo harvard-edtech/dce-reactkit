@@ -1,4 +1,6 @@
 // Import caccl functions
+// TODO: fix dependency cycle
+// eslint-disable-next-line import/no-cycle
 import {
   cacclGetLaunchInfo,
   internalGetLogCollection,
@@ -438,7 +440,7 @@ const genRouteHandler = (
         },
       );
     }
-    
+
     // Add Admin endpoint security
     if (
       // This is an admin endpoint
@@ -467,7 +469,7 @@ const genRouteHandler = (
      * Log an event on the server
      * @author Gabe Abrams
      */
-    const logServerEvent: LogFunction = async (opts) => {
+    const logServerEvent: LogFunction = async (logOpts) => {
       // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
       // that indicates that this is actually a client event, but we don't
       // include that in the LogFunction type because this is internal and
@@ -510,20 +512,20 @@ const genRouteHandler = (
           minute,
           timestamp,
           context: (
-            typeof opts.context === 'string'
-              ? opts.context
+            typeof logOpts.context === 'string'
+              ? logOpts.context
               : (
-                ((opts.context as any) ?? {})._
+                ((logOpts.context as any) ?? {})._
                 ?? LogBuiltInMetadata.Context.Uncategorized
               )
           ),
           subcontext: (
-            opts.subcontext
+            logOpts.subcontext
             ?? LogBuiltInMetadata.Context.Uncategorized
           ),
-          tags: (opts.tags ?? []),
-          level: (opts.level ?? LogLevel.Info),
-          metadata: (opts.metadata ?? {}),
+          tags: (logOpts.tags ?? []),
+          level: (logOpts.level ?? LogLevel.Info),
+          metadata: (logOpts.metadata ?? {}),
         };
 
         // Type-specific info
@@ -531,18 +533,18 @@ const genRouteHandler = (
           ('error' in opts && opts.error)
             ? {
               type: LogType.Error,
-              errorMessage: opts.error.message ?? 'Unknown message',
-              errorCode: opts.error.code ?? ReactKitErrorCode.NoCode,
-              errorStack: opts.error.stack ?? 'No stack',
+              errorMessage: (logOpts as any).error.message ?? 'Unknown message',
+              errorCode: (logOpts as any).error.code ?? ReactKitErrorCode.NoCode,
+              errorStack: (logOpts as any).error.stack ?? 'No stack',
             }
             : {
               type: LogType.Action,
               target: (
-                (opts as any).target
+                (logOpts as any).target
                 ?? LogBuiltInMetadata.Target.NoTarget
               ),
               action: (
-                (opts as any).action
+                (logOpts as any).action
                 ?? LogAction.Unknown
               ),
             }
@@ -550,7 +552,7 @@ const genRouteHandler = (
 
         // Source-specific info
         const sourceSpecificInfo: LogSourceSpecificInfo = (
-          (opts as any).overrideAsClientEvent
+          (logOpts as any).overrideAsClientEvent
             ? {
               source: LogSource.Client,
             }
@@ -573,21 +575,22 @@ const genRouteHandler = (
         if (logCollection) {
           // Store to the log collection
           await logCollection.insert(log);
-        } else {
+        } else if (log.type === LogType.Error) {
           // Print to console
-          if (log.type === LogType.Error) {
-            console.error('dce-reactkit error log:', log);
-          } else {
-            console.log('dce-reactkit action log:', log);
-          }
+          // eslint-disable-next-line no-console
+          console.error('dce-reactkit error log:', log);
+        } else {
+          // eslint-disable-next-line no-console
+          console.log('dce-reactkit action log:', log);
         }
 
         // Return log entry
         return log;
       } catch (err) {
         // Print because we cannot store the error
+        // eslint-disable-next-line no-console
         console.error('Could not log the following:', opts);
-        
+
         // Create a dummy log to return
         const dummyMainInfo: LogMainInfo = {
           id: '-1',
@@ -620,7 +623,7 @@ const genRouteHandler = (
           context: LogBuiltInMetadata.Context.Uncategorized,
           subcontext: LogBuiltInMetadata.Context.Uncategorized,
         };
-        
+
         const dummyTypeSpecificInfo: LogTypeSpecificInfo = {
           type: LogType.Error,
           errorMessage: 'Unknown',
@@ -675,17 +678,17 @@ const genRouteHandler = (
     /**
      * Render an error page
      * @author Gabe Abrams
-     * @param opts object containing all arguments
-     * @param [opts.title=An Error Occurred] title of the error box
-     * @param [opts.description=An unknown server error occurred. Please contact support.]
+     * @param renderOpts object containing all arguments
+     * @param [renderOpts.title=An Error Occurred] title of the error box
+     * @param [renderOpts.description=An unknown server error occurred. Please contact support.]
      *   a human-readable description of the error
-     * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
-     * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
+     * @param [renderOpts.code=ReactKitErrorCode.NoCode] error code to show
+     * @param [renderOpts.pageTitle=renderOpts.title] title of the page/tab if it differs from
      *   the title of the error
-     * @param [opts.status=500] http status code
+     * @param [renderOpts.status=500] http status code
      */
     const renderErrorPage = (
-      opts: {
+      renderOpts: {
         title?: string,
         description?: string,
         code?: string,
@@ -693,22 +696,22 @@ const genRouteHandler = (
         status?: number,
       } = {},
     ) => {
-      const html = genErrorPage(opts);
-      send(html, opts.status ?? 500);
+      const html = genErrorPage(renderOpts);
+      send(html, renderOpts.status ?? 500);
 
       // Log
       logServerEvent({
         context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
         error: {
-          message: `${opts.title}: ${opts.description}`,
-          code: opts.code,
+          message: `${renderOpts.title}: ${renderOpts.description}`,
+          code: renderOpts.code,
         },
         metadata: {
-          title: opts.title,
-          description: opts.description,
-          code: opts.code,
-          pageTitle: opts.pageTitle,
-          status: opts.status ?? 500,
+          title: renderOpts.title,
+          description: renderOpts.description,
+          code: renderOpts.code,
+          pageTitle: renderOpts.pageTitle,
+          status: renderOpts.status ?? 500,
         },
       });
     };
@@ -747,6 +750,7 @@ const genRouteHandler = (
       }
 
       // Log error that was not responded with
+      // eslint-disable-next-line no-console
       console.log('Error occurred but could not be sent to client because a response was already sent:', err);
     }
   };

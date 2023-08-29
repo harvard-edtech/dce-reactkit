@@ -2619,17 +2619,17 @@ const IntelliTable = (props) => {
     var _a;
     /* -------------- Props ------------- */
     // Destructure all props
-    const { title, id, columns, } = props;
+    const { title, id, columns, csvName, data = [], } = props;
     // Get data, show empty row if none
-    const data = ((props.data && props.data.length > 0)
-        ? props.data
-        : [{ id: 'empty-row' }]);
+    if (data.length === 0) {
+        data.push({ id: 'empty-row' });
+    }
     // Get CSV filename
     let filename = `${title}.csv`;
-    if (props.csvName) {
-        filename = (props.csvName.endsWith('.csv')
-            ? props.csvName
-            : `${props.csvName}.csv`);
+    if (csvName) {
+        filename = (csvName.endsWith('.csv')
+            ? csvName
+            : `${csvName}.csv`);
     }
     /* -------------- State ------------- */
     // Initial state
@@ -2747,7 +2747,7 @@ const IntelliTable = (props) => {
     const tableHeader = (React__default["default"].createElement("thead", null,
         React__default["default"].createElement("tr", null, headerCells)));
     // Sort data
-    let sortedData = [...data];
+    const sortedData = [...data];
     const paramType = (_a = columns.find((column) => {
         return (column.param === sortColumnParam);
     })) === null || _a === void 0 ? void 0 : _a.type;
@@ -2836,7 +2836,7 @@ const IntelliTable = (props) => {
             });
             let fullValue;
             let visibleValue;
-            let title = '';
+            let colTitle = '';
             if (column.type === ParamType$1.Boolean) {
                 fullValue = !!(value);
                 const noValue = (value === undefined
@@ -2844,9 +2844,9 @@ const IntelliTable = (props) => {
                 visibleValue = (noValue
                     ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
                     : (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: fullValue ? freeSolidSvgIcons.faCheckCircle : freeSolidSvgIcons.faXmarkCircle })));
-                title = (fullValue ? 'True' : 'False');
+                colTitle = (fullValue ? 'True' : 'False');
                 if (noValue) {
-                    title = 'Empty Cell';
+                    colTitle = 'Empty Cell';
                 }
             }
             else if (column.type === ParamType$1.Int) {
@@ -2855,9 +2855,9 @@ const IntelliTable = (props) => {
                 visibleValue = (noValue
                     ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
                     : fullValue);
-                title = String(fullValue);
+                colTitle = String(fullValue);
                 if (noValue) {
-                    title = 'Empty Cell';
+                    colTitle = 'Empty Cell';
                 }
             }
             else if (column.type === ParamType$1.Float) {
@@ -2866,9 +2866,9 @@ const IntelliTable = (props) => {
                 visibleValue = (noValue
                     ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
                     : roundToNumDecimals(fullValue, 2));
-                title = String(fullValue);
+                colTitle = String(fullValue);
                 if (noValue) {
-                    title = 'Empty Cell';
+                    colTitle = 'Empty Cell';
                 }
             }
             else if (column.type === ParamType$1.String) {
@@ -2879,9 +2879,9 @@ const IntelliTable = (props) => {
                 visibleValue = (noValue
                     ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
                     : fullValue);
-                title = `"${value}"`;
+                colTitle = `"${value}"`;
                 if (noValue) {
-                    title = 'Empty Cell';
+                    colTitle = 'Empty Cell';
                 }
             }
             else if (column.type === ParamType$1.JSON) {
@@ -2892,10 +2892,10 @@ const IntelliTable = (props) => {
                 visibleValue = (noValue
                     ? (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faMinus }))
                     : fullValue);
-                title = "JSON Object";
+                colTitle = 'JSON Object';
             }
             // Create UI
-            return (React__default["default"].createElement("td", { key: `${datum.id}-${column.param}`, title: title, style: {
+            return (React__default["default"].createElement("td", { key: `${datum.id}-${column.param}`, title: colTitle, style: {
                     borderRight: '0.05rem solid #555',
                     borderLeft: '0.05rem solid #555',
                 } }, visibleValue));
@@ -42153,7 +42153,7 @@ const genRouteHandler = (opts) => {
          * Log an event on the server
          * @author Gabe Abrams
          */
-        const logServerEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+        const logServerEvent = (logOpts) => __awaiter(void 0, void 0, void 0, function* () {
             var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
@@ -42184,29 +42184,29 @@ const genRouteHandler = (opts) => {
                     hour,
                     minute,
                     timestamp,
-                    context: (typeof opts.context === 'string'
-                        ? opts.context
-                        : ((_d = ((_c = opts.context) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
-                    subcontext: ((_e = opts.subcontext) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized),
-                    tags: ((_f = opts.tags) !== null && _f !== void 0 ? _f : []),
-                    level: ((_g = opts.level) !== null && _g !== void 0 ? _g : LogLevel$1.Info),
-                    metadata: ((_h = opts.metadata) !== null && _h !== void 0 ? _h : {}),
+                    context: (typeof logOpts.context === 'string'
+                        ? logOpts.context
+                        : ((_d = ((_c = logOpts.context) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
+                    subcontext: ((_e = logOpts.subcontext) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized),
+                    tags: ((_f = logOpts.tags) !== null && _f !== void 0 ? _f : []),
+                    level: ((_g = logOpts.level) !== null && _g !== void 0 ? _g : LogLevel$1.Info),
+                    metadata: ((_h = logOpts.metadata) !== null && _h !== void 0 ? _h : {}),
                 };
                 // Type-specific info
                 const typeSpecificInfo = (('error' in opts && opts.error)
                     ? {
                         type: LogType$1.Error,
-                        errorMessage: (_j = opts.error.message) !== null && _j !== void 0 ? _j : 'Unknown message',
-                        errorCode: (_k = opts.error.code) !== null && _k !== void 0 ? _k : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_l = opts.error.stack) !== null && _l !== void 0 ? _l : 'No stack',
+                        errorMessage: (_j = logOpts.error.message) !== null && _j !== void 0 ? _j : 'Unknown message',
+                        errorCode: (_k = logOpts.error.code) !== null && _k !== void 0 ? _k : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_l = logOpts.error.stack) !== null && _l !== void 0 ? _l : 'No stack',
                     }
                     : {
                         type: LogType$1.Action,
-                        target: ((_m = opts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoTarget),
-                        action: ((_o = opts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
+                        target: ((_m = logOpts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoTarget),
+                        action: ((_o = logOpts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
                     });
                 // Source-specific info
-                const sourceSpecificInfo = (opts.overrideAsClientEvent
+                const sourceSpecificInfo = (logOpts.overrideAsClientEvent
                     ? {
                         source: LogSource$1.Client,
                     }
@@ -42223,20 +42223,21 @@ const genRouteHandler = (opts) => {
                     // Store to the log collection
                     yield logCollection.insert(log);
                 }
-                else {
+                else if (log.type === LogType$1.Error) {
                     // Print to console
-                    if (log.type === LogType$1.Error) {
-                        console.error('dce-reactkit error log:', log);
-                    }
-                    else {
-                        console.log('dce-reactkit action log:', log);
-                    }
+                    // eslint-disable-next-line no-console
+                    console.error('dce-reactkit error log:', log);
+                }
+                else {
+                    // eslint-disable-next-line no-console
+                    console.log('dce-reactkit action log:', log);
                 }
                 // Return log entry
                 return log;
             }
             catch (err) {
                 // Print because we cannot store the error
+                // eslint-disable-next-line no-console
                 console.error('Could not log the following:', opts);
                 // Create a dummy log to return
                 const dummyMainInfo = {
@@ -42312,32 +42313,32 @@ const genRouteHandler = (opts) => {
         /**
          * Render an error page
          * @author Gabe Abrams
-         * @param opts object containing all arguments
-         * @param [opts.title=An Error Occurred] title of the error box
-         * @param [opts.description=An unknown server error occurred. Please contact support.]
+         * @param renderOpts object containing all arguments
+         * @param [renderOpts.title=An Error Occurred] title of the error box
+         * @param [renderOpts.description=An unknown server error occurred. Please contact support.]
          *   a human-readable description of the error
-         * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
-         * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
+         * @param [renderOpts.code=ReactKitErrorCode.NoCode] error code to show
+         * @param [renderOpts.pageTitle=renderOpts.title] title of the page/tab if it differs from
          *   the title of the error
-         * @param [opts.status=500] http status code
+         * @param [renderOpts.status=500] http status code
          */
-        const renderErrorPage = (opts = {}) => {
+        const renderErrorPage = (renderOpts = {}) => {
             var _a, _b;
-            const html = genErrorPage(opts);
-            send(html, (_a = opts.status) !== null && _a !== void 0 ? _a : 500);
+            const html = genErrorPage(renderOpts);
+            send(html, (_a = renderOpts.status) !== null && _a !== void 0 ? _a : 500);
             // Log
             logServerEvent({
                 context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
                 error: {
-                    message: `${opts.title}: ${opts.description}`,
-                    code: opts.code,
+                    message: `${renderOpts.title}: ${renderOpts.description}`,
+                    code: renderOpts.code,
                 },
                 metadata: {
-                    title: opts.title,
-                    description: opts.description,
-                    code: opts.code,
-                    pageTitle: opts.pageTitle,
-                    status: (_b = opts.status) !== null && _b !== void 0 ? _b : 500,
+                    title: renderOpts.title,
+                    description: renderOpts.description,
+                    code: renderOpts.code,
+                    pageTitle: renderOpts.pageTitle,
+                    status: (_b = renderOpts.status) !== null && _b !== void 0 ? _b : 500,
                 },
             });
         };
@@ -42372,6 +42373,7 @@ const genRouteHandler = (opts) => {
                 return;
             }
             // Log error that was not responded with
+            // eslint-disable-next-line no-console
             console.log('Error occurred but could not be sent to client because a response was already sent:', err);
         }
     });

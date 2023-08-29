@@ -746,7 +746,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   ].forEach((partialContextMap) => {
     Object.keys(partialContextMap).forEach((context) => {
       // Add context
-      contextMap[context] = partialContextMap[context];
+      contextMap[context] = (partialContextMap as any)[context];
 
       // If context has children, add an "uncategorized" subcontext
       if (typeof contextMap[context] !== 'string') {
@@ -764,7 +764,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     LogBuiltInMetadata.Target,
   ].forEach((partialTargetMap) => {
     Object.keys(partialTargetMap).forEach((target) => {
-      targetMap[target] = partialTargetMap[target];
+      targetMap[target] = (partialTargetMap as any)[target];
     });
   });
 

@@ -212,22 +212,22 @@ const IntelliTable: React.FC<Props> = (props) => {
     title,
     id,
     columns,
+    csvName,
+    data = [],
   } = props;
 
   // Get data, show empty row if none
-  const data = (
-    (props.data && props.data.length > 0)
-      ? props.data
-      : [{ id: 'empty-row' }]
-  );
+  if (data.length === 0) {
+    data.push({ id: 'empty-row' });
+  }
 
   // Get CSV filename
   let filename = `${title}.csv`;
-  if (props.csvName) {
+  if (csvName) {
     filename = (
-      props.csvName.endsWith('.csv')
-        ? props.csvName
-        : `${props.csvName}.csv`
+      csvName.endsWith('.csv')
+        ? csvName
+        : `${csvName}.csv`
     );
   }
 
@@ -287,7 +287,7 @@ const IntelliTable: React.FC<Props> = (props) => {
           if (noColumnsSelected) {
             return alert(
               'Choose at least one column',
-              'To continue, you have to choose at least one column to show'
+              'To continue, you have to choose at least one column to show',
             );
           }
           dispatch({
@@ -348,7 +348,7 @@ const IntelliTable: React.FC<Props> = (props) => {
           }}
         >
           Deselect All
-        </button >
+        </button>
       </Modal>
     );
   }
@@ -440,7 +440,7 @@ const IntelliTable: React.FC<Props> = (props) => {
   );
 
   // Sort data
-  let sortedData = [...data];
+  const sortedData = [...data];
   const paramType = columns.find((column) => {
     return (column.param === sortColumnParam);
   })?.type;
@@ -542,123 +542,123 @@ const IntelliTable: React.FC<Props> = (props) => {
           return columnVisibilityMap[column.param];
         })
         .map((column) => {
-        // Get value
-        let value: any = datum;
-        const paramParts = column.param.split('.');
-        paramParts.forEach((paramPart) => {
-          value = (value ?? {})[paramPart];
-        });
-        let fullValue: React.ReactNode;
-        let visibleValue: React.ReactNode;
-        let title: string = '';
-        if (column.type === ParamType.Boolean) {
-          fullValue = !!(value);
-          const noValue = (
-            value === undefined
-            || value === null
-          );
-          visibleValue = (
-            noValue
-              ? (
-                <FontAwesomeIcon
-                  icon={faMinus}
-                />
-              )
-              : (
-                <FontAwesomeIcon
-                  icon={fullValue ? faCheckCircle : faXmarkCircle}
-                />
-              )
-          );
-          title = (fullValue ? 'True' : 'False');
-          if (noValue) {
-            title = 'Empty Cell';
+          // Get value
+          let value: any = datum;
+          const paramParts = column.param.split('.');
+          paramParts.forEach((paramPart) => {
+            value = (value ?? {})[paramPart];
+          });
+          let fullValue: React.ReactNode;
+          let visibleValue: React.ReactNode;
+          let colTitle: string = '';
+          if (column.type === ParamType.Boolean) {
+            fullValue = !!(value);
+            const noValue = (
+              value === undefined
+              || value === null
+            );
+            visibleValue = (
+              noValue
+                ? (
+                  <FontAwesomeIcon
+                    icon={faMinus}
+                  />
+                )
+                : (
+                  <FontAwesomeIcon
+                    icon={fullValue ? faCheckCircle : faXmarkCircle}
+                  />
+                )
+            );
+            colTitle = (fullValue ? 'True' : 'False');
+            if (noValue) {
+              colTitle = 'Empty Cell';
+            }
+          } else if (column.type === ParamType.Int) {
+            fullValue = Number.parseInt(value, 10);
+            const noValue = Number.isNaN(fullValue);
+            visibleValue = (
+              noValue
+                ? (
+                  <FontAwesomeIcon
+                    icon={faMinus}
+                  />
+                )
+                : fullValue
+            );
+            colTitle = String(fullValue);
+            if (noValue) {
+              colTitle = 'Empty Cell';
+            }
+          } else if (column.type === ParamType.Float) {
+            fullValue = Number.parseFloat(value);
+            const noValue = Number.isNaN(fullValue);
+            visibleValue = (
+              noValue
+                ? (
+                  <FontAwesomeIcon
+                    icon={faMinus}
+                  />
+                )
+                : roundToNumDecimals(fullValue as number, 2)
+            );
+            colTitle = String(fullValue);
+            if (noValue) {
+              colTitle = 'Empty Cell';
+            }
+          } else if (column.type === ParamType.String) {
+            fullValue = String(value).trim();
+            const noValue = (
+              value === undefined
+              || value === null
+              || String(fullValue).trim().length === 0
+            );
+            visibleValue = (
+              noValue
+                ? (
+                  <FontAwesomeIcon
+                    icon={faMinus}
+                  />
+                )
+                : fullValue
+            );
+            colTitle = `"${value}"`;
+            if (noValue) {
+              colTitle = 'Empty Cell';
+            }
+          } else if (column.type === ParamType.JSON) {
+            fullValue = JSON.stringify(value);
+            const noValue = (
+              Array.isArray(value)
+                ? (!value || value.length === 0)
+                : Object.keys(value ?? {}).length === 0
+            );
+            visibleValue = (
+              noValue
+                ? (
+                  <FontAwesomeIcon
+                    icon={faMinus}
+                  />
+                )
+                : fullValue
+            );
+            colTitle = 'JSON Object';
           }
-        } else if (column.type === ParamType.Int) {
-          fullValue = Number.parseInt(value, 10);
-          const noValue = Number.isNaN(fullValue);
-          visibleValue = (
-            noValue
-              ? (
-                <FontAwesomeIcon
-                  icon={faMinus}
-                />
-              )
-              : fullValue
-          );
-          title = String(fullValue);
-          if (noValue) {
-            title = 'Empty Cell';
-          }
-        } else if (column.type === ParamType.Float) {
-          fullValue = Number.parseFloat(value);
-          const noValue = Number.isNaN(fullValue);
-          visibleValue = (
-            noValue
-              ? (
-                <FontAwesomeIcon
-                  icon={faMinus}
-                />
-              )
-              : roundToNumDecimals(fullValue as number, 2)
-          );
-          title = String(fullValue);
-          if (noValue) {
-            title = 'Empty Cell';
-          }
-        } else if (column.type === ParamType.String) {
-          fullValue = String(value).trim();
-          const noValue = (
-            value === undefined
-            || value === null
-            || String(fullValue).trim().length === 0
-          );
-          visibleValue = (
-            noValue
-              ? (
-                <FontAwesomeIcon
-                  icon={faMinus}
-                />
-              )
-              : fullValue
-          );
-          title = `"${value}"`;
-          if (noValue) {
-            title = 'Empty Cell';
-          }
-        } else if (column.type === ParamType.JSON) {
-          fullValue = JSON.stringify(value);
-          const noValue = (
-            Array.isArray(value)
-              ? (!value || value.length === 0)
-              : Object.keys(value ?? {}).length === 0
-          );
-          visibleValue = (
-            noValue
-              ? (
-                <FontAwesomeIcon
-                  icon={faMinus}
-                />
-              )
-              : fullValue
-          );
-          title="JSON Object"
-        }
 
-        // Create UI
-        return (
-          <td
-            key={`${datum.id}-${column.param}`}
-            title={title}
-            style={{
-              borderRight: '0.05rem solid #555',
-              borderLeft: '0.05rem solid #555',
-            }}
-          >
-            {visibleValue}
-          </td>
-        );
-      })
+          // Create UI
+          return (
+            <td
+              key={`${datum.id}-${column.param}`}
+              title={colTitle}
+              style={{
+                borderRight: '0.05rem solid #555',
+                borderLeft: '0.05rem solid #555',
+              }}
+            >
+              {visibleValue}
+            </td>
+          );
+        })
     );
 
     // Add cells to a row

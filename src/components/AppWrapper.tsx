@@ -18,6 +18,8 @@ import Variant from '../types/Variant';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 
 // Import shared components
+// TODO: fix dependency cycle
+// eslint-disable-next-line import/no-cycle
 import Modal from './Modal';
 
 // Import custom errors
