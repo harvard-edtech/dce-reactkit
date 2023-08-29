@@ -10,10 +10,9 @@ import getMonthName from '../helpers/getMonthName';
 // Import helpers
 import getOrdinal from '../helpers/getOrdinal';
 import getTimeInfoInET from '../helpers/getTimeInfoInET';
-import forceNumIntoBounds from '../helpers/forceNumIntoBounds';
 
 /*------------------------------------------------------------------------*/
-/*                                  Types                                 */
+/* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
 
 type Props = {
@@ -43,12 +42,12 @@ type Props = {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
 const SimpleDateChooser: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
-  /*                                  Setup                                 */
+  /* -------------------------------- Setup ------------------------------- */
   /*------------------------------------------------------------------------*/
 
   /* -------------- Props ------------- */
@@ -56,20 +55,17 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   const {
     ariaLabel,
     name,
-    month,
-    day,
-    year,
     onChange,
     chooseFromPast,
+    numMonthsToShow = 6,
   } = props;
-  const numMonthsToShow = (props.numMonthsToShow ?? 6);
 
   /*------------------------------------------------------------------------*/
-  /*                                 Render                                 */
+  /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
 
   /*----------------------------------------*/
-  /*                Main UI                 */
+  /* --------------- Main UI -------------- */
   /*----------------------------------------*/
 
   // Determine the set of choices allowed
@@ -134,6 +130,11 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   }
 
   // Create choice options
+  const {
+    month,
+    day,
+    year,
+  } = props;
   const monthOptions: React.ReactNode[] = [];
   const dayOptions: React.ReactNode[] = [];
   choices.forEach((choice) => {
@@ -148,7 +149,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
         }}
       >
         {choice.choiceName}
-      </option>
+      </option>,
     );
 
     if (month === choice.month) {
@@ -164,7 +165,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
           >
             {dayChoice}
             {ordinal}
-          </option>
+          </option>,
         );
       });
     }
@@ -219,7 +220,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                 Wrap Up                                */
+/* ------------------------------- Wrap Up ------------------------------ */
 /*------------------------------------------------------------------------*/
 
 // Export component

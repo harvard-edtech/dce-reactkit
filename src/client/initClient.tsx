@@ -1,11 +1,12 @@
 // Import other components
+// TODO: fix dependency cycle
+// eslint-disable-next-line import/no-cycle
 import { showFatalError } from '../components/AppWrapper';
 
 // Import shared types
 import ErrorWithCode from '../errors/ErrorWithCode';
 import waitMs from '../helpers/waitMs';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
-
 
 /*----------------------------------------*/
 /* ---------------- Types --------------- */
@@ -42,7 +43,7 @@ type SendRequestFunction = (
 /* ----------- Initialized ---------- */
 
 let onInitialized: (a: unknown) => void;
-let initialized = new Promise((resolve) => {
+const initialized = new Promise((resolve) => {
   onInitialized = resolve;
 });
 
@@ -60,7 +61,7 @@ export const getSendRequest = async () => {
   let successful = false;
   (async () => {
     await waitMs(5000);
-    
+
     if (!successful) {
       showFatalError(
         new ErrorWithCode(
@@ -69,7 +70,7 @@ export const getSendRequest = async () => {
         ),
       );
     }
-  })(),
+  })();
 
   // Wait for initialization
   await initialized;
@@ -96,6 +97,18 @@ export const getSessionExpiredMessage = () => {
   );
 };
 
+/* ------------ Dark Mode ----------- */
+
+let darkModeOn = false;
+
+/**
+ * Get whether dark mode is enabled or not
+ * @returns true if dark mode is enabled
+ */
+export const isDarkModeOn = () => {
+  return darkModeOn;
+};
+
 /*----------------------------------------*/
 /* ---------------- Init ---------------- */
 /*----------------------------------------*/
@@ -113,11 +126,14 @@ const initClient = (
     sendRequest: SendRequestFunction,
     // Custom session expired message
     sessionExpiredMessage?: string,
+    // If true, dark mode is enabled
+    darkModeOn?: boolean,
   },
 ) => {
   // Store values
   storedSendRequest = opts.sendRequest;
   sessionExpiredMessage = opts.sessionExpiredMessage;
+  darkModeOn = !!opts.darkModeOn;
 
   // Mark as initialized
   onInitialized(null);

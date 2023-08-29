@@ -7,7 +7,6 @@ import React from 'react';
 import Variant from '../types/Variant';
 type Props = {
     children: React.ReactNode;
-    dark?: boolean;
 };
 /**
  * Redirect to a new page

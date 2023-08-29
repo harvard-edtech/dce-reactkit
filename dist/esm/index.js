@@ -57,17 +57,17 @@ var ReactKitErrorCode$1 = ReactKitErrorCode;
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const ErrorBox = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
     const { error, title = 'An Error Occurred', onClose, } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     // Determine error text
     const errorText = (typeof error === 'string'
@@ -204,11 +204,89 @@ var ModalSize;
 var ModalSize$1 = ModalSize;
 
 /**
- * A generic popup modal
+ * An error with a code
  * @author Gabe Abrams
  */
+class ErrorWithCode extends Error {
+    constructor(message, code) {
+        super(message);
+        this.name = 'ErrorWithCode';
+        this.code = code;
+    }
+}
+
+/*----------------------------------------*/
+/* ---- Static Variables and Getters ---- */
+/*----------------------------------------*/
+/* ----------- Initialized ---------- */
+let onInitialized;
+const initialized = new Promise((resolve) => {
+    onInitialized = resolve;
+});
+/* ---------- Send Request ---------- */
+let storedSendRequest;
+/**
+ * Get the send request function
+ * @author Gabe Abrams
+ * @returns sendRequest function
+ */
+const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
+    // Show timeout error if too much time passes
+    let successful = false;
+    (() => __awaiter(void 0, void 0, void 0, function* () {
+        yield waitMs(5000);
+        if (!successful) {
+            showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
+        }
+    }))();
+    // Wait for initialization
+    yield initialized;
+    successful = true;
+    // Return
+    return storedSendRequest;
+});
+/* ----- Session Expired Message ---- */
+let sessionExpiredMessage;
+/**
+ * Get the custom session expired message
+ * @author Gabe Abrams
+ * @returns session expired message
+ */
+const getSessionExpiredMessage = () => {
+    // Return
+    return (sessionExpiredMessage !== null && sessionExpiredMessage !== void 0 ? sessionExpiredMessage : 'Your session has expired. Please go back to Canvas and start over.');
+};
+/* ------------ Dark Mode ----------- */
+let darkModeOn = false;
+/**
+ * Get whether dark mode is enabled or not
+ * @returns true if dark mode is enabled
+ */
+const isDarkModeOn = () => {
+    return darkModeOn;
+};
+/*----------------------------------------*/
+/* ---------------- Init ---------------- */
+/*----------------------------------------*/
+/**
+ * Initialize the client-side version of reactkit
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.sendRequest caccl send request functions
+ * @param [opts.sessionExpiredMessage] a custom session expired message
+ */
+const initClient = (opts) => {
+    // Store values
+    storedSendRequest = opts.sendRequest;
+    sessionExpiredMessage = opts.sessionExpiredMessage;
+    darkModeOn = !!opts.darkModeOn;
+    // Mark as initialized
+    onInitialized(null);
+};
+
+/* eslint-disable react/no-unused-prop-types */
 /*------------------------------------------------------------------------*/
-/*                                Constants                               */
+/* ------------------------------ Constants ----------------------------- */
 /*------------------------------------------------------------------------*/
 // Constants
 const MS_TO_ANIMATE = 200; // Animation duration
@@ -247,51 +325,66 @@ const modalTypeToModalButtonTypes = {
         ModalButtonType$1.Cancel,
     ],
 };
-// Button type styling and labels
-const ModalButtonTypeToLabelAndVariant = {
-    [ModalButtonType$1.Okay]: {
-        label: 'Okay',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.Cancel]: {
-        label: 'Cancel',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Yes]: {
-        label: 'Yes',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.No]: {
-        label: 'No',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Abandon]: {
-        label: 'Abandon Changes',
-        variant: Variant$1.Warning,
-    },
-    [ModalButtonType$1.GoBack]: {
-        label: 'Go Back',
-        variant: Variant$1.Secondary,
-    },
-    [ModalButtonType$1.Continue]: {
-        label: 'Continue',
-        variant: Variant$1.Dark,
-    },
-    [ModalButtonType$1.ImSure]: {
-        label: 'I am sure',
-        variant: Variant$1.Warning,
-    },
-    [ModalButtonType$1.Delete]: {
-        label: 'Yes, Delete',
-        variant: Variant$1.Danger,
-    },
-    [ModalButtonType$1.Confirm]: {
-        label: 'Confirm',
-        variant: Variant$1.Dark,
-    },
+/**
+ * Get button type styling and labels
+ * @author Gabe Abrams
+ * @returns map of button type to label and variant
+ */
+const getModalButtonTypeToLabelAndVariant = () => {
+    const dark = isDarkModeOn();
+    return {
+        [ModalButtonType$1.Okay]: {
+            label: 'Okay',
+            variant: (dark
+                ? Variant$1.Light
+                : Variant$1.Dark),
+        },
+        [ModalButtonType$1.Cancel]: {
+            label: 'Cancel',
+            variant: Variant$1.Secondary,
+        },
+        [ModalButtonType$1.Yes]: {
+            label: 'Yes',
+            variant: (dark
+                ? Variant$1.Light
+                : Variant$1.Dark),
+        },
+        [ModalButtonType$1.No]: {
+            label: 'No',
+            variant: Variant$1.Secondary,
+        },
+        [ModalButtonType$1.Abandon]: {
+            label: 'Abandon Changes',
+            variant: Variant$1.Warning,
+        },
+        [ModalButtonType$1.GoBack]: {
+            label: 'Go Back',
+            variant: Variant$1.Secondary,
+        },
+        [ModalButtonType$1.Continue]: {
+            label: 'Continue',
+            variant: (dark
+                ? Variant$1.Light
+                : Variant$1.Dark),
+        },
+        [ModalButtonType$1.ImSure]: {
+            label: 'I am sure',
+            variant: Variant$1.Warning,
+        },
+        [ModalButtonType$1.Delete]: {
+            label: 'Yes, Delete',
+            variant: Variant$1.Danger,
+        },
+        [ModalButtonType$1.Confirm]: {
+            label: 'Confirm',
+            variant: (dark
+                ? Variant$1.Light
+                : Variant$1.Dark),
+        },
+    };
 };
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$b = `
   .Modal-backdrop {
@@ -357,25 +450,23 @@ const style$b = `
   }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const Modal = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
     const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, children, onClose, dontAllowBackdropExit, onTopOfOtherModals, } = props;
     /* -------------- State ------------- */
-    // If true, the modal is shown
-    const [visible, setVisible] = useState(false);
     // True if animation is in use
     const [animatingIn, setAnimatingIn] = useState(true);
     const [animatingPop, setAnimatingPop] = useState(false);
     // Keep track of whether modal is still mounted
     const mounted = useRef(false);
     /*------------------------------------------------------------------------*/
-    /*                           Lifecycle Functions                          */
+    /* ------------------------- Lifecycle Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
      * Mount
@@ -384,14 +475,12 @@ const Modal = (props) => {
     useEffect(() => {
         (() => __awaiter(void 0, void 0, void 0, function* () {
             // Set defaults
-            setVisible(false);
             setAnimatingIn(true);
             setAnimatingPop(false);
             // Wait for animation
             yield waitMs(MS_TO_ANIMATE);
             // Update to state after animated in
             if (mounted.current) {
-                setVisible(true);
                 setAnimatingIn(false);
             }
         }))();
@@ -400,47 +489,46 @@ const Modal = (props) => {
         };
     }, []);
     /*------------------------------------------------------------------------*/
-    /*                           Component Functions                          */
+    /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
      * Handles the closing of the modal
      * @author Gabe Abrams
-     * @param ModalButtonType the button that was clicked when closing the
+     * @param modalButtonType the button that was clicked when closing the
      *   modal
      */
-    const handleClose = (ModalButtonType) => __awaiter(void 0, void 0, void 0, function* () {
+    const handleClose = (modalButtonType) => __awaiter(void 0, void 0, void 0, function* () {
         // Don't close if no handler
         if (!onClose) {
             return;
         }
-        onClose(ModalButtonType);
+        onClose(modalButtonType);
     });
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /*                 Footer                 */
-    /*----------------------------------------*/
     // Get list of buttons for this modal type
     const ModalButtonTypes = (_a = modalTypeToModalButtonTypes[type]) !== null && _a !== void 0 ? _a : [];
+    // Get map of button type to label and variant
+    const ModalButtonTypeToLabelAndVariant = getModalButtonTypeToLabelAndVariant();
     // Create buttons
-    const buttons = ModalButtonTypes.map((ModalButtonType, i) => {
+    const buttons = ModalButtonTypes.map((modalButtonType, i) => {
         // Get default style
-        let { label, variant, } = ModalButtonTypeToLabelAndVariant[ModalButtonType];
+        let { label, variant, } = ModalButtonTypeToLabelAndVariant[modalButtonType];
         // Override with customizations
-        const newLabel = props[`${ModalButtonType}Label`];
+        const newLabel = props[`${modalButtonType}Label`];
         if (newLabel) {
             label = newLabel;
         }
-        const newVariant = props[`${ModalButtonType}Variant`];
+        const newVariant = props[`${modalButtonType}Variant`];
         if (newVariant) {
             variant = newVariant;
         }
         // Check if this button is last
         const last = (i === ModalButtonTypes.length - 1);
         // Create the button
-        return (React__default.createElement("button", { key: ModalButtonType, type: "button", className: `Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
-                handleClose(ModalButtonType);
+        return (React__default.createElement("button", { key: modalButtonType, type: "button", className: `Modal-${modalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
+                handleClose(modalButtonType);
             } }, label));
     });
     // Put all buttons in a footer
@@ -458,7 +546,7 @@ const Modal = (props) => {
         animationClass = 'Modal-animating-pop';
     }
     // Render the modal
-    return (React__default.createElement("div", { className: `modal show modal-dialog-scrollable modal-dialog-centered`, tabIndex: -1, style: {
+    return (React__default.createElement("div", { className: "modal show modal-dialog-scrollable modal-dialog-centered", tabIndex: -1, style: {
             zIndex: (onTopOfOtherModals
                 ? 5000000001
                 : 5000000000),
@@ -488,8 +576,22 @@ const Modal = (props) => {
         React__default.createElement("div", { className: `modal-dialog modal-${size} ${animationClass}`, style: {
                 zIndex: 5000000002,
             } },
-            React__default.createElement("div", { className: "modal-content" },
-                React__default.createElement("div", { className: "modal-header" },
+            React__default.createElement("div", { className: "modal-content", style: {
+                    borderColor: (isDarkModeOn()
+                        ? 'gray'
+                        : undefined),
+                } },
+                React__default.createElement("div", { className: "modal-header", style: {
+                        color: (isDarkModeOn()
+                            ? 'white'
+                            : undefined),
+                        backgroundColor: (isDarkModeOn()
+                            ? '#444'
+                            : undefined),
+                        borderBottom: (isDarkModeOn()
+                            ? '0.1rem solid gray'
+                            : undefined),
+                    } },
                     React__default.createElement("h5", { className: "modal-title", style: {
                             fontWeight: 'bold',
                         } }, title),
@@ -497,21 +599,26 @@ const Modal = (props) => {
                             // Handle close
                             handleClose(ModalButtonType$1.Cancel);
                         } }))),
-                children && (React__default.createElement("div", { className: "modal-body" }, children)),
-                footer && (React__default.createElement("div", { className: "modal-footer pt-1 pb-1" }, footer))))));
+                children && (React__default.createElement("div", { className: "modal-body", style: {
+                        color: (isDarkModeOn()
+                            ? 'white'
+                            : undefined),
+                        backgroundColor: (isDarkModeOn()
+                            ? '#444'
+                            : undefined),
+                    } }, children)),
+                footer && (React__default.createElement("div", { className: "modal-footer pt-1 pb-1", style: {
+                        color: (isDarkModeOn()
+                            ? 'white'
+                            : undefined),
+                        backgroundColor: (isDarkModeOn()
+                            ? '#444'
+                            : undefined),
+                        borderTop: (isDarkModeOn()
+                            ? '0.1rem solid gray'
+                            : undefined),
+                    } }, footer))))));
 };
-
-/**
- * An error with a code
- * @author Gabe Abrams
- */
-class ErrorWithCode extends Error {
-    constructor(message, code) {
-        super(message);
-        this.name = 'ErrorWithCode';
-        this.code = code;
-    }
-}
 
 /**
  * Path that all routes start with
@@ -536,65 +643,6 @@ var LogLevel;
     LogLevel["Debug"] = "Debug";
 })(LogLevel || (LogLevel = {}));
 var LogLevel$1 = LogLevel;
-
-/*----------------------------------------*/
-/* ---- Static Variables and Getters ---- */
-/*----------------------------------------*/
-/* ----------- Initialized ---------- */
-let onInitialized;
-let initialized = new Promise((resolve) => {
-    onInitialized = resolve;
-});
-/* ---------- Send Request ---------- */
-let storedSendRequest;
-/**
- * Get the send request function
- * @author Gabe Abrams
- * @returns sendRequest function
- */
-const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
-    // Show timeout error if too much time passes
-    let successful = false;
-    (() => __awaiter(void 0, void 0, void 0, function* () {
-        yield waitMs(5000);
-        if (!successful) {
-            showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
-        }
-    }))(),
-        // Wait for initialization
-        yield initialized;
-    successful = true;
-    // Return
-    return storedSendRequest;
-});
-/* ----- Session Expired Message ---- */
-let sessionExpiredMessage;
-/**
- * Get the custom session expired message
- * @author Gabe Abrams
- * @returns session expired message
- */
-const getSessionExpiredMessage = () => {
-    // Return
-    return (sessionExpiredMessage !== null && sessionExpiredMessage !== void 0 ? sessionExpiredMessage : 'Your session has expired. Please go back to Canvas and start over.');
-};
-/*----------------------------------------*/
-/* ---------------- Init ---------------- */
-/*----------------------------------------*/
-/**
- * Initialize the client-side version of reactkit
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.sendRequest caccl send request functions
- * @param [opts.sessionExpiredMessage] a custom session expired message
- */
-const initClient = (opts) => {
-    // Store values
-    storedSendRequest = opts.sendRequest;
-    sessionExpiredMessage = opts.sessionExpiredMessage;
-    // Mark as initialized
-    onInitialized(null);
-};
 
 // Keep track of whether or not session expiry has already been handled
 let sessionAlreadyExpired = false;
@@ -955,7 +1003,7 @@ const AppWrapper = (props) => {
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { children, dark, } = props;
+    const { children, } = props;
     /* -------------- State ------------- */
     // Leave to URL
     const [urlToLeaveTo, setURLToLeaveToInner,] = useState();
@@ -1038,7 +1086,7 @@ const AppWrapper = (props) => {
                 width: '100vw',
                 minHeight: '100vh',
                 paddingTop: '2rem',
-                backgroundColor: (dark
+                backgroundColor: (isDarkModeOn()
                     ? '#222'
                     : '#fff'),
             } },
@@ -1051,7 +1099,7 @@ const AppWrapper = (props) => {
         body = children;
     }
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement(React__default.Fragment, null,
         React__default.createElement("style", null, style$a),
@@ -1064,7 +1112,7 @@ const AppWrapper = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$9 = `
 /* Container fades in */
@@ -1136,11 +1184,11 @@ const style$9 = `
 }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const LoadingSpinner = () => {
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     // Add all four blips to a container
     return (React__default.createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
@@ -1156,7 +1204,7 @@ const LoadingSpinner = () => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$8 = `
   /* Tab Box */
@@ -1222,19 +1270,19 @@ const style$8 = `
   }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const TabBox = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     const { title, children, noBottomPadding, noBottomMargin, } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     // Full UI
     return (React__default.createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
@@ -1250,19 +1298,23 @@ const TabBox = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const RadioButton = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = Variant$1.Secondary, unselectedVariant = Variant$1.Light, small, } = props;
+    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = (isDarkModeOn()
+        ? Variant$1.Light
+        : Variant$1.Secondary), unselectedVariant = (isDarkModeOn()
+        ? Variant$1.Secondary
+        : Variant$1.Light), small, } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                Main UI                 */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
             if (!selected) {
@@ -1278,19 +1330,23 @@ const RadioButton = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const CheckboxButton = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onChanged, ariaLabel, title, checked, id, className, noMarginOnRight, checkedVariant = Variant$1.Secondary, uncheckedVariant = Variant$1.Light, small, dashed, } = props;
+    const { text, onChanged, ariaLabel, title, checked, id, className, noMarginOnRight, checkedVariant = (isDarkModeOn()
+        ? Variant$1.Light
+        : Variant$1.Secondary), uncheckedVariant = (isDarkModeOn()
+        ? Variant$1.Secondary
+        : Variant$1.Light), small, dashed, } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                Main UI                 */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     // Determine the icon
     let icon;
@@ -1315,20 +1371,20 @@ const CheckboxButton = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const ButtonInputGroup = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
     const { label, minLabelWidth, children, className, wrapButtonsAndAddGaps, } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("div", { className: `input-group ${className !== null && className !== void 0 ? className : ''}` },
         React__default.createElement("div", { className: "input-group-prepend d-flex w-100" },
@@ -1454,21 +1510,19 @@ const getTimeInfoInET = (dateOrTimestamp) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const SimpleDateChooser = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
-    var _a;
     /* -------------- Props ------------- */
-    const { ariaLabel, name, month, day, year, onChange, chooseFromPast, } = props;
-    const numMonthsToShow = ((_a = props.numMonthsToShow) !== null && _a !== void 0 ? _a : 6);
+    const { ariaLabel, name, onChange, chooseFromPast, numMonthsToShow = 6, } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                Main UI                 */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     // Determine the set of choices allowed
     const today = getTimeInfoInET();
@@ -1523,6 +1577,7 @@ const SimpleDateChooser = (props) => {
         });
     }
     // Create choice options
+    const { month, day, year, } = props;
     const monthOptions = [];
     const dayOptions = [];
     choices.forEach((choice) => {
@@ -1558,7 +1613,7 @@ const SimpleDateChooser = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$7 = `
   .Drawer-container {
@@ -1576,20 +1631,20 @@ const style$7 = `
   }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const Drawer = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
     const { customBackgroundColor, children, } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("div", { className: "Drawer-container", style: {
             backgroundColor: (customBackgroundColor !== null && customBackgroundColor !== void 0 ? customBackgroundColor : undefined),
@@ -1603,7 +1658,7 @@ const Drawer = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$6 = `
   .PopSuccessMark-outer-container {
@@ -1691,20 +1746,20 @@ const style$6 = `
   }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const PopSuccessMark = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
     const { sizeRem = 3, circleVariant = 'success', checkVariant = 'white', } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("div", { className: `PopSuccessMark-outer-container bg-${circleVariant}`, style: {
             width: `${sizeRem}rem`,
@@ -1724,7 +1779,7 @@ const PopSuccessMark = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$5 = `
   .PopFailureMark-outer-container {
@@ -1811,20 +1866,20 @@ const style$5 = `
   }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const PopFailureMark = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
     const { sizeRem = 3, circleVariant = 'danger', xVariant = 'white', } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("div", { className: `PopFailureMark-outer-container bg-${circleVariant}`, style: {
             width: `${sizeRem}rem`,
@@ -1844,7 +1899,7 @@ const PopFailureMark = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$4 = `
   .PopPendingMark-outer-container {
@@ -1900,20 +1955,20 @@ const style$4 = `
   }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const PopPendingMark = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
     const { sizeRem = 3, circleVariant = 'warning', hourglassVariant = 'white', } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("div", { className: `PopPendingMark-outer-container bg-${circleVariant}`, style: {
             width: `${sizeRem}rem`,
@@ -1963,11 +2018,11 @@ const reducer$8 = (state, action) => {
     }
 };
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const CopiableBox = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
@@ -1982,7 +2037,7 @@ const CopiableBox = (props) => {
     // Destructure common state
     const { recentlyCopied, } = state;
     /*------------------------------------------------------------------------*/
-    /*                           Component Functions                          */
+    /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
      * Perform a copy
@@ -2008,10 +2063,10 @@ const CopiableBox = (props) => {
         });
     });
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("div", { className: "input-group mb-2" },
         (label || labelIcon) && (React__default.createElement("span", { className: "input-group-text", style: {
@@ -2082,11 +2137,11 @@ const reducer$7 = (state, action) => {
     }
 };
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const NestableItemList = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
@@ -2106,7 +2161,7 @@ const NestableItemList = (props) => {
     // Destructure common state
     const { childExpanded, } = state;
     /*------------------------------------------------------------------------*/
-    /*                           Component Functions                          */
+    /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
      * Checks if all items in a list are checked
@@ -2181,7 +2236,7 @@ const NestableItemList = (props) => {
         });
     };
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     return (React__default.createElement("div", null, items.map((item) => {
         return (React__default.createElement("div", { key: item.id },
@@ -2214,23 +2269,23 @@ const NestableItemList = (props) => {
  * @author Yuen Ler Chow
  */
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const ItemPicker = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
     const { title, items, onChanged, noBottomMargin, } = props;
     /*------------------------------------------------------------------------*/
-    /*                           Component Functions                          */
+    /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement(TabBox, { title: title, noBottomMargin: noBottomMargin },
         React__default.createElement("div", { style: { overflowX: 'auto' } },
@@ -2428,20 +2483,20 @@ const genCSV = (data, columns) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const CSVDownloadButton = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
     const { filename, csv, id, className, ariaLabel, style, onClick, children, } = props;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     // Render the button
     return (React__default.createElement("a", { id: id, download: filename, href: `data:application/octet-stream,${encodeURIComponent(csv)}`, className: `CSVDownloadButton-button ${className !== null && className !== void 0 ? className : 'btn btn-secondary'}`, "aria-label": (ariaLabel
@@ -2529,11 +2584,11 @@ const reducer$6 = (state, action) => {
     }
 };
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const IntelliTable = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
@@ -2567,10 +2622,10 @@ const IntelliTable = (props) => {
     // Destructure common state
     const { sortColumnParam, sortType, columnVisibilityMap, columnVisibilityCustomizationModalVisible, } = state;
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                  Modal                 */
+    /* ---------------- Modal --------------- */
     /*----------------------------------------*/
     // Modal that may be defined
     let modal;
@@ -2611,7 +2666,7 @@ const IntelliTable = (props) => {
                 } }, "Deselect All")));
     }
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     // Table header
     const headerCells = (columns
@@ -2876,7 +2931,7 @@ var FilterDrawer;
     FilterDrawer["Advanced"] = "advanced";
 })(FilterDrawer || (FilterDrawer = {}));
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$3 = `
   .LogReviewer-outer-container {
@@ -2962,7 +3017,7 @@ const style$3 = `
   }
 `;
 /*------------------------------------------------------------------------*/
-/*                                Constants                               */
+/* ------------------------------ Constants ----------------------------- */
 /*------------------------------------------------------------------------*/
 const columns = [
     {
@@ -3151,7 +3206,7 @@ const columns = [
     },
 ];
 /*------------------------------------------------------------------------*/
-/*                            Static Functions                            */
+/* -------------------------- Static Functions -------------------------- */
 /*------------------------------------------------------------------------*/
 /**
  * Turn a machine-readable name into a human-readable name
@@ -3281,11 +3336,11 @@ const reducer$5 = (state, action) => {
     }
 };
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const LogReviewer = (props) => {
     /*------------------------------------------------------------------------*/
-    /*                                  Setup                                 */
+    /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     var _a, _b, _c, _d;
     /* -------------- Props ------------- */
@@ -3405,7 +3460,7 @@ const LogReviewer = (props) => {
     // Destructure common state
     const { loading, logMap, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = state;
     /*------------------------------------------------------------------------*/
-    /*                           Component Functions                          */
+    /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
      * Get the list of year/month combos that need to be loaded given a new
@@ -3418,8 +3473,7 @@ const LogReviewer = (props) => {
         // List of year/month combos that need to be loaded
         const toLoad = [];
         // Loop through dates
-        let year = newDateFilterState.startDate.year;
-        let month = newDateFilterState.startDate.month;
+        let { year, month } = newDateFilterState.startDate;
         while (
         // Earlier year
         (year < newDateFilterState.endDate.year)
@@ -3492,7 +3546,7 @@ const LogReviewer = (props) => {
         });
     });
     /*------------------------------------------------------------------------*/
-    /*                           Lifecycle Functions                          */
+    /* ------------------------- Lifecycle Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
      * Mount
@@ -3503,10 +3557,10 @@ const LogReviewer = (props) => {
         handleDateRangeUpdated(dateFilterState);
     }, []);
     /*------------------------------------------------------------------------*/
-    /*                                 Render                                 */
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
-    /*                 Main UI                */
+    /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     // Body that will be filled with the contents of the panel
     let body;
@@ -3518,7 +3572,7 @@ const LogReviewer = (props) => {
     /* ------------ Review UI ----------- */
     if (!loading) {
         /*----------------------------------------*/
-        /*                 Filters                */
+        /* --------------- Filters -------------- */
         /*----------------------------------------*/
         // Filter toggle
         const filterToggles = (React__default.createElement("div", { className: "LogReviewer-filter-toggles" },
@@ -3817,7 +3871,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("span", { className: "input-group-text" }, "User Canvas Id"),
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for user canvas id", value: advancedFilterState.userId, placeholder: "e.g. 104985", onChange: (e) => {
                                     const { value } = e.target;
-                                    // Only update if value contains only numbers  
+                                    // Only update if value contains only numbers
                                     if (/^\d+$/.test(value)) {
                                         advancedFilterState.userId = ((e.target.value)
                                             .trim());
@@ -3863,7 +3917,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("span", { className: "input-group-text" }, "Course Canvas Id"),
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for course canvas id", value: advancedFilterState.courseId, placeholder: "e.g. 15948", onChange: (e) => {
                                     const { value } = e.target;
-                                    // Only update if value contains only numbers  
+                                    // Only update if value contains only numbers
                                     if (/^\d+$/.test(value)) {
                                         advancedFilterState.courseId = ((e.target.value)
                                             .trim());
@@ -4196,7 +4250,7 @@ const LogReviewer = (props) => {
             });
         });
         /*----------------------------------------*/
-        /*                  Data                  */
+        /* ---------------- Data ---------------- */
         /*----------------------------------------*/
         // Nothing to show notice
         const noLogsNotice = (logs.length === 0
@@ -41779,7 +41833,7 @@ const genRouteHandler = (opts) => {
         // Output params
         const output = {};
         /*----------------------------------------*/
-        /*              Parse Params              */
+        /* ------------ Parse Params ------------ */
         /*----------------------------------------*/
         // Process items one by one
         const paramList = Object.entries((_a = opts.paramTypes) !== null && _a !== void 0 ? _a : {});
@@ -41938,7 +41992,7 @@ const genRouteHandler = (opts) => {
             }
         }
         /*----------------------------------------*/
-        /*               Launch Info              */
+        /* ------------- Launch Info ------------ */
         /*----------------------------------------*/
         // Get launch info
         const { launched, launchInfo } = cacclGetLaunchInfo(req);

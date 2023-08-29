@@ -84,7 +84,7 @@ const genRouteHandler = (
     const output: { [k in string]: any } = {};
 
     /*----------------------------------------*/
-    /*              Parse Params              */
+    /* ------------ Parse Params ------------ */
     /*----------------------------------------*/
 
     // Process items one by one
@@ -271,7 +271,7 @@ const genRouteHandler = (
     }
 
     /*----------------------------------------*/
-    /*               Launch Info              */
+    /* ------------- Launch Info ------------ */
     /*----------------------------------------*/
 
     // Get launch info

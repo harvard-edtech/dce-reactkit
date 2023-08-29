@@ -26,7 +26,6 @@ declare enum Variant {
 
 type Props$k = {
     children: React.ReactNode;
-    dark?: boolean;
 };
 /**
  * Redirect to a new page
@@ -707,6 +706,7 @@ type SendRequestFunction = (opts: {
 declare const initClient: (opts: {
     sendRequest: SendRequestFunction;
     sessionExpiredMessage?: string;
+    darkModeOn?: boolean;
 }) => void;
 
 /**

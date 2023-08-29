@@ -52,7 +52,7 @@ import ButtonInputGroup from './ButtonInputGroup';
 import IntelliTable from './IntelliTable';
 
 /*------------------------------------------------------------------------*/
-/*                                  Types                                 */
+/* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
 
 // Props
@@ -177,7 +177,7 @@ type AdvancedFilterState = {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 
 const style = `
@@ -265,7 +265,7 @@ const style = `
 `;
 
 /*------------------------------------------------------------------------*/
-/*                                Constants                               */
+/* ------------------------------ Constants ----------------------------- */
 /*------------------------------------------------------------------------*/
 
 const columns: IntelliTableColumn[] = [
@@ -456,7 +456,7 @@ const columns: IntelliTableColumn[] = [
 ];
 
 /*------------------------------------------------------------------------*/
-/*                            Static Functions                            */
+/* -------------------------- Static Functions -------------------------- */
 /*------------------------------------------------------------------------*/
 
 /**
@@ -523,7 +523,7 @@ const genHumanReadableName = (machineReadableName: string) => {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                  State                                 */
+/* -------------------------------- State ------------------------------- */
 /*------------------------------------------------------------------------*/
 
 /* -------- State Definition -------- */
@@ -722,12 +722,12 @@ const reducer = (state: State, action: Action): State => {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
 const LogReviewer: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
-  /*                                  Setup                                 */
+  /* -------------------------------- Setup ------------------------------- */
   /*------------------------------------------------------------------------*/
 
   /* -------------- Props ------------- */
@@ -875,7 +875,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   } = state;
 
   /*------------------------------------------------------------------------*/
-  /*                           Component Functions                          */
+  /* ------------------------- Component Functions ------------------------ */
   /*------------------------------------------------------------------------*/
 
   /**
@@ -892,8 +892,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     const toLoad: { year: number, month: number }[] = [];
 
     // Loop through dates
-    let year = newDateFilterState.startDate.year;
-    let month = newDateFilterState.startDate.month;
+    let { year, month } = newDateFilterState.startDate;
     while (
       // Earlier year
       (year < newDateFilterState.endDate.year)
@@ -913,7 +912,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           month,
         });
       }
-      
+
       // Increment
       month += 1;
       if (month > 12) {
@@ -983,7 +982,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   };
 
   /*------------------------------------------------------------------------*/
-  /*                           Lifecycle Functions                          */
+  /* ------------------------- Lifecycle Functions ------------------------ */
   /*------------------------------------------------------------------------*/
 
   /**
@@ -999,11 +998,11 @@ const LogReviewer: React.FC<Props> = (props) => {
   );
 
   /*------------------------------------------------------------------------*/
-  /*                                 Render                                 */
+  /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
 
   /*----------------------------------------*/
-  /*                 Main UI                */
+  /* --------------- Main UI -------------- */
   /*----------------------------------------*/
 
   // Body that will be filled with the contents of the panel
@@ -1023,7 +1022,7 @@ const LogReviewer: React.FC<Props> = (props) => {
 
   if (!loading) {
     /*----------------------------------------*/
-    /*                 Filters                */
+    /* --------------- Filters -------------- */
     /*----------------------------------------*/
 
     // Filter toggle
@@ -1610,7 +1609,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   placeholder="e.g. 104985"
                   onChange={(e) => {
                     const { value } = e.target;
-                    // Only update if value contains only numbers  
+                    // Only update if value contains only numbers
                     if (/^\d+$/.test(value)) {
                       advancedFilterState.userId = (
                         (e.target.value)
@@ -1700,7 +1699,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   placeholder="e.g. 15948"
                   onChange={(e) => {
                     const { value } = e.target;
-                    // Only update if value contains only numbers  
+                    // Only update if value contains only numbers
                     if (/^\d+$/.test(value)) {
                       advancedFilterState.courseId = (
                         (e.target.value)
@@ -1878,7 +1877,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       Object.keys(logMap[year]).forEach((month) => {
         logMap[year][month].forEach((log) => {
           /* ----------- Date Filter ---------- */
-          
+
           // Before start date
           if (
             // Previous year
@@ -2200,7 +2199,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     });
 
     /*----------------------------------------*/
-    /*                  Data                  */
+    /* ---------------- Data ---------------- */
     /*----------------------------------------*/
 
     // Nothing to show notice
@@ -2279,7 +2278,7 @@ const LogReviewer: React.FC<Props> = (props) => {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                 Wrap Up                                */
+/* ------------------------------- Wrap Up ------------------------------ */
 /*------------------------------------------------------------------------*/
 
 // Export component

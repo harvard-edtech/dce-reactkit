@@ -24,9 +24,12 @@ import Modal from './Modal';
 import ErrorWithCode from '../errors/ErrorWithCode';
 
 // Import other helpers
+// TODO: fix dependency cycle
+// eslint-disable-next-line import/no-cycle
 import logClientEvent from '../helpers/logClientEvent';
 import {
   getSessionExpiredMessage,
+  isDarkModeOn,
 } from '../client/initClient';
 
 /*------------------------------------------------------------------------*/
@@ -36,8 +39,6 @@ import {
 type Props = {
   // The entire app
   children: React.ReactNode,
-  // True if this app is a dark-themed app
-  dark?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -327,7 +328,6 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   const {
     children,
-    dark,
   } = props;
 
   /* -------------- State ------------- */
@@ -523,7 +523,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
           minHeight: '100vh',
           paddingTop: '2rem',
           backgroundColor: (
-            dark
+            isDarkModeOn()
               ? '#222'
               : '#fff'
           ),
@@ -548,7 +548,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   }
 
   /*----------------------------------------*/
-  /*                 Main UI                */
+  /* --------------- Main UI -------------- */
   /*----------------------------------------*/
 
   return (
@@ -563,7 +563,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                 Wrap Up                                */
+/* ------------------------------- Wrap Up ------------------------------ */
 /*------------------------------------------------------------------------*/
 
 // Export component

@@ -32,6 +32,12 @@ declare let sessionExpiredMessage: string | undefined;
  * @returns session expired message
  */
 export declare const getSessionExpiredMessage: () => string;
+declare let darkModeOn: boolean;
+/**
+ * Get whether dark mode is enabled or not
+ * @returns true if dark mode is enabled
+ */
+export declare const isDarkModeOn: () => boolean;
 /**
  * Initialize the client-side version of reactkit
  * @author Gabe Abrams
@@ -42,5 +48,6 @@ export declare const getSessionExpiredMessage: () => string;
 declare const initClient: (opts: {
     sendRequest: SendRequestFunction;
     sessionExpiredMessage?: string;
+    darkModeOn?: boolean;
 }) => void;
 export default initClient;

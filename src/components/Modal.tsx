@@ -1,3 +1,8 @@
+/* eslint-disable react/no-unused-prop-types */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable react/destructuring-assignment */
+
 /**
  * A generic popup modal
  * @author Gabe Abrams
@@ -15,8 +20,13 @@ import ModalButtonType from '../types/ModalButtonType';
 import ModalSize from '../types/ModalSize';
 import ModalType from '../types/ModalType';
 
+// Import shared helpers
+// TODO: fix dependency cycle
+// eslint-disable-next-line import/no-cycle
+import { isDarkModeOn } from '../client/initClient';
+
 /*------------------------------------------------------------------------*/
-/*                                Constants                               */
+/* ------------------------------ Constants ----------------------------- */
 /*------------------------------------------------------------------------*/
 
 // Constants
@@ -60,52 +70,75 @@ const modalTypeToModalButtonTypes: {
   ],
 };
 
-// Button type styling and labels
-const ModalButtonTypeToLabelAndVariant = {
-  [ModalButtonType.Okay]: {
-    label: 'Okay',
-    variant: Variant.Dark,
-  },
-  [ModalButtonType.Cancel]: {
-    label: 'Cancel',
-    variant: Variant.Secondary,
-  },
-  [ModalButtonType.Yes]: {
-    label: 'Yes',
-    variant: Variant.Dark,
-  },
-  [ModalButtonType.No]: {
-    label: 'No',
-    variant: Variant.Secondary,
-  },
-  [ModalButtonType.Abandon]: {
-    label: 'Abandon Changes',
-    variant: Variant.Warning,
-  },
-  [ModalButtonType.GoBack]: {
-    label: 'Go Back',
-    variant: Variant.Secondary,
-  },
-  [ModalButtonType.Continue]: {
-    label: 'Continue',
-    variant: Variant.Dark,
-  },
-  [ModalButtonType.ImSure]: {
-    label: 'I am sure',
-    variant: Variant.Warning,
-  },
-  [ModalButtonType.Delete]: {
-    label: 'Yes, Delete',
-    variant: Variant.Danger,
-  },
-  [ModalButtonType.Confirm]: {
-    label: 'Confirm',
-    variant: Variant.Dark,
-  },
+/**
+ * Get button type styling and labels
+ * @author Gabe Abrams
+ * @returns map of button type to label and variant
+ */
+const getModalButtonTypeToLabelAndVariant = () => {
+  const dark = isDarkModeOn();
+  return {
+    [ModalButtonType.Okay]: {
+      label: 'Okay',
+      variant: (
+        dark
+          ? Variant.Light
+          : Variant.Dark
+      ),
+    },
+    [ModalButtonType.Cancel]: {
+      label: 'Cancel',
+      variant: Variant.Secondary,
+    },
+    [ModalButtonType.Yes]: {
+      label: 'Yes',
+      variant: (
+        dark
+          ? Variant.Light
+          : Variant.Dark
+      ),
+    },
+    [ModalButtonType.No]: {
+      label: 'No',
+      variant: Variant.Secondary,
+    },
+    [ModalButtonType.Abandon]: {
+      label: 'Abandon Changes',
+      variant: Variant.Warning,
+    },
+    [ModalButtonType.GoBack]: {
+      label: 'Go Back',
+      variant: Variant.Secondary,
+    },
+    [ModalButtonType.Continue]: {
+      label: 'Continue',
+      variant: (
+        dark
+          ? Variant.Light
+          : Variant.Dark
+      ),
+    },
+    [ModalButtonType.ImSure]: {
+      label: 'I am sure',
+      variant: Variant.Warning,
+    },
+    [ModalButtonType.Delete]: {
+      label: 'Yes, Delete',
+      variant: Variant.Danger,
+    },
+    [ModalButtonType.Confirm]: {
+      label: 'Confirm',
+      variant: (
+        dark
+          ? Variant.Light
+          : Variant.Dark
+      ),
+    },
+  };
 };
 
 /*------------------------------------------------------------------------*/
-/*                                  Style                                 */
+/* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 
 const style = `
@@ -173,7 +206,7 @@ const style = `
 `;
 
 /*------------------------------------------------------------------------*/
-/*                                  Types                                 */
+/* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
 
 type Props = {
@@ -234,12 +267,12 @@ type Props = {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                Component                               */
+/* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
 const Modal: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
-  /*                                  Setup                                 */
+  /* -------------------------------- Setup ------------------------------- */
   /*------------------------------------------------------------------------*/
 
   /* -------------- Props ------------- */
@@ -256,9 +289,6 @@ const Modal: React.FC<Props> = (props) => {
 
   /* -------------- State ------------- */
 
-  // If true, the modal is shown
-  const [visible, setVisible] = useState(false);
-
   // True if animation is in use
   const [animatingIn, setAnimatingIn] = useState(true);
   const [animatingPop, setAnimatingPop] = useState(false);
@@ -267,7 +297,7 @@ const Modal: React.FC<Props> = (props) => {
   const mounted = useRef(false);
 
   /*------------------------------------------------------------------------*/
-  /*                           Lifecycle Functions                          */
+  /* ------------------------- Lifecycle Functions ------------------------ */
   /*------------------------------------------------------------------------*/
 
   /**
@@ -278,14 +308,12 @@ const Modal: React.FC<Props> = (props) => {
     () => {
       (async () => {
         // Set defaults
-        setVisible(false);
         setAnimatingIn(true);
         setAnimatingPop(false);
         // Wait for animation
         await waitMs(MS_TO_ANIMATE);
         // Update to state after animated in
         if (mounted.current) {
-          setVisible(true);
           setAnimatingIn(false);
         }
       })();
@@ -298,49 +326,48 @@ const Modal: React.FC<Props> = (props) => {
   );
 
   /*------------------------------------------------------------------------*/
-  /*                           Component Functions                          */
+  /* ------------------------- Component Functions ------------------------ */
   /*------------------------------------------------------------------------*/
 
   /**
    * Handles the closing of the modal
    * @author Gabe Abrams
-   * @param ModalButtonType the button that was clicked when closing the
+   * @param modalButtonType the button that was clicked when closing the
    *   modal
    */
-  const handleClose = async (ModalButtonType: ModalButtonType) => {
+  const handleClose = async (modalButtonType: ModalButtonType) => {
     // Don't close if no handler
     if (!onClose) {
       return;
     }
 
-    onClose(ModalButtonType);
+    onClose(modalButtonType);
   };
 
   /*------------------------------------------------------------------------*/
-  /*                                 Render                                 */
+  /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
-
-  /*----------------------------------------*/
-  /*                 Footer                 */
-  /*----------------------------------------*/
 
   // Get list of buttons for this modal type
   const ModalButtonTypes: ModalButtonType[] = modalTypeToModalButtonTypes[type] ?? [];
 
+  // Get map of button type to label and variant
+  const ModalButtonTypeToLabelAndVariant = getModalButtonTypeToLabelAndVariant();
+
   // Create buttons
-  const buttons = ModalButtonTypes.map((ModalButtonType: ModalButtonType, i) => {
+  const buttons = ModalButtonTypes.map((modalButtonType: ModalButtonType, i) => {
     // Get default style
     let {
       label,
       variant,
-    } = ModalButtonTypeToLabelAndVariant[ModalButtonType];
+    } = ModalButtonTypeToLabelAndVariant[modalButtonType];
 
     // Override with customizations
-    const newLabel = props[`${ModalButtonType}Label`];
+    const newLabel = props[`${modalButtonType}Label`];
     if (newLabel) {
       label = newLabel;
     }
-    const newVariant = props[`${ModalButtonType}Variant`];
+    const newVariant = props[`${modalButtonType}Variant`];
     if (newVariant) {
       variant = newVariant;
     }
@@ -351,11 +378,11 @@ const Modal: React.FC<Props> = (props) => {
     // Create the button
     return (
       <button
-        key={ModalButtonType}
+        key={modalButtonType}
         type="button"
-        className={`Modal-${ModalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`}
+        className={`Modal-${modalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`}
         onClick={() => {
-          handleClose(ModalButtonType);
+          handleClose(modalButtonType);
         }}
       >
         {label}
@@ -387,7 +414,7 @@ const Modal: React.FC<Props> = (props) => {
   // Render the modal
   return (
     <div
-      className={`modal show modal-dialog-scrollable modal-dialog-centered`}
+      className="modal show modal-dialog-scrollable modal-dialog-centered"
       tabIndex={-1}
       style={{
         zIndex: (
@@ -430,8 +457,36 @@ const Modal: React.FC<Props> = (props) => {
           zIndex: 5000000002,
         }}
       >
-        <div className="modal-content">
-          <div className="modal-header">
+        <div
+          className="modal-content"
+          style={{
+            borderColor: (
+              isDarkModeOn()
+                ? 'gray'
+                : undefined
+            ),
+          }}
+        >
+          <div
+            className="modal-header"
+            style={{
+              color: (
+                isDarkModeOn()
+                  ? 'white'
+                  : undefined
+              ),
+              backgroundColor: (
+                isDarkModeOn()
+                  ? '#444'
+                  : undefined
+              ),
+              borderBottom: (
+                isDarkModeOn()
+                  ? '0.1rem solid gray'
+                  : undefined
+              ),
+            }}
+          >
             <h5
               className="modal-title"
               style={{
@@ -454,12 +509,45 @@ const Modal: React.FC<Props> = (props) => {
             )}
           </div>
           {children && (
-            <div className="modal-body">
+            <div
+              className="modal-body"
+              style={{
+                color: (
+                  isDarkModeOn()
+                    ? 'white'
+                    : undefined
+                ),
+                backgroundColor: (
+                  isDarkModeOn()
+                    ? '#444'
+                    : undefined
+                ),
+              }}
+            >
               {children}
             </div>
           )}
           {footer && (
-            <div className="modal-footer pt-1 pb-1">
+            <div
+              className="modal-footer pt-1 pb-1"
+              style={{
+                color: (
+                  isDarkModeOn()
+                    ? 'white'
+                    : undefined
+                ),
+                backgroundColor: (
+                  isDarkModeOn()
+                    ? '#444'
+                    : undefined
+                ),
+                borderTop: (
+                  isDarkModeOn()
+                    ? '0.1rem solid gray'
+                    : undefined
+                ),
+              }}
+            >
               {footer}
             </div>
           )}
@@ -470,7 +558,7 @@ const Modal: React.FC<Props> = (props) => {
 };
 
 /*------------------------------------------------------------------------*/
-/*                                 Wrap Up                                */
+/* ------------------------------- Wrap Up ------------------------------ */
 /*------------------------------------------------------------------------*/
 
 export default Modal;
