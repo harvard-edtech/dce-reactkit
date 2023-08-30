@@ -60,6 +60,6 @@ export declare const addFatalErrorHandler: (handler: () => void) => void;
  * Show the "session expired" message
  * @author Gabe Abrams
  */
-export declare const showSessionExpiredMessage: () => void;
+export declare const showSessionExpiredMessage: () => Promise<void>;
 declare const AppWrapper: React.FC<Props>;
 export default AppWrapper;

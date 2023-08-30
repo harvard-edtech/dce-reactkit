@@ -329,8 +329,21 @@ let setSessionHasExpired: (isExpired: boolean) => void;
  * Show the "session expired" message
  * @author Gabe Abrams
  */
-export const showSessionExpiredMessage = () => {
-  setSessionHasExpired(true);
+export const showSessionExpiredMessage = async () => {
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return !!setSessionHasExpired;
+  });
+
+  // Show session expired message
+  if (setSessionHasExpired) {
+    setSessionHasExpired(true);
+  } else {
+    showFatalError(
+      'Your session has expired. Please start over.',
+      'Session Expired',
+    );
+  }
 };
 
 /*------------------------------------------------------------------------*/

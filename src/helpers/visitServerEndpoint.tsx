@@ -1,9 +1,42 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/naming-convention */
 // Import custom error
 import ErrorWithCode from '../errors/ErrorWithCode';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 // Import helpers
 import { getSendRequest } from '../client/initClient';
+import waitMs from './waitMs';
+
+/*------------------------------------------------------------------------*/
+/* --------------------------- Static Helpers --------------------------- */
+/*------------------------------------------------------------------------*/
+
+// Timestamp after initialization when helpers should be available
+const timestampWhenHelpersShouldBeAvailable = Date.now() + 2000;
+
+/**
+ * Wait for a little while for a helper to exist
+ * @author Gabe Abrams
+ * @param checkForHelper a function that returns true if the helper exists
+ * @returns true if the helper exists, false if the process timed out
+ */
+const waitForHelper = async (checkForHelper: () => boolean): Promise<boolean> => {
+  // Wait for helper to exist
+  while (!checkForHelper()) {
+    // Check if we should stop waiting
+    if (Date.now() > timestampWhenHelpersShouldBeAvailable) {
+      // Stop waiting
+      return false;
+    }
+
+    // Wait a little while
+    await waitMs(10);
+  }
+
+  // Helper exists
+  return true;
+};
 
 /*------------------------------------------------------------------------*/
 /*                                Listener                                */
@@ -163,6 +196,11 @@ const visitServerEndpoint = async (
         });
       }
       sessionAlreadyExpired = true;
+
+      // Wait for helper to exist
+      await waitForHelper(() => {
+        return !!sessionExpiryHandler;
+      });
 
       // Show session expiration message
       if (sessionExpiryHandler) {

@@ -644,6 +644,36 @@ var LogLevel;
 })(LogLevel || (LogLevel = {}));
 var LogLevel$1 = LogLevel;
 
+/*------------------------------------------------------------------------*/
+/* --------------------------- Static Helpers --------------------------- */
+/*------------------------------------------------------------------------*/
+// Timestamp after initialization when helpers should be available
+const timestampWhenHelpersShouldBeAvailable$1 = Date.now() + 2000;
+/**
+ * Wait for a little while for a helper to exist
+ * @author Gabe Abrams
+ * @param checkForHelper a function that returns true if the helper exists
+ * @returns true if the helper exists, false if the process timed out
+ */
+const waitForHelper$1 = (checkForHelper) => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for helper to exist
+    while (!checkForHelper()) {
+        // Check if we should stop waiting
+        if (Date.now() > timestampWhenHelpersShouldBeAvailable$1) {
+            // Stop waiting
+            return false;
+        }
+        // Wait a little while
+        yield waitMs(10);
+    }
+    // Helper exists
+    return true;
+});
+/*------------------------------------------------------------------------*/
+/*                                Listener                                */
+/*------------------------------------------------------------------------*/
+// Handler for session expiry
+let sessionExpiryHandler;
 // Keep track of whether or not session expiry has already been handled
 let sessionAlreadyExpired = false;
 /*------------------------------------------------------------------------*/
@@ -736,6 +766,10 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
                 });
             }
             sessionAlreadyExpired = true;
+            // Wait for helper to exist
+            yield waitForHelper$1(() => {
+                return !!sessionExpiryHandler;
+            });
             // Show session expiration message
             {
                 // Fallback to alert
