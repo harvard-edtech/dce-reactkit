@@ -50,7 +50,7 @@ export declare const confirm: (title: string, text: string, opts?: {
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-export declare const showFatalError: (error: any, errorTitle?: string) => undefined;
+export declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>;
 /**
  * Add a handler for when a fatal error occurs
  * @author Gabe Abrams
@@ -60,6 +60,6 @@ export declare const addFatalErrorHandler: (handler: () => void) => void;
  * Show the "session expired" message
  * @author Gabe Abrams
  */
-export declare const showSessionExpiredMessage: () => undefined;
+export declare const showSessionExpiredMessage: () => void;
 declare const AppWrapper: React.FC<Props>;
 export default AppWrapper;

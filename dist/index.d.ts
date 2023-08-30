@@ -69,7 +69,7 @@ declare const confirm: (title: string, text: string, opts?: {
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-declare const showFatalError: (error: any, errorTitle?: string) => undefined;
+declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>;
 /**
  * Add a handler for when a fatal error occurs
  * @author Gabe Abrams

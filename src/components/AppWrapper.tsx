@@ -33,6 +33,7 @@ import {
   getSessionExpiredMessage,
   isDarkModeOn,
 } from '../client/initClient';
+import waitMs from '../helpers/waitMs';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Props ------------------------------- */
@@ -46,6 +47,32 @@ type Props = {
 /*------------------------------------------------------------------------*/
 /* --------------------------- Static Helpers --------------------------- */
 /*------------------------------------------------------------------------*/
+
+// Timestamp after initialization when helpers should be available
+const timestampWhenHelpersShouldBeAvailable = Date.now() + 2000;
+
+/**
+ * Wait for a little while for a helper to exist
+ * @author Gabe Abrams
+ * @param checkForHelper a function that returns true if the helper exists
+ * @returns true if the helper exists, false if the process timed out
+ */
+const waitForHelper = async (checkForHelper: () => boolean): Promise<boolean> => {
+  // Wait for helper to exist
+  while (!checkForHelper()) {
+    // Check if we should stop waiting
+    if (Date.now() > timestampWhenHelpersShouldBeAvailable) {
+      // Stop waiting
+      return false;
+    }
+
+    // Wait a little while
+    await waitMs(10);
+  }
+
+  // Helper exists
+  return true;
+};
 
 /*----------------------------------------*/
 /* ----------- Redirect/Leave ----------- */
@@ -103,6 +130,11 @@ let onAlertClosed: () => void;
  * @param text the text to display in the alert
  */
 export const alert = async (title: string, text: string): Promise<undefined> => {
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return !!setAlertInfo;
+  });
+
   // Fallback if alert not available
   if (!setAlertInfo) {
     // eslint-disable-next-line no-alert
@@ -172,6 +204,11 @@ export const confirm = async (
     cancelButtonVariant?: Variant,
   },
 ): Promise<boolean> => {
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return !!setConfirmInfo;
+  });
+
   // Fallback if confirm is not available
   if (!setConfirmInfo) {
     // eslint-disable-next-line no-alert
@@ -212,10 +249,10 @@ const fatalErrorHandlers: (() => void)[] = [];
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-export const showFatalError = (
+export const showFatalError = async (
   error: any,
   errorTitle: string = 'An Error Occurred',
-): undefined => {
+) => {
   // Determine message and code
   const message: string = (
     typeof error === 'string'
@@ -250,21 +287,27 @@ export const showFatalError = (
     },
   });
 
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return (
+      !!setFatalErrorMessage
+      && !!setFatalErrorCode
+    );
+  });
+
   // Handle case where app hasn't loaded
   if (!setFatalErrorMessage || !setFatalErrorCode) {
     alert(
       errorTitle,
       `${message} (code: ${code}). Please contact support.`,
     );
-    return undefined;
+    return;
   }
 
   // Use setters
   setFatalErrorMessage(message);
   setFatalErrorCode(code);
   setFatalErrorTitle(errorTitle);
-
-  return undefined;
 };
 
 /**
@@ -286,9 +329,8 @@ let setSessionHasExpired: (isExpired: boolean) => void;
  * Show the "session expired" message
  * @author Gabe Abrams
  */
-export const showSessionExpiredMessage = (): undefined => {
+export const showSessionExpiredMessage = () => {
   setSessionHasExpired(true);
-  return undefined;
 };
 
 /*------------------------------------------------------------------------*/

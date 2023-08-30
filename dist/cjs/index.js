@@ -828,6 +828,28 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
 /*------------------------------------------------------------------------*/
 /* --------------------------- Static Helpers --------------------------- */
 /*------------------------------------------------------------------------*/
+// Timestamp after initialization when helpers should be available
+const timestampWhenHelpersShouldBeAvailable = Date.now() + 2000;
+/**
+ * Wait for a little while for a helper to exist
+ * @author Gabe Abrams
+ * @param checkForHelper a function that returns true if the helper exists
+ * @returns true if the helper exists, false if the process timed out
+ */
+const waitForHelper = (checkForHelper) => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for helper to exist
+    while (!checkForHelper()) {
+        // Check if we should stop waiting
+        if (Date.now() > timestampWhenHelpersShouldBeAvailable) {
+            // Stop waiting
+            return false;
+        }
+        // Wait a little while
+        yield waitMs(10);
+    }
+    // Helper exists
+    return true;
+});
 /*----------------------------------------*/
 /* ----------- Redirect/Leave ----------- */
 /*----------------------------------------*/
@@ -874,6 +896,10 @@ let onAlertClosed;
  * @param text the text to display in the alert
  */
 const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for helper to exist
+    yield waitForHelper(() => {
+        return !!setAlertInfo;
+    });
     // Fallback if alert not available
     if (!setAlertInfo) {
         // eslint-disable-next-line no-alert
@@ -915,6 +941,10 @@ let onConfirmClosed;
  * @returns true if the user confirmed
  */
 const confirm = (title, text, opts) => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for helper to exist
+    yield waitForHelper(() => {
+        return !!setConfirmInfo;
+    });
     // Fallback if confirm is not available
     if (!setConfirmInfo) {
         // eslint-disable-next-line no-alert
@@ -949,7 +979,7 @@ const fatalErrorHandlers = [];
  * @param error the error to show
  * @param [errorTitle] title of the error box
  */
-const showFatalError = (error, errorTitle = 'An Error Occurred') => {
+const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     // Determine message and code
     const message = (typeof error === 'string'
@@ -979,17 +1009,21 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => {
             errorTitle,
         },
     });
+    // Wait for helper to exist
+    yield waitForHelper(() => {
+        return (!!setFatalErrorMessage
+            && !!setFatalErrorCode);
+    });
     // Handle case where app hasn't loaded
     if (!setFatalErrorMessage || !setFatalErrorCode) {
         alert$1(errorTitle, `${message} (code: ${code}). Please contact support.`);
-        return undefined;
+        return;
     }
     // Use setters
     setFatalErrorMessage(message);
     setFatalErrorCode(code);
     setFatalErrorTitle(errorTitle);
-    return undefined;
-};
+});
 /**
  * Add a handler for when a fatal error occurs
  * @author Gabe Abrams
