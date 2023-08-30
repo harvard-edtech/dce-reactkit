@@ -645,38 +645,6 @@ var LogLevel;
 var LogLevel$1 = LogLevel;
 
 /*------------------------------------------------------------------------*/
-/* --------------------------- Static Helpers --------------------------- */
-/*------------------------------------------------------------------------*/
-// Timestamp after initialization when helpers should be available
-const timestampWhenHelpersShouldBeAvailable$1 = Date.now() + 2000;
-/**
- * Wait for a little while for a helper to exist
- * @author Gabe Abrams
- * @param checkForHelper a function that returns true if the helper exists
- * @returns true if the helper exists, false if the process timed out
- */
-const waitForHelper$1 = (checkForHelper) => __awaiter(void 0, void 0, void 0, function* () {
-    // Wait for helper to exist
-    while (!checkForHelper()) {
-        // Check if we should stop waiting
-        if (Date.now() > timestampWhenHelpersShouldBeAvailable$1) {
-            // Stop waiting
-            return false;
-        }
-        // Wait a little while
-        yield waitMs(10);
-    }
-    // Helper exists
-    return true;
-});
-/*------------------------------------------------------------------------*/
-/*                                Listener                                */
-/*------------------------------------------------------------------------*/
-// Handler for session expiry
-let sessionExpiryHandler;
-// Keep track of whether or not session expiry has already been handled
-let sessionAlreadyExpired = false;
-/*------------------------------------------------------------------------*/
 /*                               Stub Logic                               */
 /*------------------------------------------------------------------------*/
 // Stored stub responses
@@ -758,24 +726,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     if (!response.body.success) {
         // Session expired
         if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
-            // Skip notice if session was already expired
-            if (sessionAlreadyExpired) {
-                // Never return (browser is already reloading)
-                yield new Promise(() => {
-                    // Promise that never returns
-                });
-            }
-            sessionAlreadyExpired = true;
-            // Wait for helper to exist
-            yield waitForHelper$1(() => {
-                return !!sessionExpiryHandler;
-            });
-            // Show session expiration message
-            {
-                // Fallback to alert
-                // eslint-disable-next-line no-alert
-                alert('Your session has expired. Please start over.');
-            }
+            showSessionExpiredMessage();
             // Never return (don't continue execution)
             yield new Promise(() => {
                 // Promise that never returns
@@ -903,7 +854,7 @@ let onAlertClosed;
  * @param title the title text to display at the top of the alert
  * @param text the text to display in the alert
  */
-const alert$1 = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
+const alert = (title, text) => __awaiter(void 0, void 0, void 0, function* () {
     // Wait for helper to exist
     yield waitForHelper(() => {
         return !!setAlertInfo;
@@ -1024,7 +975,7 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(vo
     });
     // Handle case where app hasn't loaded
     if (!setFatalErrorMessage || !setFatalErrorCode) {
-        alert$1(errorTitle, `${message} (code: ${code}). Please contact support.`);
+        alert(errorTitle, `${message} (code: ${code}). Please contact support.`);
         return;
     }
     // Use setters
@@ -1039,6 +990,28 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(vo
 const addFatalErrorHandler = (handler) => {
     fatalErrorHandlers.push(handler);
 };
+/*----------------------------------------*/
+/* ----------- Session Expired ---------- */
+/*----------------------------------------*/
+// Stored copies of setters
+let setSessionHasExpired;
+/**
+ * Show the "session expired" message
+ * @author Gabe Abrams
+ */
+const showSessionExpiredMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for helper to exist
+    yield waitForHelper(() => {
+        return !!setSessionHasExpired;
+    });
+    // Show session expired message
+    if (setSessionHasExpired) {
+        setSessionHasExpired(true);
+    }
+    else {
+        showFatalError('Your session has expired. Please start over.', 'Session Expired');
+    }
+});
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -1091,6 +1064,7 @@ const AppWrapper = (props) => {
     setConfirmInfo = setConfirmInfoInner;
     // Session expired
     const [sessionHasExpired, setSessionHasExpiredInner,] = useState(false);
+    setSessionHasExpired = setSessionHasExpiredInner;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -2117,7 +2091,7 @@ const CopiableBox = (props) => {
             yield navigator.clipboard.writeText(text);
         }
         catch (err) {
-            return alert$1('Unable to copy', 'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.');
+            return alert('Unable to copy', 'Oops! We couldn\'t copy that to the clipboard. Please copy the text manually.');
         }
         // Show copied notice
         dispatch({
@@ -2706,7 +2680,7 @@ const IntelliTable = (props) => {
                     return !isSelected;
                 }));
                 if (noColumnsSelected) {
-                    return alert$1('Choose at least one column', 'To continue, you have to choose at least one column to show');
+                    return alert('Choose at least one column', 'To continue, you have to choose at least one column to show');
                 }
                 dispatch({
                     type: ActionType$6.ToggleColVisCusModalVisibility,
@@ -3718,7 +3692,7 @@ const LogReviewer = (props) => {
                                 || (year === dateFilterState.startDate.year
                                     && month === dateFilterState.startDate.month
                                     && day < dateFilterState.startDate.day)) {
-                                return alert$1('Invalid Start Date', 'The start date cannot be before the end date.');
+                                return alert('Invalid Start Date', 'The start date cannot be before the end date.');
                             }
                             dateFilterState.endDate = { month, day, year };
                             handleDateRangeUpdated(dateFilterState);
@@ -40215,7 +40189,7 @@ const AddOrEditDBEntry = (props) => {
                 React__default.createElement("button", { type: "button", id: "AddOrEditDBEntry-save-changes-button", className: "btn btn-primary btn-lg me-1", "aria-label": "Save changes", onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                         // Show validation errors
                         if (validationError && validationError.length > 0) {
-                            return alert$1('Please fix the following error', validationError);
+                            return alert('Please fix the following error', validationError);
                         }
                         // Run the included validator if it exists
                         if (validateEntry) {
@@ -40223,7 +40197,7 @@ const AddOrEditDBEntry = (props) => {
                                 yield validateEntry(entry);
                             }
                             catch (error) {
-                                return alert$1('Please fix the following error', String(error));
+                                return alert('Please fix the following error', String(error));
                             }
                         }
                         save();
@@ -43106,5 +43080,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert$1 as alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

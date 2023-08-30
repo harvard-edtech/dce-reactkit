@@ -5,57 +5,10 @@ import ErrorWithCode from '../errors/ErrorWithCode';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 // Import helpers
+// TODO: fix dependency cycle
+// eslint-disable-next-line import/no-cycle
 import { getSendRequest } from '../client/initClient';
-import waitMs from './waitMs';
-
-/*------------------------------------------------------------------------*/
-/* --------------------------- Static Helpers --------------------------- */
-/*------------------------------------------------------------------------*/
-
-// Timestamp after initialization when helpers should be available
-const timestampWhenHelpersShouldBeAvailable = Date.now() + 2000;
-
-/**
- * Wait for a little while for a helper to exist
- * @author Gabe Abrams
- * @param checkForHelper a function that returns true if the helper exists
- * @returns true if the helper exists, false if the process timed out
- */
-const waitForHelper = async (checkForHelper: () => boolean): Promise<boolean> => {
-  // Wait for helper to exist
-  while (!checkForHelper()) {
-    // Check if we should stop waiting
-    if (Date.now() > timestampWhenHelpersShouldBeAvailable) {
-      // Stop waiting
-      return false;
-    }
-
-    // Wait a little while
-    await waitMs(10);
-  }
-
-  // Helper exists
-  return true;
-};
-
-/*------------------------------------------------------------------------*/
-/*                                Listener                                */
-/*------------------------------------------------------------------------*/
-
-// Handler for session expiry
-let sessionExpiryHandler: () => void;
-
-// Keep track of whether or not session expiry has already been handled
-let sessionAlreadyExpired = false;
-
-/**
- * Set the session expiry handler
- * @author Gabe Abrams
- * @param handler new handler to use when session expires
- */
-export const setSessionExpiryHandler = (handler: () => void) => {
-  sessionExpiryHandler = handler;
-};
+import { showSessionExpiredMessage } from '../components/AppWrapper';
 
 /*------------------------------------------------------------------------*/
 /*                               Stub Logic                               */
@@ -188,33 +141,10 @@ const visitServerEndpoint = async (
   if (!response.body.success) {
     // Session expired
     if (response.body.code === ReactKitErrorCode.SessionExpired) {
-      // Skip notice if session was already expired
-      if (sessionAlreadyExpired) {
-        // Never return (browser is already reloading)
-        await new Promise<{ [key in string]: any }>(() => {
-          // Promise that never returns
-        });
-      }
-      sessionAlreadyExpired = true;
-
-      // Wait for helper to exist
-      await waitForHelper(() => {
-        return !!sessionExpiryHandler;
-      });
-
-      // Show session expiration message
-      if (sessionExpiryHandler) {
-        // Use handler
-        sessionExpiryHandler();
-      } else {
-        // Fallback to alert
-
-        // eslint-disable-next-line no-alert
-        alert('Your session has expired. Please start over.');
-      }
+      showSessionExpiredMessage();
 
       // Never return (don't continue execution)
-      await new Promise<{ [key in string]: any }>(() => {
+      await new Promise(() => {
         // Promise that never returns
       });
     }

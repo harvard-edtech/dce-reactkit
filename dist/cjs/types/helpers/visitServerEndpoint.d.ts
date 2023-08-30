@@ -1,10 +1,4 @@
 /**
- * Set the session expiry handler
- * @author Gabe Abrams
- * @param handler new handler to use when session expires
- */
-export declare const setSessionExpiryHandler: (handler: () => void) => void;
-/**
  * Add a stub response
  * @author Gabe Abrams
  * @param opts object containing all arguments
