@@ -9,9 +9,11 @@ import React from 'react';
 // Import FontAwesome Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 // Import shared types
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
+import Variant from '../types/Variant';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
@@ -24,6 +26,10 @@ type Props = {
   title?: string,
   // Handler for close,
   onClose?: () => void,
+  // Variant for notice (defaults to danger)
+  variant?: Variant,
+  // Custom icon before error message (defaults to exclamation triangle)
+  icon?: IconProp,
 };
 
 /*------------------------------------------------------------------------*/
@@ -41,6 +47,8 @@ const ErrorBox: React.FC<Props> = (props) => {
     error,
     title = 'An Error Occurred',
     onClose,
+    variant = Variant.Danger,
+    icon = faExclamationTriangle,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -83,7 +91,7 @@ const ErrorBox: React.FC<Props> = (props) => {
   // Main UI
   return (
     <div
-      className="alert alert-danger text-center"
+      className={`alert alert-${variant} text-center`}
       style={{
         maxWidth: '40rem',
         margin: 'auto',
@@ -91,7 +99,7 @@ const ErrorBox: React.FC<Props> = (props) => {
     >
       <h4 className="mb-1">
         <FontAwesomeIcon
-          icon={faExclamationTriangle}
+          icon={icon}
           className="me-2"
         />
         {title}

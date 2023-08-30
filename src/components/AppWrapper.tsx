@@ -7,6 +7,9 @@
 // Import React
 import React, { useState } from 'react';
 
+// Import FontAwesome
+import { faHourglassEnd } from '@fortawesome/free-solid-svg-icons';
+
 // Import shared components
 import ErrorBox from './ErrorBox';
 
@@ -593,6 +596,12 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
               : fatalErrorTitle
           )}
           error={error}
+          variant={(
+            isDarkModeOn()
+              ? Variant.Light
+              : Variant.Secondary
+          )}
+          icon={faHourglassEnd}
         />
       </div>
     );

@@ -92,6 +92,8 @@ type Props$j = {
     error: any;
     title?: string;
     onClose?: () => void;
+    variant?: Variant;
+    icon?: IconProp;
 };
 declare const ErrorBox: React.FC<Props$j>;
 

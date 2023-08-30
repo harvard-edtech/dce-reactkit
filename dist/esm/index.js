@@ -1,7 +1,7 @@
 import * as React from 'react';
 import React__default, { useState, useRef, useEffect, useReducer, forwardRef, useContext, useLayoutEffect, createContext, useMemo, useCallback, Component, Fragment } from 'react';
+import { faExclamationTriangle, faHourglassEnd, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faCalendar, faTag, faHammer, faList, faTimes, faSave, faTrash, faCog, faPlus, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faCalendar, faTag, faHammer, faList, faTimes, faSave, faTrash, faCog, faPlus, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
 
 /******************************************************************************
@@ -53,6 +53,23 @@ var ReactKitErrorCode;
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
 /**
+ * Bootstrap variants
+ * @author Gabe Abrams
+ */
+var Variant;
+(function (Variant) {
+    Variant["Primary"] = "primary";
+    Variant["Secondary"] = "secondary";
+    Variant["Success"] = "success";
+    Variant["Warning"] = "warning";
+    Variant["Info"] = "info";
+    Variant["Danger"] = "danger";
+    Variant["Light"] = "light";
+    Variant["Dark"] = "dark";
+})(Variant || (Variant = {}));
+var Variant$1 = Variant;
+
+/**
  * Displays an error
  * @author Gabe Abrams
  */
@@ -65,7 +82,7 @@ const ErrorBox = (props) => {
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
-    const { error, title = 'An Error Occurred', onClose, } = props;
+    const { error, title = 'An Error Occurred', onClose, variant = Variant$1.Danger, icon = faExclamationTriangle, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -93,12 +110,12 @@ const ErrorBox = (props) => {
                 String((_a = error.code) !== null && _a !== void 0 ? _a : ReactKitErrorCode$1.NoCode).toUpperCase())));
     }
     // Main UI
-    return (React__default.createElement("div", { className: "alert alert-danger text-center", style: {
+    return (React__default.createElement("div", { className: `alert alert-${variant} text-center`, style: {
             maxWidth: '40rem',
             margin: 'auto',
         } },
         React__default.createElement("h4", { className: "mb-1" },
-            React__default.createElement(FontAwesomeIcon, { icon: faExclamationTriangle, className: "me-2" }),
+            React__default.createElement(FontAwesomeIcon, { icon: icon, className: "me-2" }),
             title),
         React__default.createElement("div", null,
             errorText,
@@ -172,23 +189,6 @@ const waitMs = (ms = 0) => __awaiter(void 0, void 0, void 0, function* () {
         setTimeout(resolve, ms);
     });
 });
-
-/**
- * Bootstrap variants
- * @author Gabe Abrams
- */
-var Variant;
-(function (Variant) {
-    Variant["Primary"] = "primary";
-    Variant["Secondary"] = "secondary";
-    Variant["Success"] = "success";
-    Variant["Warning"] = "warning";
-    Variant["Info"] = "info";
-    Variant["Danger"] = "danger";
-    Variant["Light"] = "light";
-    Variant["Dark"] = "dark";
-})(Variant || (Variant = {}));
-var Variant$1 = Variant;
 
 /**
  * Modal sizes
@@ -1134,7 +1134,9 @@ const AppWrapper = (props) => {
             } },
             React__default.createElement(ErrorBox, { title: (sessionHasExpired
                     ? 'Session Expired'
-                    : fatalErrorTitle), error: error })));
+                    : fatalErrorTitle), error: error, variant: (isDarkModeOn()
+                    ? Variant$1.Light
+                    : Variant$1.Secondary), icon: faHourglassEnd })));
     }
     /* --------------- App -------------- */
     if (!body) {
