@@ -607,7 +607,11 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
           )}
           error={error}
           variant={errorBoxVariant}
-          icon={faHourglassEnd}
+          icon={(
+            sessionHasExpired
+              ? faHourglassEnd
+              : undefined
+          )}
         />
       </div>
     );

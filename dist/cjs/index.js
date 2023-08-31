@@ -1167,7 +1167,9 @@ const AppWrapper = (props) => {
             } },
             React__default["default"].createElement(ErrorBox, { title: (sessionHasExpired
                     ? 'Session Expired'
-                    : fatalErrorTitle), error: error, variant: errorBoxVariant, icon: freeSolidSvgIcons.faHourglassEnd })));
+                    : fatalErrorTitle), error: error, variant: errorBoxVariant, icon: (sessionHasExpired
+                    ? freeSolidSvgIcons.faHourglassEnd
+                    : undefined) })));
     }
     /* --------------- App -------------- */
     if (!body) {
