@@ -574,6 +574,16 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         )
     );
 
+    // Choose error box variant
+    let errorBoxVariant = Variant.Danger;
+    if (sessionHasExpired) {
+      errorBoxVariant = (
+        isDarkModeOn()
+          ? Variant.Light
+          : Variant.Secondary
+      );
+    }
+
     // Build error screen
     body = (
       <div
@@ -596,11 +606,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
               : fatalErrorTitle
           )}
           error={error}
-          variant={(
-            isDarkModeOn()
-              ? Variant.Light
-              : Variant.Secondary
-          )}
+          variant={errorBoxVariant}
           icon={faHourglassEnd}
         />
       </div>

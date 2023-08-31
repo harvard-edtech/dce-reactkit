@@ -1122,6 +1122,13 @@ const AppWrapper = (props) => {
         const error = (sessionHasExpired
             ? new ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
             : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode)));
+        // Choose error box variant
+        let errorBoxVariant = Variant$1.Danger;
+        if (sessionHasExpired) {
+            errorBoxVariant = (isDarkModeOn()
+                ? Variant$1.Light
+                : Variant$1.Secondary);
+        }
         // Build error screen
         body = (React__default.createElement("div", { style: {
                 display: 'block',
@@ -1134,9 +1141,7 @@ const AppWrapper = (props) => {
             } },
             React__default.createElement(ErrorBox, { title: (sessionHasExpired
                     ? 'Session Expired'
-                    : fatalErrorTitle), error: error, variant: (isDarkModeOn()
-                    ? Variant$1.Light
-                    : Variant$1.Secondary), icon: faHourglassEnd })));
+                    : fatalErrorTitle), error: error, variant: errorBoxVariant, icon: faHourglassEnd })));
     }
     /* --------------- App -------------- */
     if (!body) {
