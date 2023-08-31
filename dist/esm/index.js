@@ -40490,7 +40490,6 @@ const TOOLTIP_BORDER_RADIUS_REM = 0.3;
 const style$1 = `
   /* Container for contents and tooltip */
   .Tooltip-outer-container {
-    display: inline-block;
     position: relative;
   }
 
@@ -40707,7 +40706,7 @@ const Tooltip = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { icon, text, children, wide, thin, } = props;
+    const { icon, text, children, wide, thin, containerIsDisplayBlock, } = props;
     /* -------------- State ------------- */
     // Initial state
     const initialState = {
@@ -40794,7 +40793,7 @@ const Tooltip = (props) => {
         size = 'thin';
     }
     // Render
-    return (React__default.createElement("div", { className: "Tooltip-outer-container", "aria-label": text, onMouseEnter: () => {
+    return (React__default.createElement("div", { className: `Tooltip-outer-container ${containerIsDisplayBlock ? 'd-block' : 'd-inline-block'}}`, "aria-label": text, onMouseEnter: () => {
             dispatch({
                 type: ActionType$1.Show,
             });

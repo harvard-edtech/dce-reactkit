@@ -10,6 +10,7 @@ type Props = {
     children: React.ReactNode;
     wide?: boolean;
     thin?: boolean;
+    containerIsDisplayBlock?: boolean;
 };
 declare const Tooltip: React.FC<Props>;
 export default Tooltip;

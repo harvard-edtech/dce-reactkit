@@ -593,6 +593,7 @@ type Props$2 = {
     children: React.ReactNode;
     wide?: boolean;
     thin?: boolean;
+    containerIsDisplayBlock?: boolean;
 };
 declare const Tooltip: React.FC<Props$2>;
 

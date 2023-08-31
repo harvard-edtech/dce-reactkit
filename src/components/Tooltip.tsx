@@ -27,6 +27,8 @@ type Props = {
   wide?: boolean,
   // If true, tooltip is thinner
   thin?: boolean,
+  // If true, the tooltip container should be display: block
+  containerIsDisplayBlock?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -48,7 +50,6 @@ const TOOLTIP_BORDER_RADIUS_REM = 0.3;
 const style = `
   /* Container for contents and tooltip */
   .Tooltip-outer-container {
-    display: inline-block;
     position: relative;
   }
 
@@ -339,6 +340,7 @@ const Tooltip: React.FC<Props> = (props) => {
     children,
     wide,
     thin,
+    containerIsDisplayBlock,
   } = props;
 
   /* -------------- State ------------- */
@@ -463,7 +465,7 @@ const Tooltip: React.FC<Props> = (props) => {
   // Render
   return (
     <div
-      className="Tooltip-outer-container"
+      className={`Tooltip-outer-container ${containerIsDisplayBlock ? 'd-block' : 'd-inline-block'}}`}
       aria-label={text}
       onMouseEnter={() => {
         dispatch({
