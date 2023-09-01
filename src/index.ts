@@ -27,6 +27,7 @@ import DBEntryManagerPanel from './components/DBEntryManagerPanel';
 import Tooltip from './components/Tooltip';
 import ToggleSwitch from './components/ToggleSwitch';
 import AutoscrollToBottomContainer from './components/AutoscrollToBottomContainer';
+import MultiSwitch from './components/MultiSwitch';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -129,6 +130,7 @@ export {
   Tooltip,
   ToggleSwitch,
   AutoscrollToBottomContainer,
+  MultiSwitch,
   // Global functions
   alert,
   confirm,
