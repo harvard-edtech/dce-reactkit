@@ -2,6 +2,7 @@
  * A switch with multiple options for selection
  * @author Alessandra De Lucas
  * @author Gabe Abrams
+ * @author Austen Money
  */
 
 // Import React
@@ -10,6 +11,10 @@ import React, { useReducer } from 'react';
 // Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
+// Import shared helpers
+import idify from '../helpers/idify';
+import combineClassNames from '../helpers/combineClassNames';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
@@ -253,12 +258,21 @@ const MultiSwitch: React.FC<Props> = (props) => {
   /*----------------------------------------*/
 
   const optionElements = options.map((option) => {
+    const isSelected = (option.id === selectedOptionId);
+    const isHovered = (option.id === hoveredOptionId);
+
     return (
       <button
         type="button"
-        className={`MultiSwitch-option-button${option.id === hoveredOptionId ? ' MultiSwitch-option-button-hovered' : ''}`}
+        key={option.id}
+        className={combineClassNames([
+          'MultiSwitch-option-button',
+          (isHovered ? 'MultiSwitch-option-button-hovered' : ''),
+          `MultiSwitch-option-button-with-id-${idify(option.id)}`,
+          `MultiSwitch-option-button-is${isSelected ? '' : '-not'}-selected`,
+        ])}
         aria-label={(
-          option.id === selectedOptionId
+          isSelected
             ? `option "${option.label}", currently selected`
             : `click to select option "${option.label}"`
         )}

@@ -2,6 +2,7 @@
  * A switch with multiple options for selection
  * @author Alessandra De Lucas
  * @author Gabe Abrams
+ * @author Austen Money
  */
 import React from 'react';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';

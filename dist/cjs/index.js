@@ -41174,9 +41174,34 @@ const AutoscrollToBottomContainer = (props) => {
 };
 
 /**
+ * Merges a list of class names into a class name, intelligently handling spaces
+ * @author Gabe Abrams
+ * @param classNames the list of class names to merge
+ * @returns the merged class name
+ */
+const combineClassNames = (classNames) => {
+    return (classNames
+        // Trim whitespace
+        .map((className) => {
+        return className.trim();
+    })
+        // Remove empty class names
+        .filter((className) => {
+        return className.length > 0;
+    })
+        // Change multiple spaces for just one space
+        .map((className) => {
+        return className.replace(/\s+/g, ' ');
+    })
+        // Join with spaces
+        .join(' '));
+};
+
+/**
  * A switch with multiple options for selection
  * @author Alessandra De Lucas
  * @author Gabe Abrams
+ * @author Austen Money
  */
 /* ------------- Actions ------------ */
 // Types of actions
@@ -41335,7 +41360,14 @@ const MultiSwitch = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     const optionElements = options.map((option) => {
-        return (React__default["default"].createElement("button", { type: "button", className: `MultiSwitch-option-button${option.id === hoveredOptionId ? ' MultiSwitch-option-button-hovered' : ''}`, "aria-label": (option.id === selectedOptionId
+        const isSelected = (option.id === selectedOptionId);
+        const isHovered = (option.id === hoveredOptionId);
+        return (React__default["default"].createElement("button", { type: "button", key: option.id, className: combineClassNames([
+                'MultiSwitch-option-button',
+                (isHovered ? 'MultiSwitch-option-button-hovered' : ''),
+                `MultiSwitch-option-button-with-id-${idify(option.id)}`,
+                `MultiSwitch-option-button-is${isSelected ? '' : '-not'}-selected`,
+            ]), "aria-label": (isSelected
                 ? `option "${option.label}", currently selected`
                 : `click to select option "${option.label}"`), onClick: () => {
                 // Remove hover
@@ -43302,30 +43334,6 @@ const makeLinksClickable = (text, opts) => {
     }
     // Return the elements
     return elements;
-};
-
-/**
- * Merges a list of class names into a class name, intelligently handling spaces
- * @author Gabe Abrams
- * @param classNames the list of class names to merge
- * @returns the merged class name
- */
-const combineClassNames = (classNames) => {
-    return (classNames
-        // Trim whitespace
-        .map((className) => {
-        return className.trim();
-    })
-        // Remove empty class names
-        .filter((className) => {
-        return className.length > 0;
-    })
-        // Change multiple spaces for just one space
-        .map((className) => {
-        return className.replace(/\s+/g, ' ');
-    })
-        // Join with spaces
-        .join(' '));
 };
 
 /**

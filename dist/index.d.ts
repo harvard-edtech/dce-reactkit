@@ -642,6 +642,7 @@ declare const AutoscrollToBottomContainer: React.FC<Props$1>;
  * A switch with multiple options for selection
  * @author Alessandra De Lucas
  * @author Gabe Abrams
+ * @author Austen Money
  */
 
 type Props = {
