@@ -82,6 +82,7 @@ import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
 import validateString from './helpers/validators/validateString';
 import idify from './helpers/idify';
 import makeLinksClickable from './helpers/makeLinksClickable';
+import combineClassNames from './helpers/combineClassNames';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -182,6 +183,7 @@ export {
   logClientEvent,
   addFatalErrorHandler,
   leaveToURL,
+  combineClassNames,
   // Server helpers
   initServer,
   genRouteHandler,
