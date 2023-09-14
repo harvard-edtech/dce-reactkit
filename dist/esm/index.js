@@ -41384,7 +41384,7 @@ const MultiSwitch = (props) => {
     });
     // Highlight behind selected option
     const highlight = (React__default.createElement("div", { className: "MultiSwitch-highlight bg-warning d-inline-block" }));
-    return (React__default.createElement("div", { className: "MultiSwitch-outer-box alert alert-dark" },
+    return (React__default.createElement("div", { className: "MultiSwitch-outer-box alert alert-dark m-0" },
         React__default.createElement("style", null, style),
         React__default.createElement("div", { className: "MultiSwitch-options-container" }, optionElements),
         React__default.createElement("div", { className: "MultiSwitch-highlight-container" }, highlight)));

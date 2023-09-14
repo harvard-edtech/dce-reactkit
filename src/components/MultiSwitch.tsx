@@ -334,7 +334,7 @@ const MultiSwitch: React.FC<Props> = (props) => {
   );
 
   return (
-    <div className="MultiSwitch-outer-box alert alert-dark">
+    <div className="MultiSwitch-outer-box alert alert-dark m-0">
       {/* Style */}
       <style>
         {style}
