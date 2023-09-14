@@ -1420,10 +1420,11 @@ declare const makeLinksClickable: (text: string, opts?: {
 /**
  * Merges a list of class names into a class name, intelligently handling spaces
  * @author Gabe Abrams
- * @param classNames the list of class names to merge
+ * @param classNames the list of class names to merge (or falsey values to
+ *   ignore)
  * @returns the merged class name
  */
-declare const combineClassNames: (classNames: string[]) => string;
+declare const combineClassNames: (classNames: (string | undefined | null | false)[]) => string;
 
 /**
  * List of error codes built into the react kit

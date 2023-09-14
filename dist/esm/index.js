@@ -41150,11 +41150,16 @@ const AutoscrollToBottomContainer = (props) => {
 /**
  * Merges a list of class names into a class name, intelligently handling spaces
  * @author Gabe Abrams
- * @param classNames the list of class names to merge
+ * @param classNames the list of class names to merge (or falsey values to
+ *   ignore)
  * @returns the merged class name
  */
 const combineClassNames = (classNames) => {
     return (classNames
+        // Turn falsey values into empty strings
+        .map((className) => {
+        return className || '';
+    })
         // Trim whitespace
         .map((className) => {
         return className.trim();
