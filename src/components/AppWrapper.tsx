@@ -314,7 +314,7 @@ export const showFatalError = async (
 };
 
 /**
- * Add a handler for when a fatal error occurs
+ * Add a handler for when a fatal error occurs (or when a session expiry occurs)
  * @author Gabe Abrams
  */
 export const addFatalErrorHandler = (handler: () => void) => {
@@ -333,6 +333,15 @@ let setSessionHasExpired: (isExpired: boolean) => void;
  * @author Gabe Abrams
  */
 export const showSessionExpiredMessage = async () => {
+  // Call all fatal error listeners
+  try {
+    fatalErrorHandlers.forEach((handler) => {
+      handler();
+    });
+  } catch (err) {
+    // Ignore listener errors
+  }
+
   // Wait for helper to exist
   await waitForHelper(() => {
     return !!setSessionHasExpired;

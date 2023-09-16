@@ -52,7 +52,7 @@ export declare const confirm: (title: string, text: string, opts?: {
  */
 export declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>;
 /**
- * Add a handler for when a fatal error occurs
+ * Add a handler for when a fatal error occurs (or when a session expiry occurs)
  * @author Gabe Abrams
  */
 export declare const addFatalErrorHandler: (handler: () => void) => void;

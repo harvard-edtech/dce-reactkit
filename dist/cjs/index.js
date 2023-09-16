@@ -1010,7 +1010,7 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(vo
     setFatalErrorTitle(errorTitle);
 });
 /**
- * Add a handler for when a fatal error occurs
+ * Add a handler for when a fatal error occurs (or when a session expiry occurs)
  * @author Gabe Abrams
  */
 const addFatalErrorHandler = (handler) => {
@@ -1026,6 +1026,15 @@ let setSessionHasExpired;
  * @author Gabe Abrams
  */
 const showSessionExpiredMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+    // Call all fatal error listeners
+    try {
+        fatalErrorHandlers.forEach((handler) => {
+            handler();
+        });
+    }
+    catch (err) {
+        // Ignore listener errors
+    }
     // Wait for helper to exist
     yield waitForHelper(() => {
         return !!setSessionHasExpired;
