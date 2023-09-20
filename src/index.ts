@@ -83,6 +83,7 @@ import validateString from './helpers/validators/validateString';
 import idify from './helpers/idify';
 import makeLinksClickable from './helpers/makeLinksClickable';
 import combineClassNames from './helpers/combineClassNames';
+import prefixWithAOrAn from './helpers/prefixWithAOrAn';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -177,6 +178,7 @@ export {
   getLocalTimeInfo,
   idify,
   makeLinksClickable,
+  prefixWithAOrAn,
   // Client helpers
   initClient,
   visitServerEndpoint,
