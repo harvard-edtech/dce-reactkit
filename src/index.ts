@@ -84,6 +84,7 @@ import idify from './helpers/idify';
 import makeLinksClickable from './helpers/makeLinksClickable';
 import combineClassNames from './helpers/combineClassNames';
 import prefixWithAOrAn from './helpers/prefixWithAOrAn';
+import useForceRender from './helpers/useForceRender';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -186,6 +187,7 @@ export {
   addFatalErrorHandler,
   leaveToURL,
   combineClassNames,
+  useForceRender,
   // Server helpers
   initServer,
   genRouteHandler,

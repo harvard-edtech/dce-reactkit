@@ -2060,7 +2060,7 @@ var ActionType$9;
  * @param state current state
  * @param action action to execute
  */
-const reducer$9 = (state, action) => {
+const reducer$a = (state, action) => {
     switch (action.type) {
         case ActionType$9.IndicateRecentlyCopied: {
             return {
@@ -2093,7 +2093,7 @@ const CopiableBox = (props) => {
         recentlyCopied: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$9, initialState);
+    const [state, dispatch] = useReducer(reducer$a, initialState);
     // Destructure common state
     const { recentlyCopied, } = state;
     /*------------------------------------------------------------------------*/
@@ -2186,7 +2186,7 @@ var ActionType$8;
  * @param state current state
  * @param action action to execute
  */
-const reducer$8 = (state, action) => {
+const reducer$9 = (state, action) => {
     switch (action.type) {
         case ActionType$8.ToggleChild: {
             return Object.assign(Object.assign({}, state), { childExpanded: Object.assign(Object.assign({}, state.childExpanded), { [String(action.id)]: !state.childExpanded[String(action.id)] }) });
@@ -2217,7 +2217,7 @@ const NestableItemList = (props) => {
         childExpanded: initChildExpanded,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$8, initialState);
+    const [state, dispatch] = useReducer(reducer$9, initialState);
     // Destructure common state
     const { childExpanded, } = state;
     /*------------------------------------------------------------------------*/
@@ -2602,7 +2602,7 @@ var ActionType$7;
  * @param state current state
  * @param action action to execute
  */
-const reducer$7 = (state, action) => {
+const reducer$8 = (state, action) => {
     switch (action.type) {
         case ActionType$7.ToggleSortColumn: {
             if (action.param !== state.sortColumnParam) {
@@ -2678,7 +2678,7 @@ const IntelliTable = (props) => {
         columnVisibilityCustomizationModalVisible: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$7, initialState);
+    const [state, dispatch] = useReducer(reducer$8, initialState);
     // Destructure common state
     const { sortColumnParam, sortType, columnVisibilityMap, columnVisibilityCustomizationModalVisible, } = state;
     /*------------------------------------------------------------------------*/
@@ -3356,7 +3356,7 @@ var ActionType$6;
  * @param state current state
  * @param action action to execute
  */
-const reducer$6 = (state, action) => {
+const reducer$7 = (state, action) => {
     switch (action.type) {
         case ActionType$6.StartLoading: {
             return Object.assign(Object.assign({}, state), { loading: true });
@@ -3516,7 +3516,7 @@ const LogReviewer = (props) => {
         advancedFilterState: initAdvancedFilterState,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$6, initialState);
+    const [state, dispatch] = useReducer(reducer$7, initialState);
     // Destructure common state
     const { loading, logMap, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = state;
     /*------------------------------------------------------------------------*/
@@ -39667,7 +39667,7 @@ var ActionType$5;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$5 = (state, action) => {
+const reducer$6 = (state, action) => {
     switch (action.type) {
         case ActionType$5.SetInputValue: {
             return Object.assign(Object.assign({}, state), { inputValue: action.value });
@@ -39689,7 +39689,7 @@ const CreatableMultiselect = (props) => {
         inputValue: '',
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$5, initialState);
+    const [state, dispatch] = useReducer(reducer$6, initialState);
     // Destructure common state
     const { inputValue } = state;
     /*------------------------------------------------------------------------*/
@@ -39871,7 +39871,7 @@ var ActionType$4;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$4 = (state, action) => {
+const reducer$5 = (state, action) => {
     switch (action.type) {
         case ActionType$4.UpdateDBEntry: {
             return Object.assign(Object.assign({}, state), { entry: action.dbEntry });
@@ -39901,7 +39901,7 @@ const AddOrEditDBEntry = (props) => {
         saving: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$4, initialState);
+    const [state, dispatch] = useReducer(reducer$5, initialState);
     // Destructure common state
     const { entry, saving, } = state;
     /*------------------------------------------------------------------------*/
@@ -40275,7 +40275,7 @@ var ActionType$3;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$3 = (state, action) => {
+const reducer$4 = (state, action) => {
     switch (action.type) {
         case ActionType$3.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, dbEntries: action.dbEntries });
@@ -40339,7 +40339,7 @@ const DBEntryManagerPanel = (props) => {
         loading: true,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$3, initialState);
+    const [state, dispatch] = useReducer(reducer$4, initialState);
     // Destructure common state
     const { adding, dbEntryToEdit, dbEntries, loading, } = state;
     /*------------------------------------------------------------------------*/
@@ -40684,7 +40684,7 @@ var ActionType$2;
  * @param state current state
  * @param action action to execute
  */
-const reducer$2 = (state, action) => {
+const reducer$3 = (state, action) => {
     switch (action.type) {
         case ActionType$2.Show: {
             return Object.assign(Object.assign({}, state), { isVisible: true });
@@ -40723,7 +40723,7 @@ const Tooltip = (props) => {
         nudgePx: 0,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$2, initialState);
+    const [state, dispatch] = useReducer(reducer$3, initialState);
     // Destructure common state
     const { isVisible, nudgePx, squareBottomLeft, squareBottomRight, } = state;
     /* -------------- Refs -------------- */
@@ -40982,7 +40982,7 @@ var ActionType$1;
  * @param state current state
  * @param action action to execute
  */
-const reducer$1 = (state, action) => {
+const reducer$2 = (state, action) => {
     switch (action.type) {
         case ActionType$1.HideJumpToBottomButton: {
             return Object.assign(Object.assign({}, state), { jumpToBottomButtonVisible: false });
@@ -41011,7 +41011,7 @@ const AutoscrollToBottomContainer = (props) => {
         jumpToBottomButtonVisible: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$1, initialState);
+    const [state, dispatch] = useReducer(reducer$2, initialState);
     // Destructure common state
     const { jumpToBottomButtonVisible, } = state;
     /* -------------- Refs -------------- */
@@ -41206,7 +41206,7 @@ var ActionType;
  * @param state current state
  * @param action action to execute
  */
-const reducer = (state, action) => {
+const reducer$1 = (state, action) => {
     switch (action.type) {
         case ActionType.StartHover: {
             return Object.assign(Object.assign({}, state), { hoveredOptionId: action.hoveredOptionId });
@@ -41235,7 +41235,7 @@ const MultiSwitch = (props) => {
         hoveredOptionId: undefined,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useReducer(reducer$1, initialState);
     // Destructure common state
     const { hoveredOptionId, } = state;
     /*------------------------------------------------------------------------*/
@@ -43348,6 +43348,40 @@ const prefixWithAOrAn = (text, capitalize = false) => {
     return `${prefix} ${text}`;
 };
 
+/* -------- State Definition -------- */
+/* ------------- Reducer ------------ */
+/**
+ * Reducer that executes actions
+ * @author Gabe Abrams
+ * @param state current state
+ */
+const reducer = (state) => {
+    return {
+        renderCount: state.renderCount + 1,
+    };
+};
+/* -------------- Main -------------- */
+/**
+ * Create a function that forces a render of a component. Use this only when
+ *   absolutely necessary
+ * @author Gabe Abrams
+ * @param useReducer the useReducer hook
+ * @returns forceRender function
+ */
+const useForceRender = (useReducer) => {
+    // Initial state
+    const initialState = {
+        renderCount: 0,
+    };
+    // Initialize state
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [state, dispatch] = useReducer(reducer, initialState);
+    // Create and return the forceRender function
+    return () => {
+        dispatch();
+    };
+};
+
 /**
  * Days of the week
  * @author Gabe Abrams
@@ -43364,5 +43398,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map
