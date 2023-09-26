@@ -6,7 +6,7 @@ import express from 'express';
 type DCEMangoCollection = {
     /**
      * Find all items in the collection that match the filter query
-     * @param filterQuery
+     * @param filterQuery query for the filter
      * @returns list of items that match the filter query
      */
     find: (filterQuery: any) => Promise<any[]>;
