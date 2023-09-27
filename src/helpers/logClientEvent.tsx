@@ -10,7 +10,7 @@ import visitServerEndpoint from './visitServerEndpoint';
 /* ------- Metadata Populator ------- */
 
 // Type of a metadata populator function
-type MetadataPopulator = () => Promise<{ [k: string]: any }>;
+type MetadataPopulator = () => { [k: string]: any } | Promise<{ [k: string]: any }>;
 
 // Current metadata populator function
 let metadataPopulator: MetadataPopulator;

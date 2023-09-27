@@ -1188,7 +1188,9 @@ declare const onlyKeepLetters: (str: string) => string;
  */
 declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number) => Promise<any[]>;
 
-type MetadataPopulator = () => Promise<{
+type MetadataPopulator = () => {
+    [k: string]: any;
+} | Promise<{
     [k: string]: any;
 }>;
 /**

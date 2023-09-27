@@ -1,5 +1,7 @@
 import LogFunction from '../types/LogFunction';
-type MetadataPopulator = () => Promise<{
+type MetadataPopulator = () => {
+    [k: string]: any;
+} | Promise<{
     [k: string]: any;
 }>;
 /**
