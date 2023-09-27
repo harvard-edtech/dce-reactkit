@@ -595,7 +595,11 @@ const Modal = (props) => {
                     React__default.createElement("h5", { className: "modal-title", style: {
                             fontWeight: 'bold',
                         } }, title),
-                    onClose && (React__default.createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: () => {
+                    onClose && (React__default.createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
+                            backgroundColor: (isDarkModeOn()
+                                ? 'white'
+                                : undefined),
+                        }, onClick: () => {
                             // Handle close
                             handleClose(ModalButtonType$1.Cancel);
                         } }))),

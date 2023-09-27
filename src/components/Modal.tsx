@@ -499,8 +499,15 @@ const Modal: React.FC<Props> = (props) => {
             {onClose && (
               <button
                 type="button"
-                className="btn-close"
+                className="Modal-x-button btn-close"
                 aria-label="Close"
+                style={{
+                  backgroundColor: (
+                    isDarkModeOn()
+                      ? 'white'
+                      : undefined
+                  ),
+                }}
                 onClick={() => {
                   // Handle close
                   handleClose(ModalButtonType.Cancel);
