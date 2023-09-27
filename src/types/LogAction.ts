@@ -33,8 +33,12 @@ enum LogAction {
   Deactivate = 'Deactivate',
   // User showed interest in a target (hover, peek, etc.)
   Peek = 'Peek',
+  // Halt a process (pause, etc.)
+  Halt = 'Halt',
+  // Resume a process (resume a halted process)
+  Resume = 'Resume',
   // Unknown action
   Unknown = 'Unknown',
-};
+}
 
 export default LogAction;

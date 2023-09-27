@@ -2473,6 +2473,10 @@ var LogAction;
     LogAction["Deactivate"] = "Deactivate";
     // User showed interest in a target (hover, peek, etc.)
     LogAction["Peek"] = "Peek";
+    // Halt a process (pause, etc.)
+    LogAction["Halt"] = "Halt";
+    // Resume a process (resume a halted process)
+    LogAction["Resume"] = "Resume";
     // Unknown action
     LogAction["Unknown"] = "Unknown";
 })(LogAction || (LogAction = {}));

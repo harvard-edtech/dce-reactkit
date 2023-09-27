@@ -931,6 +931,8 @@ declare enum LogAction {
     Activate = "Activate",
     Deactivate = "Deactivate",
     Peek = "Peek",
+    Halt = "Halt",
+    Resume = "Resume",
     Unknown = "Unknown"
 }
 

@@ -7,6 +7,6 @@ enum LogType {
   Action = 'action',
   // Error
   Error = 'error',
-};
+}
 
 export default LogType;
