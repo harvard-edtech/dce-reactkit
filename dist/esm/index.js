@@ -747,23 +747,50 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     return body;
 });
 
+// Current metadata populator function
+let metadataPopulator;
+/**
+ * Set the metadata populator function that will be called before every client
+ *   event is logged. The function should return a set of metadata values that
+ *   will be added to all client events
+ * @author Gabe Abrams
+ * @param metadataPopulator function to call that will return a set of metadata
+ *   values that will be added to all client events
+ */
+const setClientEventMetadataPopulator = (newMetadataPopulator) => {
+    metadataPopulator = newMetadataPopulator;
+};
+/* -------------- Main -------------- */
 /**
  * Log a user action on the client (cannot be used on the server)
  * @author Gabe Abrams
  */
 const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g;
+    // Populate metadata
+    let metadata = ((_a = opts.metadata) !== null && _a !== void 0 ? _a : {});
+    if (metadataPopulator) {
+        try {
+            const autoPopulatedMetadata = yield metadataPopulator();
+            metadata = Object.assign(Object.assign({}, autoPopulatedMetadata), metadata);
+        }
+        catch (err) {
+            // Add error to metadata
+            metadata = Object.assign({ autoPopulatedMetadataNotAvailable: true }, metadata);
+        }
+    }
+    // Send to server
     return visitServerEndpoint({
         path: LOG_ROUTE_PATH,
         method: 'POST',
         params: {
             context: (typeof opts.context === 'string'
                 ? opts.context
-                : ((_b = ((_a = opts.context) !== null && _a !== void 0 ? _a : {})._) !== null && _b !== void 0 ? _b : LogBuiltInMetadata.Context.Uncategorized)),
-            subcontext: ((_c = opts.subcontext) !== null && _c !== void 0 ? _c : LogBuiltInMetadata.Context.Uncategorized),
-            level: ((_d = opts.level) !== null && _d !== void 0 ? _d : LogLevel$1.Info),
-            tags: JSON.stringify((_e = opts.tags) !== null && _e !== void 0 ? _e : []),
-            metadata: JSON.stringify((_f = opts.metadata) !== null && _f !== void 0 ? _f : {}),
+                : ((_c = ((_b = opts.context) !== null && _b !== void 0 ? _b : {})._) !== null && _c !== void 0 ? _c : LogBuiltInMetadata.Context.Uncategorized)),
+            subcontext: ((_d = opts.subcontext) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized),
+            level: ((_e = opts.level) !== null && _e !== void 0 ? _e : LogLevel$1.Info),
+            tags: JSON.stringify((_f = opts.tags) !== null && _f !== void 0 ? _f : []),
+            metadata: JSON.stringify(metadata),
             errorMessage: (opts.error
                 ? opts.error.message
                 : undefined),
@@ -43406,5 +43433,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

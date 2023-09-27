@@ -66,7 +66,7 @@ import getPartOfDay from './helpers/getPartOfDay';
 import stringsToHumanReadableList from './helpers/stringsToHumanReadableList';
 import onlyKeepLetters from './helpers/onlyKeepLetters';
 import parallelLimit from './helpers/parallelLimit';
-import logClientEvent from './helpers/logClientEvent';
+import logClientEvent, { setClientEventMetadataPopulator } from './helpers/logClientEvent';
 import initLogCollection from './server/initLogCollection';
 import getMonthName from './helpers/getMonthName';
 import genCSV from './helpers/genCSV';
@@ -188,6 +188,7 @@ export {
   leaveToURL,
   combineClassNames,
   useForceRender,
+  setClientEventMetadataPopulator,
   // Server helpers
   initServer,
   genRouteHandler,
