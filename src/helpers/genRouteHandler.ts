@@ -14,6 +14,7 @@ import ParamType from '../types/ParamType';
 import handleError from './handleError';
 import handleSuccess from './handleSuccess';
 import genErrorPage from '../html/genErrorPage';
+import genInfoPage from '../html/genInfoPage';
 import parseUserAgent from './parseUserAgent';
 import getTimeInfoInET from './getTimeInfoInET';
 
@@ -407,7 +408,7 @@ const genRouteHandler = (
     });
 
     /*----------------------------------------*/
-    /*       Require Course Consistency       */
+    /* ----- Require Course Consistency ----- */
     /*----------------------------------------*/
 
     // Make sure the user actually launched from the appropriate course
@@ -476,7 +477,7 @@ const genRouteHandler = (
     }
 
     /*----------------------------------------*/
-    /*               Log Handler              */
+    /* ------------- Log Handler ------------ */
     /*----------------------------------------*/
 
     // Create a log handler function
@@ -745,7 +746,7 @@ const genRouteHandler = (
         body: string,
       },
     ) => {
-      const html = genErrorPage(renderOpts);
+      const html = genInfoPage(renderOpts);
       send(html, 200);
     };
 
