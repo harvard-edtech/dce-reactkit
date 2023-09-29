@@ -21,6 +21,7 @@ declare enum LogAction {
     Halt = "Halt",
     Resume = "Resume",
     Jump = "Jump",
+    Post = "Post",
     Unknown = "Unknown"
 }
 export default LogAction;

@@ -39,6 +39,8 @@ enum LogAction {
   Resume = 'Resume',
   // Jump to/seek to/reveal/go to/navigate to a target
   Jump = 'Jump',
+  // Post a submission/message/etc. into the target
+  Post = 'Post',
   // Unknown action
   Unknown = 'Unknown',
 }

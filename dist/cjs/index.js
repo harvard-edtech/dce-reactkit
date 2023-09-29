@@ -2506,6 +2506,8 @@ var LogAction;
     LogAction["Resume"] = "Resume";
     // Jump to/seek to/reveal/go to/navigate to a target
     LogAction["Jump"] = "Jump";
+    // Post a submission/message/etc. into the target
+    LogAction["Post"] = "Post";
     // Unknown action
     LogAction["Unknown"] = "Unknown";
 })(LogAction || (LogAction = {}));
