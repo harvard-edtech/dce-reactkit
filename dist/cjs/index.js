@@ -2504,6 +2504,8 @@ var LogAction;
     LogAction["Halt"] = "Halt";
     // Resume a process (resume a halted process)
     LogAction["Resume"] = "Resume";
+    // Jump to/seek to/reveal/go to/navigate to a target
+    LogAction["Jump"] = "Jump";
     // Unknown action
     LogAction["Unknown"] = "Unknown";
 })(LogAction || (LogAction = {}));

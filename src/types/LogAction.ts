@@ -37,6 +37,8 @@ enum LogAction {
   Halt = 'Halt',
   // Resume a process (resume a halted process)
   Resume = 'Resume',
+  // Jump to/seek to/reveal/go to/navigate to a target
+  Jump = 'Jump',
   // Unknown action
   Unknown = 'Unknown',
 }

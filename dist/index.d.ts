@@ -933,6 +933,7 @@ declare enum LogAction {
     Peek = "Peek",
     Halt = "Halt",
     Resume = "Resume",
+    Jump = "Jump",
     Unknown = "Unknown"
 }
 
