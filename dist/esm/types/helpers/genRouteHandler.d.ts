@@ -16,10 +16,12 @@ import LogFunction from '../types/LogFunction';
  *   send (a function that sends a string to the client),
  *   redirect (takes a url and redirects the user to that url),
  *   renderErrorPage (shows a static error page to the user),
+ *   renderInfoPage (shows a static info page to the user),
  *   and returns the value to send to the client as a JSON API response, or
  *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
  *   Note: params also has userId, userFirstName,
- *   userLastName, isLearner, isTTM, isAdmin, and any other variables that
+ *   userLastName, userEmail, userAvatarURL, isLearner, isTTM, isAdmin,
+ *   and any other variables that
  *   are directly added to the session, if the user does have a session.
  */
 declare const genRouteHandler: (opts: {
@@ -40,6 +42,10 @@ declare const genRouteHandler: (opts: {
             code?: string;
             pageTitle?: string;
             status?: number;
+        }) => void;
+        renderInfoPage: (opts: {
+            title: string;
+            body: string;
         }) => void;
         logServerEvent: LogFunction;
     }) => any;
