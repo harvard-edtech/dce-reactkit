@@ -346,6 +346,14 @@ const genRouteHandler = (
         ? launchInfo.userEmail
         : undefined
     );
+    output.userAvatarURL = (
+      launchInfo
+        ? (
+          launchInfo.userImage
+          ?? 'http://www.gravatar.com/avatar/?d=identicon'
+        )
+        : undefined
+    );
     output.isLearner = (
       launchInfo
         ? !!launchInfo.isLearner

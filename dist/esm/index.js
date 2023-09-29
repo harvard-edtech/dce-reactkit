@@ -42170,7 +42170,7 @@ const parseUserAgent = (userAgent) => {
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
+        var _a, _b, _c;
         // Output params
         const output = {};
         /*----------------------------------------*/
@@ -42381,6 +42381,9 @@ const genRouteHandler = (opts) => {
         output.userEmail = (launchInfo
             ? launchInfo.userEmail
             : undefined);
+        output.userAvatarURL = (launchInfo
+            ? ((_b = launchInfo.userImage) !== null && _b !== void 0 ? _b : 'http://www.gravatar.com/avatar/?d=identicon')
+            : undefined);
         output.isLearner = (launchInfo
             ? !!launchInfo.isLearner
             : undefined);
@@ -42391,7 +42394,7 @@ const genRouteHandler = (opts) => {
             ? !!launchInfo.isAdmin
             : undefined);
         output.courseId = (launchInfo
-            ? ((_b = output.courseId) !== null && _b !== void 0 ? _b : launchInfo.courseId)
+            ? ((_c = output.courseId) !== null && _c !== void 0 ? _c : launchInfo.courseId)
             : undefined);
         output.courseName = (launchInfo
             ? launchInfo.contextLabel
@@ -42469,7 +42472,7 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (logOpts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
@@ -42501,24 +42504,24 @@ const genRouteHandler = (opts) => {
                     timestamp,
                     context: (typeof logOpts.context === 'string'
                         ? logOpts.context
-                        : ((_d = ((_c = logOpts.context) !== null && _c !== void 0 ? _c : {})._) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized)),
-                    subcontext: ((_e = logOpts.subcontext) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized),
-                    tags: ((_f = logOpts.tags) !== null && _f !== void 0 ? _f : []),
-                    level: ((_g = logOpts.level) !== null && _g !== void 0 ? _g : LogLevel$1.Info),
-                    metadata: ((_h = logOpts.metadata) !== null && _h !== void 0 ? _h : {}),
+                        : ((_e = ((_d = logOpts.context) !== null && _d !== void 0 ? _d : {})._) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized)),
+                    subcontext: ((_f = logOpts.subcontext) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Context.Uncategorized),
+                    tags: ((_g = logOpts.tags) !== null && _g !== void 0 ? _g : []),
+                    level: ((_h = logOpts.level) !== null && _h !== void 0 ? _h : LogLevel$1.Info),
+                    metadata: ((_j = logOpts.metadata) !== null && _j !== void 0 ? _j : {}),
                 };
                 // Type-specific info
                 const typeSpecificInfo = (('error' in opts && opts.error)
                     ? {
                         type: LogType$1.Error,
-                        errorMessage: (_j = logOpts.error.message) !== null && _j !== void 0 ? _j : 'Unknown message',
-                        errorCode: (_k = logOpts.error.code) !== null && _k !== void 0 ? _k : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_l = logOpts.error.stack) !== null && _l !== void 0 ? _l : 'No stack',
+                        errorMessage: (_k = logOpts.error.message) !== null && _k !== void 0 ? _k : 'Unknown message',
+                        errorCode: (_l = logOpts.error.code) !== null && _l !== void 0 ? _l : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_m = logOpts.error.stack) !== null && _m !== void 0 ? _m : 'No stack',
                     }
                     : {
                         type: LogType$1.Action,
-                        target: ((_m = logOpts.target) !== null && _m !== void 0 ? _m : LogBuiltInMetadata.Target.NoTarget),
-                        action: ((_o = logOpts.action) !== null && _o !== void 0 ? _o : LogAction$1.Unknown),
+                        target: ((_o = logOpts.target) !== null && _o !== void 0 ? _o : LogBuiltInMetadata.Target.NoTarget),
+                        action: ((_p = logOpts.action) !== null && _p !== void 0 ? _p : LogAction$1.Unknown),
                     });
                 // Source-specific info
                 const sourceSpecificInfo = (logOpts.overrideAsClientEvent
