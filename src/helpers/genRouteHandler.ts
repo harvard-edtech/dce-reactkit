@@ -606,7 +606,13 @@ const genRouteHandler = (
       } catch (err) {
         // Print because we cannot store the error
         // eslint-disable-next-line no-console
-        console.error('Could not log the following:', opts);
+        console.error(
+          'Could not log the following:',
+          logOpts,
+          'due to this error:',
+          (err as any ?? {}).message,
+          (err as any ?? {}).stack,
+        );
 
         // Create a dummy log to return
         const dummyMainInfo: LogMainInfo = {

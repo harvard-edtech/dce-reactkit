@@ -42564,7 +42564,7 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (logOpts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
@@ -42648,7 +42648,7 @@ const genRouteHandler = (opts) => {
             catch (err) {
                 // Print because we cannot store the error
                 // eslint-disable-next-line no-console
-                console.error('Could not log the following:', opts);
+                console.error('Could not log the following:', logOpts, 'due to this error:', ((_q = err) !== null && _q !== void 0 ? _q : {}).message, ((_r = err) !== null && _r !== void 0 ? _r : {}).stack);
                 // Create a dummy log to return
                 const dummyMainInfo = {
                     id: '-1',
