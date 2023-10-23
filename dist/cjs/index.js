@@ -6,6 +6,7 @@ var React = require('react');
 var freeSolidSvgIcons = require('@fortawesome/free-solid-svg-icons');
 var reactFontawesome = require('@fortawesome/react-fontawesome');
 var freeRegularSvgIcons = require('@fortawesome/free-regular-svg-icons');
+var bootstrap = require('bootstrap');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -412,7 +413,7 @@ const getModalButtonTypeToLabelAndVariant = () => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$b = `
+const style$a = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -581,7 +582,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default["default"].createElement("style", null, style$b),
+        React__default["default"].createElement("style", null, style$a),
         React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -1081,7 +1082,7 @@ const showSessionExpiredMessage = () => __awaiter(void 0, void 0, void 0, functi
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$a = `
+const style$9 = `
   .AppWrapper-leave-to-url-notice {
     opacity: 0;
 
@@ -1219,7 +1220,7 @@ const AppWrapper = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement("style", null, style$a),
+        React__default["default"].createElement("style", null, style$9),
         modal,
         body));
 };
@@ -1231,7 +1232,7 @@ const AppWrapper = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$9 = `
+const style$8 = `
 /* Container fades in */
 .LoadingSpinner-container {
   animation-name: LoadingSpinner-container-fade-in;
@@ -1309,7 +1310,7 @@ const LoadingSpinner = () => {
     /*------------------------------------------------------------------------*/
     // Add all four blips to a container
     return (React__default["default"].createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default["default"].createElement("style", null, style$9),
+        React__default["default"].createElement("style", null, style$8),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-1 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-2 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-3 me-1" }),
@@ -1323,7 +1324,7 @@ const LoadingSpinner = () => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$8 = `
+const style$7 = `
   /* Tab Box */
   .TabBox-box {
     /* Light Border */
@@ -1403,7 +1404,7 @@ const TabBox = (props) => {
     /*----------------------------------------*/
     // Full UI
     return (React__default["default"].createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
-        React__default["default"].createElement("style", null, style$8),
+        React__default["default"].createElement("style", null, style$7),
         React__default["default"].createElement("div", { className: "TabBox-title-container" },
             React__default["default"].createElement("div", { className: "TabBox-title" }, title)),
         React__default["default"].createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },
@@ -1732,7 +1733,7 @@ const SimpleDateChooser = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$7 = `
+const style$6 = `
   .Drawer-container {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -1766,7 +1767,7 @@ const Drawer = (props) => {
     return (React__default["default"].createElement("div", { className: "Drawer-container", style: {
             backgroundColor: (customBackgroundColor !== null && customBackgroundColor !== void 0 ? customBackgroundColor : undefined),
         } },
-        React__default["default"].createElement("style", null, style$7),
+        React__default["default"].createElement("style", null, style$6),
         children));
 };
 
@@ -1777,7 +1778,7 @@ const Drawer = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$6 = `
+const style$5 = `
   .PopSuccessMark-outer-container {
     position: relative;
     display: inline-block;
@@ -1882,7 +1883,7 @@ const PopSuccessMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "checkmark indicating success" },
-        React__default["default"].createElement("style", null, style$6),
+        React__default["default"].createElement("style", null, style$5),
         React__default["default"].createElement("div", { className: `PopSuccessMark-check-stroke-1 bg-${checkVariant}`, style: {
                 borderRadius: `${sizeRem / 5}rem`,
             } }),
@@ -1898,7 +1899,7 @@ const PopSuccessMark = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$5 = `
+const style$4 = `
   .PopFailureMark-outer-container {
     position: relative;
     display: inline-block;
@@ -2002,7 +2003,7 @@ const PopFailureMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "mark indicating failure" },
-        React__default["default"].createElement("style", null, style$5),
+        React__default["default"].createElement("style", null, style$4),
         React__default["default"].createElement("div", { className: `PopFailureMark-x-stroke-1 bg-${xVariant}`, style: {
                 borderRadius: `${sizeRem / 5}rem`,
             } }),
@@ -2018,7 +2019,7 @@ const PopFailureMark = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$4 = `
+const style$3 = `
   .PopPendingMark-outer-container {
     position: relative;
     display: inline-block;
@@ -2091,7 +2092,7 @@ const PopPendingMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "mark indicating that the item is pending" },
-        React__default["default"].createElement("style", null, style$4),
+        React__default["default"].createElement("style", null, style$3),
         React__default["default"].createElement("div", null,
             React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faHourglass, className: `PopPendingMark-hourglass text-${hourglassVariant}`, style: {
                     fontSize: `${sizeRem * 0.6}rem`,
@@ -2104,27 +2105,27 @@ const PopPendingMark = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$9;
+var ActionType$8;
 (function (ActionType) {
     // Indicate that the text was recently copied
     ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
     // Clear the status
     ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType$9 || (ActionType$9 = {}));
+})(ActionType$8 || (ActionType$8 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$a = (state, action) => {
+const reducer$9 = (state, action) => {
     switch (action.type) {
-        case ActionType$9.IndicateRecentlyCopied: {
+        case ActionType$8.IndicateRecentlyCopied: {
             return {
                 recentlyCopied: true,
             };
         }
-        case ActionType$9.ClearRecentlyCopiedStatus: {
+        case ActionType$8.ClearRecentlyCopiedStatus: {
             return {
                 recentlyCopied: false,
             };
@@ -2150,7 +2151,7 @@ const CopiableBox = (props) => {
         recentlyCopied: false,
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$a, initialState);
+    const [state, dispatch] = React.useReducer(reducer$9, initialState);
     // Destructure common state
     const { recentlyCopied, } = state;
     /*------------------------------------------------------------------------*/
@@ -2170,13 +2171,13 @@ const CopiableBox = (props) => {
         }
         // Show copied notice
         dispatch({
-            type: ActionType$9.IndicateRecentlyCopied,
+            type: ActionType$8.IndicateRecentlyCopied,
         });
         // Wait a moment
         yield waitMs(4000);
         // Hide copied notice
         dispatch({
-            type: ActionType$9.ClearRecentlyCopiedStatus,
+            type: ActionType$8.ClearRecentlyCopiedStatus,
         });
     });
     /*------------------------------------------------------------------------*/
@@ -2232,20 +2233,20 @@ const CopiableBox = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$8;
+var ActionType$7;
 (function (ActionType) {
     // Toggle whether a child are being shown
     ActionType["ToggleChild"] = "toggle-child";
-})(ActionType$8 || (ActionType$8 = {}));
+})(ActionType$7 || (ActionType$7 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$9 = (state, action) => {
+const reducer$8 = (state, action) => {
     switch (action.type) {
-        case ActionType$8.ToggleChild: {
+        case ActionType$7.ToggleChild: {
             return Object.assign(Object.assign({}, state), { childExpanded: Object.assign(Object.assign({}, state.childExpanded), { [String(action.id)]: !state.childExpanded[String(action.id)] }) });
         }
         default: {
@@ -2274,7 +2275,7 @@ const NestableItemList = (props) => {
         childExpanded: initChildExpanded,
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$9, initialState);
+    const [state, dispatch] = React.useReducer(reducer$8, initialState);
     // Destructure common state
     const { childExpanded, } = state;
     /*------------------------------------------------------------------------*/
@@ -2364,7 +2365,7 @@ const NestableItemList = (props) => {
                     backgroundColor: 'transparent',
                 }, type: "button", onClick: () => {
                     dispatch({
-                        type: ActionType$8.ToggleChild,
+                        type: ActionType$7.ToggleChild,
                         id: item.id,
                     });
                 }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}` },
@@ -2648,7 +2649,7 @@ var SortType;
 })(SortType || (SortType = {}));
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$7;
+var ActionType$6;
 (function (ActionType) {
     // Toggle sort column param
     ActionType["ToggleSortColumn"] = "toggle-sort-column";
@@ -2660,16 +2661,16 @@ var ActionType$7;
     ActionType["ShowAllColumns"] = "show-all-columns";
     // Hide all columns
     ActionType["HideAllColumns"] = "hide-all-columns";
-})(ActionType$7 || (ActionType$7 = {}));
+})(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$8 = (state, action) => {
+const reducer$7 = (state, action) => {
     switch (action.type) {
-        case ActionType$7.ToggleSortColumn: {
+        case ActionType$6.ToggleSortColumn: {
             if (action.param !== state.sortColumnParam) {
                 // Different column param
                 return Object.assign(Object.assign({}, state), { sortColumnParam: action.param, sortType: SortType.Ascending });
@@ -2681,22 +2682,22 @@ const reducer$8 = (state, action) => {
             // Stop sorting by column
             return Object.assign(Object.assign({}, state), { sortColumnParam: undefined, sortType: SortType.Ascending });
         }
-        case ActionType$7.UpdateColumnVisibility: {
+        case ActionType$6.UpdateColumnVisibility: {
             const { columnVisibilityMap } = state;
             columnVisibilityMap[action.param] = action.visible;
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$7.ToggleColVisCusModalVisibility: {
+        case ActionType$6.ToggleColVisCusModalVisibility: {
             return Object.assign(Object.assign({}, state), { columnVisibilityCustomizationModalVisible: !state.columnVisibilityCustomizationModalVisible });
         }
-        case ActionType$7.ShowAllColumns: {
+        case ActionType$6.ShowAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = true;
             });
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$7.HideAllColumns: {
+        case ActionType$6.HideAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = false;
@@ -2743,7 +2744,7 @@ const IntelliTable = (props) => {
         columnVisibilityCustomizationModalVisible: false,
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$8, initialState);
+    const [state, dispatch] = React.useReducer(reducer$7, initialState);
     // Destructure common state
     const { sortColumnParam, sortType, columnVisibilityMap, columnVisibilityCustomizationModalVisible, } = state;
     /*------------------------------------------------------------------------*/
@@ -2766,13 +2767,13 @@ const IntelliTable = (props) => {
                     return alert('Choose at least one column', 'To continue, you have to choose at least one column to show');
                 }
                 dispatch({
-                    type: ActionType$7.ToggleColVisCusModalVisibility,
+                    type: ActionType$6.ToggleColVisCusModalVisibility,
                 });
             }, okayVariant: Variant$1.Light },
             columns.map((column) => {
                 return (React__default["default"].createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
                         dispatch({
-                            type: ActionType$7.UpdateColumnVisibility,
+                            type: ActionType$6.UpdateColumnVisibility,
                             param: column.param,
                             visible: checked,
                         });
@@ -2781,12 +2782,12 @@ const IntelliTable = (props) => {
             React__default["default"].createElement("div", { className: "mt-3" }, "Or you can:"),
             React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-select-all-columns`, className: "btn btn-secondary me-2", "aria-label": `show all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$7.ShowAllColumns,
+                        type: ActionType$6.ShowAllColumns,
                     });
                 } }, "Select All"),
             React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-select-none-columns`, className: "btn btn-secondary", "aria-label": `hide all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$7.HideAllColumns,
+                        type: ActionType$6.HideAllColumns,
                     });
                 } }, "Deselect All")));
     }
@@ -2837,7 +2838,7 @@ const IntelliTable = (props) => {
                 React__default["default"].createElement("div", null,
                     React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-sort-by-${column.param}-button`, className: `btn btn-${sortingByThisColumn ? 'light' : 'secondary'} btn-sm ms-1 ps-1 pe-1 pt-0 pb-0`, "aria-label": sortButtonAriaLabel, onClick: () => {
                             dispatch({
-                                type: ActionType$7.ToggleSortColumn,
+                                type: ActionType$6.ToggleSortColumn,
                                 param: column.param,
                             });
                         } },
@@ -3026,7 +3027,7 @@ const IntelliTable = (props) => {
                 React__default["default"].createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: filename, csv: csv }),
                 React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary ms-2", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
                         dispatch({
-                            type: ActionType$7.ToggleColVisCusModalVisibility,
+                            type: ActionType$6.ToggleColVisCusModalVisibility,
                         });
                     } },
                     "Show/Hide Cols",
@@ -3058,7 +3059,7 @@ var FilterDrawer;
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$3 = `
+const style$2 = `
   .LogReviewer-outer-container {
     /* Full Screen */
     display: inline-block;
@@ -3392,7 +3393,7 @@ const genHumanReadableName = (machineReadableName) => {
 };
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$6;
+var ActionType$5;
 (function (ActionType) {
     // Show the loading bar
     ActionType["StartLoading"] = "start-loading";
@@ -3414,45 +3415,45 @@ var ActionType$6;
     ActionType["UpdateActionErrorFilterState"] = "update-action-error-filter-state";
     // Update the advanced filter state
     ActionType["UpdateAdvancedFilterState"] = "update-advanced-filter-state";
-})(ActionType$6 || (ActionType$6 = {}));
+})(ActionType$5 || (ActionType$5 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$7 = (state, action) => {
+const reducer$6 = (state, action) => {
     switch (action.type) {
-        case ActionType$6.StartLoading: {
+        case ActionType$5.StartLoading: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$6.FinishLoading: {
+        case ActionType$5.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, logMap: action.logMap });
         }
-        case ActionType$6.ToggleFilterDrawer: {
+        case ActionType$5.ToggleFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
                     ? undefined // hide
                     : action.filterDrawer) });
         }
-        case ActionType$6.HideFilterDrawer: {
+        case ActionType$5.HideFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
         }
-        case ActionType$6.ResetFilters: {
+        case ActionType$5.ResetFilters: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState });
         }
-        case ActionType$6.UpdateDateFilterState: {
+        case ActionType$5.UpdateDateFilterState: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
         }
-        case ActionType$6.UpdateContextFilterState: {
+        case ActionType$5.UpdateContextFilterState: {
             return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
         }
-        case ActionType$6.UpdateTagFilterState: {
+        case ActionType$5.UpdateTagFilterState: {
             return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
         }
-        case ActionType$6.UpdateActionErrorFilterState: {
+        case ActionType$5.UpdateActionErrorFilterState: {
             return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
         }
-        case ActionType$6.UpdateAdvancedFilterState: {
+        case ActionType$5.UpdateAdvancedFilterState: {
             return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
         }
         default: {
@@ -3581,7 +3582,7 @@ const LogReviewer = (props) => {
         advancedFilterState: initAdvancedFilterState,
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$7, initialState);
+    const [state, dispatch] = React.useReducer(reducer$6, initialState);
     // Destructure common state
     const { loading, logMap, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = state;
     /*------------------------------------------------------------------------*/
@@ -3631,7 +3632,7 @@ const LogReviewer = (props) => {
     const handleDateRangeUpdated = (newDateFilterState) => __awaiter(void 0, void 0, void 0, function* () {
         // Update state
         dispatch({
-            type: ActionType$6.UpdateDateFilterState,
+            type: ActionType$5.UpdateDateFilterState,
             dateFilterState: newDateFilterState,
         });
         // Check which year/month combos we need to load
@@ -3642,7 +3643,7 @@ const LogReviewer = (props) => {
         }
         // Start loading
         dispatch({
-            type: ActionType$6.StartLoading,
+            type: ActionType$5.StartLoading,
         });
         // Load required months
         try {
@@ -3666,7 +3667,7 @@ const LogReviewer = (props) => {
         }
         // Finish loading
         dispatch({
-            type: ActionType$6.FinishLoading,
+            type: ActionType$5.FinishLoading,
             logMap,
         });
     });
@@ -3705,7 +3706,7 @@ const LogReviewer = (props) => {
             React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Date,
                         });
                     } },
@@ -3713,7 +3714,7 @@ const LogReviewer = (props) => {
                     "Date"),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Context,
                         });
                     } },
@@ -3721,7 +3722,7 @@ const LogReviewer = (props) => {
                     "Context"),
                 (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Tag,
                         });
                     } },
@@ -3729,7 +3730,7 @@ const LogReviewer = (props) => {
                     "Tag")),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Action,
                         });
                     } },
@@ -3737,7 +3738,7 @@ const LogReviewer = (props) => {
                     "Action"),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle advanced filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
+                            type: ActionType$5.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Advanced,
                         });
                     } },
@@ -3745,7 +3746,7 @@ const LogReviewer = (props) => {
                     "Advanced"),
                 React__default["default"].createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
                         dispatch({
-                            type: ActionType$6.ResetFilters,
+                            type: ActionType$5.ResetFilters,
                             initActionErrorFilterState,
                             initAdvancedFilterState,
                             initContextFilterState,
@@ -3867,7 +3868,7 @@ const LogReviewer = (props) => {
                             }
                         });
                         dispatch({
-                            type: ActionType$6.UpdateContextFilterState,
+                            type: ActionType$5.UpdateContextFilterState,
                             contextFilterState,
                         });
                     } }));
@@ -3882,7 +3883,7 @@ const LogReviewer = (props) => {
                         return (React__default["default"].createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
                                 tagFilterState[tag] = checked;
                                 dispatch({
-                                    type: ActionType$6.UpdateTagFilterState,
+                                    type: ActionType$5.UpdateTagFilterState,
                                     tagFilterState,
                                 });
                             } }));
@@ -3895,21 +3896,21 @@ const LogReviewer = (props) => {
                         React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
                                 actionErrorFilterState.type = undefined;
                                 dispatch({
-                                    type: ActionType$6.UpdateActionErrorFilterState,
+                                    type: ActionType$5.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
                         React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Action;
                                 dispatch({
-                                    type: ActionType$6.UpdateActionErrorFilterState,
+                                    type: ActionType$5.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
                         React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Error;
                                 dispatch({
-                                    type: ActionType$6.UpdateActionErrorFilterState,
+                                    type: ActionType$5.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
@@ -3921,7 +3922,7 @@ const LogReviewer = (props) => {
                             return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
                                     dispatch({
-                                        type: ActionType$6.UpdateActionErrorFilterState,
+                                        type: ActionType$5.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -3932,7 +3933,7 @@ const LogReviewer = (props) => {
                             return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
                                     actionErrorFilterState.target[target] = checked;
                                     dispatch({
-                                        type: ActionType$6.UpdateActionErrorFilterState,
+                                        type: ActionType$5.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -3944,7 +3945,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
                                     actionErrorFilterState.errorMessage = e.target.value;
                                     dispatch({
-                                        type: ActionType$6.UpdateActionErrorFilterState,
+                                        type: ActionType$5.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } })),
@@ -3955,7 +3956,7 @@ const LogReviewer = (props) => {
                                         .trim()
                                         .toUpperCase());
                                     dispatch({
-                                        type: ActionType$6.UpdateActionErrorFilterState,
+                                        type: ActionType$5.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }))))));
@@ -3969,7 +3970,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
                                     advancedFilterState.userFirstName = e.target.value;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3978,7 +3979,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
                                     advancedFilterState.userLastName = e.target.value;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -3988,7 +3989,7 @@ const LogReviewer = (props) => {
                                     advancedFilterState.userEmail = ((e.target.value)
                                         .trim());
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4002,7 +4003,7 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4010,21 +4011,21 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
                                     advancedFilterState.includeLearners = checked;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
                             React__default["default"].createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
                                     advancedFilterState.includeTTMs = checked;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
                             React__default["default"].createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
                                     advancedFilterState.includeAdmins = checked;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
@@ -4034,7 +4035,7 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
                                     advancedFilterState.courseName = e.target.value;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4048,7 +4049,7 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }))),
@@ -4057,21 +4058,21 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
                                     advancedFilterState.isMobile = undefined;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default["default"].createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
                                     advancedFilterState.isMobile = true;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default["default"].createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
                                     advancedFilterState.isMobile = false;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true }))),
@@ -4080,21 +4081,21 @@ const LogReviewer = (props) => {
                             React__default["default"].createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
                                     advancedFilterState.source = undefined;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default["default"].createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Client;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default["default"].createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Server;
                                     dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
+                                        type: ActionType$5.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true })),
@@ -4105,7 +4106,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$6.UpdateAdvancedFilterState,
+                                            type: ActionType$5.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })),
@@ -4115,7 +4116,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$6.UpdateAdvancedFilterState,
+                                            type: ActionType$5.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })))))));
@@ -4394,7 +4395,7 @@ const LogReviewer = (props) => {
     }
     /* ---------- Wrap in Modal --------- */
     return (React__default["default"].createElement("div", { className: "LogReviewer-outer-container" },
-        React__default["default"].createElement("style", null, style$3),
+        React__default["default"].createElement("style", null, style$2),
         React__default["default"].createElement("div", { className: "LogReviewer-inner-container" },
             React__default["default"].createElement("div", { className: "LogReviewer-header" },
                 React__default["default"].createElement("div", { className: "LogReviewer-header-title" },
@@ -39720,11 +39721,11 @@ var CreatableSelect$1 = CreatableSelect;
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$5;
+var ActionType$4;
 (function (ActionType) {
     // Update the input value
     ActionType["SetInputValue"] = "SetInputValue";
-})(ActionType$5 || (ActionType$5 = {}));
+})(ActionType$4 || (ActionType$4 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -39732,9 +39733,9 @@ var ActionType$5;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$6 = (state, action) => {
+const reducer$5 = (state, action) => {
     switch (action.type) {
-        case ActionType$5.SetInputValue: {
+        case ActionType$4.SetInputValue: {
             return Object.assign(Object.assign({}, state), { inputValue: action.value });
         }
         default: {
@@ -39754,7 +39755,7 @@ const CreatableMultiselect = (props) => {
         inputValue: '',
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$6, initialState);
+    const [state, dispatch] = React.useReducer(reducer$5, initialState);
     // Destructure common state
     const { inputValue } = state;
     /*------------------------------------------------------------------------*/
@@ -39831,7 +39832,7 @@ const CreatableMultiselect = (props) => {
         }
         // Reset text field to empty because the values have been added
         dispatch({
-            type: ActionType$5.SetInputValue,
+            type: ActionType$4.SetInputValue,
             value: '',
         });
     };
@@ -39870,7 +39871,7 @@ const CreatableMultiselect = (props) => {
         else {
             // simply update the input value to the new input value
             dispatch({
-                type: ActionType$5.SetInputValue,
+                type: ActionType$4.SetInputValue,
                 value: newValue,
             });
         }
@@ -39915,20 +39916,20 @@ const CreatableMultiselect = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$2 = `
+const style$1 = `
   .AddOrEditDBEntry-input-label {
     min-width: 7rem;
   }
 `;
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$4;
+var ActionType$3;
 (function (ActionType) {
     // Update the DBEntry
     ActionType["UpdateDBEntry"] = "UpdateDBEntry";
     // Start the save spinner
     ActionType["StartSave"] = "StartSave";
-})(ActionType$4 || (ActionType$4 = {}));
+})(ActionType$3 || (ActionType$3 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -39936,12 +39937,12 @@ var ActionType$4;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$5 = (state, action) => {
+const reducer$4 = (state, action) => {
     switch (action.type) {
-        case ActionType$4.UpdateDBEntry: {
+        case ActionType$3.UpdateDBEntry: {
             return Object.assign(Object.assign({}, state), { entry: action.dbEntry });
         }
-        case ActionType$4.StartSave: {
+        case ActionType$3.StartSave: {
             return Object.assign(Object.assign({}, state), { saving: true });
         }
         default: {
@@ -39966,7 +39967,7 @@ const AddOrEditDBEntry = (props) => {
         saving: false,
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$5, initialState);
+    const [state, dispatch] = React.useReducer(reducer$4, initialState);
     // Destructure common state
     const { entry, saving, } = state;
     /*------------------------------------------------------------------------*/
@@ -39978,7 +39979,7 @@ const AddOrEditDBEntry = (props) => {
      */
     const save = () => __awaiter(void 0, void 0, void 0, function* () {
         // Start the save loading indicator
-        dispatch({ type: ActionType$4.StartSave });
+        dispatch({ type: ActionType$3.StartSave });
         // add all default values to the entry
         entryFields.forEach((field) => {
             if (field.defaultValue && !entry[field.objectKey]) {
@@ -40161,7 +40162,7 @@ const AddOrEditDBEntry = (props) => {
                                 return (React__default["default"].createElement(RadioButton, { key: choice.value, text: choice.title, selected: entry[field.objectKey] === choice.value, onSelected: () => {
                                         entry[field.objectKey] = choice.value;
                                         dispatch({
-                                            type: ActionType$4.UpdateDBEntry,
+                                            type: ActionType$3.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -40173,7 +40174,7 @@ const AddOrEditDBEntry = (props) => {
                         React__default["default"].createElement("input", { disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value);
                                 dispatch({
-                                    type: ActionType$4.UpdateDBEntry,
+                                    type: ActionType$3.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -40186,7 +40187,7 @@ const AddOrEditDBEntry = (props) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^0-9]/g, ''));
                                 dispatch({
-                                    type: ActionType$4.UpdateDBEntry,
+                                    type: ActionType$3.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -40216,7 +40217,7 @@ const AddOrEditDBEntry = (props) => {
                                         }
                                         // Save
                                         dispatch({
-                                            type: ActionType$4.UpdateDBEntry,
+                                            type: ActionType$3.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -40231,7 +40232,7 @@ const AddOrEditDBEntry = (props) => {
                                     // Update entry and save
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$4.UpdateDBEntry,
+                                        type: ActionType$3.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -40244,7 +40245,7 @@ const AddOrEditDBEntry = (props) => {
                             React__default["default"].createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.NumberArray, values: entry[field.objectKey] || [], onChange: (values) => {
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$4.UpdateDBEntry,
+                                        type: ActionType$3.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -40293,7 +40294,7 @@ const AddOrEditDBEntry = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default["default"].createElement("div", { className: "alert alert-light text-black" },
-        React__default["default"].createElement("style", null, style$2),
+        React__default["default"].createElement("style", null, style$1),
         body));
 };
 
@@ -40318,7 +40319,7 @@ const generateEndpointPath = (collectionName, adminsOnly) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$3;
+var ActionType$2;
 (function (ActionType) {
     // Show adder
     ActionType["ShowAdder"] = "ShowAdder";
@@ -40332,7 +40333,7 @@ var ActionType$3;
     ActionType["StartDelete"] = "StartDelete";
     // Finish deletion process
     ActionType["FinishDelete"] = "FinishDelete";
-})(ActionType$3 || (ActionType$3 = {}));
+})(ActionType$2 || (ActionType$2 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -40340,18 +40341,18 @@ var ActionType$3;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$4 = (state, action) => {
+const reducer$3 = (state, action) => {
     switch (action.type) {
-        case ActionType$3.FinishLoading: {
+        case ActionType$2.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, dbEntries: action.dbEntries });
         }
-        case ActionType$3.ShowAdder: {
+        case ActionType$2.ShowAdder: {
             return Object.assign(Object.assign({}, state), { adding: true, dbEntryToEdit: undefined });
         }
-        case ActionType$3.ShowEditor: {
+        case ActionType$2.ShowEditor: {
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: action.dbEntry });
         }
-        case ActionType$3.FinishAdd: {
+        case ActionType$2.FinishAdd: {
             // Handle cancel
             const finishedEntry = action.dbEntry;
             if (!finishedEntry) {
@@ -40375,10 +40376,10 @@ const reducer$4 = (state, action) => {
             // Update the state
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: undefined, dbEntries: updatedDbEntries });
         }
-        case ActionType$3.StartDelete: {
+        case ActionType$2.StartDelete: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$3.FinishDelete: {
+        case ActionType$2.FinishDelete: {
             return Object.assign(Object.assign({}, state), { loading: false, 
                 // Remove the deleted entry from the list
                 dbEntries: state.dbEntries.filter((entry) => {
@@ -40404,7 +40405,7 @@ const DBEntryManagerPanel = (props) => {
         loading: true,
     };
     // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$4, initialState);
+    const [state, dispatch] = React.useReducer(reducer$3, initialState);
     // Destructure common state
     const { adding, dbEntryToEdit, dbEntries, loading, } = state;
     /*------------------------------------------------------------------------*/
@@ -40430,7 +40431,7 @@ const DBEntryManagerPanel = (props) => {
         try {
             // Start loader
             dispatch({
-                type: ActionType$3.StartDelete,
+                type: ActionType$2.StartDelete,
             });
             // Perform deletion
             yield visitServerEndpoint({
@@ -40439,7 +40440,7 @@ const DBEntryManagerPanel = (props) => {
             });
             // Finish loader
             dispatch({
-                type: ActionType$3.FinishDelete,
+                type: ActionType$2.FinishDelete,
                 dbEntry: entry,
                 idPropName,
             });
@@ -40468,7 +40469,7 @@ const DBEntryManagerPanel = (props) => {
                 });
                 // Save loaded data
                 dispatch({
-                    type: ActionType$3.FinishLoading,
+                    type: ActionType$2.FinishLoading,
                     dbEntries: data,
                 });
             }
@@ -40511,7 +40512,7 @@ const DBEntryManagerPanel = (props) => {
                                 React__default["default"].createElement("span", { className: "d-none d-md-inline ms-1" }, "Remove")),
                             !disableEdit && (React__default["default"].createElement("button", { type: "button", id: `DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
                                     dispatch({
-                                        type: ActionType$3.ShowEditor,
+                                        type: ActionType$2.ShowEditor,
                                         dbEntry: entry,
                                     });
                                 } },
@@ -40521,7 +40522,7 @@ const DBEntryManagerPanel = (props) => {
                 React__default["default"].createElement("div", { className: "d-grid" },
                     React__default["default"].createElement("button", { type: "button", id: "DBEntryManagerPanel-add-entry", className: "btn btn-lg btn-primary", "aria-label": `add a new ${itemName} entry to the list of entries`, onClick: () => {
                             dispatch({
-                                type: ActionType$3.ShowAdder,
+                                type: ActionType$2.ShowAdder,
                             });
                         } },
                         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faPlus, className: "me-2" }),
@@ -40533,7 +40534,7 @@ const DBEntryManagerPanel = (props) => {
     if (!loading && (adding || dbEntryToEdit)) {
         body = (React__default["default"].createElement(AddOrEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, itemName: itemName, onFinished: (entry) => {
                 dispatch({
-                    type: ActionType$3.FinishAdd,
+                    type: ActionType$2.FinishAdd,
                     dbEntry: entry,
                     idPropName,
                 });
@@ -40550,228 +40551,6 @@ const DBEntryManagerPanel = (props) => {
  * @author Gabe Abrams
  */
 /*------------------------------------------------------------------------*/
-/* ------------------------------ Constants ----------------------------- */
-/*------------------------------------------------------------------------*/
-// Tooltip widths
-const TOOLTIP_WIDTH_THIN_REM = 5;
-const TOOLTIP_WIDTH_NORMAL_REM = 7;
-const TOOLTIP_WIDTH_WIDE_REM = 10;
-// Tooltip border radius
-const TOOLTIP_BORDER_RADIUS_REM = 0.3;
-/*------------------------------------------------------------------------*/
-/* -------------------------------- Style ------------------------------- */
-/*------------------------------------------------------------------------*/
-const style$1 = `
-  /* Container for contents and tooltip */
-  .Tooltip-outer-container {
-    position: relative;
-  }
-
-  /* Container for just tooltip */
-  .Tooltip-tooltip-container {
-    /* Position in middle but take no space */
-    /* (so layout of page is unaffected) */
-    position: absolute;
-    display: inline-block;
-    top: 0;
-    left: 50%;
-    height: 0;
-    width: 0;
-    overflow: visible;
-  }
-
-  /* Tooltip */
-  .Tooltip-tooltip {
-    /* Position above item */
-    display: inline-block;
-    position: absolute;
-    top: -2.3rem;
-    height: 1.8rem;
-    z-index: 1;
-
-    /* Use standard black font */
-    font-size: 1rem;
-    color: black;
-
-    /* Non-interactive */
-    pointer-events: none;
-  }
-
-  /* Tooltip box (the rectangle surrounding the text) */
-  .Tooltip-box,
-  .Tooltip-box-shadow,
-  .Tooltip-box-highlight {
-    /* Fill all space with rectangle */
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-
-    /* Rounded border */
-    border: 0.15rem solid black;
-    border-radius: ${TOOLTIP_BORDER_RADIUS_REM}rem;
-  }
-
-  /* Tooltip highlight (the bright background to the text) */
-  .Tooltip-box-highlight {
-    /* Bootstrap warning variant background */
-    background-color: rgb(255, 193, 7);
-    border-radius: ${TOOLTIP_BORDER_RADIUS_REM}rem;
-
-    /* Place on top */
-    z-index: -1;
-  }
-
-  /* Tooltip box (the black rectangle) */
-  .Tooltip-box {
-    /* Plain black background */
-    background-color: black;
-
-    /* Place in middle */
-    z-index: -2;
-  }
-
-  /* Tooltip box shadow (the white shadow beneath the box) */
-  .Tooltip-box-shadow {
-    /* White shadow */
-    box-shadow: 0 0 0.3rem white;
-
-    /* Place beneath */
-    z-index: -3;
-  }
-
-  /* Tooltip contents (the text and icon) */
-  .Tooltip-contents {
-    /* Center text, don't allow overflow */
-    white-space: nowrap;
-    overflow: hidden;
-    text-align: center;
-    text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    /* Space within parent */
-    z-index: 1;
-    padding-left: 0.2rem;
-    padding-right: 0.2rem;
-    height: 100%;
-  }
-
-  /* Tooltip text */
-  .Tooltip-text {
-    /* Center text, add ellipsis */
-    overflow: hidden;
-    text-align: center;
-    text-overflow: ellipsis;
-  }
-
-  /* Classes to switch between tooltip visible/hidden */
-  .Tooltip-tooltip-visible-true {
-    opacity: 1;
-  }
-  .Tooltip-tooltip-visible-false {
-    opacity: 0;
-  }
-
-  /* Classes to switch between tooltip sizes */
-  .Tooltip-size-thin {
-    width: ${TOOLTIP_WIDTH_THIN_REM}rem;
-    left: calc(50% - ${TOOLTIP_WIDTH_THIN_REM / 2}rem);
-  }
-  .Tooltip-size-normal {
-    width: ${TOOLTIP_WIDTH_NORMAL_REM}rem;
-    left: calc(50% - ${TOOLTIP_WIDTH_NORMAL_REM / 2}rem);
-  }
-  .Tooltip-size-wide {
-    width: ${TOOLTIP_WIDTH_WIDE_REM}rem;
-    left: calc(50% - ${TOOLTIP_WIDTH_WIDE_REM / 2}rem);
-  }
-
-  /* Arrow (beneath tooltip) */
-  .Tooltip-arrow,
-  .Tooltip-arrow-shadow {
-    /* Position beneath tooltip */
-    position: absolute;
-    top: -1.5rem;
-    font-size: 1.5rem;
-    left: calc(50% - 0.5rem);
-    width: 0;
-    display: inline-block;
-
-    /* Non-interactive */
-    pointer-events: none;
-  }
-
-  /* Arrow itself */
-  .Tooltip-arrow {
-    color: black;
-    z-index: 4;
-  }
-
-  /* Arrow shadow */
-  .Tooltip-arrow-shadow {
-    z-index: -1;
-
-    /* Blur a white version of the caret as a shadow */
-    color: white;
-    filter: blur(0.2rem);
-  }
-
-  /* Classes to switch between arrow visible/hidden */
-  .Tooltip-arrow-visible-true {
-    opacity: 1;
-  }
-  .Tooltip-arrow-visible-false {
-    opacity: 0;
-  }
-`;
-/* ------------- Actions ------------ */
-// Types of actions
-var ActionType$2;
-(function (ActionType) {
-    // Make the tooltip visible
-    ActionType["Show"] = "Show";
-    // Make the tooltip invisible
-    ActionType["Hide"] = "Hide";
-    // Set nudge pixels
-    ActionType["SetNudgePx"] = "SetNudgePx";
-    // Set whether bottom left corner should be square
-    ActionType["SetSquareBottomLeft"] = "SetSquareBottomLeft";
-    // Set whether bottom right corner should be square
-    ActionType["SetSquareBottomRight"] = "SetSquareBottomRight";
-})(ActionType$2 || (ActionType$2 = {}));
-/**
- * Reducer that executes actions
- * @author Gabe Abrams
- * @param state current state
- * @param action action to execute
- */
-const reducer$3 = (state, action) => {
-    switch (action.type) {
-        case ActionType$2.Show: {
-            return Object.assign(Object.assign({}, state), { isVisible: true });
-        }
-        case ActionType$2.Hide: {
-            return Object.assign(Object.assign({}, state), { isVisible: false, nudgePx: 0 });
-        }
-        case ActionType$2.SetNudgePx: {
-            return Object.assign(Object.assign({}, state), { nudgePx: action.nudgePx });
-        }
-        case ActionType$2.SetSquareBottomLeft: {
-            return Object.assign(Object.assign({}, state), { squareBottomLeft: action.squareBottomLeft });
-        }
-        case ActionType$2.SetSquareBottomRight: {
-            return Object.assign(Object.assign({}, state), { squareBottomRight: action.squareBottomRight });
-        }
-        default: {
-            return state;
-        }
-    }
-};
-/*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const Tooltip = (props) => {
@@ -40780,21 +40559,10 @@ const Tooltip = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { icon, text, children, wide, thin, containerIsDisplayBlock, } = props;
-    /* -------------- State ------------- */
-    // Initial state
-    const initialState = {
-        isVisible: false,
-        nudgePx: 0,
-    };
-    // Initialize state
-    const [state, dispatch] = React.useReducer(reducer$3, initialState);
-    // Destructure common state
-    const { isVisible, nudgePx, squareBottomLeft, squareBottomRight, } = state;
+    const { text, children, } = props;
     /* -------------- Refs -------------- */
-    // Initialize refs
-    const tooltipContainer = React.useRef(null);
-    const arrowElement = React.useRef(null);
+    // Child ref
+    const childRef = React.useRef(undefined);
     /*------------------------------------------------------------------------*/
     /* ------------------------- Lifecycle Functions ------------------------ */
     /*------------------------------------------------------------------------*/
@@ -40803,109 +40571,29 @@ const Tooltip = (props) => {
      * @author Gabe Abrams
      */
     React.useEffect(() => {
-        // Update tooltip container position
-        if (tooltipContainer.current && isVisible) {
-            // Get the tooltip container location
-            const tooltipContainerRect = (tooltipContainer
-                .current
-                .getBoundingClientRect());
-            // Get the window width
-            const windowWidth = window.innerWidth;
-            // Calculate new nudge value
-            let newNudgePx;
-            if (tooltipContainerRect.left < 0) {
-                // Tooltip is off the left side of the screen
-                newNudgePx = -1 * tooltipContainerRect.left;
-            }
-            else if (tooltipContainerRect.right > windowWidth) {
-                // Tooltip is off the right side of the screen
-                newNudgePx = -1 * (tooltipContainerRect.right - windowWidth);
-            }
-            else {
-                // Tooltip is in the middle of the screen
-                newNudgePx = 0;
-            }
-            // Update state
-            dispatch({
-                type: ActionType$2.SetNudgePx,
-                nudgePx: newNudgePx,
-            });
+        // Skip if no child
+        if (!childRef.current) {
+            return;
         }
-        // Update border rounding
-        if (arrowElement.current && isVisible) {
-            // Get the arrow location
-            const arrowRect = (arrowElement
-                .current
-                .getBoundingClientRect());
-            // REM in pixels given font size
-            const remInPixels = Number.parseInt(getComputedStyle(document.documentElement).fontSize, 10);
-            // Set bottom left corner rounding
-            dispatch({
-                type: ActionType$2.SetSquareBottomLeft,
-                squareBottomLeft: (arrowRect.left < (TOOLTIP_BORDER_RADIUS_REM * remInPixels)),
-            });
-            // Set bottom right corner rounding
-            dispatch({
-                type: ActionType$2.SetSquareBottomRight,
-                squareBottomRight: (arrowRect.right
-                    > window.innerWidth - (TOOLTIP_BORDER_RADIUS_REM * remInPixels)),
-            });
-        }
-    }, [isVisible]);
+        // Initialize tooltip
+        const t = new bootstrap.Tooltip(childRef.current, {
+            title: text,
+            placement: 'top',
+            trigger: 'hover',
+        });
+        // Clean up tooltip
+        return () => {
+            t.dispose();
+        };
+    }, [text]);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
-    // Determine size
-    let size = 'normal';
-    if (wide) {
-        size = 'wide';
-    }
-    else if (thin) {
-        size = 'thin';
-    }
-    // Render
-    return (React__default["default"].createElement("div", { className: `Tooltip-outer-container ${containerIsDisplayBlock ? 'd-block' : 'd-inline-block'}}`, "aria-label": text, onMouseEnter: () => {
-            dispatch({
-                type: ActionType$2.Show,
-            });
-        }, onMouseLeave: () => {
-            dispatch({
-                type: ActionType$2.Hide,
-            });
-        }, onFocus: () => {
-            dispatch({
-                type: ActionType$2.Show,
-            });
-        }, onBlur: () => {
-            dispatch({
-                type: ActionType$2.Hide,
-            });
-        } },
-        React__default["default"].createElement("style", null, style$1),
-        children,
-        React__default["default"].createElement("div", { className: `Tooltip-arrow Tooltip-arrow-visible-${isVisible ? 'true' : 'false'}`, ref: arrowElement },
-            React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCaretDown })),
-        React__default["default"].createElement("div", { className: `Tooltip-arrow-shadow Tooltip-arrow-visible-${isVisible ? 'true' : 'false'}` },
-            React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCaretDown })),
-        React__default["default"].createElement("div", { className: "Tooltip-tooltip-container" },
-            React__default["default"].createElement("div", { className: `Tooltip-tooltip Tooltip-tooltip-visible-${isVisible ? 'true' : 'false'} Tooltip-size-${size}`, role: "tooltip", ref: tooltipContainer, style: {
-                    transform: `translateX(${nudgePx}px)`,
-                } },
-                React__default["default"].createElement("div", { className: "Tooltip-box-highlight" }),
-                React__default["default"].createElement("div", { className: "Tooltip-box", style: {
-                        borderBottomLeftRadius: squareBottomLeft ? 0 : undefined,
-                        borderBottomRightRadius: squareBottomRight ? 0 : undefined,
-                    } }),
-                React__default["default"].createElement("div", { className: "Tooltip-box-shadow", style: {
-                        borderBottomLeftRadius: squareBottomLeft ? 0 : undefined,
-                        borderBottomRightRadius: squareBottomRight ? 0 : undefined,
-                    } }),
-                React__default["default"].createElement("div", { className: "Tooltip-contents" },
-                    icon && (React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: icon, className: "me-1" })),
-                    React__default["default"].createElement("span", { className: "Tooltip-text" }, text))))));
+    // Clone child and add ref
+    return React__default["default"].cloneElement(children, { ref: childRef });
 };
 
 /**

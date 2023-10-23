@@ -588,12 +588,8 @@ declare const DBEntryManagerPanel: React.FC<Props$4>;
  */
 
 type Props$3 = {
-    icon?: IconProp;
     text: string;
-    children: React.ReactNode;
-    wide?: boolean;
-    thin?: boolean;
-    containerIsDisplayBlock?: boolean;
+    children: JSX.Element;
 };
 declare const Tooltip: React.FC<Props$3>;
 
