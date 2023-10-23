@@ -632,16 +632,54 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
     body = children;
   }
 
+  /* ------------- Tooltip ------------ */
+
+  const tooltipStyle = (
+    isDarkModeOn()
+      ? `
+        .tooltip-inner {
+          background-color: white;
+          color: black;
+          border: 0.1rem solid black;
+        }
+        div[data-popper-placement="top"] .tooltip-arrow::before {
+          border-top-color: white !important;
+          transform: translate(0, -0.05rem);
+        }
+      `
+      : `
+        .tooltip-inner {
+          background-color: black;
+          color: black;
+          border: 0.1rem solid white;
+        }
+        div[data-popper-placement="top"] .tooltip-arrow::before {
+          border-top-color: black !important;
+          transform: translate(0, -0.05rem);
+        }
+      `
+  );
+
   /*----------------------------------------*/
   /* --------------- Main UI -------------- */
   /*----------------------------------------*/
 
   return (
     <>
+      {/* Style */}
       <style>
         {style}
       </style>
+
+      {/* Tooltip Style */}
+      <style>
+        {tooltipStyle}
+      </style>
+
+      {/* Modal */}
       {modal}
+
+      {/* Body */}
       {body}
     </>
   );

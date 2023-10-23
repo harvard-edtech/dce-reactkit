@@ -1190,11 +1190,36 @@ const AppWrapper = (props) => {
     if (!body) {
         body = children;
     }
+    /* ------------- Tooltip ------------ */
+    const tooltipStyle = (isDarkModeOn()
+        ? `
+        .tooltip-inner {
+          background-color: white;
+          color: black;
+          border: 0.1rem solid black;
+        }
+        div[data-popper-placement="top"] .tooltip-arrow::before {
+          border-top-color: white !important;
+          transform: translate(0, -0.05rem);
+        }
+      `
+        : `
+        .tooltip-inner {
+          background-color: black;
+          color: black;
+          border: 0.1rem solid white;
+        }
+        div[data-popper-placement="top"] .tooltip-arrow::before {
+          border-top-color: black !important;
+          transform: translate(0, -0.05rem);
+        }
+      `);
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement(React__default.Fragment, null,
         React__default.createElement("style", null, style$9),
+        React__default.createElement("style", null, tooltipStyle),
         modal,
         body));
 };
