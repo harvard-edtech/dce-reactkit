@@ -9,7 +9,7 @@ import LOG_REVIEW_STATUS_ROUTE from '../constants/LOG_REVIEW_STATUS_ROUTE';
 /*------------------------------------------------------------------------*/
 
 // Cache user's ability
-let canReview: boolean | undefined = undefined;
+let canReview: boolean | undefined;
 
 /*------------------------------------------------------------------------*/
 /* ---------------------------- Other Helpers --------------------------- */

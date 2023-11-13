@@ -100,6 +100,7 @@ import LogSource from './types/LogSource';
 import LogAction from './types/LogAction';
 import LogBuiltInMetadata from './types/LogBuiltInMetadata';
 import LogMetadataType from './types/LogMetadataType';
+import LogFunction from './types/LogFunction';
 import IntelliTableColumn from './types/IntelliTableColumn';
 
 // Component-specific-types
@@ -209,6 +210,7 @@ export {
   LogAction,
   LogBuiltInMetadata,
   LogMetadataType,
+  LogFunction,
   IntelliTableColumn,
   // Component-specific-types
   PickableItem,
