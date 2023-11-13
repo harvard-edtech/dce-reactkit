@@ -6,9 +6,6 @@
 // Import React
 import React, { useEffect, useRef } from 'react';
 
-// Import Bootstrap
-import { Tooltip as BSTooltip } from 'bootstrap';
-
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -58,19 +55,30 @@ const Tooltip: React.FC<Props> = (props) => {
         return;
       }
 
+      // Store copy of tooltip
+      let t: any;
+
       // Initialize tooltip
-      const t = new BSTooltip(
-        childRef.current,
-        {
-          title: text,
-          placement: 'top',
-          trigger: 'hover',
-        },
-      );
+      (async () => {
+        // Import bootstrap tooltip
+        const BSTooltip = (await import('bootstrap')).Tooltip;
+
+        // Initialize
+        t = new BSTooltip(
+          childRef.current,
+          {
+            title: text,
+            placement: 'top',
+            trigger: 'hover',
+          },
+        );
+      })();
 
       // Clean up tooltip
       return () => {
-        t.dispose();
+        if (t) {
+          t.dispose();
+        }
       };
     },
     [text],

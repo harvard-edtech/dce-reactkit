@@ -31,7 +31,7 @@ const getTimeInfoInET = (dateOrTimestamp?: Date | number): {
   }
   const str = d.toLocaleString(
     'en-US', // Using US encoding (it's the only one installed on containers)
-    { timeZone: 'America/New_York' } // Force EST timezone
+    { timeZone: 'America/New_York' }, // Force EST timezone
   );
 
   // Parse the string for the date/time info
@@ -45,11 +45,11 @@ const getTimeInfoInET = (dateOrTimestamp?: Date | number): {
   const month = Number.parseInt(monthStr, 10);
   const day = Number.parseInt(dayStr, 10);
   const minute = Number.parseInt(minStr, 10);
-  let hour12 = Number.parseInt(hourStr, 10);
+  const hour12 = Number.parseInt(hourStr, 10);
   // Convert from am/pm to 24hr
   const isAM = ending.toLowerCase().includes('am');
   const isPM = !isAM;
-  let hour = hour12
+  let hour = hour12;
   if (isPM && hour12 !== 12) {
     hour += 12;
   } else if (isAM && hour12 === 12) {

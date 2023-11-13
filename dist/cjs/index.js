@@ -6,7 +6,6 @@ var React = require('react');
 var freeSolidSvgIcons = require('@fortawesome/free-solid-svg-icons');
 var reactFontawesome = require('@fortawesome/react-fontawesome');
 var freeRegularSvgIcons = require('@fortawesome/free-regular-svg-icons');
-var bootstrap = require('bootstrap');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -1612,8 +1611,7 @@ const getTimeInfoInET = (dateOrTimestamp) => {
         d = dateOrTimestamp;
     }
     const str = d.toLocaleString('en-US', // Using US encoding (it's the only one installed on containers)
-    { timeZone: 'America/New_York' } // Force EST timezone
-    );
+    { timeZone: 'America/New_York' });
     // Parse the string for the date/time info
     const [dateStr, timeStr] = str.split(', '); // Format: MM/DD/YYYY, HH:MM:SS AM
     const [monthStr, dayStr, yearStr] = dateStr.split('/'); // Format: MM/DD/YYYY
@@ -1624,7 +1622,7 @@ const getTimeInfoInET = (dateOrTimestamp) => {
     const month = Number.parseInt(monthStr, 10);
     const day = Number.parseInt(dayStr, 10);
     const minute = Number.parseInt(minStr, 10);
-    let hour12 = Number.parseInt(hourStr, 10);
+    const hour12 = Number.parseInt(hourStr, 10);
     // Convert from am/pm to 24hr
     const isAM = ending.toLowerCase().includes('am');
     const isPM = !isAM;
@@ -40600,15 +40598,24 @@ const Tooltip = (props) => {
         if (!childRef.current) {
             return;
         }
+        // Store copy of tooltip
+        let t;
         // Initialize tooltip
-        const t = new bootstrap.Tooltip(childRef.current, {
-            title: text,
-            placement: 'top',
-            trigger: 'hover',
-        });
+        (() => __awaiter(void 0, void 0, void 0, function* () {
+            // Import bootstrap tooltip
+            const BSTooltip = (yield Promise.resolve().then(function () { return /*#__PURE__*/_interopNamespace(require('bootstrap')); })).Tooltip;
+            // Initialize
+            t = new BSTooltip(childRef.current, {
+                title: text,
+                placement: 'top',
+                trigger: 'hover',
+            });
+        }))();
         // Clean up tooltip
         return () => {
-            t.dispose();
+            if (t) {
+                t.dispose();
+            }
         };
     }, [text]);
     /*------------------------------------------------------------------------*/

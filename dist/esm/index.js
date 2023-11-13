@@ -3,7 +3,6 @@ import React__default, { useState, useRef, useEffect, useReducer, forwardRef, us
 import { faExclamationTriangle, faHourglassEnd, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faCalendar, faTag, faHammer, faList, faTimes, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
-import { Tooltip as Tooltip$1 } from 'bootstrap';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1586,8 +1585,7 @@ const getTimeInfoInET = (dateOrTimestamp) => {
         d = dateOrTimestamp;
     }
     const str = d.toLocaleString('en-US', // Using US encoding (it's the only one installed on containers)
-    { timeZone: 'America/New_York' } // Force EST timezone
-    );
+    { timeZone: 'America/New_York' });
     // Parse the string for the date/time info
     const [dateStr, timeStr] = str.split(', '); // Format: MM/DD/YYYY, HH:MM:SS AM
     const [monthStr, dayStr, yearStr] = dateStr.split('/'); // Format: MM/DD/YYYY
@@ -1598,7 +1596,7 @@ const getTimeInfoInET = (dateOrTimestamp) => {
     const month = Number.parseInt(monthStr, 10);
     const day = Number.parseInt(dayStr, 10);
     const minute = Number.parseInt(minStr, 10);
-    let hour12 = Number.parseInt(hourStr, 10);
+    const hour12 = Number.parseInt(hourStr, 10);
     // Convert from am/pm to 24hr
     const isAM = ending.toLowerCase().includes('am');
     const isPM = !isAM;
@@ -40574,15 +40572,24 @@ const Tooltip = (props) => {
         if (!childRef.current) {
             return;
         }
+        // Store copy of tooltip
+        let t;
         // Initialize tooltip
-        const t = new Tooltip$1(childRef.current, {
-            title: text,
-            placement: 'top',
-            trigger: 'hover',
-        });
+        (() => __awaiter(void 0, void 0, void 0, function* () {
+            // Import bootstrap tooltip
+            const BSTooltip = (yield import('bootstrap')).Tooltip;
+            // Initialize
+            t = new BSTooltip(childRef.current, {
+                title: text,
+                placement: 'top',
+                trigger: 'hover',
+            });
+        }))();
         // Clean up tooltip
         return () => {
-            t.dispose();
+            if (t) {
+                t.dispose();
+            }
         };
     }, [text]);
     /*------------------------------------------------------------------------*/
