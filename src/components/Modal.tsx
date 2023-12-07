@@ -147,7 +147,7 @@ const style = `
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vw;
+    height: 200vh;
     background-color: rgba(0, 0, 0, 0.7);
   }
   .Modal-fading-in {
