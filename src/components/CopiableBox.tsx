@@ -178,7 +178,7 @@ const CopiableBox: React.FC<Props> = (props) => {
   /*----------------------------------------*/
 
   return (
-    <div className="input-group mb-2">
+    <div className="input-group">
       {/* Label */}
       {(label || labelIcon) && (
         <span

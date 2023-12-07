@@ -2209,7 +2209,7 @@ const CopiableBox = (props) => {
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
-    return (React__default["default"].createElement("div", { className: "input-group mb-2" },
+    return (React__default["default"].createElement("div", { className: "input-group" },
         (label || labelIcon) && (React__default["default"].createElement("span", { className: "input-group-text", style: {
                 minWidth: (minLabelWidthRem
                     ? `${minLabelWidthRem}rem`
