@@ -14,6 +14,7 @@ type Props = {
     children?: React.ReactNode;
     onClose?: (type: ModalButtonType) => void;
     dontAllowBackdropExit?: boolean;
+    dontShowXButton?: boolean;
     okayLabel?: string;
     okayVariant?: Variant;
     cancelLabel?: string;

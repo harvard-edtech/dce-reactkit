@@ -222,6 +222,8 @@ type Props = {
   onClose?: (type: ModalButtonType) => void,
   // If true, don't allow the user to click the backdrop to exit
   dontAllowBackdropExit?: boolean,
+  // If true, don't show the "X" close button
+  dontShowXButton?: boolean,
   // Custom label for "okay" button
   okayLabel?: string,
   // Custom variant for "okay" button
@@ -284,6 +286,7 @@ const Modal: React.FC<Props> = (props) => {
     children,
     onClose,
     dontAllowBackdropExit,
+    dontShowXButton,
     onTopOfOtherModals,
   } = props;
 
@@ -496,7 +499,7 @@ const Modal: React.FC<Props> = (props) => {
               {title}
             </h5>
 
-            {onClose && (
+            {(onClose && !dontShowXButton) && (
               <button
                 type="button"
                 className="Modal-x-button btn-close"

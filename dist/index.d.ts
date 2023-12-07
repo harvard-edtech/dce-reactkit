@@ -153,6 +153,7 @@ type Props$j = {
     children?: React.ReactNode;
     onClose?: (type: ModalButtonType) => void;
     dontAllowBackdropExit?: boolean;
+    dontShowXButton?: boolean;
     okayLabel?: string;
     okayVariant?: Variant;
     cancelLabel?: string;
@@ -1466,6 +1467,66 @@ declare const prefixWithAOrAn: (text: string, capitalize?: boolean) => string;
 declare const useForceRender: (useReducer: any) => () => void;
 
 /**
+ * Run the operator function on each item in the array, returning true if
+ *   the operator function returns true for every item in the array
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply. If it returns true
+ *   for every item, this function will return true
+ * @returns true if the operator function returns true for every item in the array
+ */
+declare const everyAsync: <T>(array: T[], operatorFunction: (item: T, index: number, opts: {
+    breakNow: () => void;
+    array: T[];
+}) => Promise<any>) => Promise<boolean>;
+
+/**
+ * Run the operator function on each item in the array, returning a new array
+ *   that only contains the items that pass the filter
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply. If it returns true
+ *   for an item, the item will be included in the returned array
+ * @returns the filtered array
+ */
+declare const filterAsync: <T>(array: T[], operatorFunction: (item: T, index: number, opts: {
+    breakNow: () => void;
+    array: T[];
+}) => Promise<any>) => Promise<T[]>;
+
+/**
+ * Run the operator function on each item in the array
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply
+ */
+declare const forEachAsync: <T>(array: T[], operatorFunction: (item: T, index: number, opts: {
+    breakNow: () => void;
+    array: T[];
+}) => void) => Promise<void>;
+
+/**
+ * Run the operator function on each item in the array, collecting all results
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply
+ * @returns the array of results
+ */
+declare const mapAsync: <T, U>(array: T[], operatorFunction: (item: T, index: number, opts: {
+    breakNow: () => void;
+    array: T[];
+}) => Promise<U>) => Promise<U[]>;
+
+/**
+ * Run the operator function on each item in the array, returning true if
+ *   the operator function returns true for any item in the array
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply. If it returns true
+ *   for any item, this function will return true
+ * @returns true if the operator function returns true for any item in the array
+ */
+declare const someAsync: <T>(array: T[], operatorFunction: (item: T, index: number, opts: {
+    breakNow: () => void;
+    array: T[];
+}) => Promise<any>) => Promise<boolean>;
+
+/**
  * List of error codes built into the react kit
  * @author Gabe Abrams
  */
@@ -1515,4 +1576,4 @@ declare const LogBuiltInMetadata: {
     };
 };
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, extractProp, floorToNumDecimals, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };

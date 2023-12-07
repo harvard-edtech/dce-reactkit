@@ -85,6 +85,11 @@ import makeLinksClickable from './helpers/makeLinksClickable';
 import combineClassNames from './helpers/combineClassNames';
 import prefixWithAOrAn from './helpers/prefixWithAOrAn';
 import useForceRender from './helpers/useForceRender';
+import everyAsync from './helpers/asyncArrayFunctions/everyAsync';
+import filterAsync from './helpers/asyncArrayFunctions/filterAsync';
+import forEachAsync from './helpers/asyncArrayFunctions/forEachAsync';
+import mapAsync from './helpers/asyncArrayFunctions/mapAsync';
+import someAsync from './helpers/asyncArrayFunctions/someAsync';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -181,6 +186,11 @@ export {
   idify,
   makeLinksClickable,
   prefixWithAOrAn,
+  everyAsync,
+  filterAsync,
+  forEachAsync,
+  mapAsync,
+  someAsync,
   // Client helpers
   initClient,
   visitServerEndpoint,

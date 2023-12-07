@@ -484,7 +484,7 @@ const Modal = (props) => {
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
-    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, children, onClose, dontAllowBackdropExit, onTopOfOtherModals, } = props;
+    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, children, onClose, dontAllowBackdropExit, dontShowXButton, onTopOfOtherModals, } = props;
     /* -------------- State ------------- */
     // True if animation is in use
     const [animatingIn, setAnimatingIn] = React.useState(true);
@@ -621,7 +621,7 @@ const Modal = (props) => {
                     React__default["default"].createElement("h5", { className: "modal-title", style: {
                             fontWeight: 'bold',
                         } }, title),
-                    onClose && (React__default["default"].createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
+                    (onClose && !dontShowXButton) && (React__default["default"].createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
                             backgroundColor: (isDarkModeOn()
                                 ? 'white'
                                 : undefined),
@@ -43275,6 +43275,157 @@ const useForceRender = (useReducer) => {
 };
 
 /**
+ * Run the operator function on each item in the array, returning true if
+ *   the operator function returns true for every item in the array
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply. If it returns true
+ *   for every item, this function will return true
+ * @returns true if the operator function returns true for every item in the array
+ */
+const everyAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
+    // Create break logic
+    let done = false;
+    /**
+     * Break the loop (checking stops here)
+     * @author Gabe Abrams
+     */
+    const breakNow = () => {
+        done = true;
+    };
+    // Loop through each item, checking
+    for (let i = 0; i < array.length && !done; i++) {
+        const passed = yield operatorFunction(array[i], i, {
+            breakNow,
+            array,
+        });
+        // Check if this one failed or if loop was broken
+        if (!passed || done) {
+            return false;
+        }
+    }
+    // Return true because none returned false
+    return true;
+});
+
+/**
+ * Run the operator function on each item in the array, returning a new array
+ *   that only contains the items that pass the filter
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply. If it returns true
+ *   for an item, the item will be included in the returned array
+ * @returns the filtered array
+ */
+const filterAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
+    // Create break logic
+    let done = false;
+    /**
+     * Break the loop (filtering stops here)
+     * @author Gabe Abrams
+     */
+    const breakNow = () => {
+        done = true;
+    };
+    // Loop through each item, filtering
+    const output = [];
+    for (let i = 0; i < array.length && !done; i++) {
+        const included = yield operatorFunction(array[i], i, {
+            breakNow,
+            array,
+        });
+        if (included && !done) {
+            output.push(array[i]);
+        }
+    }
+    // Return results
+    return output;
+});
+
+/**
+ * Run the operator function on each item in the array
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply
+ */
+const forEachAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
+    // Create break logic
+    let done = false;
+    /**
+     * Break the loop
+     * @author Gabe Abrams
+     */
+    const breakNow = () => {
+        done = true;
+    };
+    // Loop through each item
+    for (let i = 0; i < array.length && !done; i++) {
+        yield operatorFunction(array[i], i, {
+            breakNow,
+            array,
+        });
+    }
+});
+
+/**
+ * Run the operator function on each item in the array, collecting all results
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply
+ * @returns the array of results
+ */
+const mapAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
+    // Create break logic
+    let done = false;
+    /**
+     * Break the loop
+     * @author Gabe Abrams
+     */
+    const breakNow = () => {
+        done = true;
+    };
+    // Loop through each item, collecting results
+    const results = [];
+    for (let i = 0; i < array.length && !done; i++) {
+        const result = yield operatorFunction(array[i], i, {
+            breakNow,
+            array,
+        });
+        results.push(result);
+    }
+    // Return results
+    return results;
+});
+
+/**
+ * Run the operator function on each item in the array, returning true if
+ *   the operator function returns true for any item in the array
+ * @author Gabe Abrams
+ * @param operatorFunction the operator function to apply. If it returns true
+ *   for any item, this function will return true
+ * @returns true if the operator function returns true for any item in the array
+ */
+const someAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
+    // Create break logic
+    let done = false;
+    /**
+     * Break the loop (checking stops here)
+     * @author Gabe Abrams
+     */
+    const breakNow = () => {
+        done = true;
+    };
+    // Loop through each item, checking
+    for (let i = 0; i < array.length && !done; i++) {
+        const passed = yield operatorFunction(array[i], i, {
+            breakNow,
+            array,
+        });
+        if (passed && !done) {
+            return true;
+        }
+    }
+    // Return false because none returned true
+    return false;
+});
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -43340,8 +43491,11 @@ exports.ceilToNumDecimals = ceilToNumDecimals;
 exports.combineClassNames = combineClassNames;
 exports.compareArraysByProp = compareArraysByProp;
 exports.confirm = confirm;
+exports.everyAsync = everyAsync;
 exports.extractProp = extractProp;
+exports.filterAsync = filterAsync;
 exports.floorToNumDecimals = floorToNumDecimals;
+exports.forEachAsync = forEachAsync;
 exports.forceNumIntoBounds = forceNumIntoBounds;
 exports.genCSV = genCSV;
 exports.genCommaList = genCommaList;
@@ -43362,6 +43516,7 @@ exports.isMobileOrTablet = isMobileOrTablet;
 exports.leaveToURL = leaveToURL;
 exports.logClientEvent = logClientEvent;
 exports.makeLinksClickable = makeLinksClickable;
+exports.mapAsync = mapAsync;
 exports.onlyKeepLetters = onlyKeepLetters;
 exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;
@@ -43370,6 +43525,7 @@ exports.prefixWithAOrAn = prefixWithAOrAn;
 exports.roundToNumDecimals = roundToNumDecimals;
 exports.setClientEventMetadataPopulator = setClientEventMetadataPopulator;
 exports.showFatalError = showFatalError;
+exports.someAsync = someAsync;
 exports.startMinWait = startMinWait;
 exports.stringsToHumanReadableList = stringsToHumanReadableList;
 exports.stubServerEndpoint = stubServerEndpoint;
