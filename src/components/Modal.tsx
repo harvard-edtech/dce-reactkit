@@ -203,10 +203,6 @@ const style = `
       opacity: 1;
     }
   }
-
-  .modal-dialog-scrollable {
-    height: 100% !important;
-  }
 `;
 
 /*------------------------------------------------------------------------*/
