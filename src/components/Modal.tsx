@@ -421,7 +421,7 @@ const Modal: React.FC<Props> = (props) => {
   // Render the modal
   return (
     <div
-      className="modal show modal-dialog-scrollable modal-dialog-centered"
+      className="modal show"
       tabIndex={-1}
       style={{
         zIndex: (
@@ -459,7 +459,7 @@ const Modal: React.FC<Props> = (props) => {
         }}
       />
       <div
-        className={`modal-dialog modal-${size} ${animationClass}`}
+        className={`modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`}
         style={{
           zIndex: 5000000002,
         }}
