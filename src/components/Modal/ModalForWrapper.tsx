@@ -31,6 +31,10 @@ import { isDarkModeOn } from '../../client/initClient';
 /* ------------------------------ Constants ----------------------------- */
 /*------------------------------------------------------------------------*/
 
+// Base level of z-index
+const BASE_Z_INDEX = 1000000000;
+const BASE_Z_INDEX_ON_TOP = 2000000000;
+
 // Constants
 const MS_TO_ANIMATE = 200; // Animation duration
 
@@ -290,6 +294,13 @@ const Modal: React.FC<ModalProps> = (props) => {
   /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
 
+  // Calculate Z-index
+  const baseZIndex = (
+    onTopOfOtherModals
+      ? BASE_Z_INDEX_ON_TOP
+      : BASE_Z_INDEX
+  );
+
   // Get list of buttons for this modal type
   const ModalButtonTypes: ModalButtonType[] = modalTypeToModalButtonTypes[type] ?? [];
 
@@ -359,11 +370,7 @@ const Modal: React.FC<ModalProps> = (props) => {
       className="modal show"
       tabIndex={-1}
       style={{
-        zIndex: (
-          onTopOfOtherModals
-            ? 2000000001
-            : 2000000000
-        ),
+        zIndex: baseZIndex,
         display: 'block',
         margin: 'auto',
         left: 0,
@@ -374,7 +381,7 @@ const Modal: React.FC<ModalProps> = (props) => {
       <div
         className={`ModalForWrapper-backdrop ${backdropAnimationClass}`}
         style={{
-          zIndex: 2000000003,
+          zIndex: baseZIndex + 1,
         }}
         onClick={async () => {
           // Skip if exit via backdrop not allowed
@@ -396,7 +403,7 @@ const Modal: React.FC<ModalProps> = (props) => {
       <div
         className={`modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`}
         style={{
-          zIndex: 2000000002,
+          zIndex: baseZIndex + 2,
         }}
       >
         <div
