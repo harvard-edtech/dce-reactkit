@@ -1,7 +1,7 @@
 import AppWrapper, { alert, confirm, showFatalError, addFatalErrorHandler, leaveToURL } from './components/AppWrapper';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBox from './components/ErrorBox';
-import Modal from './components/Modal';
+import Modal from './components/Modal/ModalForWrapper';
 import TabBox from './components/TabBox';
 import RadioButton from './components/RadioButton';
 import CheckboxButton from './components/CheckboxButton';

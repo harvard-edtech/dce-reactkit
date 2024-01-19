@@ -4,7 +4,8 @@
 /* eslint-disable react/destructuring-assignment */
 
 /**
- * A generic popup modal
+ * The displayable modal component (this is the modal that's added to the
+ *   wrapper, not the one that the programmer renders)
  * @author Gabe Abrams
  */
 
@@ -12,18 +13,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // Import other components
-import waitMs from '../helpers/waitMs';
+import waitMs from '../../helpers/waitMs';
 
 // Import types
-import Variant from '../types/Variant';
-import ModalButtonType from '../types/ModalButtonType';
-import ModalSize from '../types/ModalSize';
-import ModalType from '../types/ModalType';
+import Variant from '../../types/Variant';
+import ModalButtonType from '../../types/ModalButtonType';
+import ModalSize from '../../types/ModalSize';
+import ModalType from '../../types/ModalType';
+import ModalProps from './ModalProps';
 
 // Import shared helpers
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
-import { isDarkModeOn } from '../client/initClient';
+import { isDarkModeOn } from '../../client/initClient';
 
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Constants ----------------------------- */
@@ -142,7 +144,7 @@ const getModalButtonTypeToLabelAndVariant = () => {
 /*------------------------------------------------------------------------*/
 
 const style = `
-  .Modal-backdrop {
+  .ModalForWrapper-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -150,7 +152,7 @@ const style = `
     height: 200vh;
     background-color: rgba(0, 0, 0, 0.7);
   }
-  .Modal-fading-in {
+  .ModalForWrapper-fading-in {
     animation-name: Modal-fading-in;
     animation-duration: ${Math.floor(MS_TO_ANIMATE * 2)}ms;
     animation-iteration-count: 1;
@@ -165,7 +167,7 @@ const style = `
       opacity: 1;
     }
   }
-  .Modal-animating-in {
+  .ModalForWrapper-animating-in {
     animation-name: Modal-animating-in;
     animation-duration: ${MS_TO_ANIMATE}ms;
     animation-iteration-count: 1;
@@ -182,14 +184,14 @@ const style = `
       opacity: 1;
     }
   }
-  .Modal-animating-pop {
-    animation-name: Modal-animating-pop;
+  .ModalForWrapper-animating-pop {
+    animation-name: ModalForWrapper-animating-pop;
     animation-duration: ${MS_TO_ANIMATE}ms;
     animation-iteration-count: 1;
     animation-fill-mode: both;
     animation-timing-function: ease-in-out;
   }
-  @keyframes Modal-animating-pop {
+  @keyframes ModalForWrapper-animating-pop {
     0% {
       transform: scale(1);
       opacity: 1;
@@ -206,73 +208,10 @@ const style = `
 `;
 
 /*------------------------------------------------------------------------*/
-/* -------------------------------- Types ------------------------------- */
-/*------------------------------------------------------------------------*/
-
-type Props = {
-  // Type of the modal
-  type?: ModalType,
-  // Size of the modal
-  size?: ModalSize,
-  // Title of the modal (if excluded, no header)
-  title?: React.ReactNode,
-  // The body of the modal
-  children?: React.ReactNode,
-  // Handler to call when modal is closed (if excluded, not closable)
-  onClose?: (type: ModalButtonType) => void,
-  // If true, don't allow the user to click the backdrop to exit
-  dontAllowBackdropExit?: boolean,
-  // If true, don't show the "X" close button
-  dontShowXButton?: boolean,
-  // Custom label for "okay" button
-  okayLabel?: string,
-  // Custom variant for "okay" button
-  okayVariant?: Variant,
-  // Custom label for "cancel" button
-  cancelLabel?: string,
-  // Custom variant for "cancel" button
-  cancelVariant?: Variant,
-  // Custom label for "yes" button
-  yesLabel?: string,
-  // Custom variant for "yes" button
-  yesVariant?: Variant,
-  // Custom label for "no" button
-  noLabel?: string,
-  // Custom variant for "no" button
-  noVariant?: Variant,
-  // Custom label for "abandon" button
-  abandonLabel?: string,
-  // Custom variant for "abandon" button
-  abandonVariant?: Variant,
-  // Custom label for "goBack" button
-  goBackLabel?: string,
-  // Custom variant for "goBack" button
-  goBackVariant?: Variant,
-  // Custom label for "continue" button
-  continueLabel?: string,
-  // Custom variant for "continue" button
-  continueVariant?: Variant,
-  // Custom label for "imSure" button
-  imSureLabel?: string,
-  // Custom variant for "imSure" button
-  imSureVariant?: Variant,
-  // Custom label for "delete" button
-  deleteLabel?: string,
-  // Custom variant for "delete" button
-  deleteVariant?: Variant,
-  // Custom label for "confirm" button
-  confirmLabel?: string,
-  // Custom variant for "confirm" button
-  confirmVariant?: Variant,
-  // True if modal should be on top of other modals
-  onTopOfOtherModals?: boolean,
-};
-
-/*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-const Modal: React.FC<Props> = (props) => {
+const Modal: React.FC<ModalProps> = (props) => {
   /*------------------------------------------------------------------------*/
   /* -------------------------------- Setup ------------------------------- */
   /*------------------------------------------------------------------------*/
@@ -383,7 +322,7 @@ const Modal: React.FC<Props> = (props) => {
       <button
         key={modalButtonType}
         type="button"
-        className={`Modal-${modalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`}
+        className={`ModalForWrapper-${modalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`}
         onClick={() => {
           handleClose(modalButtonType);
         }}
@@ -408,10 +347,10 @@ const Modal: React.FC<Props> = (props) => {
   let animationClass = '';
   let backdropAnimationClass = '';
   if (animatingIn) {
-    animationClass = 'Modal-animating-in';
-    backdropAnimationClass = 'Modal-fading-in';
+    animationClass = 'ModalForWrapper-animating-in';
+    backdropAnimationClass = 'ModalForWrapper-fading-in';
   } else if (animatingPop) {
-    animationClass = 'Modal-animating-pop';
+    animationClass = 'ModalForWrapper-animating-pop';
   }
 
   // Render the modal
@@ -433,7 +372,7 @@ const Modal: React.FC<Props> = (props) => {
     >
       <style>{style}</style>
       <div
-        className={`Modal-backdrop ${backdropAnimationClass}`}
+        className={`ModalForWrapper-backdrop ${backdropAnimationClass}`}
         style={{
           zIndex: 5000000003,
         }}
@@ -502,7 +441,7 @@ const Modal: React.FC<Props> = (props) => {
             {(onClose && !dontShowXButton) && (
               <button
                 type="button"
-                className="Modal-x-button btn-close"
+                className="ModalForWrapper-x-button btn-close"
                 aria-label="Close"
                 style={{
                   backgroundColor: (

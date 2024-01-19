@@ -413,7 +413,7 @@ const getModalButtonTypeToLabelAndVariant = () => {
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 const style$a = `
-  .Modal-backdrop {
+  .ModalForWrapper-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -421,7 +421,7 @@ const style$a = `
     height: 200vh;
     background-color: rgba(0, 0, 0, 0.7);
   }
-  .Modal-fading-in {
+  .ModalForWrapper-fading-in {
     animation-name: Modal-fading-in;
     animation-duration: ${Math.floor(MS_TO_ANIMATE * 2)}ms;
     animation-iteration-count: 1;
@@ -436,7 +436,7 @@ const style$a = `
       opacity: 1;
     }
   }
-  .Modal-animating-in {
+  .ModalForWrapper-animating-in {
     animation-name: Modal-animating-in;
     animation-duration: ${MS_TO_ANIMATE}ms;
     animation-iteration-count: 1;
@@ -453,14 +453,14 @@ const style$a = `
       opacity: 1;
     }
   }
-  .Modal-animating-pop {
-    animation-name: Modal-animating-pop;
+  .ModalForWrapper-animating-pop {
+    animation-name: ModalForWrapper-animating-pop;
     animation-duration: ${MS_TO_ANIMATE}ms;
     animation-iteration-count: 1;
     animation-fill-mode: both;
     animation-timing-function: ease-in-out;
   }
-  @keyframes Modal-animating-pop {
+  @keyframes ModalForWrapper-animating-pop {
     0% {
       transform: scale(1);
       opacity: 1;
@@ -553,7 +553,7 @@ const Modal = (props) => {
         // Check if this button is last
         const last = (i === ModalButtonTypes.length - 1);
         // Create the button
-        return (React__default["default"].createElement("button", { key: modalButtonType, type: "button", className: `Modal-${modalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
+        return (React__default["default"].createElement("button", { key: modalButtonType, type: "button", className: `ModalForWrapper-${modalButtonType}-button btn btn-${variant} ${last ? '' : 'me-1'}`, onClick: () => {
                 handleClose(modalButtonType);
             } }, label));
     });
@@ -565,11 +565,11 @@ const Modal = (props) => {
     let animationClass = '';
     let backdropAnimationClass = '';
     if (animatingIn) {
-        animationClass = 'Modal-animating-in';
-        backdropAnimationClass = 'Modal-fading-in';
+        animationClass = 'ModalForWrapper-animating-in';
+        backdropAnimationClass = 'ModalForWrapper-fading-in';
     }
     else if (animatingPop) {
-        animationClass = 'Modal-animating-pop';
+        animationClass = 'ModalForWrapper-animating-pop';
     }
     // Render the modal
     return (React__default["default"].createElement("div", { className: "modal show", tabIndex: -1, style: {
@@ -582,7 +582,7 @@ const Modal = (props) => {
             right: 0,
         } },
         React__default["default"].createElement("style", null, style$a),
-        React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
+        React__default["default"].createElement("div", { className: `ModalForWrapper-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: 5000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                 // Skip if exit via backdrop not allowed
@@ -621,7 +621,7 @@ const Modal = (props) => {
                     React__default["default"].createElement("h5", { className: "modal-title", style: {
                             fontWeight: 'bold',
                         } }, title),
-                    (onClose && !dontShowXButton) && (React__default["default"].createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
+                    (onClose && !dontShowXButton) && (React__default["default"].createElement("button", { type: "button", className: "ModalForWrapper-x-button btn-close", "aria-label": "Close", style: {
                             backgroundColor: (isDarkModeOn()
                                 ? 'white'
                                 : undefined),
@@ -1131,6 +1131,8 @@ const AppWrapper = (props) => {
     // Session expired
     const [sessionHasExpired, setSessionHasExpiredInner,] = React.useState(false);
     setSessionHasExpired = setSessionHasExpiredInner;
+    // Modals
+    const [modalsFromState, setModalsInner,] = React.useState([]);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -1158,6 +1160,14 @@ const AppWrapper = (props) => {
                 }
             }, dontAllowBackdropExit: true }, confirmInfo.text));
     }
+    /* ---------- Custom Modals --------- */
+    // List of modals added outside reactkit via the Modal component
+    const customModals = [];
+    // Add custom modals
+    modalsFromState.forEach((modalTuple) => {
+        var _a;
+        customModals.push(React__default["default"].createElement(Modal, Object.assign({ key: String((_a = modalTuple.props.key) !== null && _a !== void 0 ? _a : modalTuple.id) }, modalTuple.props)));
+    });
     /*----------------------------------------*/
     /* ---------------- Views --------------- */
     /*----------------------------------------*/
@@ -1222,10 +1232,12 @@ const AppWrapper = (props) => {
           background-color: white;
           color: black;
           border: 0.1rem solid black;
+          pointer-events: none;
         }
         div[data-popper-placement="top"] .tooltip-arrow::before {
           border-top-color: white !important;
           transform: translate(0, -0.05rem);
+          pointer-events: none;
         }
       `
         : `
@@ -1233,10 +1245,12 @@ const AppWrapper = (props) => {
           background-color: black;
           color: black;
           border: 0.1rem solid white;
+          pointer-events: none;
         }
         div[data-popper-placement="top"] .tooltip-arrow::before {
           border-top-color: black !important;
           transform: translate(0, -0.05rem);
+          pointer-events: none;
         }
       `);
     /*----------------------------------------*/
@@ -1246,6 +1260,7 @@ const AppWrapper = (props) => {
         React__default["default"].createElement("style", null, style$9),
         React__default["default"].createElement("style", null, tooltipStyle),
         modal,
+        customModals,
         body));
 };
 
