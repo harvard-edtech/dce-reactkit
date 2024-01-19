@@ -548,8 +548,8 @@ const Modal$1 = (props) => {
     // Render the modal
     return (React__default.createElement("div", { className: "modal show", tabIndex: -1, style: {
             zIndex: (onTopOfOtherModals
-                ? 5000000001
-                : 5000000000),
+                ? 2000000001
+                : 2000000000),
             display: 'block',
             margin: 'auto',
             left: 0,
@@ -557,7 +557,7 @@ const Modal$1 = (props) => {
         } },
         React__default.createElement("style", null, style$a),
         React__default.createElement("div", { className: `ModalForWrapper-backdrop ${backdropAnimationClass}`, style: {
-                zIndex: 5000000003,
+                zIndex: 2000000003,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                 // Skip if exit via backdrop not allowed
                 if (dontAllowBackdropExit || !onClose) {
@@ -574,7 +574,7 @@ const Modal$1 = (props) => {
                 handleClose(ModalButtonType$1.Cancel);
             }) }),
         React__default.createElement("div", { className: `modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`, style: {
-                zIndex: 5000000002,
+                zIndex: 2000000002,
             } },
             React__default.createElement("div", { className: "modal-content", style: {
                     borderColor: (isDarkModeOn()

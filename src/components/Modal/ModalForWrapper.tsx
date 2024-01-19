@@ -361,8 +361,8 @@ const Modal: React.FC<ModalProps> = (props) => {
       style={{
         zIndex: (
           onTopOfOtherModals
-            ? 5000000001
-            : 5000000000
+            ? 2000000001
+            : 2000000000
         ),
         display: 'block',
         margin: 'auto',
@@ -374,7 +374,7 @@ const Modal: React.FC<ModalProps> = (props) => {
       <div
         className={`ModalForWrapper-backdrop ${backdropAnimationClass}`}
         style={{
-          zIndex: 5000000003,
+          zIndex: 2000000003,
         }}
         onClick={async () => {
           // Skip if exit via backdrop not allowed
@@ -396,7 +396,7 @@ const Modal: React.FC<ModalProps> = (props) => {
       <div
         className={`modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`}
         style={{
-          zIndex: 5000000002,
+          zIndex: 2000000002,
         }}
       >
         <div
