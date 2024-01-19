@@ -1,13 +1,14 @@
+/// <reference types="react" />
+import Variant from '../../types/Variant';
+import ModalButtonType from '../../types/ModalButtonType';
+import ModalSize from '../../types/ModalSize';
+import ModalType from '../../types/ModalType';
 /**
- * A generic popup modal
+ * Props for the Modal component
  * @author Gabe Abrams
  */
-import React from 'react';
-import Variant from '../types/Variant';
-import ModalButtonType from '../types/ModalButtonType';
-import ModalSize from '../types/ModalSize';
-import ModalType from '../types/ModalType';
-type Props = {
+type ModalProps = {
+    key?: string;
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
@@ -37,5 +38,4 @@ type Props = {
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
 };
-declare const Modal: React.FC<Props>;
-export default Modal;
+export default ModalProps;

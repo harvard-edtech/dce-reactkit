@@ -19,11 +19,12 @@ import ModalButtonType from '../types/ModalButtonType';
 import ModalType from '../types/ModalType';
 import Variant from '../types/Variant';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
+import ModalProps from './Modal/ModalProps';
 
 // Import shared components
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
-import Modal from './Modal';
+import ModalForWrapper from './Modal/ModalForWrapper';
 
 // Import custom errors
 import ErrorWithCode from '../errors/ErrorWithCode';
@@ -358,6 +359,99 @@ export const showSessionExpiredMessage = async () => {
   }
 };
 
+/*----------------------------------------*/
+/* --------------- Modals --------------- */
+/*----------------------------------------*/
+
+// Modal tuple with id and props
+type ModalTuple = {
+  // Unique id
+  id: number,
+  // Modal props
+  props: ModalProps,
+};
+
+// Stored copies of setters
+let setModals: (modals: ModalTuple[]) => void;
+
+// Stored copies of modals
+let modals: ModalTuple[] = [];
+
+/**
+ * Add a modal to the screen
+ * @author Gabe Abrams
+ * @param id the uniqueId of the modal
+ * @param props the props for the modal
+ */
+export const addModal = async (
+  id: number,
+  props: ModalProps,
+) => {
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return !!setModals;
+  });
+
+  // Add modal
+  modals.push({
+    id,
+    props,
+  });
+
+  // Update modals
+  setModals(modals);
+};
+
+/**
+ * Update a modal on the screen by id (if it exists) with new props
+ * @author Gabe Abrams
+ * @param id the uniqueId of the modal
+ * @param props the new props for the modal
+ */
+export const updateModal = async (
+  id: number,
+  props: ModalProps,
+) => {
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return !!setModals;
+  });
+
+  // Update modal
+  modals = modals.map((modal) => {
+    if (modal.id === id) {
+      return {
+        id,
+        props,
+      };
+    }
+    return modal;
+  });
+
+  // Update modals
+  setModals(modals);
+};
+
+/**
+ * Remove a modal from the screen by id (if it exists)
+ * @author Gabe Abrams
+ * @param id the uniqueId of the modal
+ */
+export const removeModal = async (id: number) => {
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return !!setModals;
+  });
+
+  // Remove modal
+  modals = modals.filter((modal) => {
+    return modal.id !== id;
+  });
+
+  // Update modals
+  setModals(modals);
+};
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -464,6 +558,13 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   ] = useState<boolean>(false);
   setSessionHasExpired = setSessionHasExpiredInner;
 
+  // Modals
+  const [
+    modalsFromState,
+    setModalsInner,
+  ] = useState<ModalTuple[]>([]);
+  setModals = setModalsInner;
+
   /*------------------------------------------------------------------------*/
   /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
@@ -479,7 +580,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   if (alertInfo) {
     modal = (
-      <Modal
+      <ModalForWrapper
         key={`alert-${alertInfo.title}-${alertInfo.text}`}
         title={alertInfo.title}
         type={ModalType.Okay}
@@ -493,7 +594,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         onTopOfOtherModals
       >
         {alertInfo.text}
-      </Modal>
+      </ModalForWrapper>
     );
   }
 
@@ -501,7 +602,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   if (confirmInfo) {
     modal = (
-      <Modal
+      <ModalForWrapper
         key={`confirm-${confirmInfo.title}-${confirmInfo.text}`}
         title={confirmInfo.title}
         type={ModalType.OkayCancel}
@@ -518,9 +619,25 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         dontAllowBackdropExit
       >
         {confirmInfo.text}
-      </Modal>
+      </ModalForWrapper>
     );
   }
+
+  /* ---------- Custom Modals --------- */
+
+  // List of modals added outside reactkit via the Modal component
+  const customModals: React.ReactNode[] = [];
+
+  // Add custom modals
+  modalsFromState.forEach((modalTuple) => {
+    customModals.push(
+      <ModalForWrapper
+        key={String(modalTuple.props.key ?? modalTuple.id)}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...modalTuple.props}
+      />,
+    );
+  });
 
   /*----------------------------------------*/
   /* ---------------- Views --------------- */
@@ -641,10 +758,12 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
           background-color: white;
           color: black;
           border: 0.1rem solid black;
+          pointer-events: none;
         }
         div[data-popper-placement="top"] .tooltip-arrow::before {
           border-top-color: white !important;
           transform: translate(0, -0.05rem);
+          pointer-events: none;
         }
       `
       : `
@@ -652,10 +771,12 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
           background-color: black;
           color: black;
           border: 0.1rem solid white;
+          pointer-events: none;
         }
         div[data-popper-placement="top"] .tooltip-arrow::before {
           border-top-color: black !important;
           transform: translate(0, -0.05rem);
+          pointer-events: none;
         }
       `
   );
@@ -678,6 +799,9 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
       {/* Modal */}
       {modal}
+
+      {/* Custom Modals */}
+      {customModals}
 
       {/* Body */}
       {body}

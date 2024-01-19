@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import React from 'react';
+import React$1 from 'react';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import express from 'express';
 
@@ -19,13 +19,93 @@ declare enum Variant {
 }
 
 /**
+ * Types of buttons in the modal
+ * @author Gabe Abrams
+ */
+declare enum ModalButtonType {
+    Okay = "okay",
+    Cancel = "cancel",
+    Yes = "yes",
+    No = "no",
+    Abandon = "abandon",
+    GoBack = "goBack",
+    Continue = "continue",
+    ImSure = "imSure",
+    Delete = "delete",
+    Confirm = "confirm"
+}
+
+/**
+ * Modal sizes
+ * @author Gabe Abrams
+ */
+declare enum ModalSize {
+    Small = "sm",
+    Medium = "md",
+    Large = "lg",
+    ExtraLarge = "xl"
+}
+
+/**
+ * Types of modals
+ * @author Gabe Abrams
+ */
+declare enum ModalType {
+    Okay = "okay",
+    OkayCancel = "okay-cancel",
+    YesNo = "yes-no",
+    YesNoCancel = "yes-no-cancel",
+    AbandonGoBack = "abandon-goBack",
+    ImSureCancel = "imSure-cancel",
+    DeleteCancel = "delete-cancel",
+    ConfirmCancel = "confirm-cancel",
+    NoButtons = "-"
+}
+
+/**
+ * Props for the Modal component
+ * @author Gabe Abrams
+ */
+type ModalProps = {
+    key?: string;
+    type?: ModalType;
+    size?: ModalSize;
+    title?: React.ReactNode;
+    children?: React.ReactNode;
+    onClose?: (type: ModalButtonType) => void;
+    dontAllowBackdropExit?: boolean;
+    dontShowXButton?: boolean;
+    okayLabel?: string;
+    okayVariant?: Variant;
+    cancelLabel?: string;
+    cancelVariant?: Variant;
+    yesLabel?: string;
+    yesVariant?: Variant;
+    noLabel?: string;
+    noVariant?: Variant;
+    abandonLabel?: string;
+    abandonVariant?: Variant;
+    goBackLabel?: string;
+    goBackVariant?: Variant;
+    continueLabel?: string;
+    continueVariant?: Variant;
+    imSureLabel?: string;
+    imSureVariant?: Variant;
+    deleteLabel?: string;
+    deleteVariant?: Variant;
+    confirmLabel?: string;
+    confirmVariant?: Variant;
+    onTopOfOtherModals?: boolean;
+};
+
+/**
  * A wrapper for the entire React app that adds global functionality like
  *   handling for fatal error messages, adds bootstrap support
  * @author Gabe Abrams
  */
 
-type Props$l = {
-    children: React.ReactNode;
+type Props$k = {
+    children: React$1.ReactNode;
 };
 /**
  * Redirect to a new page
@@ -75,7 +155,7 @@ declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>
  * @author Gabe Abrams
  */
 declare const addFatalErrorHandler: (handler: () => void) => void;
-declare const AppWrapper: React.FC<Props$l>;
+declare const AppWrapper: React$1.FC<Props$k>;
 
 /**
  * Loading spinner/indicator
@@ -88,95 +168,21 @@ declare const LoadingSpinner: () => JSX.Element;
  * @author Gabe Abrams
  */
 
-type Props$k = {
+type Props$j = {
     error: any;
     title?: string;
     onClose?: () => void;
     variant?: Variant;
     icon?: IconProp;
 };
-declare const ErrorBox: React.FC<Props$k>;
+declare const ErrorBox: React$1.FC<Props$j>;
 
 /**
- * Types of buttons in the modal
- * @author Gabe Abrams
- */
-declare enum ModalButtonType {
-    Okay = "okay",
-    Cancel = "cancel",
-    Yes = "yes",
-    No = "no",
-    Abandon = "abandon",
-    GoBack = "goBack",
-    Continue = "continue",
-    ImSure = "imSure",
-    Delete = "delete",
-    Confirm = "confirm"
-}
-
-/**
- * Modal sizes
- * @author Gabe Abrams
- */
-declare enum ModalSize {
-    Small = "sm",
-    Medium = "md",
-    Large = "lg",
-    ExtraLarge = "xl"
-}
-
-/**
- * Types of modals
- * @author Gabe Abrams
- */
-declare enum ModalType {
-    Okay = "okay",
-    OkayCancel = "okay-cancel",
-    YesNo = "yes-no",
-    YesNoCancel = "yes-no-cancel",
-    AbandonGoBack = "abandon-goBack",
-    ImSureCancel = "imSure-cancel",
-    DeleteCancel = "delete-cancel",
-    ConfirmCancel = "confirm-cancel",
-    NoButtons = "-"
-}
-
-/**
- * A generic popup modal
+ * General use modal component
  * @author Gabe Abrams
  */
 
-type Props$j = {
-    type?: ModalType;
-    size?: ModalSize;
-    title?: React.ReactNode;
-    children?: React.ReactNode;
-    onClose?: (type: ModalButtonType) => void;
-    dontAllowBackdropExit?: boolean;
-    dontShowXButton?: boolean;
-    okayLabel?: string;
-    okayVariant?: Variant;
-    cancelLabel?: string;
-    cancelVariant?: Variant;
-    yesLabel?: string;
-    yesVariant?: Variant;
-    noLabel?: string;
-    noVariant?: Variant;
-    abandonLabel?: string;
-    abandonVariant?: Variant;
-    goBackLabel?: string;
-    goBackVariant?: Variant;
-    continueLabel?: string;
-    continueVariant?: Variant;
-    imSureLabel?: string;
-    imSureVariant?: Variant;
-    deleteLabel?: string;
-    deleteVariant?: Variant;
-    confirmLabel?: string;
-    confirmVariant?: Variant;
-    onTopOfOtherModals?: boolean;
-};
-declare const Modal: React.FC<Props$j>;
+declare const Modal: React$1.FC<ModalProps>;
 
 /**
  * A box with a tab on the top that holds buttons and other content
@@ -184,12 +190,12 @@ declare const Modal: React.FC<Props$j>;
  */
 
 type Props$i = {
-    title: React.ReactNode;
-    children: React.ReactNode;
+    title: React$1.ReactNode;
+    children: React$1.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React.FC<Props$i>;
+declare const TabBox: React$1.FC<Props$i>;
 
 /**
  * A radio selection button
@@ -208,7 +214,7 @@ type Props$h = {
     unselectedVariant?: Variant;
     small?: boolean;
 };
-declare const RadioButton: React.FC<Props$h>;
+declare const RadioButton: React$1.FC<Props$h>;
 
 /**
  * A checkbox button
@@ -229,7 +235,7 @@ type Props$g = {
     small?: boolean;
     dashed?: boolean;
 };
-declare const CheckboxButton: React.FC<Props$g>;
+declare const CheckboxButton: React$1.FC<Props$g>;
 
 /**
  * Input group with a title and space for buttons
@@ -239,11 +245,11 @@ declare const CheckboxButton: React.FC<Props$g>;
 type Props$f = {
     label: string;
     minLabelWidth?: string;
-    children: React.ReactNode;
+    children: React$1.ReactNode;
     className?: string;
     wrapButtonsAndAddGaps?: boolean;
 };
-declare const ButtonInputGroup: React.FC<Props$f>;
+declare const ButtonInputGroup: React$1.FC<Props$f>;
 
 /**
  * A very simple, lightweight date chooser
@@ -266,7 +272,7 @@ type Props$e = {
     numMonthsToShow?: number;
     chooseFromPast?: boolean;
 };
-declare const SimpleDateChooser: React.FC<Props$e>;
+declare const SimpleDateChooser: React$1.FC<Props$e>;
 
 /**
  * Drawer container
@@ -275,9 +281,9 @@ declare const SimpleDateChooser: React.FC<Props$e>;
 
 type Props$d = {
     customBackgroundColor?: string;
-    children: React.ReactNode;
+    children: React$1.ReactNode;
 };
-declare const Drawer: React.FC<Props$d>;
+declare const Drawer: React$1.FC<Props$d>;
 
 /**
  * Success checkmark that pops into view
@@ -289,7 +295,7 @@ type Props$c = {
     circleVariant?: string;
     checkVariant?: string;
 };
-declare const PopSuccessMark: React.FC<Props$c>;
+declare const PopSuccessMark: React$1.FC<Props$c>;
 
 /**
  * Failure x mark that pops into view
@@ -301,7 +307,7 @@ type Props$b = {
     circleVariant?: string;
     xVariant?: string;
 };
-declare const PopFailureMark: React.FC<Props$b>;
+declare const PopFailureMark: React$1.FC<Props$b>;
 
 /**
  * Failure pending that pops into view
@@ -313,7 +319,7 @@ type Props$a = {
     circleVariant?: string;
     hourglassVariant?: string;
 };
-declare const PopPendingMark: React.FC<Props$a>;
+declare const PopPendingMark: React$1.FC<Props$a>;
 
 /**
  * Copiable text box
@@ -332,7 +338,7 @@ type Props$9 = {
     textAreaId?: string;
     copyButtonId?: string;
 };
-declare const CopiableBox: React.FC<Props$9>;
+declare const CopiableBox: React$1.FC<Props$9>;
 
 /**
  * An item that can be chosen (for use within ItemPicker)
@@ -366,7 +372,7 @@ type Props$8 = {
     onChanged: (updatedItems: PickableItem[]) => void;
     noBottomMargin?: boolean;
 };
-declare const ItemPicker: React.FC<Props$8>;
+declare const ItemPicker: React$1.FC<Props$8>;
 
 /**
  * Type of the context map in a LogMetadata file
@@ -415,7 +421,7 @@ type Props$7 = {
     LogMetadata: LogMetadataType;
     onClose: () => void;
 };
-declare const LogReviewer: React.FC<Props$7>;
+declare const LogReviewer: React$1.FC<Props$7>;
 
 /**
  * Server-side API param types
@@ -460,7 +466,7 @@ type Props$6 = {
     columns: IntelliTableColumn[];
     csvName?: string;
 };
-declare const IntelliTable: React.FC<Props$6>;
+declare const IntelliTable: React$1.FC<Props$6>;
 
 /**
  * Button for downloading a csv file
@@ -477,9 +483,9 @@ type Props$5 = {
         [k: string]: any;
     };
     onClick?: () => void;
-    children?: React.ReactNode;
+    children?: React$1.ReactNode;
 };
-declare const CSVDownloadButton: React.FC<Props$5>;
+declare const CSVDownloadButton: React$1.FC<Props$5>;
 
 /**
  * Generic type for an object
@@ -581,7 +587,7 @@ type Props$4 = {
         [k: string]: any;
     };
 };
-declare const DBEntryManagerPanel: React.FC<Props$4>;
+declare const DBEntryManagerPanel: React$1.FC<Props$4>;
 
 /**
  * Simple tooltip component
@@ -592,7 +598,7 @@ type Props$3 = {
     text: string;
     children: JSX.Element;
 };
-declare const Tooltip: React.FC<Props$3>;
+declare const Tooltip: React$1.FC<Props$3>;
 
 /**
  * A toggle switch that toggles on or off
@@ -611,7 +617,7 @@ type Props$2 = {
     description: string;
     backgroundVariantWhenOn?: Variant;
 };
-declare const ToggleSwitch: React.FC<Props$2>;
+declare const ToggleSwitch: React$1.FC<Props$2>;
 
 /**
  * Container that automatically scrolls when new items are added,
@@ -626,14 +632,14 @@ type Props$1 = {
     itemsName?: string;
     items: AutoScrollItem[];
     jumpToBottomButtonVariant?: Variant;
-    messageBeforeItems?: React.ReactNode;
-    messageAfterItems?: React.ReactNode;
+    messageBeforeItems?: React$1.ReactNode;
+    messageAfterItems?: React$1.ReactNode;
 };
 type AutoScrollItem = {
     id: string | number;
-    item: React.ReactNode;
+    item: React$1.ReactNode;
 };
-declare const AutoscrollToBottomContainer: React.FC<Props$1>;
+declare const AutoscrollToBottomContainer: React$1.FC<Props$1>;
 
 /**
  * A switch with multiple options for selection
@@ -657,7 +663,7 @@ type Option = {
     icon: IconProp;
     id: string;
 };
-declare const MultiSwitch: React.FC<Props>;
+declare const MultiSwitch: React$1.FC<Props>;
 
 /**
  * An error with a code
@@ -1436,7 +1442,7 @@ declare const makeLinksClickable: (text: string, opts?: {
     newTab?: boolean;
     preventPropagation?: boolean;
     inheritColor?: boolean;
-}) => React.ReactNode;
+}) => React$1.ReactNode;
 
 /**
  * Merges a list of class names into a class name, intelligently handling spaces
