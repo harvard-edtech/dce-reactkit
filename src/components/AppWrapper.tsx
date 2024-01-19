@@ -24,7 +24,7 @@ import ModalProps from './Modal/ModalProps';
 // Import shared components
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
-import Modal from './Modal/ModalForWrapper';
+import ModalForWrapper from './Modal/ModalForWrapper';
 
 // Import custom errors
 import ErrorWithCode from '../errors/ErrorWithCode';
@@ -580,7 +580,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   if (alertInfo) {
     modal = (
-      <Modal
+      <ModalForWrapper
         key={`alert-${alertInfo.title}-${alertInfo.text}`}
         title={alertInfo.title}
         type={ModalType.Okay}
@@ -594,7 +594,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         onTopOfOtherModals
       >
         {alertInfo.text}
-      </Modal>
+      </ModalForWrapper>
     );
   }
 
@@ -602,7 +602,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   if (confirmInfo) {
     modal = (
-      <Modal
+      <ModalForWrapper
         key={`confirm-${confirmInfo.title}-${confirmInfo.text}`}
         title={confirmInfo.title}
         type={ModalType.OkayCancel}
@@ -619,7 +619,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         dontAllowBackdropExit
       >
         {confirmInfo.text}
-      </Modal>
+      </ModalForWrapper>
     );
   }
 
@@ -631,7 +631,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   // Add custom modals
   modalsFromState.forEach((modalTuple) => {
     customModals.push(
-      <Modal
+      <ModalForWrapper
         key={String(modalTuple.props.key ?? modalTuple.id)}
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...modalTuple.props}

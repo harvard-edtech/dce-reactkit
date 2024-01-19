@@ -178,8 +178,7 @@ type Props$j = {
 declare const ErrorBox: React$1.FC<Props$j>;
 
 /**
- * The displayable modal component (this is the modal that's added to the
- *   wrapper, not the one that the programmer renders)
+ * General use modal component
  * @author Gabe Abrams
  */
 

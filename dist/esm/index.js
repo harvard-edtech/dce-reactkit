@@ -452,7 +452,7 @@ const style$a = `
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
-const Modal = (props) => {
+const Modal$1 = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -1052,6 +1052,70 @@ const showSessionExpiredMessage = () => __awaiter(void 0, void 0, void 0, functi
         showFatalError('Your session has expired. Please start over.', 'Session Expired');
     }
 });
+// Stored copies of setters
+let setModals;
+// Stored copies of modals
+let modals = [];
+/**
+ * Add a modal to the screen
+ * @author Gabe Abrams
+ * @param id the uniqueId of the modal
+ * @param props the props for the modal
+ */
+const addModal = (id, props) => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for helper to exist
+    yield waitForHelper(() => {
+        return !!setModals;
+    });
+    // Add modal
+    modals.push({
+        id,
+        props,
+    });
+    // Update modals
+    setModals(modals);
+});
+/**
+ * Update a modal on the screen by id (if it exists) with new props
+ * @author Gabe Abrams
+ * @param id the uniqueId of the modal
+ * @param props the new props for the modal
+ */
+const updateModal = (id, props) => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for helper to exist
+    yield waitForHelper(() => {
+        return !!setModals;
+    });
+    // Update modal
+    modals = modals.map((modal) => {
+        if (modal.id === id) {
+            return {
+                id,
+                props,
+            };
+        }
+        return modal;
+    });
+    // Update modals
+    setModals(modals);
+});
+/**
+ * Remove a modal from the screen by id (if it exists)
+ * @author Gabe Abrams
+ * @param id the uniqueId of the modal
+ */
+const removeModal = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    // Wait for helper to exist
+    yield waitForHelper(() => {
+        return !!setModals;
+    });
+    // Remove modal
+    modals = modals.filter((modal) => {
+        return modal.id !== id;
+    });
+    // Update modals
+    setModals(modals);
+});
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -1107,6 +1171,7 @@ const AppWrapper = (props) => {
     setSessionHasExpired = setSessionHasExpiredInner;
     // Modals
     const [modalsFromState, setModalsInner,] = useState([]);
+    setModals = setModalsInner;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -1117,7 +1182,7 @@ const AppWrapper = (props) => {
     let modal;
     /* -------------- Alert ------------- */
     if (alertInfo) {
-        modal = (React__default.createElement(Modal, { key: `alert-${alertInfo.title}-${alertInfo.text}`, title: alertInfo.title, type: ModalType$1.Okay, onClose: () => {
+        modal = (React__default.createElement(Modal$1, { key: `alert-${alertInfo.title}-${alertInfo.text}`, title: alertInfo.title, type: ModalType$1.Okay, onClose: () => {
                 // Alert closed
                 setAlertInfo(undefined);
                 if (onAlertClosed) {
@@ -1127,7 +1192,7 @@ const AppWrapper = (props) => {
     }
     /* ------------- Confirm ------------ */
     if (confirmInfo) {
-        modal = (React__default.createElement(Modal, { key: `confirm-${confirmInfo.title}-${confirmInfo.text}`, title: confirmInfo.title, type: ModalType$1.OkayCancel, okayLabel: confirmInfo.opts.confirmButtonText, okayVariant: confirmInfo.opts.confirmButtonVariant, cancelLabel: confirmInfo.opts.cancelButtonText, cancelVariant: confirmInfo.opts.cancelButtonVariant, onClose: (buttonType) => {
+        modal = (React__default.createElement(Modal$1, { key: `confirm-${confirmInfo.title}-${confirmInfo.text}`, title: confirmInfo.title, type: ModalType$1.OkayCancel, okayLabel: confirmInfo.opts.confirmButtonText, okayVariant: confirmInfo.opts.confirmButtonVariant, cancelLabel: confirmInfo.opts.cancelButtonText, cancelVariant: confirmInfo.opts.cancelButtonVariant, onClose: (buttonType) => {
                 setConfirmInfo(undefined);
                 if (onConfirmClosed) {
                     onConfirmClosed(buttonType === ModalButtonType$1.Okay);
@@ -1140,7 +1205,7 @@ const AppWrapper = (props) => {
     // Add custom modals
     modalsFromState.forEach((modalTuple) => {
         var _a;
-        customModals.push(React__default.createElement(Modal, Object.assign({ key: String((_a = modalTuple.props.key) !== null && _a !== void 0 ? _a : modalTuple.id) }, modalTuple.props)));
+        customModals.push(React__default.createElement(Modal$1, Object.assign({ key: String((_a = modalTuple.props.key) !== null && _a !== void 0 ? _a : modalTuple.id) }, modalTuple.props)));
     });
     /*----------------------------------------*/
     /* ---------------- Views --------------- */
@@ -1328,6 +1393,71 @@ const LoadingSpinner = () => {
         React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-2 me-1" }),
         React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-3 me-1" }),
         React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-4" })));
+};
+
+/**
+ * General use modal component
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/* --------------------------- Static Helpers --------------------------- */
+/*------------------------------------------------------------------------*/
+// Next unique id
+let nextUniqueId = 0;
+/**
+ * Get a new unique id for this modal
+ * @author Gabe Abrams
+ * @returns new unique id
+ */
+const getNextUniqueId = () => {
+    // eslint-disable-next-line no-plusplus
+    return nextUniqueId++;
+};
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const Modal = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Refs -------------- */
+    // Initialize refs
+    const id = useRef(getNextUniqueId());
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Lifecycle Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Mount: add to app wrapper
+     * @author Gabe Abrams
+     */
+    useEffect(() => {
+        addModal(id.current, props);
+    }, []);
+    /**
+     * Update: update modal props in app wrapper when props change
+     * @author Gabe Abrams
+     */
+    useEffect(() => {
+        // Update modal props
+        updateModal(id.current, props);
+    }, [props]);
+    /**
+     * Unmount: remove from app wrapper when unmounting
+     * @author Gabe Abrams
+     */
+    useEffect(() => {
+        return () => {
+            // Remove modal
+            removeModal(id.current);
+        };
+    }, []);
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    return (React__default.createElement("div", { className: "Modal-shell d-none" }));
 };
 
 /**
@@ -2770,7 +2900,7 @@ const IntelliTable = (props) => {
     /* ------- Col Vis Customization Modal ------ */
     if (columnVisibilityCustomizationModalVisible) {
         // Create modal
-        modal = (React__default.createElement(Modal, { type: ModalType$1.Okay, title: "Choose columns to show:", onClose: () => {
+        modal = (React__default.createElement(Modal$1, { type: ModalType$1.Okay, title: "Choose columns to show:", onClose: () => {
                 const noColumnsSelected = (Object.values(columnVisibilityMap)
                     .every((isSelected) => {
                     return !isSelected;
