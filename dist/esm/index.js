@@ -288,6 +288,9 @@ const initClient = (opts) => {
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Constants ----------------------------- */
 /*------------------------------------------------------------------------*/
+// Base level of z-index
+const BASE_Z_INDEX = 1000000000;
+const BASE_Z_INDEX_ON_TOP = 2000000000;
 // Constants
 const MS_TO_ANIMATE = 200; // Animation duration
 // Modal type to list of buttons
@@ -507,6 +510,10 @@ const Modal$1 = (props) => {
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
+    // Calculate Z-index
+    const baseZIndex = (onTopOfOtherModals
+        ? BASE_Z_INDEX_ON_TOP
+        : BASE_Z_INDEX);
     // Get list of buttons for this modal type
     const ModalButtonTypes = (_a = modalTypeToModalButtonTypes[type]) !== null && _a !== void 0 ? _a : [];
     // Get map of button type to label and variant
@@ -547,9 +554,7 @@ const Modal$1 = (props) => {
     }
     // Render the modal
     return (React__default.createElement("div", { className: "modal show", tabIndex: -1, style: {
-            zIndex: (onTopOfOtherModals
-                ? 2000000001
-                : 2000000000),
+            zIndex: baseZIndex,
             display: 'block',
             margin: 'auto',
             left: 0,
@@ -557,7 +562,7 @@ const Modal$1 = (props) => {
         } },
         React__default.createElement("style", null, style$a),
         React__default.createElement("div", { className: `ModalForWrapper-backdrop ${backdropAnimationClass}`, style: {
-                zIndex: 2000000003,
+                zIndex: baseZIndex + 1,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                 // Skip if exit via backdrop not allowed
                 if (dontAllowBackdropExit || !onClose) {
@@ -574,7 +579,7 @@ const Modal$1 = (props) => {
                 handleClose(ModalButtonType$1.Cancel);
             }) }),
         React__default.createElement("div", { className: `modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`, style: {
-                zIndex: 2000000002,
+                zIndex: baseZIndex + 2,
             } },
             React__default.createElement("div", { className: "modal-content", style: {
                     borderColor: (isDarkModeOn()
@@ -1197,7 +1202,7 @@ const AppWrapper = (props) => {
                 if (onConfirmClosed) {
                     onConfirmClosed(buttonType === ModalButtonType$1.Okay);
                 }
-            }, dontAllowBackdropExit: true }, confirmInfo.text));
+            }, onTopOfOtherModals: true, dontAllowBackdropExit: true }, confirmInfo.text));
     }
     /* ---------- Custom Modals --------- */
     // List of modals added outside reactkit via the Modal component

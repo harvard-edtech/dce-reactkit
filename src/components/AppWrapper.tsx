@@ -616,6 +616,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
             onConfirmClosed(buttonType === ModalButtonType.Okay);
           }
         }}
+        onTopOfOtherModals
         dontAllowBackdropExit
       >
         {confirmInfo.text}
