@@ -1,6 +1,6 @@
 {
   "name": "dce-reactkit",
-  "version": "3.7.11",
+  "version": "3.7.12",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -34,7 +34,7 @@
     "bootstrap": "^5.x.x",
     "express": "^x.x.x",
     "react": "^x.x.x",
-    "react-dom": "^17.0.2"
+    "react-dom": "^x.x.x"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.0",
