@@ -26,7 +26,7 @@ import roundToNumDecimals from '../helpers/roundToNumDecimals';
 import genCSV from '../helpers/genCSV';
 
 // Import shared components
-import Modal from './Modal/ModalForWrapper';
+import Modal from './Modal';
 import ModalType from '../types/ModalType';
 import CheckboxButton from './CheckboxButton';
 import CSVDownloadButton from './CSVDownloadButton';

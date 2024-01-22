@@ -19,6 +19,85 @@ declare enum Variant {
 }
 
 /**
+ * A wrapper for the entire React app that adds global functionality like
+ *   handling for fatal error messages, adds bootstrap support
+ * @author Gabe Abrams
+ */
+
+type Props$k = {
+    children: React$1.ReactNode;
+};
+/**
+ * Redirect to a new page
+ * @author Gabe Abrams
+ * @param url the url to redirect to
+ * @param destination the destination of the redirect, for example "YouTube"
+ *   and will be used in the following text: `Redirecting to ${destination}...`
+ */
+declare const leaveToURL: (url: string, destination: string) => Promise<void>;
+/**
+ * Show an alert modal with an "Okay" button
+ * @author Gabe Abrams
+ * @param title the title text to display at the top of the alert
+ * @param text the text to display in the alert
+ */
+declare const alert: (title: string, text: string) => Promise<undefined>;
+/**
+ * Show a confirmation modal with an "Okay" and a "Cancel" button
+ *   (with the option to customize the text of those buttons)
+ * @author Gabe Abrams
+ * @param title the title text to display at the top of the alert
+ * @param text the text to display in the alert
+ * @param [opts={}] additional options for the confirmation dialog
+ * @param [opts.confirmButtonText=Okay] the text of the confirm button
+ * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm
+ *   button
+ * @param [opts.cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel
+ *   button
+ * @returns true if the user confirmed
+ */
+declare const confirm: (title: string, text: string, opts?: {
+    confirmButtonText?: string;
+    confirmButtonVariant?: Variant;
+    cancelButtonText?: string;
+    cancelButtonVariant?: Variant;
+}) => Promise<boolean>;
+/**
+ * Show a fatal error message
+ * @author Gabe Abrams
+ * @param error the error to show
+ * @param [errorTitle] title of the error box
+ */
+declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>;
+/**
+ * Add a handler for when a fatal error occurs (or when a session expiry occurs)
+ * @author Gabe Abrams
+ */
+declare const addFatalErrorHandler: (handler: () => void) => void;
+declare const AppWrapper: React$1.FC<Props$k>;
+
+/**
+ * Loading spinner/indicator
+ * @author Gabe Abrams
+ */
+declare const LoadingSpinner: () => JSX.Element;
+
+/**
+ * Displays an error
+ * @author Gabe Abrams
+ */
+
+type Props$j = {
+    error: any;
+    title?: string;
+    onClose?: () => void;
+    variant?: Variant;
+    icon?: IconProp;
+};
+declare const ErrorBox: React$1.FC<Props$j>;
+
+/**
  * Types of buttons in the modal
  * @author Gabe Abrams
  */
@@ -99,86 +178,8 @@ type ModalProps = {
 };
 
 /**
- * A wrapper for the entire React app that adds global functionality like
- *   handling for fatal error messages, adds bootstrap support
- * @author Gabe Abrams
- */
-
-type Props$k = {
-    children: React$1.ReactNode;
-};
-/**
- * Redirect to a new page
- * @author Gabe Abrams
- * @param url the url to redirect to
- * @param destination the destination of the redirect, for example "YouTube"
- *   and will be used in the following text: `Redirecting to ${destination}...`
- */
-declare const leaveToURL: (url: string, destination: string) => Promise<void>;
-/**
- * Show an alert modal with an "Okay" button
- * @author Gabe Abrams
- * @param title the title text to display at the top of the alert
- * @param text the text to display in the alert
- */
-declare const alert: (title: string, text: string) => Promise<undefined>;
-/**
- * Show a confirmation modal with an "Okay" and a "Cancel" button
- *   (with the option to customize the text of those buttons)
- * @author Gabe Abrams
- * @param title the title text to display at the top of the alert
- * @param text the text to display in the alert
- * @param [opts={}] additional options for the confirmation dialog
- * @param [opts.confirmButtonText=Okay] the text of the confirm button
- * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm
- *   button
- * @param [opts.cancelButtonText=Cancel] the text of the cancel button
- * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel
- *   button
- * @returns true if the user confirmed
- */
-declare const confirm: (title: string, text: string, opts?: {
-    confirmButtonText?: string;
-    confirmButtonVariant?: Variant;
-    cancelButtonText?: string;
-    cancelButtonVariant?: Variant;
-}) => Promise<boolean>;
-/**
- * Show a fatal error message
- * @author Gabe Abrams
- * @param error the error to show
- * @param [errorTitle] title of the error box
- */
-declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>;
-/**
- * Add a handler for when a fatal error occurs (or when a session expiry occurs)
- * @author Gabe Abrams
- */
-declare const addFatalErrorHandler: (handler: () => void) => void;
-declare const AppWrapper: React$1.FC<Props$k>;
-
-/**
- * Loading spinner/indicator
- * @author Gabe Abrams
- */
-declare const LoadingSpinner: () => JSX.Element;
-
-/**
- * Displays an error
- * @author Gabe Abrams
- */
-
-type Props$j = {
-    error: any;
-    title?: string;
-    onClose?: () => void;
-    variant?: Variant;
-    icon?: IconProp;
-};
-declare const ErrorBox: React$1.FC<Props$j>;
-
-/**
- * General use modal component
+ * The displayable modal component (this is the modal that's added to the
+ *   wrapper, not the one that the programmer renders)
  * @author Gabe Abrams
  */
 

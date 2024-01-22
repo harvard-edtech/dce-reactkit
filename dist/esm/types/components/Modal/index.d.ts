@@ -1,5 +1,6 @@
 /**
- * General use modal component
+ * The displayable modal component (this is the modal that's added to the
+ *   wrapper, not the one that the programmer renders)
  * @author Gabe Abrams
  */
 import React from 'react';

@@ -5,7 +5,6 @@
  */
 import React from 'react';
 import Variant from '../types/Variant';
-import ModalProps from './Modal/ModalProps';
 type Props = {
     children: React.ReactNode;
 };
@@ -62,25 +61,5 @@ export declare const addFatalErrorHandler: (handler: () => void) => void;
  * @author Gabe Abrams
  */
 export declare const showSessionExpiredMessage: () => Promise<void>;
-/**
- * Add a modal to the screen
- * @author Gabe Abrams
- * @param id the uniqueId of the modal
- * @param props the props for the modal
- */
-export declare const addModal: (id: number, props: ModalProps) => Promise<void>;
-/**
- * Update a modal on the screen by id (if it exists) with new props
- * @author Gabe Abrams
- * @param id the uniqueId of the modal
- * @param props the new props for the modal
- */
-export declare const updateModal: (id: number, props: ModalProps) => Promise<void>;
-/**
- * Remove a modal from the screen by id (if it exists)
- * @author Gabe Abrams
- * @param id the uniqueId of the modal
- */
-export declare const removeModal: (id: number) => Promise<void>;
 declare const AppWrapper: React.FC<Props>;
 export default AppWrapper;
