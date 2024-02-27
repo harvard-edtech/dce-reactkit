@@ -1003,6 +1003,14 @@ type LogFunction = (opts: ({
  * @param opts.handler function that processes the request
  * @param [opts.skipSessionCheck] if true, skip the session check (allow users
  *   to not be logged in and launched via LTI)
+ * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
+ *   is not of type ErrorWithCode is thrown, the client will receive an error
+ *   where the error message is prefixed with this string. For example,
+ *   if unhandledErrorMessagePrefix is
+ *   'While saving progress, we encountered an error:'
+ *   and the error is 'progressInfo is not an object',
+ *   the client will receive an error with the message
+ *   'While saving progress, we encountered an error: progressInfo is not an object'
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value),
  *   req (express request object),
@@ -1011,6 +1019,7 @@ type LogFunction = (opts: ({
  *   redirect (takes a url and redirects the user to that url),
  *   renderErrorPage (shows a static error page to the user),
  *   renderInfoPage (shows a static info page to the user),
+ *   renderCustomHTML (renders custom html and sends it to the user),
  *   and returns the value to send to the client as a JSON API response, or
  *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
  *   Note: params also has userId, userFirstName,
@@ -1041,9 +1050,14 @@ declare const genRouteHandler: (opts: {
             title: string;
             body: string;
         }) => void;
+        renderCustomHTML: (opts: {
+            html: string;
+            status?: number;
+        }) => void;
         logServerEvent: LogFunction;
     }) => any;
     skipSessionCheck?: boolean | undefined;
+    unhandledErrorMessagePrefix?: string | undefined;
 }) => (req: any, res: any, next: () => void) => Promise<undefined>;
 
 /**

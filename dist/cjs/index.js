@@ -14056,6 +14056,7 @@ const genErrorPage = (opts = {}) => {
  * @param opts object containing all arguments
  * @param opts.title title of the info box
  * @param opts.body a human-readable text body for the info alert
+ * @returns the HTML for the info page
  */
 const genInfoPage = (opts) => {
     const { title, body, } = opts;
@@ -14254,6 +14255,14 @@ const parseUserAgent = (userAgent) => {
  * @param opts.handler function that processes the request
  * @param [opts.skipSessionCheck] if true, skip the session check (allow users
  *   to not be logged in and launched via LTI)
+ * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
+ *   is not of type ErrorWithCode is thrown, the client will receive an error
+ *   where the error message is prefixed with this string. For example,
+ *   if unhandledErrorMessagePrefix is
+ *   'While saving progress, we encountered an error:'
+ *   and the error is 'progressInfo is not an object',
+ *   the client will receive an error with the message
+ *   'While saving progress, we encountered an error: progressInfo is not an object'
  * @returns express route handler that takes the following arguments:
  *   params (map: param name => value),
  *   req (express request object),
@@ -14262,6 +14271,7 @@ const parseUserAgent = (userAgent) => {
  *   redirect (takes a url and redirects the user to that url),
  *   renderErrorPage (shows a static error page to the user),
  *   renderInfoPage (shows a static info page to the user),
+ *   renderCustomHTML (renders custom html and sends it to the user),
  *   and returns the value to send to the client as a JSON API response, or
  *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
  *   Note: params also has userId, userFirstName,
@@ -14773,6 +14783,17 @@ const genRouteHandler = (opts) => {
             const html = genInfoPage(renderOpts);
             send(html, 200);
         };
+        /**
+         * Render custom HTML
+         * @author Gabe Abrams
+         * @param htmlOpts object containing all arguments
+         * @param htmlOpts.html the HTML to send to the client
+         * @param [ejsOpts.status=200] the http status code to send
+         */
+        const renderCustomHTML = (htmlOpts) => {
+            var _a;
+            send(htmlOpts.html, (_a = htmlOpts.status) !== null && _a !== void 0 ? _a : 200);
+        };
         // Call the handler
         try {
             const results = yield opts.handler({
@@ -14786,6 +14807,7 @@ const genRouteHandler = (opts) => {
                 redirect,
                 renderErrorPage,
                 renderInfoPage,
+                renderCustomHTML,
                 logServerEvent,
             });
             // Send results to client (only if next wasn't called)
@@ -14794,6 +14816,13 @@ const genRouteHandler = (opts) => {
             }
         }
         catch (err) {
+            // Prefix error message if needed
+            if (opts.unhandledErrorMessagePrefix
+                && err instanceof Error
+                && err.message
+                && err.name !== 'ErrorWithCode') {
+                err.message = `${opts.unhandledErrorMessagePrefix.trim()} ${err.message.trim()}`;
+            }
             // Send error to client (only if next wasn't called)
             if (!responseSent) {
                 handleError(res, err);
