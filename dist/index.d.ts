@@ -244,7 +244,7 @@ declare const CheckboxButton: React$1.FC<Props$g>;
  */
 
 type Props$f = {
-    label: string;
+    label: React$1.ReactNode;
     minLabelWidth?: string;
     children: React$1.ReactNode;
     className?: string;

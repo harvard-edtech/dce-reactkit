@@ -13,7 +13,7 @@ import React from 'react';
 // Props definition
 type Props = {
   // Label text
-  label: string,
+  label: React.ReactNode,
   // Minimum width of the label (css units)
   minLabelWidth?: string,
   // Buttons

@@ -4,7 +4,7 @@
  */
 import React from 'react';
 type Props = {
-    label: string;
+    label: React.ReactNode;
     minLabelWidth?: string;
     children: React.ReactNode;
     className?: string;
