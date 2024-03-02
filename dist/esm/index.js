@@ -1543,21 +1543,21 @@ const ButtonInputGroup = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { label, minLabelWidth, children, className, wrapButtonsAndAddGaps, } = props;
+    const { label, minLabelWidth, children, className, wrapButtonsAndAddGaps, isAdminFeature, noMarginOnBottom, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
-    return (React__default.createElement("div", { className: `input-group ${className !== null && className !== void 0 ? className : ''}` },
+    return (React__default.createElement("div", { className: `input-group ${className !== null && className !== void 0 ? className : ''} ${noMarginOnBottom ? '' : 'mb-2'}` },
         React__default.createElement("div", { className: "input-group-prepend d-flex w-100" },
-            React__default.createElement("span", { className: "input-group-text", style: {
+            React__default.createElement("span", { className: `input-group-text ${isAdminFeature ? 'border border-success progress-bar-striped bg-success text-white fw-bold' : ''}`, style: {
                     minWidth: (minLabelWidth !== null && minLabelWidth !== void 0 ? minLabelWidth : undefined),
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                 } }, label),
-            React__default.createElement("span", { className: "input-group-text flex-grow-1 rounded-right d-flex flex-wrap", style: {
+            React__default.createElement("span", { className: `input-group-text flex-grow-1 ${isAdminFeature ? 'border-success ' : ''}rounded-right d-flex flex-wrap`, style: {
                     backgroundColor: 'white',
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,

@@ -249,6 +249,8 @@ type Props$f = {
     children: React$1.ReactNode;
     className?: string;
     wrapButtonsAndAddGaps?: boolean;
+    isAdminFeature?: boolean;
+    noMarginOnBottom?: boolean;
 };
 declare const ButtonInputGroup: React$1.FC<Props$f>;
 

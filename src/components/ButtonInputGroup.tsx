@@ -22,6 +22,10 @@ type Props = {
   className?: string,
   // If true, wrap buttons and create gaps
   wrapButtonsAndAddGaps?: boolean,
+  // If true, is an admin feature
+  isAdminFeature?: boolean,
+  // If true, don't add a margin on the bottom
+  noMarginOnBottom?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -42,6 +46,8 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
     children,
     className,
     wrapButtonsAndAddGaps,
+    isAdminFeature,
+    noMarginOnBottom,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -53,11 +59,11 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
   /*----------------------------------------*/
 
   return (
-    <div className={`input-group ${className ?? ''}`}>
+    <div className={`input-group ${className ?? ''} ${noMarginOnBottom ? '' : 'mb-2'}`}>
       <div className="input-group-prepend d-flex w-100">
         {/* Label */}
         <span
-          className="input-group-text"
+          className={`input-group-text ${isAdminFeature ? 'border border-success progress-bar-striped bg-success text-white fw-bold' : ''}`}
           style={{
             minWidth: (
               minLabelWidth
@@ -72,7 +78,7 @@ const ButtonInputGroup: React.FC<Props> = (props) => {
 
         {/* Contents */}
         <span
-          className="input-group-text flex-grow-1 rounded-right d-flex flex-wrap"
+          className={`input-group-text flex-grow-1 ${isAdminFeature ? 'border-success ' : ''}rounded-right d-flex flex-wrap`}
           style={{
             backgroundColor: 'white',
             borderTopLeftRadius: 0,

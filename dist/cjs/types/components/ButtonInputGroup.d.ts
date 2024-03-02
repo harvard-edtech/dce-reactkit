@@ -9,6 +9,8 @@ type Props = {
     children: React.ReactNode;
     className?: string;
     wrapButtonsAndAddGaps?: boolean;
+    isAdminFeature?: boolean;
+    noMarginOnBottom?: boolean;
 };
 declare const ButtonInputGroup: React.FC<Props>;
 export default ButtonInputGroup;
