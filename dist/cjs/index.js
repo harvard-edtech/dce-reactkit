@@ -12906,7 +12906,7 @@ const ToggleSwitch = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { isOn, onToggle, id, description, backgroundVariantWhenOn = Variant$1.Info, } = props;
+    const { isOn, onToggle, id, className, description, backgroundVariantWhenOn = Variant$1.Info, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -12916,7 +12916,7 @@ const ToggleSwitch = (props) => {
     const backgroundVariant = (isOn
         ? backgroundVariantWhenOn
         : 'secondary');
-    return (React__default["default"].createElement("button", { id: id, "aria-label": `If on, ${description}. Currently ${isOn ? 'on' : 'off'}. Click to turn ${isOn ? 'off' : 'on'}.`, className: `alert alert-${backgroundVariant} bg-${backgroundVariant} mb-0 rounded-pill d-inline-block pt-0 pb-0 px-3`, onClick: () => {
+    return (React__default["default"].createElement("button", { id: id, "aria-label": `If on, ${description}. Currently ${isOn ? 'on' : 'off'}. Click to turn ${isOn ? 'off' : 'on'}.`, className: `alert alert-${backgroundVariant} bg-${backgroundVariant} mb-0 rounded-pill d-inline-block pt-0 pb-0 px-3 ${className !== null && className !== void 0 ? className : ''}`, onClick: () => {
             onToggle(!isOn);
         }, type: "button" },
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "text-light", style: {

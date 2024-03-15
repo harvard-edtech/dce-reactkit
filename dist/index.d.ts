@@ -617,6 +617,7 @@ type Props$2 = {
      */
     onToggle: (isOn: boolean) => void;
     id?: string;
+    className?: string;
     description: string;
     backgroundVariantWhenOn?: Variant;
 };

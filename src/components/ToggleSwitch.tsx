@@ -29,6 +29,8 @@ type Props = {
   onToggle: (isOn: boolean) => void,
   // Unique ID for the toggle switch
   id?: string,
+  // Custom className for the toggle switch
+  className?: string,
   // A description for what it means when the toggle switch is on
   // E.g. "airplane mode is active"
   // Description will be placed into a sentence with the structure:
@@ -54,6 +56,7 @@ const ToggleSwitch: React.FC<Props> = (props) => {
     isOn,
     onToggle,
     id,
+    className,
     description,
     backgroundVariantWhenOn = Variant.Info,
   } = props;
@@ -76,7 +79,7 @@ const ToggleSwitch: React.FC<Props> = (props) => {
     <button
       id={id}
       aria-label={`If on, ${description}. Currently ${isOn ? 'on' : 'off'}. Click to turn ${isOn ? 'off' : 'on'}.`}
-      className={`alert alert-${backgroundVariant} bg-${backgroundVariant} mb-0 rounded-pill d-inline-block pt-0 pb-0 px-3`}
+      className={`alert alert-${backgroundVariant} bg-${backgroundVariant} mb-0 rounded-pill d-inline-block pt-0 pb-0 px-3 ${className ?? ''}`}
       onClick={() => {
         onToggle(!isOn);
       }}
