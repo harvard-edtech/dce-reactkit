@@ -874,6 +874,23 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
 });
 
 /**
+ * Universal stylesheet
+ * @author Gabe Abrams
+ */
+const shared = `
+/* Button with no style */
+.btn-nostyle {
+  border: 0 !important;
+  background: transparent !important;
+  outline: 0 !important;
+  font-size: inherit !important;
+  color: inherit !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+`;
+
+/**
  * A wrapper for the entire React app that adds global functionality like
  *   handling for fatal error messages, adds bootstrap support
  * @author Gabe Abrams
@@ -1138,6 +1155,8 @@ const style$9 = `
       opacity: 1;
     }
   }
+
+  ${shared}
 `;
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
@@ -14753,10 +14772,16 @@ const genRouteHandler = (opts) => {
          * @param [renderOpts.status=500] http status code
          */
         const renderErrorPage = (renderOpts = {}) => {
-            var _a, _b;
+            var _a, _b, _c;
             const html = genErrorPage(renderOpts);
             send(html, (_a = renderOpts.status) !== null && _a !== void 0 ? _a : 500);
-            // Log
+            // Log server-side error if not a session expired error or 404
+            if (renderOpts.status && renderOpts.status === 404) {
+                return;
+            }
+            if ((_b = renderOpts.title) === null || _b === void 0 ? void 0 : _b.toLowerCase().includes('session expired')) {
+                return;
+            }
             logServerEvent({
                 context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
                 error: {
@@ -14768,7 +14793,7 @@ const genRouteHandler = (opts) => {
                     description: renderOpts.description,
                     code: renderOpts.code,
                     pageTitle: renderOpts.pageTitle,
-                    status: (_b = renderOpts.status) !== null && _b !== void 0 ? _b : 500,
+                    status: (_c = renderOpts.status) !== null && _c !== void 0 ? _c : 500,
                 },
             });
         };

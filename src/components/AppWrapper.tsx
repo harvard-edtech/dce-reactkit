@@ -37,7 +37,12 @@ import {
   isDarkModeOn,
 } from '../client/initClient';
 import waitMs from '../helpers/waitMs';
+
+// Import constants
 import NUM_MODAL_PORTALS from '../constants/NUM_MODAL_PORTALS';
+
+// Import style
+import sharedStyle from '../stylesheets/shared.css';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Props ------------------------------- */
@@ -383,6 +388,8 @@ const style = `
       opacity: 1;
     }
   }
+
+  ${sharedStyle}
 `;
 
 /*------------------------------------------------------------------------*/

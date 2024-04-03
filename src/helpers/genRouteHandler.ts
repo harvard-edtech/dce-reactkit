@@ -738,7 +738,13 @@ const genRouteHandler = (
       const html = genErrorPage(renderOpts);
       send(html, renderOpts.status ?? 500);
 
-      // Log
+      // Log server-side error if not a session expired error or 404
+      if (renderOpts.status && renderOpts.status === 404) {
+        return;
+      }
+      if (renderOpts.title?.toLowerCase().includes('session expired')) {
+        return;
+      }
       logServerEvent({
         context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
         error: {
