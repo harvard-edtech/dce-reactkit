@@ -607,6 +607,13 @@ const Modal = (props) => {
             }) }),
         React__default.createElement("div", { className: `modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`, style: {
                 zIndex: baseZIndex + 2,
+                // Override sizes for even larger for XL
+                width: (size === ModalSize$1.ExtraLarge
+                    ? 'calc(100vw - 3rem)'
+                    : undefined),
+                maxWidth: (size === ModalSize$1.ExtraLarge
+                    ? '80rem'
+                    : undefined),
             } },
             React__default.createElement("div", { className: "modal-content", style: {
                     borderColor: (isDarkModeOn()
