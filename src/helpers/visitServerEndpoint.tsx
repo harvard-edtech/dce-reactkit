@@ -123,12 +123,27 @@ const visitServerEndpoint = async (
     );
   }
 
+  // Process params (encode objects)
+  let params: {
+    [key: string]: any,
+  } | undefined;
+  if (opts.params) {
+    params = {};
+    Object.entries(opts.params).forEach(([key, value]) => {
+      if (typeof value === 'object') {
+        (params as any)[key] = JSON.stringify(value);
+      } else {
+        (params as any)[key] = value;
+      }
+    });
+  }
+
   // Send the request
   const sendRequest = await getSendRequest();
   const response = await sendRequest({
     path: opts.path,
     method: opts.method ?? 'GET',
-    params: opts.params,
+    params,
   });
 
   // Check for failure
