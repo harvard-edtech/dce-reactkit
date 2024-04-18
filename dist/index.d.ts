@@ -204,7 +204,7 @@ declare const TabBox: React$1.FC<Props$i>;
  */
 
 type Props$h = {
-    text: string;
+    text: React$1.ReactNode;
     onSelected: () => void;
     ariaLabel: string;
     title?: string;
