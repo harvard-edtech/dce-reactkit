@@ -4,6 +4,7 @@
  */
 import React from 'react';
 type Props = {
+    grayBackground?: boolean;
     customBackgroundColor?: string;
     children: React.ReactNode;
 };

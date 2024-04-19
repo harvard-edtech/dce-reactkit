@@ -12,6 +12,8 @@ import React from 'react';
 
 // Props definition
 type Props = {
+  // If true, the background color is gray
+  grayBackground?: boolean,
   // Custom background color
   customBackgroundColor?: string,
   // Children to display
@@ -51,6 +53,7 @@ const Drawer: React.FC<Props> = (props) => {
 
   // Destructure all props
   const {
+    grayBackground,
     customBackgroundColor,
     children,
   } = props;
@@ -67,7 +70,11 @@ const Drawer: React.FC<Props> = (props) => {
     <div
       className="Drawer-container"
       style={{
-        backgroundColor: (customBackgroundColor ?? undefined),
+        backgroundColor: (
+          grayBackground
+            ? '#E2E3E5'
+            : (customBackgroundColor ?? undefined)
+        ),
       }}
     >
       <style>{style}</style>

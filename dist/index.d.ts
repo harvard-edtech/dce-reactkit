@@ -283,6 +283,7 @@ declare const SimpleDateChooser: React$1.FC<Props$e>;
  */
 
 type Props$d = {
+    grayBackground?: boolean;
     customBackgroundColor?: string;
     children: React$1.ReactNode;
 };

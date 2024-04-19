@@ -1828,7 +1828,7 @@ const Drawer = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { customBackgroundColor, children, } = props;
+    const { grayBackground, customBackgroundColor, children, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -1836,7 +1836,9 @@ const Drawer = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("div", { className: "Drawer-container", style: {
-            backgroundColor: (customBackgroundColor !== null && customBackgroundColor !== void 0 ? customBackgroundColor : undefined),
+            backgroundColor: (grayBackground
+                ? '#E2E3E5'
+                : (customBackgroundColor !== null && customBackgroundColor !== void 0 ? customBackgroundColor : undefined)),
         } },
         React__default.createElement("style", null, style$6),
         children));
