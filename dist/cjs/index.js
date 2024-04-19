@@ -1303,7 +1303,7 @@ const AppWrapper = (props) => {
         : `
         .tooltip-inner {
           background-color: black;
-          color: black;
+          color: white;
           border: 0.1rem solid white;
           pointer-events: none;
         }
