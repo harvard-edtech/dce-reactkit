@@ -223,7 +223,7 @@ declare const RadioButton: React$1.FC<Props$h>;
  */
 
 type Props$g = {
-    text: string;
+    text: React$1.ReactNode;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
     title?: string;

@@ -23,7 +23,7 @@ import { isDarkModeOn } from '../client/initClient';
 
 type Props = {
   // Text of the button
-  text: string,
+  text: React.ReactNode,
   // Handler for when this item is toggled
   onChanged: (checked: boolean) => void,
   // Aria label

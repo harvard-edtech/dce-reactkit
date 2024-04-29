@@ -5,7 +5,7 @@
 import React from 'react';
 import Variant from '../types/Variant';
 type Props = {
-    text: string;
+    text: React.ReactNode;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
     title?: string;
