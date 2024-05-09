@@ -17,6 +17,8 @@ type ModalProps = {
   size?: ModalSize,
   // Title of the modal (if excluded, no header)
   title?: React.ReactNode,
+  // If true, the title should be large
+  largeTitle?: boolean,
   // The body of the modal
   children?: React.ReactNode,
   // Handler to call when modal is closed (if excluded, not closable)

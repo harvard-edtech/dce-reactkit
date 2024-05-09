@@ -150,6 +150,7 @@ type ModalProps = {
     type?: ModalType;
     size?: ModalSize;
     title?: React.ReactNode;
+    largeTitle?: boolean;
     children?: React.ReactNode;
     onClose?: (type: ModalButtonType) => void;
     dontAllowBackdropExit?: boolean;

@@ -247,6 +247,7 @@ const Modal: React.FC<ModalProps> = (props) => {
     type = ModalType.NoButtons,
     size = ModalSize.Large,
     title,
+    largeTitle,
     children,
     onClose,
     dontAllowBackdropExit,
@@ -480,6 +481,11 @@ const Modal: React.FC<ModalProps> = (props) => {
               className="modal-title"
               style={{
                 fontWeight: 'bold',
+                fontSize: (
+                  largeTitle
+                    ? '1.6rem'
+                    : undefined
+                ),
               }}
             >
               {title}

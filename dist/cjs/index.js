@@ -509,7 +509,7 @@ const Modal = (props) => {
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
-    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, children, onClose, dontAllowBackdropExit, dontShowXButton, onTopOfOtherModals, } = props;
+    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, largeTitle, children, onClose, dontAllowBackdropExit, dontShowXButton, onTopOfOtherModals, } = props;
     /* -------------- State ------------- */
     // True if animation is in use
     const [animatingIn, setAnimatingIn] = React.useState(true);
@@ -660,6 +660,9 @@ const Modal = (props) => {
                     } },
                     React__default["default"].createElement("h5", { className: "modal-title", style: {
                             fontWeight: 'bold',
+                            fontSize: (largeTitle
+                                ? '1.6rem'
+                                : undefined),
                         } }, title),
                     (onClose && !dontShowXButton) && (React__default["default"].createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
                             backgroundColor: (isDarkModeOn()
