@@ -114,11 +114,17 @@ const CheckboxButton: React.FC<Props> = (props) => {
         onChanged(!checked);
       }}
     >
-      <FontAwesomeIcon
-        icon={icon}
-        className="me-1"
-      />
-      {text}
+      <div className="d-flex">
+        <div className="align-items-center">
+          <FontAwesomeIcon
+            icon={icon}
+            className="me-1"
+          />
+        </div>
+        <div className="flex-grow-1">
+          {text}
+        </div>
+      </div>
     </button>
   );
 };
