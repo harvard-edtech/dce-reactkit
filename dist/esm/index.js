@@ -1555,8 +1555,10 @@ const CheckboxButton = (props) => {
     return (React__default.createElement("button", { type: "button", id: id, title: title, className: `CheckboxButton-status-${checked ? 'checked' : 'unchecked'} ${dashed ? 'CheckboxButton-dashed ' : ''}btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'} ${className !== null && className !== void 0 ? className : ''}`, "aria-label": `${ariaLabel}${checked ? ': currently checked' : ''}`, onClick: () => {
             onChanged(!checked);
         } },
-        React__default.createElement(FontAwesomeIcon, { icon: icon, className: "me-1" }),
-        text));
+        React__default.createElement("div", { className: "d-flex" },
+            React__default.createElement("div", { className: "align-items-center" },
+                React__default.createElement(FontAwesomeIcon, { icon: icon, className: "me-1" })),
+            React__default.createElement("div", { className: "flex-grow-1" }, text))));
 };
 
 /**
