@@ -323,22 +323,12 @@ const MultiSwitch: React.FC<Props> = (props) => {
         }}
         disabled={option.id === selectedOptionId}
       >
-        <div className={`MultiSwitch-icon MultiSwitch-icon-${
-          isSelected
-            ? 'selected'
-            : ''
-        }`}
-        >
+        <div className={`MultiSwitch-icon MultiSwitch-icon-${isSelected ? 'selected' : ''}`}>
           <FontAwesomeIcon
             icon={option.icon}
           />
         </div>
-        <div className={`MultiSwitch-option-text MultiSwitch-option-text-${
-          isSelected
-            ? 'selected'
-            : ''
-        }`}
-        >
+        <div className={`MultiSwitch-option-text MultiSwitch-option-text-${isSelected ? 'selected' : ''}`}>
           {option.label}
         </div>
       </button>
