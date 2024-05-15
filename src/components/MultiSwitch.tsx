@@ -188,6 +188,7 @@ const MultiSwitch: React.FC<Props> = (props) => {
 
     .MultiSwitch-icon {
       font-size: ${iconFontSize}rems !important;
+      color: white;
     }
 
     .MultiSwitch-option-button {
@@ -214,7 +215,7 @@ const MultiSwitch: React.FC<Props> = (props) => {
     }
 
     .MultiSwitch-option-button-hovered {
-      background-color: #eee !important;
+      background-color: #545454 !important;
     }
 
     .MultiSwitch-option-text {
@@ -224,6 +225,12 @@ const MultiSwitch: React.FC<Props> = (props) => {
       white-space: nowrap;
       width: 100%;
       text-align: center !important;
+
+      color: white !important;
+    }
+
+    .MultiSwitch-option-text-selected {
+      font-weight: bold;
     }
 
     .MultiSwitch-highlight-container {
@@ -316,12 +323,12 @@ const MultiSwitch: React.FC<Props> = (props) => {
         }}
         disabled={option.id === selectedOptionId}
       >
-        <div className="MultiSelect-icon">
+        <div className={`MultiSwitch-icon MultiSwitch-icon-${isSelected ? 'selected' : ''}`}>
           <FontAwesomeIcon
             icon={option.icon}
           />
         </div>
-        <div className="MultiSwitch-option-text">
+        <div className={`MultiSwitch-option-text MultiSwitch-option-text-${isSelected ? 'selected' : ''}`}>
           {option.label}
         </div>
       </button>
@@ -330,7 +337,7 @@ const MultiSwitch: React.FC<Props> = (props) => {
 
   // Highlight behind selected option
   const highlight = (
-    <div className="MultiSwitch-highlight bg-warning d-inline-block" />
+    <div className="MultiSwitch-highlight bg-danger d-inline-block" />
   );
 
   return (
