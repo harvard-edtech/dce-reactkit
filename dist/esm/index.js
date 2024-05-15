@@ -13336,6 +13336,7 @@ const MultiSwitch = (props) => {
 
     .MultiSwitch-icon {
       font-size: ${iconFontSize}rems !important;
+      color: white;
     }
 
     .MultiSwitch-option-button {
@@ -13362,7 +13363,7 @@ const MultiSwitch = (props) => {
     }
 
     .MultiSwitch-option-button-hovered {
-      background-color: #eee !important;
+      background-color: #545454 !important;
     }
 
     .MultiSwitch-option-text {
@@ -13372,6 +13373,12 @@ const MultiSwitch = (props) => {
       white-space: nowrap;
       width: 100%;
       text-align: center !important;
+
+      color: white !important;
+    }
+
+    .MultiSwitch-option-text-selected {
+      font-weight: bold;
     }
 
     .MultiSwitch-highlight-container {
@@ -13442,12 +13449,12 @@ const MultiSwitch = (props) => {
                     ? 'none'
                     : undefined),
             }, disabled: option.id === selectedOptionId },
-            React__default.createElement("div", { className: "MultiSelect-icon" },
+            React__default.createElement("div", { className: `MultiSwitch-icon MultiSwitch-icon-${isSelected ? 'selected' : ''}` },
                 React__default.createElement(FontAwesomeIcon, { icon: option.icon })),
-            React__default.createElement("div", { className: "MultiSwitch-option-text" }, option.label)));
+            React__default.createElement("div", { className: `MultiSwitch-option-text MultiSwitch-option-text-${isSelected ? 'selected' : ''}` }, option.label)));
     });
     // Highlight behind selected option
-    const highlight = (React__default.createElement("div", { className: "MultiSwitch-highlight bg-warning d-inline-block" }));
+    const highlight = (React__default.createElement("div", { className: "MultiSwitch-highlight bg-danger d-inline-block" }));
     return (React__default.createElement("div", { className: "MultiSwitch-outer-box alert alert-dark m-0" },
         React__default.createElement("style", null, style),
         React__default.createElement("div", { className: "MultiSwitch-options-container" }, optionElements),
