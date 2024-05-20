@@ -15765,6 +15765,23 @@ const someAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0,
 });
 
 /**
+ * Capitalize every word in a string (just the first letter)
+ * @param str string to capitalize
+ * @returns string with every word capitalized
+ */
+const capitalize = (str) => {
+    return (str
+        // Split into words
+        .split(' ')
+        // Capitalize first letter of each word
+        .map((word) => {
+        return word.charAt(0).toUpperCase() + word.substring(1);
+    })
+        // Join back together
+        .join(' '));
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -15826,6 +15843,7 @@ exports.addFatalErrorHandler = addFatalErrorHandler;
 exports.alert = alert;
 exports.avg = avg;
 exports.canReviewLogs = canReviewLogs;
+exports.capitalize = capitalize;
 exports.ceilToNumDecimals = ceilToNumDecimals;
 exports.combineClassNames = combineClassNames;
 exports.compareArraysByProp = compareArraysByProp;

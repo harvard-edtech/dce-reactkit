@@ -90,6 +90,7 @@ import filterAsync from './helpers/asyncArrayFunctions/filterAsync';
 import forEachAsync from './helpers/asyncArrayFunctions/forEachAsync';
 import mapAsync from './helpers/asyncArrayFunctions/mapAsync';
 import someAsync from './helpers/asyncArrayFunctions/someAsync';
+import capitalize from './helpers/capitalize';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -191,6 +192,7 @@ export {
   forEachAsync,
   mapAsync,
   someAsync,
+  capitalize,
   // Client helpers
   initClient,
   visitServerEndpoint,
