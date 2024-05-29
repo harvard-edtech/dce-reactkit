@@ -15782,6 +15782,22 @@ const capitalize = (str) => {
 };
 
 /**
+ * Shuffle a given array
+ * @author Austen Money
+ * @param arr the array to shuffle
+ * @returns the shuffled array
+ */
+const shuffleArray = (arr) => {
+    const newArr = [...arr];
+    // Shuffle using Durstenfeld algorithm
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+    }
+    return newArr;
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -15882,6 +15898,7 @@ exports.prefixWithAOrAn = prefixWithAOrAn;
 exports.roundToNumDecimals = roundToNumDecimals;
 exports.setClientEventMetadataPopulator = setClientEventMetadataPopulator;
 exports.showFatalError = showFatalError;
+exports.shuffleArray = shuffleArray;
 exports.someAsync = someAsync;
 exports.startMinWait = startMinWait;
 exports.stringsToHumanReadableList = stringsToHumanReadableList;

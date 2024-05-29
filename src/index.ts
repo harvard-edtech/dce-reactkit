@@ -91,6 +91,7 @@ import forEachAsync from './helpers/asyncArrayFunctions/forEachAsync';
 import mapAsync from './helpers/asyncArrayFunctions/mapAsync';
 import someAsync from './helpers/asyncArrayFunctions/someAsync';
 import capitalize from './helpers/capitalize';
+import shuffleArray from './helpers/shuffleArray';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -193,6 +194,7 @@ export {
   mapAsync,
   someAsync,
   capitalize,
+  shuffleArray,
   // Client helpers
   initClient,
   visitServerEndpoint,
