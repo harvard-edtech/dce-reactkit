@@ -123,12 +123,17 @@ const visitServerEndpoint = async (
     );
   }
 
+  // remove properties with undefined values
+  const params = opts.params ? Object.fromEntries(
+    Object.entries(opts.params).filter(([, value]) => { return value !== undefined; }),
+  ) : undefined;
+
   // Send the request
   const sendRequest = await getSendRequest();
   const response = await sendRequest({
     path: opts.path,
     method: opts.method ?? 'GET',
-    params: opts.params,
+    params,
   });
 
   // Check for failure
