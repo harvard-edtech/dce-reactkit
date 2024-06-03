@@ -789,12 +789,21 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
         // Error
         throw new ErrorWithCode(stubResponse.errorMessage, stubResponse.errorCode);
     }
+    // Remove properties with undefined values
+    let params;
+    if (opts.params) {
+        params = Object.fromEntries(Object
+            .entries(opts.params)
+            .filter(([key, value]) => {
+            return value !== undefined;
+        }));
+    }
     // Send the request
     const sendRequest = yield getSendRequest();
     const response = yield sendRequest({
         path: opts.path,
         method: (_c = opts.method) !== null && _c !== void 0 ? _c : 'GET',
-        params: opts.params,
+        params,
     });
     // Check for failure
     if (!response || !response.body) {
