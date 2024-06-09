@@ -255,6 +255,9 @@ const Modal: React.FC<ModalProps> = (props) => {
     onTopOfOtherModals,
   } = props;
 
+  // Determine if no header either
+  const noHeader = (!title && type === ModalType.NoButtons);
+
   /* -------------- State ------------- */
 
   // True if animation is in use
@@ -457,59 +460,61 @@ const Modal: React.FC<ModalProps> = (props) => {
             ),
           }}
         >
-          <div
-            className="modal-header"
-            style={{
-              color: (
-                isDarkModeOn()
-                  ? 'white'
-                  : undefined
-              ),
-              backgroundColor: (
-                isDarkModeOn()
-                  ? '#444'
-                  : undefined
-              ),
-              borderBottom: (
-                isDarkModeOn()
-                  ? '0.1rem solid gray'
-                  : undefined
-              ),
-            }}
-          >
-            <h5
-              className="modal-title"
+          {!noHeader && (
+            <div
+              className="modal-header"
               style={{
-                fontWeight: 'bold',
-                fontSize: (
-                  largeTitle
-                    ? '1.6rem'
+                color: (
+                  isDarkModeOn()
+                    ? 'white'
+                    : undefined
+                ),
+                backgroundColor: (
+                  isDarkModeOn()
+                    ? '#444'
+                    : undefined
+                ),
+                borderBottom: (
+                  isDarkModeOn()
+                    ? '0.1rem solid gray'
                     : undefined
                 ),
               }}
             >
-              {title}
-            </h5>
-
-            {(onClose && !dontShowXButton) && (
-              <button
-                type="button"
-                className="Modal-x-button btn-close"
-                aria-label="Close"
+              <h5
+                className="modal-title"
                 style={{
-                  backgroundColor: (
-                    isDarkModeOn()
-                      ? 'white'
+                  fontWeight: 'bold',
+                  fontSize: (
+                    largeTitle
+                      ? '1.6rem'
                       : undefined
                   ),
                 }}
-                onClick={() => {
-                  // Handle close
-                  handleClose(ModalButtonType.Cancel);
-                }}
-              />
-            )}
-          </div>
+              >
+                {title}
+              </h5>
+
+              {(onClose && !dontShowXButton) && (
+                <button
+                  type="button"
+                  className="Modal-x-button btn-close"
+                  aria-label="Close"
+                  style={{
+                    backgroundColor: (
+                      isDarkModeOn()
+                        ? 'white'
+                        : undefined
+                    ),
+                  }}
+                  onClick={() => {
+                    // Handle close
+                    handleClose(ModalButtonType.Cancel);
+                  }}
+                />
+              )}
+            </div>
+          )}
           {children && (
             <div
               className="modal-body"

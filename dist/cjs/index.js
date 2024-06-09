@@ -510,6 +510,8 @@ const Modal = (props) => {
     var _a;
     /* -------------- Props ------------- */
     const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, largeTitle, children, onClose, dontAllowBackdropExit, dontShowXButton, onTopOfOtherModals, } = props;
+    // Determine if no header either
+    const noHeader = (!title && type === ModalType$1.NoButtons);
     /* -------------- State ------------- */
     // True if animation is in use
     const [animatingIn, setAnimatingIn] = React.useState(true);
@@ -647,7 +649,7 @@ const Modal = (props) => {
                         ? 'gray'
                         : undefined),
                 } },
-                React__default["default"].createElement("div", { className: "modal-header", style: {
+                !noHeader && (React__default["default"].createElement("div", { className: "modal-header", style: {
                         color: (isDarkModeOn()
                             ? 'white'
                             : undefined),
@@ -671,7 +673,7 @@ const Modal = (props) => {
                         }, onClick: () => {
                             // Handle close
                             handleClose(ModalButtonType$1.Cancel);
-                        } }))),
+                        } })))),
                 children && (React__default["default"].createElement("div", { className: "modal-body", style: {
                         color: (isDarkModeOn()
                             ? 'white'
