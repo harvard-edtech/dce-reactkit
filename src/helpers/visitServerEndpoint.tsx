@@ -129,8 +129,22 @@ const visitServerEndpoint = async (
     params = Object.fromEntries(
       Object
         .entries(opts.params)
-        .filter(([key, value]) => {
+        .filter(([, value]) => {
           return value !== undefined;
+        }),
+    );
+  }
+
+  // Automatically JSONify arrays and objects
+  if (params) {
+    params = Object.fromEntries(
+      Object
+        .entries(params)
+        .map(([key, value]) => {
+          if (Array.isArray(value) || typeof value === 'object') {
+            return [key, JSON.stringify(value)];
+          }
+          return [key, value];
         }),
     );
   }

@@ -769,8 +769,19 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     if (opts.params) {
         params = Object.fromEntries(Object
             .entries(opts.params)
-            .filter(([key, value]) => {
+            .filter(([, value]) => {
             return value !== undefined;
+        }));
+    }
+    // Automatically JSONify arrays and objects
+    if (params) {
+        params = Object.fromEntries(Object
+            .entries(params)
+            .map(([key, value]) => {
+            if (Array.isArray(value) || typeof value === 'object') {
+                return [key, JSON.stringify(value)];
+            }
+            return [key, value];
         }));
     }
     // Send the request
