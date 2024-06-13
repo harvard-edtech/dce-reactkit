@@ -920,6 +920,11 @@ const shared = `
   padding: 0 !important;
   margin: 0 !important;
 }
+
+/* Tooltip on Very Top */
+.tooltip {
+  z-index: 9000000000 !important;
+}
 `;
 
 /**
