@@ -209,6 +209,8 @@ type ModalProps = {
     confirmLabel?: string;
     confirmVariant?: Variant;
     onTopOfOtherModals?: boolean;
+    isLoading?: boolean;
+    isLoadingCancelable?: boolean;
 };
 
 /**
