@@ -440,7 +440,7 @@ const Modal: React.FC<ModalProps> = (props) => {
           // Override sizes for even larger for XL
           width: (
             size === ModalSize.ExtraLarge
-              ? 'calc(100vw - 3rem)'
+              ? 'calc(100vw - 1rem)'
               : undefined
           ),
           maxWidth: (

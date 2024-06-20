@@ -638,7 +638,7 @@ const Modal = (props) => {
                 zIndex: baseZIndex + 2,
                 // Override sizes for even larger for XL
                 width: (size === ModalSize$1.ExtraLarge
-                    ? 'calc(100vw - 3rem)'
+                    ? 'calc(100vw - 1rem)'
                     : undefined),
                 maxWidth: (size === ModalSize$1.ExtraLarge
                     ? '80rem'
