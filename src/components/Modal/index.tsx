@@ -15,6 +15,7 @@ import ReactDOM from 'react-dom';
 
 // Import other components
 import waitMs from '../../helpers/waitMs';
+import LoadingSpinner from '../LoadingSpinner';
 
 // Import types
 import Variant from '../../types/Variant';
@@ -256,6 +257,8 @@ const Modal: React.FC<ModalProps> = (props) => {
     dontAllowBackdropExit,
     dontShowXButton,
     onTopOfOtherModals,
+    isLoading,
+    isLoadingCancelable,
   } = props;
 
   // Determine if no header either
@@ -266,6 +269,7 @@ const Modal: React.FC<ModalProps> = (props) => {
   // True if animation is in use
   const [animatingIn, setAnimatingIn] = useState(true);
   const [animatingPop, setAnimatingPop] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   /* -------------- Refs -------------- */
 
@@ -297,6 +301,13 @@ const Modal: React.FC<ModalProps> = (props) => {
         // Update to state after animated in
         if (mounted.current) {
           setAnimatingIn(false);
+          if (isLoading) {
+            // wait 1 second before showing modal
+            await waitMs(1000);
+            setShowModal(true);
+          } else {
+            setShowModal(true);
+          }
         }
       })();
 
@@ -436,6 +447,8 @@ const Modal: React.FC<ModalProps> = (props) => {
           handleClose(ModalButtonType.Cancel);
         }}
       />
+
+      { showModal && (
       <div
         className={`modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`}
         style={{
@@ -498,7 +511,7 @@ const Modal: React.FC<ModalProps> = (props) => {
                 {title}
               </h5>
 
-              {(onClose && !dontShowXButton) && (
+              {(onClose && !dontShowXButton && !(isLoading && !isLoadingCancelable)) && (
                 <button
                   type="button"
                   className="Modal-x-button btn-close"
@@ -518,7 +531,29 @@ const Modal: React.FC<ModalProps> = (props) => {
               )}
             </div>
           )}
-          {children && (
+
+          {isLoading && (
+            <div
+              className="modal-body"
+              style={{
+                color: (
+                  isDarkModeOn()
+                    ? 'white'
+                    : undefined
+                ),
+                backgroundColor: (
+                  isDarkModeOn()
+                    ? '#444'
+                    : undefined
+                ),
+              }}
+            >
+              <LoadingSpinner />
+              <span className="sr-only">Content loading</span>
+            </div>
+          )}
+
+          {children && !isLoading && (
             <div
               className="modal-body"
               style={{
@@ -563,6 +598,7 @@ const Modal: React.FC<ModalProps> = (props) => {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 

@@ -69,6 +69,10 @@ type ModalProps = {
   confirmVariant?: Variant,
   // True if modal should be on top of other modals
   onTopOfOtherModals?: boolean,
+  // If true, the modal is loading
+  isLoading?: boolean,
+  // If true, the loading is cancelable
+  isLoadingCancelable?: boolean,
 };
 
 export default ModalProps;
