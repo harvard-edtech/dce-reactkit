@@ -42,6 +42,7 @@ const BASE_Z_INDEX_ON_TOP = 2000000000;
 
 // Constants
 const MS_TO_ANIMATE = 200; // Animation duration
+const MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR = 1000;
 
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes: {
@@ -301,13 +302,13 @@ const Modal: React.FC<ModalProps> = (props) => {
         // Update to state after animated in
         if (mounted.current) {
           setAnimatingIn(false);
-          if (isLoading) {
-            // wait 1 second before showing modal
-            await waitMs(1000);
-            setShowModal(true);
-          } else {
-            setShowModal(true);
-          }
+        }
+        if (isLoading) {
+          // wait before showing modal
+          await waitMs(MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR);
+          setShowModal(true);
+        } else {
+          setShowModal(true);
         }
       })();
 
