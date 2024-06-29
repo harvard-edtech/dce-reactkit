@@ -530,46 +530,33 @@ const Modal: React.FC<ModalProps> = (props) => {
             </div>
           )}
 
-          {isLoading && (
-            <div
-              className="modal-body"
-              style={{
-                color: (
-                  isDarkModeOn()
-                    ? 'white'
-                    : undefined
-                ),
-                backgroundColor: (
-                  isDarkModeOn()
-                    ? '#444'
-                    : undefined
-                ),
-              }}
-            >
-              <LoadingSpinner />
-              <span className="sr-only">Content loading</span>
-            </div>
-          )}
+          <div
+            className="modal-body"
+            style={{
+              color: (
+                isDarkModeOn()
+                  ? 'white'
+                  : undefined
+              ),
+              backgroundColor: (
+                isDarkModeOn()
+                  ? '#444'
+                  : undefined
+              ),
+            }}
+          >
+            {isLoading ? (
+              <>
+                <LoadingSpinner />
+                <span className="sr-only">Content loading</span>
+              </>
+            ) : (
+              children && (
+                children
+              )
+            )}
+          </div>
 
-          {children && !isLoading && (
-            <div
-              className="modal-body"
-              style={{
-                color: (
-                  isDarkModeOn()
-                    ? 'white'
-                    : undefined
-                ),
-                backgroundColor: (
-                  isDarkModeOn()
-                    ? '#444'
-                    : undefined
-                ),
-              }}
-            >
-              {children}
-            </div>
-          )}
           {footer && (
             <div
               className="modal-footer pt-1 pb-1"
