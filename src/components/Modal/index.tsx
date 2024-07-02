@@ -14,8 +14,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 // Import other components
-import waitMs from '../../helpers/waitMs';
 import LoadingSpinner from '../LoadingSpinner';
+
+// Import helpers
+import waitMs from '../../helpers/waitMs';
 
 // Import types
 import Variant from '../../types/Variant';
@@ -412,6 +414,10 @@ const Modal: React.FC<ModalProps> = (props) => {
     animationClass = 'Modal-animating-pop';
   }
 
+  // default to show close button when not loading and not show close button when loading
+  // unless downShowXButton or isLoadingCancelable
+  const showCloseButton = onClose && !dontShowXButton && !(isLoading && !isLoadingCancelable);
+
   // Render the modal
   const contentToRender = (
     <div
@@ -512,7 +518,7 @@ const Modal: React.FC<ModalProps> = (props) => {
                 {title}
               </h5>
 
-              {(onClose && !dontShowXButton && !(isLoading && !isLoadingCancelable)) && (
+              {showCloseButton && (
                 <button
                   type="button"
                   className="Modal-x-button btn-close"
@@ -548,15 +554,13 @@ const Modal: React.FC<ModalProps> = (props) => {
               ),
             }}
           >
-            {isLoading ? (
+            {isLoading && !children ? (
               <>
                 <LoadingSpinner />
                 <span className="sr-only">Content loading</span>
               </>
             ) : (
-              children && (
-                children
-              )
+              children
             )}
           </div>
 
