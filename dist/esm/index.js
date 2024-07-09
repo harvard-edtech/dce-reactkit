@@ -13329,7 +13329,7 @@ const MultiSwitch = (props) => {
     });
     // Constants
     const gutterRems = heightRem * 0.1;
-    const itemWidthRems = heightRem * 1.3;
+    const itemWidthRems = heightRem * 2.2;
     const textFontSize = heightRem / 3.5;
     const iconFontSize = heightRem / 2;
     const borderWidthRems = 0.05;
