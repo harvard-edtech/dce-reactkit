@@ -229,7 +229,13 @@ const Dropdown: React.FC<Props> = (props) => {
             : selectedItem.label
         }
       </button>
-      <ul className={`dropdown-menu ${variant && variant === Variant.Dark ? 'dropdown-menu-dark' : ''} ${isDropdownOpen && 'show'}`} aria-labelledby="dropdownMenuButton">
+      <ul
+        className={`dropdown-menu 
+          ${variant && variant === Variant.Dark ? 'dropdown-menu-dark' : ''} 
+          ${isDropdownOpen && 'show'}
+        `}
+        aria-labelledby="dropdownMenuButton"
+      >
         {Object.values(items).map((item) => {
           return (
             <li
