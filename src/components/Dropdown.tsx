@@ -6,7 +6,7 @@
  */
 
 // Import React
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 
 // Import helpers
 import combineClassNames from '../helpers/combineClassNames';
@@ -34,7 +34,6 @@ type Props = {
     // Button content
     content?: React.ReactNode,
   },
-  // TODO: Implement these props
   // If true, no arrow shows in dropdown
   // noArrow?: boolean,
   // Size of dropdown
@@ -172,12 +171,44 @@ const Dropdown: React.FC<Props> = (props) => {
     isDropdownOpen,
   } = state;
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      dispatch({ type: ActionType.ToggleDropdown });
+    }
+  };
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------- Lifecycle Functions ------------------------ */
+  /*------------------------------------------------------------------------*/
+
+  /**
+   * Mount
+   * @author Yuen Ler Chow
+   */
+
+  useEffect(() => {
+    // Add event listener to close dropdown when clicking outside
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      // Remove event listener when dropdown is closed
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
   /*----------------------------------------*/
   /* --------------- Main UI -------------- */
   /*----------------------------------------*/
 
   return (
-    <div className="dropdown">
+    <div className="dropdown" ref={dropdownRef}>
       <button
         className={
           combineClassNames([
@@ -201,14 +232,13 @@ const Dropdown: React.FC<Props> = (props) => {
           dropdownButton.content
         }
       </button>
-      <ul
-        className={
+      <ul className={
         combineClassNames([
           'dropdown-menu',
           variant && variant === Variant.Dark && 'dropdown-menu-dark',
           isDropdownOpen && 'show',
         ])
-    }
+      }
       >
         {Object.values(items).map((item) => {
           if (item.type === DropdownItemType.Header) {
