@@ -187,7 +187,6 @@ const Dropdown: React.FC<Props> = (props) => {
    * Mount
    * @author Yuen Ler Chow
    */
-
   useEffect(() => {
     // Add event listener to close dropdown when clicking outside
     if (isDropdownOpen) {
@@ -233,12 +232,12 @@ const Dropdown: React.FC<Props> = (props) => {
         }
       </button>
       <ul className={
-        combineClassNames([
-          'dropdown-menu',
-          variant && variant === Variant.Dark && 'dropdown-menu-dark',
-          isDropdownOpen && 'show',
-        ])
-      }
+          combineClassNames([
+            'dropdown-menu',
+            variant && variant === Variant.Dark && 'dropdown-menu-dark',
+            isDropdownOpen && 'show',
+          ])
+        }
       >
         {Object.values(items).map((item) => {
           if (item.type === DropdownItemType.Header) {
