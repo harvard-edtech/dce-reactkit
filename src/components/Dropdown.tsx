@@ -2,43 +2,39 @@
  * A simple dropdown menu
  * @author Alessandra De Lucas
  * @author Gabe Abrams
+ * @author Yuen Ler Chow
  */
 
 // Import React
 import React, { useReducer } from 'react';
 
-// Import FontAwesome
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { IconProp } from '@fortawesome/fontawesome-svg-core';
+// Import helpers
+import combineClassNames from '../helpers/combineClassNames';
 
+// Import shared types
 import Variant from '../types/Variant';
+import DropdownItemType from '../types/DropdownItemType';
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
 
 // Props definition
 type Props = {
-  // currently selected dropdown item
-  selectedItem: DropdownItem,
   // List of items in the dropdown menu
   items: DropdownItem[],
-  // on click function for the dropdown button
-  onChange: (dropdownItem: DropdownItem) => void,
   // If true, dropdown variant is displayed
   variant?: Variant,
-  // If true, dropdown will only render content in the dropdown button
-  onlyRenderContentInButton?: boolean,
   // Information about the dropdown button
-  // dropdownButton: {
-  //   // Text
-  //   text: string,
-  //   // Aria label for accessibility
-  //   ariaLabel: string,
-  //   // Unique ID
-  //   id: string,
-  //   // Element icon
-  //   icon?: IconProp,
-  // },
+  dropdownButton: {
+    // Aria label for accessibility
+    ariaLabel: string,
+    // Unique ID
+    id: string,
+    // Button content
+    content?: React.ReactNode,
+  },
+  // TODO: Implement these props
   // If true, no arrow shows in dropdown
   // noArrow?: boolean,
   // Size of dropdown
@@ -48,53 +44,30 @@ type Props = {
 };
 
 // Details about a dropdown item
-// type DropdownItem = (
-//   | {
-//     // Header element
-//     type: DropdownItemType.Header,
-//     // Header text
-//     text: string,
-//   }
-//   | {
-//     // Divider element
-//     type: DropdownItemType.Divider,
-//   }
-//   | {
-//     // Item from dropdown menu
-//     type: DropdownItemType.Item,
-//     // Item text
-//     text: string,
-//     // Item aria label
-//     ariaLabel: string,
-//     // Unique item ID
-//     id: string,
-//     // Item icon
-//     icon?: IconProp,
-//     // Click function for dropdown item
-//     onClick: () => void,
-//   }
-// );
-
-type DropdownItem = {
-  // the text of the item
-  label: string,
-  // the value of the item (used for comparison)
-  value: any,
-  // optionally, a React node to render as the content of the item
-  // this will be rendered instead of the label, and the
-  // label will only be used for the aria-label
-  content?: React.ReactNode
-};
-
-// Types of dropdown items
-// enum DropdownItemType {
-//   // Dropdown header
-//   Header = 'Header',
-//   // Dropdown divider
-//   Divider = 'Divider',
-//   // Dropdown item
-//   Item = 'Item',
-// }
+type DropdownItem = (
+  | {
+    // Header element
+    type: DropdownItemType.Header,
+    // Header content
+    content: React.ReactNode,
+  }
+  | {
+    // Divider element
+    type: DropdownItemType.Divider,
+  }
+  | {
+    // Item from dropdown menu
+    type: DropdownItemType.Item,
+    // Item content
+    content: React.ReactNode,
+    // Item aria label
+    ariaLabel: string,
+    // Unique item ID
+    id: string,
+    // Click function for dropdown item
+    onClick: () => void,
+  }
+);
 
 // Dropdown menu sizes
 // enum DropdownSize {
@@ -179,11 +152,9 @@ const Dropdown: React.FC<Props> = (props) => {
 
   // Destructure all props
   const {
-    selectedItem,
+    dropdownButton,
     items,
-    onChange,
     variant,
-    onlyRenderContentInButton,
   } = props;
 
   /* -------------- State ------------- */
@@ -208,15 +179,18 @@ const Dropdown: React.FC<Props> = (props) => {
   return (
     <div className="dropdown">
       <button
-        className={`btn dropdown-toggle border 
-          ${isDropdownOpen && 'show'}
-          ${variant && variant === Variant.Dark && 'btn-dark text-light'} 
-          ${variant && variant === Variant.Light && 'btn-light text-dark'}
-        `}
+        className={
+          combineClassNames([
+            'btn dropdown-toggle border',
+            isDropdownOpen && 'show',
+            variant && variant === Variant.Dark && 'btn-dark text-light',
+            variant && variant === Variant.Light && 'btn-light text-dark',
+          ])
+        }
         type="button"
-        id="dropdownMenuButton"
+        id={dropdownButton.id}
         aria-expanded={isDropdownOpen}
-        aria-label={`${selectedItem.label} currently selected. Click to change`}
+        aria-label={dropdownButton.ariaLabel}
         onClick={() => {
           dispatch({
             type: ActionType.ToggleDropdown,
@@ -224,46 +198,49 @@ const Dropdown: React.FC<Props> = (props) => {
         }}
       >
         {
-          selectedItem.content
-            ? selectedItem.content
-            : selectedItem.label
+          dropdownButton.content
         }
       </button>
       <ul
-        className={`dropdown-menu 
-          ${variant && variant === Variant.Dark ? 'dropdown-menu-dark' : ''} 
-          ${isDropdownOpen && 'show'}
-        `}
-        aria-labelledby="dropdownMenuButton"
+        className={
+        combineClassNames([
+          'dropdown-menu',
+          variant && variant === Variant.Dark && 'dropdown-menu-dark',
+          isDropdownOpen && 'show',
+        ])
+    }
       >
         {Object.values(items).map((item) => {
+          if (item.type === DropdownItemType.Header) {
+            return (
+              // TODO: Implement header
+              <span />
+            );
+          }
+          if (item.type === DropdownItemType.Divider) {
+            return (
+              // TODO: Implement divider
+              <span />
+            );
+          }
           return (
             <li
-              key={item.label}
+              key={item.id}
             >
               <button
                 type="button"
-                aria-label={`Show ${item.label}`}
-                className={`dropdown-item ${selectedItem.label === item.label
-                  ? 'active-custom'
-                  : ''
-                } 
-                `}
+                aria-label={item.ariaLabel}
+                className="dropdown-item"
                 onClick={(e) => {
                   e.preventDefault();
-                  onChange(item);
                   dispatch({
                     type: ActionType.ToggleDropdown,
                   });
-                }}
-                style={{
-                  fontWeight: selectedItem.label === item.label ? 'bold' : 'normal',
+                  item.onClick();
                 }}
               >
                 {
-                  item.content && !onlyRenderContentInButton
-                    ? item.content
-                    : item.label
+                  item.content
                 }
               </button>
             </li>
