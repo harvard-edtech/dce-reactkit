@@ -1,19 +1,19 @@
 /**
  * A simple dropdown menu
  * @author Alessandra De Lucas
- * @author Gabe Abrams
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 import React from 'react';
 import Variant from '../types/Variant';
 import DropdownItemType from '../types/DropdownItemType';
 type Props = {
     items: DropdownItem[];
-    variant?: Variant;
     dropdownButton: {
         ariaLabel: string;
         id: string;
         content?: React.ReactNode;
+        variant?: Variant;
     };
 };
 type DropdownItem = ({

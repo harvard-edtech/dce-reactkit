@@ -1,8 +1,8 @@
 /**
  * A simple dropdown menu
  * @author Alessandra De Lucas
- * @author Gabe Abrams
  * @author Yuen Ler Chow
+ * @author Gabe Abrams
  */
 
 // Import React
@@ -15,6 +15,9 @@ import combineClassNames from '../helpers/combineClassNames';
 import Variant from '../types/Variant';
 import DropdownItemType from '../types/DropdownItemType';
 
+// Check dark mode
+import { isDarkModeOn } from '../client/initClient';
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -23,8 +26,6 @@ import DropdownItemType from '../types/DropdownItemType';
 type Props = {
   // List of items in the dropdown menu
   items: DropdownItem[],
-  // If true, dropdown variant is displayed
-  variant?: Variant,
   // Information about the dropdown button
   dropdownButton: {
     // Aria label for accessibility
@@ -33,6 +34,8 @@ type Props = {
     id: string,
     // Button content
     content?: React.ReactNode,
+    // Variant
+    variant?: Variant,
   },
   // If true, no arrow shows in dropdown
   // noArrow?: boolean,
@@ -126,6 +129,7 @@ type Action = (
 /**
  * Reducer that executes actions
  * @author Alessandra De Lucas
+ * @author Yuen Ler Chow
  * @param state current state
  * @param action action to execute
  */
@@ -164,7 +168,6 @@ const Dropdown: React.FC<Props> = (props) => {
   const {
     dropdownButton,
     items,
-    variant = Variant.Secondary,
   } = props;
 
   /* -------------- State ------------- */
@@ -198,7 +201,10 @@ const Dropdown: React.FC<Props> = (props) => {
    */
   const handleClickOutside = (event: MouseEvent) => {
     if (
-      dropdownRef.current && !dropdownRef.current.contains(event.target as Node)
+      // Dropdown has been rendered
+      dropdownRef.current
+      // Click occurred outside the dropdown
+      && !dropdownRef.current.contains(event.target as Element)
     ) {
       dispatch({ type: ActionType.CloseDropdown });
     }
@@ -227,14 +233,18 @@ const Dropdown: React.FC<Props> = (props) => {
   /*----------------------------------------*/
 
   return (
-    <div className="dropdown" ref={dropdownRef}>
+    <div
+      className="dropdown"
+      ref={dropdownRef}
+      data-bs-theme={isDarkModeOn() ? 'dark' : undefined}
+    >
       <button
         className={
           combineClassNames([
             'btn dropdown-toggle border',
             isDropdownOpen && 'show',
-            `btn-${variant}`,
-            variant === Variant.Light && 'text-dark',
+            `btn-${dropdownButton.variant}`,
+            dropdownButton.variant === Variant.Light && 'text-dark',
           ])
         }
         type="button"
@@ -251,13 +261,14 @@ const Dropdown: React.FC<Props> = (props) => {
           dropdownButton.content
         }
       </button>
-      <ul className={
-        combineClassNames([
-          'dropdown-menu',
-          `dropdown-menu-${variant}`,
-          isDropdownOpen && 'show',
-        ])
-      }
+      <ul
+        className={
+          combineClassNames([
+            'dropdown-menu',
+            isDarkModeOn() && 'dropdown-menu-dark',
+            isDropdownOpen && 'show',
+          ])
+        }
       >
         {Object.values(items).map((item) => {
           if (item.type === DropdownItemType.Header) {
@@ -288,9 +299,7 @@ const Dropdown: React.FC<Props> = (props) => {
                   item.onClick();
                 }}
               >
-                {
-                  item.content
-                }
+                {item.content}
               </button>
             </li>
           );
