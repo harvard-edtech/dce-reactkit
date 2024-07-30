@@ -2210,27 +2210,27 @@ const PopPendingMark = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$8;
+var ActionType$9;
 (function (ActionType) {
     // Indicate that the text was recently copied
     ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
     // Clear the status
     ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType$8 || (ActionType$8 = {}));
+})(ActionType$9 || (ActionType$9 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$9 = (state, action) => {
+const reducer$a = (state, action) => {
     switch (action.type) {
-        case ActionType$8.IndicateRecentlyCopied: {
+        case ActionType$9.IndicateRecentlyCopied: {
             return {
                 recentlyCopied: true,
             };
         }
-        case ActionType$8.ClearRecentlyCopiedStatus: {
+        case ActionType$9.ClearRecentlyCopiedStatus: {
             return {
                 recentlyCopied: false,
             };
@@ -2256,7 +2256,7 @@ const CopiableBox = (props) => {
         recentlyCopied: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$9, initialState);
+    const [state, dispatch] = useReducer(reducer$a, initialState);
     // Destructure common state
     const { recentlyCopied, } = state;
     /*------------------------------------------------------------------------*/
@@ -2276,13 +2276,13 @@ const CopiableBox = (props) => {
         }
         // Show copied notice
         dispatch({
-            type: ActionType$8.IndicateRecentlyCopied,
+            type: ActionType$9.IndicateRecentlyCopied,
         });
         // Wait a moment
         yield waitMs(4000);
         // Hide copied notice
         dispatch({
-            type: ActionType$8.ClearRecentlyCopiedStatus,
+            type: ActionType$9.ClearRecentlyCopiedStatus,
         });
     });
     /*------------------------------------------------------------------------*/
@@ -2338,20 +2338,20 @@ const CopiableBox = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$7;
+var ActionType$8;
 (function (ActionType) {
     // Toggle whether a child are being shown
     ActionType["ToggleChild"] = "toggle-child";
-})(ActionType$7 || (ActionType$7 = {}));
+})(ActionType$8 || (ActionType$8 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$8 = (state, action) => {
+const reducer$9 = (state, action) => {
     switch (action.type) {
-        case ActionType$7.ToggleChild: {
+        case ActionType$8.ToggleChild: {
             return Object.assign(Object.assign({}, state), { childExpanded: Object.assign(Object.assign({}, state.childExpanded), { [String(action.id)]: !state.childExpanded[String(action.id)] }) });
         }
         default: {
@@ -2380,7 +2380,7 @@ const NestableItemList = (props) => {
         childExpanded: initChildExpanded,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$8, initialState);
+    const [state, dispatch] = useReducer(reducer$9, initialState);
     // Destructure common state
     const { childExpanded, } = state;
     /*------------------------------------------------------------------------*/
@@ -2470,7 +2470,7 @@ const NestableItemList = (props) => {
                     backgroundColor: 'transparent',
                 }, type: "button", onClick: () => {
                     dispatch({
-                        type: ActionType$7.ToggleChild,
+                        type: ActionType$8.ToggleChild,
                         id: item.id,
                     });
                 }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}` },
@@ -2754,7 +2754,7 @@ var SortType;
 })(SortType || (SortType = {}));
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$6;
+var ActionType$7;
 (function (ActionType) {
     // Toggle sort column param
     ActionType["ToggleSortColumn"] = "toggle-sort-column";
@@ -2766,16 +2766,16 @@ var ActionType$6;
     ActionType["ShowAllColumns"] = "show-all-columns";
     // Hide all columns
     ActionType["HideAllColumns"] = "hide-all-columns";
-})(ActionType$6 || (ActionType$6 = {}));
+})(ActionType$7 || (ActionType$7 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$7 = (state, action) => {
+const reducer$8 = (state, action) => {
     switch (action.type) {
-        case ActionType$6.ToggleSortColumn: {
+        case ActionType$7.ToggleSortColumn: {
             if (action.param !== state.sortColumnParam) {
                 // Different column param
                 return Object.assign(Object.assign({}, state), { sortColumnParam: action.param, sortType: SortType.Ascending });
@@ -2787,22 +2787,22 @@ const reducer$7 = (state, action) => {
             // Stop sorting by column
             return Object.assign(Object.assign({}, state), { sortColumnParam: undefined, sortType: SortType.Ascending });
         }
-        case ActionType$6.UpdateColumnVisibility: {
+        case ActionType$7.UpdateColumnVisibility: {
             const { columnVisibilityMap } = state;
             columnVisibilityMap[action.param] = action.visible;
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$6.ToggleColVisCusModalVisibility: {
+        case ActionType$7.ToggleColVisCusModalVisibility: {
             return Object.assign(Object.assign({}, state), { columnVisibilityCustomizationModalVisible: !state.columnVisibilityCustomizationModalVisible });
         }
-        case ActionType$6.ShowAllColumns: {
+        case ActionType$7.ShowAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = true;
             });
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$6.HideAllColumns: {
+        case ActionType$7.HideAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = false;
@@ -2849,7 +2849,7 @@ const IntelliTable = (props) => {
         columnVisibilityCustomizationModalVisible: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$7, initialState);
+    const [state, dispatch] = useReducer(reducer$8, initialState);
     // Destructure common state
     const { sortColumnParam, sortType, columnVisibilityMap, columnVisibilityCustomizationModalVisible, } = state;
     /*------------------------------------------------------------------------*/
@@ -2872,13 +2872,13 @@ const IntelliTable = (props) => {
                     return alert('Choose at least one column', 'To continue, you have to choose at least one column to show');
                 }
                 dispatch({
-                    type: ActionType$6.ToggleColVisCusModalVisibility,
+                    type: ActionType$7.ToggleColVisCusModalVisibility,
                 });
             }, okayVariant: Variant$1.Light },
             columns.map((column) => {
                 return (React__default.createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
                         dispatch({
-                            type: ActionType$6.UpdateColumnVisibility,
+                            type: ActionType$7.UpdateColumnVisibility,
                             param: column.param,
                             visible: checked,
                         });
@@ -2887,12 +2887,12 @@ const IntelliTable = (props) => {
             React__default.createElement("div", { className: "mt-3" }, "Or you can:"),
             React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-select-all-columns`, className: "btn btn-secondary me-2", "aria-label": `show all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$6.ShowAllColumns,
+                        type: ActionType$7.ShowAllColumns,
                     });
                 } }, "Select All"),
             React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-select-none-columns`, className: "btn btn-secondary", "aria-label": `hide all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$6.HideAllColumns,
+                        type: ActionType$7.HideAllColumns,
                     });
                 } }, "Deselect All")));
     }
@@ -2943,7 +2943,7 @@ const IntelliTable = (props) => {
                 React__default.createElement("div", null,
                     React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-sort-by-${column.param}-button`, className: `btn btn-${sortingByThisColumn ? 'light' : 'secondary'} btn-sm ms-1 ps-1 pe-1 pt-0 pb-0`, "aria-label": sortButtonAriaLabel, onClick: () => {
                             dispatch({
-                                type: ActionType$6.ToggleSortColumn,
+                                type: ActionType$7.ToggleSortColumn,
                                 param: column.param,
                             });
                         } },
@@ -3132,7 +3132,7 @@ const IntelliTable = (props) => {
                 React__default.createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: filename, csv: csv }),
                 React__default.createElement("button", { type: "button", className: "btn btn-secondary ms-2", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
                         dispatch({
-                            type: ActionType$6.ToggleColVisCusModalVisibility,
+                            type: ActionType$7.ToggleColVisCusModalVisibility,
                         });
                     } },
                     "Show/Hide Cols",
@@ -3498,7 +3498,7 @@ const genHumanReadableName = (machineReadableName) => {
 };
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$5;
+var ActionType$6;
 (function (ActionType) {
     // Show the loading bar
     ActionType["StartLoading"] = "start-loading";
@@ -3520,45 +3520,45 @@ var ActionType$5;
     ActionType["UpdateActionErrorFilterState"] = "update-action-error-filter-state";
     // Update the advanced filter state
     ActionType["UpdateAdvancedFilterState"] = "update-advanced-filter-state";
-})(ActionType$5 || (ActionType$5 = {}));
+})(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$6 = (state, action) => {
+const reducer$7 = (state, action) => {
     switch (action.type) {
-        case ActionType$5.StartLoading: {
+        case ActionType$6.StartLoading: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$5.FinishLoading: {
+        case ActionType$6.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, logMap: action.logMap });
         }
-        case ActionType$5.ToggleFilterDrawer: {
+        case ActionType$6.ToggleFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
                     ? undefined // hide
                     : action.filterDrawer) });
         }
-        case ActionType$5.HideFilterDrawer: {
+        case ActionType$6.HideFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
         }
-        case ActionType$5.ResetFilters: {
+        case ActionType$6.ResetFilters: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState });
         }
-        case ActionType$5.UpdateDateFilterState: {
+        case ActionType$6.UpdateDateFilterState: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
         }
-        case ActionType$5.UpdateContextFilterState: {
+        case ActionType$6.UpdateContextFilterState: {
             return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
         }
-        case ActionType$5.UpdateTagFilterState: {
+        case ActionType$6.UpdateTagFilterState: {
             return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
         }
-        case ActionType$5.UpdateActionErrorFilterState: {
+        case ActionType$6.UpdateActionErrorFilterState: {
             return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
         }
-        case ActionType$5.UpdateAdvancedFilterState: {
+        case ActionType$6.UpdateAdvancedFilterState: {
             return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
         }
         default: {
@@ -3687,7 +3687,7 @@ const LogReviewer = (props) => {
         advancedFilterState: initAdvancedFilterState,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$6, initialState);
+    const [state, dispatch] = useReducer(reducer$7, initialState);
     // Destructure common state
     const { loading, logMap, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = state;
     /*------------------------------------------------------------------------*/
@@ -3737,7 +3737,7 @@ const LogReviewer = (props) => {
     const handleDateRangeUpdated = (newDateFilterState) => __awaiter(void 0, void 0, void 0, function* () {
         // Update state
         dispatch({
-            type: ActionType$5.UpdateDateFilterState,
+            type: ActionType$6.UpdateDateFilterState,
             dateFilterState: newDateFilterState,
         });
         // Check which year/month combos we need to load
@@ -3748,7 +3748,7 @@ const LogReviewer = (props) => {
         }
         // Start loading
         dispatch({
-            type: ActionType$5.StartLoading,
+            type: ActionType$6.StartLoading,
         });
         // Load required months
         try {
@@ -3772,7 +3772,7 @@ const LogReviewer = (props) => {
         }
         // Finish loading
         dispatch({
-            type: ActionType$5.FinishLoading,
+            type: ActionType$6.FinishLoading,
             logMap,
         });
     });
@@ -3811,7 +3811,7 @@ const LogReviewer = (props) => {
             React__default.createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Date,
                         });
                     } },
@@ -3819,7 +3819,7 @@ const LogReviewer = (props) => {
                     "Date"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Context,
                         });
                     } },
@@ -3827,7 +3827,7 @@ const LogReviewer = (props) => {
                     "Context"),
                 (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Tag,
                         });
                     } },
@@ -3835,7 +3835,7 @@ const LogReviewer = (props) => {
                     "Tag")),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Action,
                         });
                     } },
@@ -3843,7 +3843,7 @@ const LogReviewer = (props) => {
                     "Action"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle advanced filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Advanced,
                         });
                     } },
@@ -3851,7 +3851,7 @@ const LogReviewer = (props) => {
                     "Advanced"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ResetFilters,
+                            type: ActionType$6.ResetFilters,
                             initActionErrorFilterState,
                             initAdvancedFilterState,
                             initContextFilterState,
@@ -3973,7 +3973,7 @@ const LogReviewer = (props) => {
                             }
                         });
                         dispatch({
-                            type: ActionType$5.UpdateContextFilterState,
+                            type: ActionType$6.UpdateContextFilterState,
                             contextFilterState,
                         });
                     } }));
@@ -3988,7 +3988,7 @@ const LogReviewer = (props) => {
                         return (React__default.createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
                                 tagFilterState[tag] = checked;
                                 dispatch({
-                                    type: ActionType$5.UpdateTagFilterState,
+                                    type: ActionType$6.UpdateTagFilterState,
                                     tagFilterState,
                                 });
                             } }));
@@ -4001,21 +4001,21 @@ const LogReviewer = (props) => {
                         React__default.createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
                                 actionErrorFilterState.type = undefined;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
                         React__default.createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Action;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
                         React__default.createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Error;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
@@ -4027,7 +4027,7 @@ const LogReviewer = (props) => {
                             return (React__default.createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$6.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -4038,7 +4038,7 @@ const LogReviewer = (props) => {
                             return (React__default.createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
                                     actionErrorFilterState.target[target] = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$6.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -4050,7 +4050,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
                                     actionErrorFilterState.errorMessage = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$6.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } })),
@@ -4061,7 +4061,7 @@ const LogReviewer = (props) => {
                                         .trim()
                                         .toUpperCase());
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$6.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }))))));
@@ -4075,7 +4075,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
                                     advancedFilterState.userFirstName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4084,7 +4084,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
                                     advancedFilterState.userLastName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4094,7 +4094,7 @@ const LogReviewer = (props) => {
                                     advancedFilterState.userEmail = ((e.target.value)
                                         .trim());
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4108,7 +4108,7 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4116,21 +4116,21 @@ const LogReviewer = (props) => {
                             React__default.createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
                                     advancedFilterState.includeLearners = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
                             React__default.createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
                                     advancedFilterState.includeTTMs = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
                             React__default.createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
                                     advancedFilterState.includeAdmins = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
@@ -4140,7 +4140,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
                                     advancedFilterState.courseName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4154,7 +4154,7 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }))),
@@ -4163,21 +4163,21 @@ const LogReviewer = (props) => {
                             React__default.createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
                                     advancedFilterState.isMobile = undefined;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default.createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
                                     advancedFilterState.isMobile = true;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default.createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
                                     advancedFilterState.isMobile = false;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true }))),
@@ -4186,21 +4186,21 @@ const LogReviewer = (props) => {
                             React__default.createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
                                     advancedFilterState.source = undefined;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default.createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Client;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default.createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Server;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true })),
@@ -4211,7 +4211,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$5.UpdateAdvancedFilterState,
+                                            type: ActionType$6.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })),
@@ -4221,7 +4221,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$5.UpdateAdvancedFilterState,
+                                            type: ActionType$6.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })))))));
@@ -12041,11 +12041,11 @@ var CreatableSelect$1 = CreatableSelect;
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$4;
+var ActionType$5;
 (function (ActionType) {
     // Update the input value
     ActionType["SetInputValue"] = "SetInputValue";
-})(ActionType$4 || (ActionType$4 = {}));
+})(ActionType$5 || (ActionType$5 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -12053,9 +12053,9 @@ var ActionType$4;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$5 = (state, action) => {
+const reducer$6 = (state, action) => {
     switch (action.type) {
-        case ActionType$4.SetInputValue: {
+        case ActionType$5.SetInputValue: {
             return Object.assign(Object.assign({}, state), { inputValue: action.value });
         }
         default: {
@@ -12075,7 +12075,7 @@ const CreatableMultiselect = (props) => {
         inputValue: '',
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$5, initialState);
+    const [state, dispatch] = useReducer(reducer$6, initialState);
     // Destructure common state
     const { inputValue } = state;
     /*------------------------------------------------------------------------*/
@@ -12152,7 +12152,7 @@ const CreatableMultiselect = (props) => {
         }
         // Reset text field to empty because the values have been added
         dispatch({
-            type: ActionType$4.SetInputValue,
+            type: ActionType$5.SetInputValue,
             value: '',
         });
     };
@@ -12191,7 +12191,7 @@ const CreatableMultiselect = (props) => {
         else {
             // simply update the input value to the new input value
             dispatch({
-                type: ActionType$4.SetInputValue,
+                type: ActionType$5.SetInputValue,
                 value: newValue,
             });
         }
@@ -12243,13 +12243,13 @@ const style$1 = `
 `;
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$3;
+var ActionType$4;
 (function (ActionType) {
     // Update the DBEntry
     ActionType["UpdateDBEntry"] = "UpdateDBEntry";
     // Start the save spinner
     ActionType["StartSave"] = "StartSave";
-})(ActionType$3 || (ActionType$3 = {}));
+})(ActionType$4 || (ActionType$4 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -12257,12 +12257,12 @@ var ActionType$3;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$4 = (state, action) => {
+const reducer$5 = (state, action) => {
     switch (action.type) {
-        case ActionType$3.UpdateDBEntry: {
+        case ActionType$4.UpdateDBEntry: {
             return Object.assign(Object.assign({}, state), { entry: action.dbEntry });
         }
-        case ActionType$3.StartSave: {
+        case ActionType$4.StartSave: {
             return Object.assign(Object.assign({}, state), { saving: true });
         }
         default: {
@@ -12287,7 +12287,7 @@ const AddOrEditDBEntry = (props) => {
         saving: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$4, initialState);
+    const [state, dispatch] = useReducer(reducer$5, initialState);
     // Destructure common state
     const { entry, saving, } = state;
     /*------------------------------------------------------------------------*/
@@ -12299,7 +12299,7 @@ const AddOrEditDBEntry = (props) => {
      */
     const save = () => __awaiter(void 0, void 0, void 0, function* () {
         // Start the save loading indicator
-        dispatch({ type: ActionType$3.StartSave });
+        dispatch({ type: ActionType$4.StartSave });
         // add all default values to the entry
         entryFields.forEach((field) => {
             if (field.defaultValue && !entry[field.objectKey]) {
@@ -12482,7 +12482,7 @@ const AddOrEditDBEntry = (props) => {
                                 return (React__default.createElement(RadioButton, { key: choice.value, text: choice.title, selected: entry[field.objectKey] === choice.value, onSelected: () => {
                                         entry[field.objectKey] = choice.value;
                                         dispatch({
-                                            type: ActionType$3.UpdateDBEntry,
+                                            type: ActionType$4.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -12494,7 +12494,7 @@ const AddOrEditDBEntry = (props) => {
                         React__default.createElement("input", { disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value);
                                 dispatch({
-                                    type: ActionType$3.UpdateDBEntry,
+                                    type: ActionType$4.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -12507,7 +12507,7 @@ const AddOrEditDBEntry = (props) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^0-9]/g, ''));
                                 dispatch({
-                                    type: ActionType$3.UpdateDBEntry,
+                                    type: ActionType$4.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -12537,7 +12537,7 @@ const AddOrEditDBEntry = (props) => {
                                         }
                                         // Save
                                         dispatch({
-                                            type: ActionType$3.UpdateDBEntry,
+                                            type: ActionType$4.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -12552,7 +12552,7 @@ const AddOrEditDBEntry = (props) => {
                                     // Update entry and save
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$3.UpdateDBEntry,
+                                        type: ActionType$4.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -12565,7 +12565,7 @@ const AddOrEditDBEntry = (props) => {
                             React__default.createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.NumberArray, values: entry[field.objectKey] || [], onChange: (values) => {
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$3.UpdateDBEntry,
+                                        type: ActionType$4.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -12639,7 +12639,7 @@ const generateEndpointPath = (collectionName, adminsOnly) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$2;
+var ActionType$3;
 (function (ActionType) {
     // Show adder
     ActionType["ShowAdder"] = "ShowAdder";
@@ -12653,7 +12653,7 @@ var ActionType$2;
     ActionType["StartDelete"] = "StartDelete";
     // Finish deletion process
     ActionType["FinishDelete"] = "FinishDelete";
-})(ActionType$2 || (ActionType$2 = {}));
+})(ActionType$3 || (ActionType$3 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -12661,18 +12661,18 @@ var ActionType$2;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$3 = (state, action) => {
+const reducer$4 = (state, action) => {
     switch (action.type) {
-        case ActionType$2.FinishLoading: {
+        case ActionType$3.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, dbEntries: action.dbEntries });
         }
-        case ActionType$2.ShowAdder: {
+        case ActionType$3.ShowAdder: {
             return Object.assign(Object.assign({}, state), { adding: true, dbEntryToEdit: undefined });
         }
-        case ActionType$2.ShowEditor: {
+        case ActionType$3.ShowEditor: {
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: action.dbEntry });
         }
-        case ActionType$2.FinishAdd: {
+        case ActionType$3.FinishAdd: {
             // Handle cancel
             const finishedEntry = action.dbEntry;
             if (!finishedEntry) {
@@ -12696,10 +12696,10 @@ const reducer$3 = (state, action) => {
             // Update the state
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: undefined, dbEntries: updatedDbEntries });
         }
-        case ActionType$2.StartDelete: {
+        case ActionType$3.StartDelete: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$2.FinishDelete: {
+        case ActionType$3.FinishDelete: {
             return Object.assign(Object.assign({}, state), { loading: false, 
                 // Remove the deleted entry from the list
                 dbEntries: state.dbEntries.filter((entry) => {
@@ -12725,7 +12725,7 @@ const DBEntryManagerPanel = (props) => {
         loading: true,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$3, initialState);
+    const [state, dispatch] = useReducer(reducer$4, initialState);
     // Destructure common state
     const { adding, dbEntryToEdit, dbEntries, loading, } = state;
     /*------------------------------------------------------------------------*/
@@ -12751,7 +12751,7 @@ const DBEntryManagerPanel = (props) => {
         try {
             // Start loader
             dispatch({
-                type: ActionType$2.StartDelete,
+                type: ActionType$3.StartDelete,
             });
             // Perform deletion
             yield visitServerEndpoint({
@@ -12760,7 +12760,7 @@ const DBEntryManagerPanel = (props) => {
             });
             // Finish loader
             dispatch({
-                type: ActionType$2.FinishDelete,
+                type: ActionType$3.FinishDelete,
                 dbEntry: entry,
                 idPropName,
             });
@@ -12789,7 +12789,7 @@ const DBEntryManagerPanel = (props) => {
                 });
                 // Save loaded data
                 dispatch({
-                    type: ActionType$2.FinishLoading,
+                    type: ActionType$3.FinishLoading,
                     dbEntries: data,
                 });
             }
@@ -12832,7 +12832,7 @@ const DBEntryManagerPanel = (props) => {
                                 React__default.createElement("span", { className: "d-none d-md-inline ms-1" }, "Remove")),
                             !disableEdit && (React__default.createElement("button", { type: "button", id: `DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
                                     dispatch({
-                                        type: ActionType$2.ShowEditor,
+                                        type: ActionType$3.ShowEditor,
                                         dbEntry: entry,
                                     });
                                 } },
@@ -12842,7 +12842,7 @@ const DBEntryManagerPanel = (props) => {
                 React__default.createElement("div", { className: "d-grid" },
                     React__default.createElement("button", { type: "button", id: "DBEntryManagerPanel-add-entry", className: "btn btn-lg btn-primary", "aria-label": `add a new ${itemName} entry to the list of entries`, onClick: () => {
                             dispatch({
-                                type: ActionType$2.ShowAdder,
+                                type: ActionType$3.ShowAdder,
                             });
                         } },
                         React__default.createElement(FontAwesomeIcon, { icon: faPlus, className: "me-2" }),
@@ -12854,7 +12854,7 @@ const DBEntryManagerPanel = (props) => {
     if (!loading && (adding || dbEntryToEdit)) {
         body = (React__default.createElement(AddOrEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, itemName: itemName, onFinished: (entry) => {
                 dispatch({
-                    type: ActionType$2.FinishAdd,
+                    type: ActionType$3.FinishAdd,
                     dbEntry: entry,
                     idPropName,
                 });
@@ -13051,25 +13051,25 @@ const getItemIds = (items) => {
 };
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$1;
+var ActionType$2;
 (function (ActionType) {
     // Hide the "jump to bottom" button
     ActionType["HideJumpToBottomButton"] = "HideJumpToBottomButton";
     // Show the "jump to bottom" button
     ActionType["ShowJumpToBottomButton"] = "ShowJumpToBottomButton";
-})(ActionType$1 || (ActionType$1 = {}));
+})(ActionType$2 || (ActionType$2 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$2 = (state, action) => {
+const reducer$3 = (state, action) => {
     switch (action.type) {
-        case ActionType$1.HideJumpToBottomButton: {
+        case ActionType$2.HideJumpToBottomButton: {
             return Object.assign(Object.assign({}, state), { jumpToBottomButtonVisible: false });
         }
-        case ActionType$1.ShowJumpToBottomButton: {
+        case ActionType$2.ShowJumpToBottomButton: {
             return Object.assign(Object.assign({}, state), { jumpToBottomButtonVisible: true });
         }
         default: {
@@ -13093,7 +13093,7 @@ const AutoscrollToBottomContainer = (props) => {
         jumpToBottomButtonVisible: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$2, initialState);
+    const [state, dispatch] = useReducer(reducer$3, initialState);
     // Destructure common state
     const { jumpToBottomButtonVisible, } = state;
     /* -------------- Refs -------------- */
@@ -13139,7 +13139,7 @@ const AutoscrollToBottomContainer = (props) => {
         }
         // Update state
         dispatch({
-            type: ActionType$1.HideJumpToBottomButton,
+            type: ActionType$2.HideJumpToBottomButton,
         });
         // Scroll to bottom
         container.current.scrollTop = (container.current.scrollHeight
@@ -13163,7 +13163,7 @@ const AutoscrollToBottomContainer = (props) => {
         if (isScrolledToBottom()) {
             // Hide button
             dispatch({
-                type: ActionType$1.HideJumpToBottomButton,
+                type: ActionType$2.HideJumpToBottomButton,
             });
         }
     };
@@ -13205,7 +13205,7 @@ const AutoscrollToBottomContainer = (props) => {
         else {
             // Not scrolled to bottom. Show "jump to bottom" button.
             dispatch({
-                type: ActionType$1.ShowJumpToBottomButton,
+                type: ActionType$2.ShowJumpToBottomButton,
             });
         }
     }, [items]);
@@ -13275,25 +13275,25 @@ const combineClassNames = (classNames) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType;
+var ActionType$1;
 (function (ActionType) {
     // Start hovering on an option
     ActionType["StartHover"] = "StartHover";
     // Stop hovering on an option
     ActionType["StopHover"] = "StopHover";
-})(ActionType || (ActionType = {}));
+})(ActionType$1 || (ActionType$1 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$1 = (state, action) => {
+const reducer$2 = (state, action) => {
     switch (action.type) {
-        case ActionType.StartHover: {
+        case ActionType$1.StartHover: {
             return Object.assign(Object.assign({}, state), { hoveredOptionId: action.hoveredOptionId });
         }
-        case ActionType.StopHover: {
+        case ActionType$1.StopHover: {
             return Object.assign(Object.assign({}, state), { hoveredOptionId: undefined });
         }
         default: {
@@ -13317,7 +13317,7 @@ const MultiSwitch = (props) => {
         hoveredOptionId: undefined,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$1, initialState);
+    const [state, dispatch] = useReducer(reducer$2, initialState);
     // Destructure common state
     const { hoveredOptionId, } = state;
     /*------------------------------------------------------------------------*/
@@ -13449,27 +13449,27 @@ const MultiSwitch = (props) => {
                 : `click to select option "${option.label}"`), onClick: () => {
                 // Remove hover
                 dispatch({
-                    type: ActionType.StopHover,
+                    type: ActionType$1.StopHover,
                 });
                 // Notify parent
                 onChange(option.id);
             }, onMouseEnter: () => {
                 dispatch({
-                    type: ActionType.StartHover,
+                    type: ActionType$1.StartHover,
                     hoveredOptionId: option.id,
                 });
             }, onMouseLeave: () => {
                 dispatch({
-                    type: ActionType.StopHover,
+                    type: ActionType$1.StopHover,
                 });
             }, onFocus: () => {
                 dispatch({
-                    type: ActionType.StartHover,
+                    type: ActionType$1.StartHover,
                     hoveredOptionId: option.id,
                 });
             }, onBlur: () => {
                 dispatch({
-                    type: ActionType.StopHover,
+                    type: ActionType$1.StopHover,
                 });
             }, style: {
                 pointerEvents: ((option.id === selectedOptionId)
@@ -13486,6 +13486,147 @@ const MultiSwitch = (props) => {
         React__default.createElement("style", null, style),
         React__default.createElement("div", { className: "MultiSwitch-options-container" }, optionElements),
         React__default.createElement("div", { className: "MultiSwitch-highlight-container" }, highlight)));
+};
+
+// Types of dropdown items
+var DropdownItemType;
+(function (DropdownItemType) {
+    // Dropdown header
+    DropdownItemType["Header"] = "Header";
+    // Dropdown divider
+    DropdownItemType["Divider"] = "Divider";
+    // Dropdown item
+    DropdownItemType["Item"] = "Item";
+})(DropdownItemType || (DropdownItemType = {}));
+var DropdownItemType$1 = DropdownItemType;
+
+/**
+ * A simple dropdown menu
+ * @author Alessandra De Lucas
+ * @author Yuen Ler Chow
+ * @author Gabe Abrams
+ */
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType;
+(function (ActionType) {
+    // Toggle opening the dropdown menu
+    ActionType["ToggleDropdown"] = "ToggleDropdown";
+    // Close the dropdown menu
+    ActionType["CloseDropdown"] = "CloseDropdown";
+})(ActionType || (ActionType = {}));
+/**
+ * Reducer that executes actions
+ * @author Alessandra De Lucas
+ * @author Yuen Ler Chow
+ * @param state current state
+ * @param action action to execute
+ */
+const reducer$1 = (state, action) => {
+    switch (action.type) {
+        case ActionType.ToggleDropdown: {
+            return Object.assign(Object.assign({}, state), { isDropdownOpen: !state.isDropdownOpen });
+        }
+        case ActionType.CloseDropdown: {
+            return Object.assign(Object.assign({}, state), { isDropdownOpen: false });
+        }
+        default: {
+            return state;
+        }
+    }
+};
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const Dropdown = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { dropdownButton, items, } = props;
+    /* -------------- State ------------- */
+    // Initial state
+    const initialState = {
+        isDropdownOpen: false,
+    };
+    // Initialize state
+    const [state, dispatch] = useReducer(reducer$1, initialState);
+    // Destructure common state
+    const { isDropdownOpen, } = state;
+    /* -------------- Refs -------------- */
+    // Initialize refs
+    const dropdownRef = useRef(null);
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Component Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Handle clicking outside of the dropdown menu to close it
+     * @author Yuen Ler Chow
+     * @param event the mouse event
+     */
+    const handleClickOutside = (event) => {
+        if (
+        // Dropdown has been rendered
+        dropdownRef.current
+            // Click occurred outside the dropdown
+            && !dropdownRef.current.contains(event.target)) {
+            dispatch({ type: ActionType.CloseDropdown });
+        }
+    };
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Lifecycle Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Mount
+     * @author Yuen Ler Chow
+     */
+    useEffect(() => {
+        // Add event listener to close dropdown when clicking outside
+        document.addEventListener('mousedown', handleClickOutside);
+        // Cleanup
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    return (React__default.createElement("div", { className: "dropdown", ref: dropdownRef, "data-bs-theme": isDarkModeOn() ? 'dark' : undefined },
+        React__default.createElement("button", { className: combineClassNames([
+                'btn dropdown-toggle border',
+                isDropdownOpen && 'show',
+                `btn-${dropdownButton.variant}`,
+                dropdownButton.variant === Variant$1.Light && 'text-dark',
+            ]), type: "button", id: dropdownButton.id, "aria-expanded": isDropdownOpen, "aria-label": dropdownButton.ariaLabel, onClick: () => {
+                dispatch({
+                    type: ActionType.ToggleDropdown,
+                });
+            } }, dropdownButton.content),
+        React__default.createElement("ul", { className: combineClassNames([
+                'dropdown-menu',
+                isDarkModeOn() && 'dropdown-menu-dark',
+                isDropdownOpen && 'show',
+            ]) }, Object.values(items).map((item) => {
+            if (item.type === DropdownItemType$1.Header) {
+                return (
+                // TODO: Implement header
+                React__default.createElement("span", null));
+            }
+            if (item.type === DropdownItemType$1.Divider) {
+                return (
+                // TODO: Implement divider
+                React__default.createElement("span", null));
+            }
+            return (React__default.createElement("li", { key: item.id },
+                React__default.createElement("button", { type: "button", "aria-label": item.ariaLabel, className: "dropdown-item", onClick: (e) => {
+                        e.preventDefault();
+                        dispatch({
+                            type: ActionType.CloseDropdown,
+                        });
+                        item.onClick();
+                    } }, item.content)));
+        }))));
 };
 
 /**
@@ -15813,5 +15954,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

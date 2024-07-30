@@ -28,6 +28,7 @@ import Tooltip from './components/Tooltip';
 import ToggleSwitch from './components/ToggleSwitch';
 import AutoscrollToBottomContainer from './components/AutoscrollToBottomContainer';
 import MultiSwitch from './components/MultiSwitch';
+import Dropdown from './components/Dropdown';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -109,6 +110,7 @@ import LogBuiltInMetadata from './types/LogBuiltInMetadata';
 import LogMetadataType from './types/LogMetadataType';
 import LogFunction from './types/LogFunction';
 import IntelliTableColumn from './types/IntelliTableColumn';
+import DropdownItemType from './types/DropdownItemType';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -142,6 +144,7 @@ export {
   ToggleSwitch,
   AutoscrollToBottomContainer,
   MultiSwitch,
+  Dropdown,
   // Global functions
   alert,
   confirm,
@@ -226,6 +229,7 @@ export {
   LogMetadataType,
   LogFunction,
   IntelliTableColumn,
+  DropdownItemType,
   // Component-specific-types
   PickableItem,
   DBEntry,
