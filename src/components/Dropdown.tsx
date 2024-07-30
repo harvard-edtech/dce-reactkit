@@ -109,12 +109,17 @@ type State = {
 enum ActionType {
   // Toggle opening the dropdown menu
   ToggleDropdown = 'ToggleDropdown',
+  // Close the dropdown menu
+  CloseDropdown = 'CloseDropdown',
 }
 
 // Action definitions
 type Action = (
   | {
     type: ActionType.ToggleDropdown,
+  }
+  | {
+    type: ActionType.CloseDropdown,
   }
 );
 
@@ -130,6 +135,12 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         isDropdownOpen: !state.isDropdownOpen,
+      };
+    }
+    case ActionType.CloseDropdown: {
+      return {
+        ...state,
+        isDropdownOpen: false,
       };
     }
     default: {
@@ -153,7 +164,7 @@ const Dropdown: React.FC<Props> = (props) => {
   const {
     dropdownButton,
     items,
-    variant,
+    variant = Variant.Secondary,
   } = props;
 
   /* -------------- State ------------- */
@@ -171,11 +182,25 @@ const Dropdown: React.FC<Props> = (props) => {
     isDropdownOpen,
   } = state;
 
+  /* -------------- Refs -------------- */
+
+  // Initialize refs
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  /*------------------------------------------------------------------------*/
+  /* ------------------------- Component Functions ------------------------ */
+  /*------------------------------------------------------------------------*/
+
+  /**
+   * Handle clicking outside of the dropdown menu to close it
+   * @author Yuen Ler Chow
+   * @param event the mouse event
+   */
   const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-      dispatch({ type: ActionType.ToggleDropdown });
+    if (
+      dropdownRef.current && !dropdownRef.current.contains(event.target as Node)
+    ) {
+      dispatch({ type: ActionType.CloseDropdown });
     }
   };
 
@@ -189,18 +214,13 @@ const Dropdown: React.FC<Props> = (props) => {
    */
   useEffect(() => {
     // Add event listener to close dropdown when clicking outside
-    if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      // Remove event listener when dropdown is closed
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
+    document.addEventListener('mousedown', handleClickOutside);
 
     // Cleanup
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isDropdownOpen]);
+  }, []);
 
   /*----------------------------------------*/
   /* --------------- Main UI -------------- */
@@ -213,8 +233,8 @@ const Dropdown: React.FC<Props> = (props) => {
           combineClassNames([
             'btn dropdown-toggle border',
             isDropdownOpen && 'show',
-            variant && variant === Variant.Dark && 'btn-dark text-light',
-            variant && variant === Variant.Light && 'btn-light text-dark',
+            `btn-${variant}`,
+            variant === Variant.Light && 'text-dark',
           ])
         }
         type="button"
@@ -232,12 +252,12 @@ const Dropdown: React.FC<Props> = (props) => {
         }
       </button>
       <ul className={
-          combineClassNames([
-            'dropdown-menu',
-            variant && variant === Variant.Dark && 'dropdown-menu-dark',
-            isDropdownOpen && 'show',
-          ])
-        }
+        combineClassNames([
+          'dropdown-menu',
+          `dropdown-menu-${variant}`,
+          isDropdownOpen && 'show',
+        ])
+      }
       >
         {Object.values(items).map((item) => {
           if (item.type === DropdownItemType.Header) {
@@ -263,7 +283,7 @@ const Dropdown: React.FC<Props> = (props) => {
                 onClick={(e) => {
                   e.preventDefault();
                   dispatch({
-                    type: ActionType.ToggleDropdown,
+                    type: ActionType.CloseDropdown,
                   });
                   item.onClick();
                 }}
