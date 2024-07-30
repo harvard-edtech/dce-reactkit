@@ -5,12 +5,18 @@ import findURLs from './findURL';
 import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from './shared/constants/ERROR_MESSAGES';
 
 /*------------------------------------------------------------------------*/
-/* ---------------------------- Valid Tests --------------------------- */
+/* ---------------------------- Valid Tests ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-const validTests: { block: string, expected: { start: number, end: number }[] }[] = [
+const validTests: { 
+  block: string, 
+  expected: { 
+    start: number, 
+    end: number 
+  }[] 
+}[] = [
   {
-    block: 'Visit http://example.com for more information.',
+    block: 'Visit http://example.com',
     expected: [{ start: 6, end: 23 }],
   },
   {
@@ -21,10 +27,10 @@ const validTests: { block: string, expected: { start: number, end: number }[] }[
     ],
   },
   {
-    block: 'Localhost URLs: http://localhost and http://127.0.0.1.',
+    block: 'http://localhost and http://127.0.0.1.',
     expected: [
-      { start: 16, end: 31 },
-      { start: 36, end: 52 },
+      { start: 0, end: 15 },
+      { start: 21, end: 37 },
     ],
   },
   {
@@ -34,6 +40,10 @@ const validTests: { block: string, expected: { start: number, end: number }[] }[
   {
     block: 'Secure site: https://secure-site.com/path?query=string#fragment',
     expected: [{ start: 13, end: 58 }],
+  },
+  {
+    block: 'No URL',
+    expected: [],
   },
 ];
 
@@ -50,31 +60,37 @@ test(
 /* ---------------------------- Invalid Tests --------------------------- */
 /*------------------------------------------------------------------------*/
 
-const invalidTests: { block: string, expected: { start: number, end: number }[] }[] = [
+const invalidTests: { 
+  block: string, 
+  expected: { 
+    start: number, 
+    end: number 
+  }[] 
+}[] = [
   {
-    block: 'No URL.',
+    block: 'Does not follow URL regex format http:/example.com and htt://example.com.',
     expected: [],
   },
   {
-    block: 'URL format is wrong: http:/example.com and htt://example.com.',
-    expected: [],
+    block: 'Trailing punctuation http://example.com, should not affect the URL',
+    expected: [{ start: 21, end: 38 }],
   },
   {
-    block: 'Any punctuation after the URL http://example.com, should not count.',
-    expected: [{ start: 20, end: 37 }],
-  },
-  {
-    block: 'Starting punctuation ,http://example.com should not count.',
+    block: 'Starting punctuation ,http://example.com should not affect the URL',
     expected: [{ start: 22, end: 39 }],
   },
   {
-    block: 'Spaces in the middle http://exa mple.com is invalid.',
+    block: 'No spaces in the URL http://exa mple.com',
+    expected: [],
+  },
+  {
+    block: '',
     expected: [],
   },
 ];
 
 test(
-  'Returns empty array for strings without valid URLs.',
+  'Returns empty array for strings without valid URLs or for invalid input formats.',
   async () => {
     invalidTests.forEach(({ block, expected }) => {
       expect(findURLs(block)).toStrictEqual(expected);

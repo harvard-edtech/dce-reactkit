@@ -1,5 +1,5 @@
 // Importing the testing function
-import chicagoTitleCase from './chicagoTitleCase';
+import toTitleCase from './toTitleCase';
 
 // Import constants
 import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from './shared/constants/ERROR_MESSAGES';
@@ -35,7 +35,7 @@ test(
   'Converts strings to Chicago title case correctly.',
   async () => {
     validTests.forEach(({ input, expected }) => {
-      expect(chicagoTitleCase(input)).toBe(expected);
+      expect(toTitleCase(input)).toBe(expected);
     });
   },
 );
@@ -79,7 +79,34 @@ test(
   'Handles the edge cases for the function that converts a string to Chicago Title Case.',
   async () => {
     edgeCases.forEach(({ input, expected }) => {
-      expect(chicagoTitleCase(input)).toBe(expected);
+      expect(toTitleCase(input)).toBe(expected);
     });
   },
 );
+
+/*------------------------------------------------------------------------*/
+/* --------------------------- Failure Cases -------------------------- */
+/*------------------------------------------------------------------------*/
+
+const failureCases: { input: any, errorExpected: string }[] = [
+  {
+    input: undefined,
+    errorExpected: 'Input is undefined',
+  },
+  {
+    input: null,
+    errorExpected: 'Input is null',
+  },
+  {
+    input: 123,
+    errorExpected: 'Input is a number. It must be a string',
+  },
+];
+
+failureCases.forEach(({ input, errorExpected }) => {
+  test(
+    `Throws an error when handed invalid input (${input}).`,
+    async () => {
+      expect(() => toTitleCase(input)).toThrow(errorExpected);
+    });
+});

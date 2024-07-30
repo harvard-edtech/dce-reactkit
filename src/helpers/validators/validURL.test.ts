@@ -28,7 +28,7 @@ const validUrls: string[] = [
   'ftp://example.com/path',
   'ftp://example.com',
   'https://127.0.0.1:3000',
-  'file:///C:/path/to/file'
+  'file:///C:/path/to/file',
 ];
 
 test(
@@ -77,8 +77,45 @@ const invalidUrls: string[] = [
   'http://example.com_',
   'http://example..com',
   'http://example.com.',
-  'http://.example.com'
+  'http://.example.com',
 ];
+
+/*------------------------------------------------------------------------*/
+/* ---------------------------- Invalid Tests --------------------------- */
+/*------------------------------------------------------------------------*/
+
+// A comprehensive list of invalid URLs for testing purposes.
+const invalidUrls: string[] = [
+  '', 
+  ' ',
+  'example', 
+  'http://', 
+  'http://.', 
+  'http://?/',
+  'http://#', 
+  '//', 
+  '//x', 
+  'http:///x', 
+  'http://123456789', 
+  'http://.www.foo.bar/',
+  'http://123.123.123', 
+  'http://1.1.1.1.1', 
+  'http://example.com:12:34:56', 
+  'http://example.com::10', 
+  'http://example.com.', 
+  'http://.example.com',
+  'http://example.com:-+',
+  'http://-example.com', 
+  'http://example..com',
+];
+
+// Iterating through each invalid URL to test if the `isValid` function correctly identifies it as invalid.
+invalidUrls.forEach((url) => {
+  test(`Returns false for invalid URL: '${url}'`, () => {
+    expect(isValid(url)).toBe(false);
+  });
+});
+
 
 test(
   'Returns false for a given invalid URL.',

@@ -1,11 +1,11 @@
 /**
  * This function checks if a given input string is a valid URL.
  * @author Leisha Bhandari
- * @param URL: The input string that needs checked as a URL or not.
+ * @param URL The input string that needs checked as a URL or not.
  * @returns A true boolean value if the input string is a valid URL, and a false
  *          boolean value if the input string is a invalid URL
  */
-function isValid(url: string): boolean {
+const isValid = (url: string): boolean => {
   // Uses the input URL to create a URL object
   try {
     new URL(url);
@@ -15,4 +15,6 @@ function isValid(url: string): boolean {
     // URL constructor throws an error, so input URL is invalid
     return false;
   }
-}
+};
+
+export default isValid;
