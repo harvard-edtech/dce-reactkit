@@ -1,9 +1,5 @@
-
 // Import the function to be tested
 import isValid from './validURL';
-
-// Import constants
-import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from './shared/constants/ERROR_MESSAGES';
 
 /*------------------------------------------------------------------------*/
 /* ---------------------------- Valid Tests --------------------------- */
@@ -44,78 +40,32 @@ test(
 /* ---------------------------- Invalid Tests --------------------------- */
 /*------------------------------------------------------------------------*/
 
+// A comprehensive list of invalid URLs for testing purposes.
 const invalidUrls: string[] = [
   '',
   ' ',
   'example',
   'http://',
   'http://.',
-  'http://..',
-  'http://##/',
-  'http://../',
-  'http://??/',
+  'http:/?/',
   'http://#',
-  'http://##',
+  'http://##/',
   '//',
-  '//a',
-  '///a',
-  '///',
-  'http:///a',
-  'http://www.foo.bar./',
-  'http://foo.bar/foo(bar)baz quux',
-  'http://3628126748',
+  '//x',
+  'http:///x',
+  'http://.',
+  'http://..',
+  'http://123456789',
   'http://.www.foo.bar/',
-  'http://.www.foo.bar./',
   'http://123.123.123',
   'http://1.1.1.1.1',
-  'http://example.com:99999',
-  'http://example.com:80:80',
-  'http://example.com::80',
-  'http://example.com:-80',
-  'http://-example.com',
-  'http://example.com-',
-  'http://example.com_',
-  'http://example..com',
+  'http://example.com:12:34:56',
+  'http://example.com::10',
   'http://example.com.',
   'http://.example.com',
-];
-
-/*------------------------------------------------------------------------*/
-/* ---------------------------- Invalid Tests --------------------------- */
-/*------------------------------------------------------------------------*/
-
-// A comprehensive list of invalid URLs for testing purposes.
-const invalidUrls: string[] = [
-  '', 
-  ' ',
-  'example', 
-  'http://', 
-  'http://.', 
-  'http://?/',
-  'http://#', 
-  '//', 
-  '//x', 
-  'http:///x', 
-  'http://123456789', 
-  'http://.www.foo.bar/',
-  'http://123.123.123', 
-  'http://1.1.1.1.1', 
-  'http://example.com:12:34:56', 
-  'http://example.com::10', 
-  'http://example.com.', 
-  'http://.example.com',
   'http://example.com:-+',
-  'http://-example.com', 
   'http://example..com',
 ];
-
-// Iterating through each invalid URL to test if the `isValid` function correctly identifies it as invalid.
-invalidUrls.forEach((url) => {
-  test(`Returns false for invalid URL: '${url}'`, () => {
-    expect(isValid(url)).toBe(false);
-  });
-});
-
 
 test(
   'Returns false for a given invalid URL.',

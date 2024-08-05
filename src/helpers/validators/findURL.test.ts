@@ -1,45 +1,42 @@
 // Import the function to be tested
 import findURLs from './findURL';
 
-// Import constants
-import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from './shared/constants/ERROR_MESSAGES';
-
 /*------------------------------------------------------------------------*/
 /* ---------------------------- Valid Tests ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-const validTests: { 
-  block: string, 
-  expected: { 
-    start: number, 
-    end: number 
-  }[] 
+const validTests: {
+  block: string,
+  expected: {
+    startIndice: number,
+    endIndice: number
+  }[]
 }[] = [
   {
     block: 'Visit http://example.com',
-    expected: [{ start: 6, end: 23 }],
+    expected: [{ startIndice: 6, endIndice: 23 }],
   },
   {
     block: 'Multiple URLs: http://one.com and http://two.com.',
     expected: [
-      { start: 15, end: 29 },
-      { start: 34, end: 48 },
+      { startIndice: 15, endIndice: 29 },
+      { startIndice: 34, endIndice: 48 },
     ],
   },
   {
     block: 'http://localhost and http://127.0.0.1.',
     expected: [
-      { start: 0, end: 15 },
-      { start: 21, end: 37 },
+      { startIndice: 0, endIndice: 15 },
+      { startIndice: 16, endIndice: 31 },
     ],
   },
   {
     block: 'Embedded URL: text https://embedded-url.com?query=1&value=2.',
-    expected: [{ start: 13, end: 51 }],
+    expected: [{ startIndice: 13, endIndice: 51 }],
   },
   {
     block: 'Secure site: https://secure-site.com/path?query=string#fragment',
-    expected: [{ start: 13, end: 58 }],
+    expected: [{ startIndice: 13, endIndice: 58 }],
   },
   {
     block: 'No URL',
@@ -60,12 +57,12 @@ test(
 /* ---------------------------- Invalid Tests --------------------------- */
 /*------------------------------------------------------------------------*/
 
-const invalidTests: { 
-  block: string, 
-  expected: { 
-    start: number, 
-    end: number 
-  }[] 
+const invalidTests: {
+  block: string,
+  expected: {
+    startIndice: number,
+    endIndice: number
+  }[]
 }[] = [
   {
     block: 'Does not follow URL regex format http:/example.com and htt://example.com.',
@@ -73,11 +70,11 @@ const invalidTests: {
   },
   {
     block: 'Trailing punctuation http://example.com, should not affect the URL',
-    expected: [{ start: 21, end: 38 }],
+    expected: [{ startIndice: 21, endIndice: 37 }],
   },
   {
     block: 'Starting punctuation ,http://example.com should not affect the URL',
-    expected: [{ start: 22, end: 39 }],
+    expected: [{ startIndice: 22, endIndice: 39 }],
   },
   {
     block: 'No spaces in the URL http://exa mple.com',

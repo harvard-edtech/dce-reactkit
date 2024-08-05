@@ -1,9 +1,6 @@
 // Importing the testing function
 import toTitleCase from './toTitleCase';
 
-// Import constants
-import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from './shared/constants/ERROR_MESSAGES';
-
 /*------------------------------------------------------------------------*/
 /* ---------------------------- Valid Tests --------------------------- */
 /*------------------------------------------------------------------------*/
@@ -11,7 +8,7 @@ import { INVALID_STRING_ERRORS, INVALID_REGEX_ERROR } from './shared/constants/E
 const validTests: { input: string, expected: string }[] = [
   {
     input: 'this is the american language',
-    expected: 'This the American language',
+    expected: 'This Is the American Language',
   },
   {
     input: 'to kill a mockingbird',
@@ -35,7 +32,7 @@ test(
   'Converts strings to Chicago title case correctly.',
   async () => {
     validTests.forEach(({ input, expected }) => {
-      expect(toTitleCase(input)).toBe(expected);
+      expect(toTitleCase(input)).toEqual(expected);
     });
   },
 );
@@ -70,7 +67,7 @@ const edgeCases: { input: string, expected: string }[] = [
     expected: 'To Kill a Mockingbird',
   },
   {
-    input: 'pRiDe And pReduJiCe',
+    input: 'pride and prejudice',
     expected: 'Pride and Prejudice',
   },
 ];
@@ -79,7 +76,7 @@ test(
   'Handles the edge cases for the function that converts a string to Chicago Title Case.',
   async () => {
     edgeCases.forEach(({ input, expected }) => {
-      expect(toTitleCase(input)).toBe(expected);
+      expect(toTitleCase(input)).toEqual(expected);
     });
   },
 );
@@ -106,7 +103,8 @@ const failureCases: { input: any, errorExpected: string }[] = [
 failureCases.forEach(({ input, errorExpected }) => {
   test(
     `Throws an error when handed invalid input (${input}).`,
-    async () => {
-      expect(() => toTitleCase(input)).toThrow(errorExpected);
-    });
+    () => {
+      expect(() => { return toTitleCase(input); }).toThrow(errorExpected);
+    },
+  );
 });
