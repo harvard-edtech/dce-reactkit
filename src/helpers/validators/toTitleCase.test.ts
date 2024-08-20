@@ -1,4 +1,3 @@
-// Importing the testing function
 import toTitleCase from './toTitleCase';
 
 /*------------------------------------------------------------------------*/
