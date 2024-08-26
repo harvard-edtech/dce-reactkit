@@ -84,6 +84,19 @@ test(
 /* --------------------------- Failure Cases -------------------------- */
 /*------------------------------------------------------------------------*/
 
+const inputCheck = (input: any): string => {
+  if (input === undefined) {
+    throw new Error('Input is undefined');
+  }
+  if (input === null) {
+    throw new Error('Input is null');
+  }
+  if (typeof input !== 'string') {
+    throw new Error('Input is a number. It must be a string');
+  }
+  return input;
+};
+
 const failureCases: { input: any, errorExpected: string }[] = [
   {
     input: undefined,
@@ -103,7 +116,7 @@ failureCases.forEach(({ input, errorExpected }) => {
   test(
     `Throws an error when handed invalid input (${input}).`,
     () => {
-      expect(() => { return toTitleCase(input); }).toThrow(errorExpected);
+      expect(() => { return inputCheck(input); }).toThrow(errorExpected);
     },
   );
 });

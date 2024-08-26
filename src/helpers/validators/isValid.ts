@@ -10,34 +10,24 @@ const isValid = (url: string): boolean => {
     const parsed = new URL(url);
 
     // Checks that the URL's protocol is valid
-    if (!['https:', 'http:', 'file:', 'ftp:'].includes(parsed.protocol)) {
+    if (!['https:', 'http:'].includes(parsed.protocol)) {
       return false;
     }
-
-    // Checks that the hostname is not empty and doesn't start with a dot
-    if (!parsed.hostname || parsed.hostname.startsWith('.')) {
-      return false;
-    }
-
-    // Checks that the hostname is not empty and doesn't end with a dot
-    if (!parsed.hostname || parsed.hostname.endsWith('.')) {
-      return false;
-    }
-
-    // Checks that the URL doesn't have consecutive periods in the hostname
-    if (/(\.\.)/.test(parsed.hostname)) {
-      return false;
-    }
-
-    // Checks that the hostname is not just numbers
-    if (!parsed.hostname || parsed.hostname.endsWith('.') || /^\d+$/.test(parsed.hostname)) {
+    // Checks that the hostname is not empty and doesn't start or end with a
+    // dot and doesn't contain consecutive dots
+    const hostname = parsed.hostname.trim();
+    if (hostname.length === 0
+      || hostname.startsWith('.')
+      || hostname.endsWith('.')
+      || hostname.includes('..')) {
       return false;
     }
 
     // Checks that if the port is given, it is a valid number
-    if (parsed.port && !/^\d+$/.test(parsed.port)) {
+    if (parsed.port && Number.isNaN(Number.parseInt(parsed.port, 10))) {
       return false;
     }
+
     return true;
   } catch (err) {
     return false;
