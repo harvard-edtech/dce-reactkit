@@ -7,6 +7,7 @@ var freeSolidSvgIcons = require('@fortawesome/free-solid-svg-icons');
 var reactFontawesome = require('@fortawesome/react-fontawesome');
 var ReactDOM = require('react-dom');
 var freeRegularSvgIcons = require('@fortawesome/free-regular-svg-icons');
+var qs = require('qs');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -31,6 +32,7 @@ function _interopNamespace(e) {
 var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 var React__namespace = /*#__PURE__*/_interopNamespace(React);
 var ReactDOM__default = /*#__PURE__*/_interopDefaultLegacy(ReactDOM);
+var qs__default = /*#__PURE__*/_interopDefaultLegacy(qs);
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -15970,6 +15972,180 @@ const shuffleArray = (arr) => {
 };
 
 /**
+ * Sends and retries an http request
+ * @author Gabriel Abrams
+ * @param opts object containing all arguments
+ * @param opts.path path to send request to
+ * @param [opts.host] host to send request to
+ * @param [opts.method=GET] http method to use
+ * @param [opts.params] body/data to include in the request
+ * @param [opts.headers] headers to include in the request
+ * @param [opts.sendCrossDomainCredentials=true if in development mode] if true,
+ *   send cross-domain credentials even if not in dev mode
+ * @param [opts.responseType=JSON] expected response type
+ * @returns { body, status, headers } on success
+ */
+const sendServerToServerRequest = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Process method
+    const method = (opts.method || 'GET');
+    // Encode objects within params
+    let params;
+    if (opts.params) {
+        params = {};
+        Object.entries(opts.params).forEach(([key, val]) => {
+            if (typeof val === 'object' && !Array.isArray(val)) {
+                params[key] = JSON.stringify(val);
+            }
+            else {
+                params[key] = val;
+            }
+        });
+    }
+    // Stringify parameters
+    const stringifiedParams = qs__default["default"].stringify(params || {}, {
+        encodeValuesOnly: true,
+        arrayFormat: 'brackets',
+    });
+    // Create url (include query if GET)
+    const query = (method === 'GET' ? `?${stringifiedParams}` : '');
+    let url;
+    if (!opts.host) {
+        // No host included at all. Just send to a path
+        url = `${opts.path}${query}`;
+    }
+    else {
+        url = `https://${opts.host}${opts.path}${query}`;
+    }
+    // Update headers
+    const headers = opts.headers || {};
+    let data = null;
+    if (!headers['Content-Type']) {
+        // Form encoded
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        // Add data if applicable
+        data = (method !== 'GET' ? stringifiedParams : null);
+    }
+    else {
+        // JSON encode
+        data = params;
+    }
+    // Encode data
+    let encodedData;
+    if (data) {
+        if (headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+            encodedData = new URLSearchParams(params);
+        }
+        else {
+            encodedData = JSON.stringify(data);
+        }
+    }
+    // Send request
+    try {
+        const response = yield fetch(url, {
+            method,
+            mode: 'cors',
+            headers: headers !== null && headers !== void 0 ? headers : {},
+            body: ((method !== 'GET' && encodedData)
+                ? encodedData
+                : undefined),
+            redirect: 'follow',
+        });
+        // Get headers map
+        const responseHeaders = {};
+        response.headers.forEach((value, key) => {
+            responseHeaders[key] = value;
+        });
+        // Process response based on responseType
+        try {
+            // Parse response
+            let responseBody;
+            if (opts.responseType
+                && opts.responseType === 'Text') {
+                // Response type is text
+                responseBody = yield response.text();
+            }
+            else {
+                // Response type is JSON
+                responseBody = yield response.json();
+            }
+            // Return response
+            return {
+                body: responseBody,
+                status: response.status,
+                headers: responseHeaders,
+            };
+        }
+        catch (err) {
+            throw new ErrorWithCode(`Failed to parse response as ${opts.responseType}: ${err === null || err === void 0 ? void 0 : err.message}`, ReactKitErrorCode$1.ResponseParseError);
+        }
+    }
+    catch (err) {
+        // Self-signed certificate error:
+        if ((_a = err === null || err === void 0 ? void 0 : err.message) === null || _a === void 0 ? void 0 : _a.includes('self signed certificate')) {
+            throw new ErrorWithCode('We refused to send a request because the receiver has self-signed certificates.', ReactKitErrorCode$1.SelfSigned);
+        }
+        // No tries left
+        throw new ErrorWithCode(`We encountered an error when trying to send a network request. If this issue persists, contact an admin. Error: ${err === null || err === void 0 ? void 0 : err.message}`, ReactKitErrorCode$1.NotConnected);
+    }
+});
+
+/**
+ * Send a server-to-server request from this sever to another server that uses
+ *   dce-reactkit [for server only]
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.path - the path of the other server's endpoint
+ * @param [opts.method=GET] - the method of the endpoint
+ * @param [opts.params] - query/body parameters to include
+ * @param [opts.headers] - headers to include
+ * @returns response from server
+ */
+const visitEndpointOnAnotherServer = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Remove properties with undefined values
+    let params;
+    if (opts.params) {
+        params = Object.fromEntries(Object
+            .entries(opts.params)
+            .filter(([, value]) => {
+            return value !== undefined;
+        }));
+    }
+    // Automatically JSONify arrays and objects
+    if (params) {
+        params = Object.fromEntries(Object
+            .entries(params)
+            .map(([key, value]) => {
+            if (Array.isArray(value) || typeof value === 'object') {
+                return [key, JSON.stringify(value)];
+            }
+            return [key, value];
+        }));
+    }
+    // Send the request
+    const response = yield sendServerToServerRequest({
+        path: opts.path,
+        method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
+        params,
+    });
+    // Check for failure
+    if (!response || !response.body) {
+        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+    }
+    if (!response.body.success) {
+        // Other errors
+        throw new ErrorWithCode((response.body.message
+            || 'An unknown error occurred. Please contact an admin.'), (response.body.code
+            || ReactKitErrorCode$1.NoCode));
+    }
+    // Success! Extract the body
+    const { body } = response.body;
+    // Return
+    return body;
+});
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -16082,6 +16258,7 @@ exports.useForceRender = useForceRender;
 exports.validateEmail = validateEmail;
 exports.validatePhoneNumber = validatePhoneNumber;
 exports.validateString = validateString;
+exports.visitEndpointOnAnotherServer = visitEndpointOnAnotherServer;
 exports.visitServerEndpoint = visitServerEndpoint;
 exports.waitMs = waitMs;
 //# sourceMappingURL=index.js.map

@@ -93,6 +93,7 @@ import mapAsync from './helpers/asyncArrayFunctions/mapAsync';
 import someAsync from './helpers/asyncArrayFunctions/someAsync';
 import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
+import visitEndpointOnAnotherServer from './helpers/visitEndpointOnAnotherServer';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -214,6 +215,7 @@ export {
   handleSuccess,
   initLogCollection,
   addDBEditorEndpoints,
+  visitEndpointOnAnotherServer,
   // Types
   ModalButtonType,
   ModalSize,
