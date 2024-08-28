@@ -16067,6 +16067,7 @@ const sendServerToServerRequest = (opts) => __awaiter(void 0, void 0, void 0, fu
  *   dce-reactkit [for server only]
  * @author Gabe Abrams
  * @param opts object containing all arguments
+ * @param opts.host - the host of the other server
  * @param opts.path - the path of the other server's endpoint
  * @param [opts.method=GET] - the method of the endpoint
  * @param [opts.params] - query/body parameters to include
@@ -16097,6 +16098,7 @@ const visitEndpointOnAnotherServer = (opts) => __awaiter(void 0, void 0, void 0,
     }
     // Send the request
     const response = yield sendServerToServerRequest({
+        host: opts.host,
         path: opts.path,
         method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
         params,

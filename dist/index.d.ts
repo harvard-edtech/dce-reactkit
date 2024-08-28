@@ -1608,6 +1608,7 @@ declare const shuffleArray: <T>(arr: T[]) => T[];
  *   dce-reactkit [for server only]
  * @author Gabe Abrams
  * @param opts object containing all arguments
+ * @param opts.host - the host of the other server
  * @param opts.path - the path of the other server's endpoint
  * @param [opts.method=GET] - the method of the endpoint
  * @param [opts.params] - query/body parameters to include
@@ -1615,6 +1616,7 @@ declare const shuffleArray: <T>(arr: T[]) => T[];
  * @returns response from server
  */
 declare const visitEndpointOnAnotherServer: (opts: {
+    host: string;
     path: string;
     method?: "GET" | "POST" | "DELETE" | "PUT" | undefined;
     params?: {

@@ -12,6 +12,7 @@ import sendServerToServerRequest from './sendServerToServerRequest';
  *   dce-reactkit [for server only]
  * @author Gabe Abrams
  * @param opts object containing all arguments
+ * @param opts.host - the host of the other server
  * @param opts.path - the path of the other server's endpoint
  * @param [opts.method=GET] - the method of the endpoint
  * @param [opts.params] - query/body parameters to include
@@ -20,6 +21,7 @@ import sendServerToServerRequest from './sendServerToServerRequest';
  */
 const visitEndpointOnAnotherServer = async (
   opts: {
+    host: string,
     path: string,
     method?: ('GET' | 'POST' | 'DELETE' | 'PUT'),
     params?: { [key in string]: any },
@@ -54,6 +56,7 @@ const visitEndpointOnAnotherServer = async (
 
   // Send the request
   const response = await sendServerToServerRequest({
+    host: opts.host,
     path: opts.path,
     method: opts.method ?? 'GET',
     params,
