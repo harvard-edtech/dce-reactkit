@@ -354,22 +354,22 @@ const genRouteHandler = (
     output.userId = (
       launchInfo
         ? launchInfo.userId
-        : undefined
+        : (output.userId ?? undefined)
     );
     output.userFirstName = (
       launchInfo
         ? launchInfo.userFirstName
-        : undefined
+        : (output.userFirstName ?? undefined)
     );
     output.userLastName = (
       launchInfo
         ? launchInfo.userLastName
-        : undefined
+        : (output.userLastName ?? undefined)
     );
     output.userEmail = (
       launchInfo
         ? launchInfo.userEmail
-        : undefined
+        : (output.userEmail ?? undefined)
     );
     output.userAvatarURL = (
       launchInfo
@@ -377,32 +377,32 @@ const genRouteHandler = (
           launchInfo.userImage
           ?? 'http://www.gravatar.com/avatar/?d=identicon'
         )
-        : undefined
+        : (output.userAvatarURL ?? undefined)
     );
     output.isLearner = (
       launchInfo
         ? !!launchInfo.isLearner
-        : undefined
+        : (output.isLearner ?? undefined)
     );
     output.isTTM = (
       launchInfo
         ? !!launchInfo.isTTM
-        : undefined
+        : (output.isTTM ?? undefined)
     );
     output.isAdmin = (
       launchInfo
         ? !!launchInfo.isAdmin
-        : undefined
+        : (output.isAdmin ?? undefined)
     );
     output.courseId = (
       launchInfo
         ? (output.courseId ?? launchInfo.courseId)
-        : undefined
+        : (output.courseId ?? undefined)
     );
     output.courseName = (
       launchInfo
         ? launchInfo.contextLabel
-        : undefined
+        : (output.courseName ?? undefined)
     );
 
     // Add other session variables

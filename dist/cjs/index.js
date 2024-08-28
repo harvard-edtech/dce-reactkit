@@ -14496,7 +14496,7 @@ const parseUserAgent = (userAgent) => {
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         // Output params
         const output = {};
         /*----------------------------------------*/
@@ -14697,34 +14697,34 @@ const genRouteHandler = (opts) => {
         // Add launch info to output
         output.userId = (launchInfo
             ? launchInfo.userId
-            : undefined);
+            : ((_b = output.userId) !== null && _b !== void 0 ? _b : undefined));
         output.userFirstName = (launchInfo
             ? launchInfo.userFirstName
-            : undefined);
+            : ((_c = output.userFirstName) !== null && _c !== void 0 ? _c : undefined));
         output.userLastName = (launchInfo
             ? launchInfo.userLastName
-            : undefined);
+            : ((_d = output.userLastName) !== null && _d !== void 0 ? _d : undefined));
         output.userEmail = (launchInfo
             ? launchInfo.userEmail
-            : undefined);
+            : ((_e = output.userEmail) !== null && _e !== void 0 ? _e : undefined));
         output.userAvatarURL = (launchInfo
-            ? ((_b = launchInfo.userImage) !== null && _b !== void 0 ? _b : 'http://www.gravatar.com/avatar/?d=identicon')
-            : undefined);
+            ? ((_f = launchInfo.userImage) !== null && _f !== void 0 ? _f : 'http://www.gravatar.com/avatar/?d=identicon')
+            : ((_g = output.userAvatarURL) !== null && _g !== void 0 ? _g : undefined));
         output.isLearner = (launchInfo
             ? !!launchInfo.isLearner
-            : undefined);
+            : ((_h = output.isLearner) !== null && _h !== void 0 ? _h : undefined));
         output.isTTM = (launchInfo
             ? !!launchInfo.isTTM
-            : undefined);
+            : ((_j = output.isTTM) !== null && _j !== void 0 ? _j : undefined));
         output.isAdmin = (launchInfo
             ? !!launchInfo.isAdmin
-            : undefined);
+            : ((_k = output.isAdmin) !== null && _k !== void 0 ? _k : undefined));
         output.courseId = (launchInfo
-            ? ((_c = output.courseId) !== null && _c !== void 0 ? _c : launchInfo.courseId)
-            : undefined);
+            ? ((_l = output.courseId) !== null && _l !== void 0 ? _l : launchInfo.courseId)
+            : ((_m = output.courseId) !== null && _m !== void 0 ? _m : undefined));
         output.courseName = (launchInfo
             ? launchInfo.contextLabel
-            : undefined);
+            : ((_o = output.courseName) !== null && _o !== void 0 ? _o : undefined));
         // Add other session variables
         Object.keys(req.session).forEach((propName) => {
             // Skip if prop already in output
@@ -14798,7 +14798,7 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (logOpts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+            var _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
@@ -14830,24 +14830,24 @@ const genRouteHandler = (opts) => {
                     timestamp,
                     context: (typeof logOpts.context === 'string'
                         ? logOpts.context
-                        : ((_e = ((_d = logOpts.context) !== null && _d !== void 0 ? _d : {})._) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized)),
-                    subcontext: ((_f = logOpts.subcontext) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Context.Uncategorized),
-                    tags: ((_g = logOpts.tags) !== null && _g !== void 0 ? _g : []),
-                    level: ((_h = logOpts.level) !== null && _h !== void 0 ? _h : LogLevel$1.Info),
-                    metadata: ((_j = logOpts.metadata) !== null && _j !== void 0 ? _j : {}),
+                        : ((_q = ((_p = logOpts.context) !== null && _p !== void 0 ? _p : {})._) !== null && _q !== void 0 ? _q : LogBuiltInMetadata.Context.Uncategorized)),
+                    subcontext: ((_r = logOpts.subcontext) !== null && _r !== void 0 ? _r : LogBuiltInMetadata.Context.Uncategorized),
+                    tags: ((_s = logOpts.tags) !== null && _s !== void 0 ? _s : []),
+                    level: ((_t = logOpts.level) !== null && _t !== void 0 ? _t : LogLevel$1.Info),
+                    metadata: ((_u = logOpts.metadata) !== null && _u !== void 0 ? _u : {}),
                 };
                 // Type-specific info
                 const typeSpecificInfo = (('error' in opts && opts.error)
                     ? {
                         type: LogType$1.Error,
-                        errorMessage: (_k = logOpts.error.message) !== null && _k !== void 0 ? _k : 'Unknown message',
-                        errorCode: (_l = logOpts.error.code) !== null && _l !== void 0 ? _l : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_m = logOpts.error.stack) !== null && _m !== void 0 ? _m : 'No stack',
+                        errorMessage: (_v = logOpts.error.message) !== null && _v !== void 0 ? _v : 'Unknown message',
+                        errorCode: (_w = logOpts.error.code) !== null && _w !== void 0 ? _w : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_x = logOpts.error.stack) !== null && _x !== void 0 ? _x : 'No stack',
                     }
                     : {
                         type: LogType$1.Action,
-                        target: ((_o = logOpts.target) !== null && _o !== void 0 ? _o : LogBuiltInMetadata.Target.NoTarget),
-                        action: ((_p = logOpts.action) !== null && _p !== void 0 ? _p : LogAction$1.Unknown),
+                        target: ((_y = logOpts.target) !== null && _y !== void 0 ? _y : LogBuiltInMetadata.Target.NoTarget),
+                        action: ((_z = logOpts.action) !== null && _z !== void 0 ? _z : LogAction$1.Unknown),
                     });
                 // Source-specific info
                 const sourceSpecificInfo = (logOpts.overrideAsClientEvent
@@ -14882,7 +14882,7 @@ const genRouteHandler = (opts) => {
             catch (err) {
                 // Print because we cannot store the error
                 // eslint-disable-next-line no-console
-                console.error('Could not log the following:', logOpts, 'due to this error:', ((_q = err) !== null && _q !== void 0 ? _q : {}).message, ((_r = err) !== null && _r !== void 0 ? _r : {}).stack);
+                console.error('Could not log the following:', logOpts, 'due to this error:', ((_0 = err) !== null && _0 !== void 0 ? _0 : {}).message, ((_1 = err) !== null && _1 !== void 0 ? _1 : {}).stack);
                 // Create a dummy log to return
                 const dummyMainInfo = {
                     id: '-1',
