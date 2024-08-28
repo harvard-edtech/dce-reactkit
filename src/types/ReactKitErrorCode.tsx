@@ -1,4 +1,4 @@
-// Highest error code = DRK13
+// Highest error code = DRK16
 
 /**
  * List of error codes built into the react kit
@@ -18,6 +18,11 @@ enum ReactKitErrorCode {
   NotAllowedToReviewLogs = 'DRK11',
   ThemeCheckedBeforeReactKitReady = 'DRK12',
   SessionExpiredMessageGottenBeforeReactKitReady = 'DRK13',
+
+  // Server-to-server requests
+  NotConnected = 'DRK14',
+  SelfSigned = 'DRK15',
+  ResponseParseError = 'DRK16',
 }
 
 export default ReactKitErrorCode;

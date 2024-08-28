@@ -30,7 +30,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK13
+// Highest error code = DRK16
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -50,6 +50,10 @@ var ReactKitErrorCode;
     ReactKitErrorCode["NotAllowedToReviewLogs"] = "DRK11";
     ReactKitErrorCode["ThemeCheckedBeforeReactKitReady"] = "DRK12";
     ReactKitErrorCode["SessionExpiredMessageGottenBeforeReactKitReady"] = "DRK13";
+    // Server-to-server requests
+    ReactKitErrorCode["NotConnected"] = "DRK14";
+    ReactKitErrorCode["SelfSigned"] = "DRK15";
+    ReactKitErrorCode["ResponseParseError"] = "DRK16";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 

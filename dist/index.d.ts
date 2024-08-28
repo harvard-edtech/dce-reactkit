@@ -1620,7 +1620,10 @@ declare enum ReactKitErrorCode {
     NotAdmin = "DRK10",
     NotAllowedToReviewLogs = "DRK11",
     ThemeCheckedBeforeReactKitReady = "DRK12",
-    SessionExpiredMessageGottenBeforeReactKitReady = "DRK13"
+    SessionExpiredMessageGottenBeforeReactKitReady = "DRK13",
+    NotConnected = "DRK14",
+    SelfSigned = "DRK15",
+    ResponseParseError = "DRK16"
 }
 
 /**
