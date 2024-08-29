@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-named-as-default
+// Import function to test
 import findURL from './findURL';
 
 /*------------------------------------------------------------------------*/
@@ -8,43 +8,43 @@ import findURL from './findURL';
 const validTests: {
   block: string,
   expected: {
-    startIndice: number,
-    endIndice: number
+    startIndex: number,
+    endIndex: number
   }[]
 }[] = [
   {
     block: 'Visit http://example.com',
-    expected: [{ startIndice: 6, endIndice: 23 }],
+    expected: [{ startIndex: 6, endIndex: 23 }],
   },
   {
     block: 'Multiple URLs: http://one.com and http://two.com.',
     expected: [
-      { startIndice: 15, endIndice: 28 },
-      { startIndice: 34, endIndice: 47 },
+      { startIndex: 15, endIndex: 28 },
+      { startIndex: 34, endIndex: 47 },
     ],
   },
   {
     block: 'http://localhost and http://127.0.0.1.',
     expected: [
-      { startIndice: 0, endIndice: 15 },
-      { startIndice: 21, endIndice: 36 },
+      { startIndex: 0, endIndex: 15 },
+      { startIndex: 21, endIndex: 36 },
     ],
   },
   {
     block: 'Embedded URL: text https://embedded-url.com?query=1&value=2.',
-    expected: [{ startIndice: 19, endIndice: 58 }],
+    expected: [{ startIndex: 19, endIndex: 58 }],
   },
   {
     block: 'Secure site: https://secure-site.com/path?query=string#fragment',
-    expected: [{ startIndice: 13, endIndice: 62 }],
+    expected: [{ startIndex: 13, endIndex: 62 }],
   },
   {
     block: 'Trailing punctuation http://example.com, should not affect the URL',
-    expected: [{ startIndice: 21, endIndice: 38 }],
+    expected: [{ startIndex: 21, endIndex: 38 }],
   },
   {
     block: 'Starting punctuation ,http://example.com should not affect the URL',
-    expected: [{ startIndice: 22, endIndice: 39 }],
+    expected: [{ startIndex: 22, endIndex: 39 }],
   },
   {
     block: 'No URL',
@@ -53,7 +53,7 @@ const validTests: {
 ];
 
 test(
-  'Returns correct start and end indices for valid URLs within a string.',
+  'Returns correct start and end indices for valid URLs within a string',
   async () => {
     validTests.forEach(({ block, expected }) => {
       const result = findURL(block);
@@ -68,8 +68,8 @@ test(
 const invalidTests: {
   block: string,
   expected: {
-    startIndice: number,
-    endIndice: number
+    startIndex: number,
+    endIndex: number
   }[]
 }[] = [
   {
