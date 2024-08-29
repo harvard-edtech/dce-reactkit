@@ -4,6 +4,7 @@ import { faExclamationTriangle, faHourglassEnd, faCircle, faDotCircle, faCheckSq
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactDOM, { createPortal } from 'react-dom';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
+import qs from 'qs';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -30,7 +31,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK13
+// Highest error code = DRK18
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -42,6 +43,8 @@ var ReactKitErrorCode;
     ReactKitErrorCode["SessionExpired"] = "DRK3";
     ReactKitErrorCode["MissingParameter"] = "DRK4";
     ReactKitErrorCode["InvalidParameter"] = "DRK5";
+    ReactKitErrorCode["HostNotAllowed"] = "DRK17";
+    ReactKitErrorCode["HostBanned"] = "DRK18";
     ReactKitErrorCode["WrongCourse"] = "DRK6";
     ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
     ReactKitErrorCode["NoCACCLGetLaunchInfoFunction"] = "DRK8";
@@ -50,6 +53,10 @@ var ReactKitErrorCode;
     ReactKitErrorCode["NotAllowedToReviewLogs"] = "DRK11";
     ReactKitErrorCode["ThemeCheckedBeforeReactKitReady"] = "DRK12";
     ReactKitErrorCode["SessionExpiredMessageGottenBeforeReactKitReady"] = "DRK13";
+    // Server-to-server requests
+    ReactKitErrorCode["NotConnected"] = "DRK14";
+    ReactKitErrorCode["SelfSigned"] = "DRK15";
+    ReactKitErrorCode["ResponseParseError"] = "DRK16";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -2210,27 +2217,27 @@ const PopPendingMark = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$8;
+var ActionType$9;
 (function (ActionType) {
     // Indicate that the text was recently copied
     ActionType["IndicateRecentlyCopied"] = "indicate-recently-copied";
     // Clear the status
     ActionType["ClearRecentlyCopiedStatus"] = "clear-recently-copied-status";
-})(ActionType$8 || (ActionType$8 = {}));
+})(ActionType$9 || (ActionType$9 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$9 = (state, action) => {
+const reducer$a = (state, action) => {
     switch (action.type) {
-        case ActionType$8.IndicateRecentlyCopied: {
+        case ActionType$9.IndicateRecentlyCopied: {
             return {
                 recentlyCopied: true,
             };
         }
-        case ActionType$8.ClearRecentlyCopiedStatus: {
+        case ActionType$9.ClearRecentlyCopiedStatus: {
             return {
                 recentlyCopied: false,
             };
@@ -2256,7 +2263,7 @@ const CopiableBox = (props) => {
         recentlyCopied: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$9, initialState);
+    const [state, dispatch] = useReducer(reducer$a, initialState);
     // Destructure common state
     const { recentlyCopied, } = state;
     /*------------------------------------------------------------------------*/
@@ -2276,13 +2283,13 @@ const CopiableBox = (props) => {
         }
         // Show copied notice
         dispatch({
-            type: ActionType$8.IndicateRecentlyCopied,
+            type: ActionType$9.IndicateRecentlyCopied,
         });
         // Wait a moment
         yield waitMs(4000);
         // Hide copied notice
         dispatch({
-            type: ActionType$8.ClearRecentlyCopiedStatus,
+            type: ActionType$9.ClearRecentlyCopiedStatus,
         });
     });
     /*------------------------------------------------------------------------*/
@@ -2338,20 +2345,20 @@ const CopiableBox = (props) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$7;
+var ActionType$8;
 (function (ActionType) {
     // Toggle whether a child are being shown
     ActionType["ToggleChild"] = "toggle-child";
-})(ActionType$7 || (ActionType$7 = {}));
+})(ActionType$8 || (ActionType$8 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$8 = (state, action) => {
+const reducer$9 = (state, action) => {
     switch (action.type) {
-        case ActionType$7.ToggleChild: {
+        case ActionType$8.ToggleChild: {
             return Object.assign(Object.assign({}, state), { childExpanded: Object.assign(Object.assign({}, state.childExpanded), { [String(action.id)]: !state.childExpanded[String(action.id)] }) });
         }
         default: {
@@ -2380,7 +2387,7 @@ const NestableItemList = (props) => {
         childExpanded: initChildExpanded,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$8, initialState);
+    const [state, dispatch] = useReducer(reducer$9, initialState);
     // Destructure common state
     const { childExpanded, } = state;
     /*------------------------------------------------------------------------*/
@@ -2470,7 +2477,7 @@ const NestableItemList = (props) => {
                     backgroundColor: 'transparent',
                 }, type: "button", onClick: () => {
                     dispatch({
-                        type: ActionType$7.ToggleChild,
+                        type: ActionType$8.ToggleChild,
                         id: item.id,
                     });
                 }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}` },
@@ -2754,7 +2761,7 @@ var SortType;
 })(SortType || (SortType = {}));
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$6;
+var ActionType$7;
 (function (ActionType) {
     // Toggle sort column param
     ActionType["ToggleSortColumn"] = "toggle-sort-column";
@@ -2766,16 +2773,16 @@ var ActionType$6;
     ActionType["ShowAllColumns"] = "show-all-columns";
     // Hide all columns
     ActionType["HideAllColumns"] = "hide-all-columns";
-})(ActionType$6 || (ActionType$6 = {}));
+})(ActionType$7 || (ActionType$7 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$7 = (state, action) => {
+const reducer$8 = (state, action) => {
     switch (action.type) {
-        case ActionType$6.ToggleSortColumn: {
+        case ActionType$7.ToggleSortColumn: {
             if (action.param !== state.sortColumnParam) {
                 // Different column param
                 return Object.assign(Object.assign({}, state), { sortColumnParam: action.param, sortType: SortType.Ascending });
@@ -2787,22 +2794,22 @@ const reducer$7 = (state, action) => {
             // Stop sorting by column
             return Object.assign(Object.assign({}, state), { sortColumnParam: undefined, sortType: SortType.Ascending });
         }
-        case ActionType$6.UpdateColumnVisibility: {
+        case ActionType$7.UpdateColumnVisibility: {
             const { columnVisibilityMap } = state;
             columnVisibilityMap[action.param] = action.visible;
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$6.ToggleColVisCusModalVisibility: {
+        case ActionType$7.ToggleColVisCusModalVisibility: {
             return Object.assign(Object.assign({}, state), { columnVisibilityCustomizationModalVisible: !state.columnVisibilityCustomizationModalVisible });
         }
-        case ActionType$6.ShowAllColumns: {
+        case ActionType$7.ShowAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = true;
             });
             return Object.assign(Object.assign({}, state), { columnVisibilityMap });
         }
-        case ActionType$6.HideAllColumns: {
+        case ActionType$7.HideAllColumns: {
             const { columnVisibilityMap } = state;
             Object.keys(columnVisibilityMap).forEach((param) => {
                 columnVisibilityMap[param] = false;
@@ -2849,7 +2856,7 @@ const IntelliTable = (props) => {
         columnVisibilityCustomizationModalVisible: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$7, initialState);
+    const [state, dispatch] = useReducer(reducer$8, initialState);
     // Destructure common state
     const { sortColumnParam, sortType, columnVisibilityMap, columnVisibilityCustomizationModalVisible, } = state;
     /*------------------------------------------------------------------------*/
@@ -2872,13 +2879,13 @@ const IntelliTable = (props) => {
                     return alert('Choose at least one column', 'To continue, you have to choose at least one column to show');
                 }
                 dispatch({
-                    type: ActionType$6.ToggleColVisCusModalVisibility,
+                    type: ActionType$7.ToggleColVisCusModalVisibility,
                 });
             }, okayVariant: Variant$1.Light },
             columns.map((column) => {
                 return (React__default.createElement(CheckboxButton, { key: column.param, id: `IntelliTable-${id}-toggle-visibility-${column.param}`, className: "mb-2", text: column.title, onChanged: (checked) => {
                         dispatch({
-                            type: ActionType$6.UpdateColumnVisibility,
+                            type: ActionType$7.UpdateColumnVisibility,
                             param: column.param,
                             visible: checked,
                         });
@@ -2887,12 +2894,12 @@ const IntelliTable = (props) => {
             React__default.createElement("div", { className: "mt-3" }, "Or you can:"),
             React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-select-all-columns`, className: "btn btn-secondary me-2", "aria-label": `show all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$6.ShowAllColumns,
+                        type: ActionType$7.ShowAllColumns,
                     });
                 } }, "Select All"),
             React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-select-none-columns`, className: "btn btn-secondary", "aria-label": `hide all columns in the ${title} table`, onClick: () => {
                     dispatch({
-                        type: ActionType$6.HideAllColumns,
+                        type: ActionType$7.HideAllColumns,
                     });
                 } }, "Deselect All")));
     }
@@ -2943,7 +2950,7 @@ const IntelliTable = (props) => {
                 React__default.createElement("div", null,
                     React__default.createElement("button", { type: "button", id: `IntelliTable-${id}-sort-by-${column.param}-button`, className: `btn btn-${sortingByThisColumn ? 'light' : 'secondary'} btn-sm ms-1 ps-1 pe-1 pt-0 pb-0`, "aria-label": sortButtonAriaLabel, onClick: () => {
                             dispatch({
-                                type: ActionType$6.ToggleSortColumn,
+                                type: ActionType$7.ToggleSortColumn,
                                 param: column.param,
                             });
                         } },
@@ -3132,7 +3139,7 @@ const IntelliTable = (props) => {
                 React__default.createElement(CSVDownloadButton, { "aria-label": `download data as csv for ${title}`, id: `IntelliTable-${id}-download-as-csv`, filename: filename, csv: csv }),
                 React__default.createElement("button", { type: "button", className: "btn btn-secondary ms-2", "aria-label": `show panel for customizing which columns show in table ${title}`, id: `IntelliTable-${id}-show-column-customization-modal`, onClick: () => {
                         dispatch({
-                            type: ActionType$6.ToggleColVisCusModalVisibility,
+                            type: ActionType$7.ToggleColVisCusModalVisibility,
                         });
                     } },
                     "Show/Hide Cols",
@@ -3498,7 +3505,7 @@ const genHumanReadableName = (machineReadableName) => {
 };
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$5;
+var ActionType$6;
 (function (ActionType) {
     // Show the loading bar
     ActionType["StartLoading"] = "start-loading";
@@ -3520,45 +3527,45 @@ var ActionType$5;
     ActionType["UpdateActionErrorFilterState"] = "update-action-error-filter-state";
     // Update the advanced filter state
     ActionType["UpdateAdvancedFilterState"] = "update-advanced-filter-state";
-})(ActionType$5 || (ActionType$5 = {}));
+})(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$6 = (state, action) => {
+const reducer$7 = (state, action) => {
     switch (action.type) {
-        case ActionType$5.StartLoading: {
+        case ActionType$6.StartLoading: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$5.FinishLoading: {
+        case ActionType$6.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, logMap: action.logMap });
         }
-        case ActionType$5.ToggleFilterDrawer: {
+        case ActionType$6.ToggleFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
                     ? undefined // hide
                     : action.filterDrawer) });
         }
-        case ActionType$5.HideFilterDrawer: {
+        case ActionType$6.HideFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
         }
-        case ActionType$5.ResetFilters: {
+        case ActionType$6.ResetFilters: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState });
         }
-        case ActionType$5.UpdateDateFilterState: {
+        case ActionType$6.UpdateDateFilterState: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
         }
-        case ActionType$5.UpdateContextFilterState: {
+        case ActionType$6.UpdateContextFilterState: {
             return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
         }
-        case ActionType$5.UpdateTagFilterState: {
+        case ActionType$6.UpdateTagFilterState: {
             return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
         }
-        case ActionType$5.UpdateActionErrorFilterState: {
+        case ActionType$6.UpdateActionErrorFilterState: {
             return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
         }
-        case ActionType$5.UpdateAdvancedFilterState: {
+        case ActionType$6.UpdateAdvancedFilterState: {
             return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
         }
         default: {
@@ -3687,7 +3694,7 @@ const LogReviewer = (props) => {
         advancedFilterState: initAdvancedFilterState,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$6, initialState);
+    const [state, dispatch] = useReducer(reducer$7, initialState);
     // Destructure common state
     const { loading, logMap, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = state;
     /*------------------------------------------------------------------------*/
@@ -3737,7 +3744,7 @@ const LogReviewer = (props) => {
     const handleDateRangeUpdated = (newDateFilterState) => __awaiter(void 0, void 0, void 0, function* () {
         // Update state
         dispatch({
-            type: ActionType$5.UpdateDateFilterState,
+            type: ActionType$6.UpdateDateFilterState,
             dateFilterState: newDateFilterState,
         });
         // Check which year/month combos we need to load
@@ -3748,7 +3755,7 @@ const LogReviewer = (props) => {
         }
         // Start loading
         dispatch({
-            type: ActionType$5.StartLoading,
+            type: ActionType$6.StartLoading,
         });
         // Load required months
         try {
@@ -3772,7 +3779,7 @@ const LogReviewer = (props) => {
         }
         // Finish loading
         dispatch({
-            type: ActionType$5.FinishLoading,
+            type: ActionType$6.FinishLoading,
             logMap,
         });
     });
@@ -3811,7 +3818,7 @@ const LogReviewer = (props) => {
             React__default.createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Date,
                         });
                     } },
@@ -3819,7 +3826,7 @@ const LogReviewer = (props) => {
                     "Date"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Context,
                         });
                     } },
@@ -3827,7 +3834,7 @@ const LogReviewer = (props) => {
                     "Context"),
                 (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Tag,
                         });
                     } },
@@ -3835,7 +3842,7 @@ const LogReviewer = (props) => {
                     "Tag")),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Action,
                         });
                     } },
@@ -3843,7 +3850,7 @@ const LogReviewer = (props) => {
                     "Action"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle advanced filter drawer", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ToggleFilterDrawer,
+                            type: ActionType$6.ToggleFilterDrawer,
                             filterDrawer: FilterDrawer.Advanced,
                         });
                     } },
@@ -3851,7 +3858,7 @@ const LogReviewer = (props) => {
                     "Advanced"),
                 React__default.createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
                         dispatch({
-                            type: ActionType$5.ResetFilters,
+                            type: ActionType$6.ResetFilters,
                             initActionErrorFilterState,
                             initAdvancedFilterState,
                             initContextFilterState,
@@ -3973,7 +3980,7 @@ const LogReviewer = (props) => {
                             }
                         });
                         dispatch({
-                            type: ActionType$5.UpdateContextFilterState,
+                            type: ActionType$6.UpdateContextFilterState,
                             contextFilterState,
                         });
                     } }));
@@ -3988,7 +3995,7 @@ const LogReviewer = (props) => {
                         return (React__default.createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
                                 tagFilterState[tag] = checked;
                                 dispatch({
-                                    type: ActionType$5.UpdateTagFilterState,
+                                    type: ActionType$6.UpdateTagFilterState,
                                     tagFilterState,
                                 });
                             } }));
@@ -4001,21 +4008,21 @@ const LogReviewer = (props) => {
                         React__default.createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
                                 actionErrorFilterState.type = undefined;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
                         React__default.createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Action;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
                         React__default.createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
                                 actionErrorFilterState.type = LogType$1.Error;
                                 dispatch({
-                                    type: ActionType$5.UpdateActionErrorFilterState,
+                                    type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
                             }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
@@ -4027,7 +4034,7 @@ const LogReviewer = (props) => {
                             return (React__default.createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
                                     actionErrorFilterState.action[action] = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$6.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -4038,7 +4045,7 @@ const LogReviewer = (props) => {
                             return (React__default.createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
                                     actionErrorFilterState.target[target] = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$6.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }));
@@ -4050,7 +4057,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
                                     actionErrorFilterState.errorMessage = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$6.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } })),
@@ -4061,7 +4068,7 @@ const LogReviewer = (props) => {
                                         .trim()
                                         .toUpperCase());
                                     dispatch({
-                                        type: ActionType$5.UpdateActionErrorFilterState,
+                                        type: ActionType$6.UpdateActionErrorFilterState,
                                         actionErrorFilterState,
                                     });
                                 } }))))));
@@ -4075,7 +4082,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
                                     advancedFilterState.userFirstName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4084,7 +4091,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
                                     advancedFilterState.userLastName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4094,7 +4101,7 @@ const LogReviewer = (props) => {
                                     advancedFilterState.userEmail = ((e.target.value)
                                         .trim());
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4108,7 +4115,7 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4116,21 +4123,21 @@ const LogReviewer = (props) => {
                             React__default.createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
                                     advancedFilterState.includeLearners = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
                             React__default.createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
                                     advancedFilterState.includeTTMs = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
                             React__default.createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
                                     advancedFilterState.includeAdmins = checked;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
@@ -4140,7 +4147,7 @@ const LogReviewer = (props) => {
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
                                     advancedFilterState.courseName = e.target.value;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } })),
@@ -4154,7 +4161,7 @@ const LogReviewer = (props) => {
                                             .trim());
                                     }
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }))),
@@ -4163,21 +4170,21 @@ const LogReviewer = (props) => {
                             React__default.createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
                                     advancedFilterState.isMobile = undefined;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default.createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
                                     advancedFilterState.isMobile = true;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default.createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
                                     advancedFilterState.isMobile = false;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true }))),
@@ -4186,21 +4193,21 @@ const LogReviewer = (props) => {
                             React__default.createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
                                     advancedFilterState.source = undefined;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default.createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Client;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 } }),
                             React__default.createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
                                     advancedFilterState.source = LogSource$1.Server;
                                     dispatch({
-                                        type: ActionType$5.UpdateAdvancedFilterState,
+                                        type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
                                 }, noMarginOnRight: true })),
@@ -4211,7 +4218,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$5.UpdateAdvancedFilterState,
+                                            type: ActionType$6.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })),
@@ -4221,7 +4228,7 @@ const LogReviewer = (props) => {
                                         advancedFilterState.courseName = ((e.target.value)
                                             .trim());
                                         dispatch({
-                                            type: ActionType$5.UpdateAdvancedFilterState,
+                                            type: ActionType$6.UpdateAdvancedFilterState,
                                             advancedFilterState,
                                         });
                                     } })))))));
@@ -12041,11 +12048,11 @@ var CreatableSelect$1 = CreatableSelect;
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$4;
+var ActionType$5;
 (function (ActionType) {
     // Update the input value
     ActionType["SetInputValue"] = "SetInputValue";
-})(ActionType$4 || (ActionType$4 = {}));
+})(ActionType$5 || (ActionType$5 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -12053,9 +12060,9 @@ var ActionType$4;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$5 = (state, action) => {
+const reducer$6 = (state, action) => {
     switch (action.type) {
-        case ActionType$4.SetInputValue: {
+        case ActionType$5.SetInputValue: {
             return Object.assign(Object.assign({}, state), { inputValue: action.value });
         }
         default: {
@@ -12075,7 +12082,7 @@ const CreatableMultiselect = (props) => {
         inputValue: '',
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$5, initialState);
+    const [state, dispatch] = useReducer(reducer$6, initialState);
     // Destructure common state
     const { inputValue } = state;
     /*------------------------------------------------------------------------*/
@@ -12152,7 +12159,7 @@ const CreatableMultiselect = (props) => {
         }
         // Reset text field to empty because the values have been added
         dispatch({
-            type: ActionType$4.SetInputValue,
+            type: ActionType$5.SetInputValue,
             value: '',
         });
     };
@@ -12191,7 +12198,7 @@ const CreatableMultiselect = (props) => {
         else {
             // simply update the input value to the new input value
             dispatch({
-                type: ActionType$4.SetInputValue,
+                type: ActionType$5.SetInputValue,
                 value: newValue,
             });
         }
@@ -12243,13 +12250,13 @@ const style$1 = `
 `;
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$3;
+var ActionType$4;
 (function (ActionType) {
     // Update the DBEntry
     ActionType["UpdateDBEntry"] = "UpdateDBEntry";
     // Start the save spinner
     ActionType["StartSave"] = "StartSave";
-})(ActionType$3 || (ActionType$3 = {}));
+})(ActionType$4 || (ActionType$4 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -12257,12 +12264,12 @@ var ActionType$3;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$4 = (state, action) => {
+const reducer$5 = (state, action) => {
     switch (action.type) {
-        case ActionType$3.UpdateDBEntry: {
+        case ActionType$4.UpdateDBEntry: {
             return Object.assign(Object.assign({}, state), { entry: action.dbEntry });
         }
-        case ActionType$3.StartSave: {
+        case ActionType$4.StartSave: {
             return Object.assign(Object.assign({}, state), { saving: true });
         }
         default: {
@@ -12287,7 +12294,7 @@ const AddOrEditDBEntry = (props) => {
         saving: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$4, initialState);
+    const [state, dispatch] = useReducer(reducer$5, initialState);
     // Destructure common state
     const { entry, saving, } = state;
     /*------------------------------------------------------------------------*/
@@ -12299,7 +12306,7 @@ const AddOrEditDBEntry = (props) => {
      */
     const save = () => __awaiter(void 0, void 0, void 0, function* () {
         // Start the save loading indicator
-        dispatch({ type: ActionType$3.StartSave });
+        dispatch({ type: ActionType$4.StartSave });
         // add all default values to the entry
         entryFields.forEach((field) => {
             if (field.defaultValue && !entry[field.objectKey]) {
@@ -12482,7 +12489,7 @@ const AddOrEditDBEntry = (props) => {
                                 return (React__default.createElement(RadioButton, { key: choice.value, text: choice.title, selected: entry[field.objectKey] === choice.value, onSelected: () => {
                                         entry[field.objectKey] = choice.value;
                                         dispatch({
-                                            type: ActionType$3.UpdateDBEntry,
+                                            type: ActionType$4.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -12494,7 +12501,7 @@ const AddOrEditDBEntry = (props) => {
                         React__default.createElement("input", { disabled: disabled, type: "text", className: "form-control", placeholder: field.placeholder, "aria-describedby": "AddOrEditDBEntry-form-name-label", value: entry[field.objectKey] || '', onChange: (e) => {
                                 entry[field.objectKey] = (e.target.value);
                                 dispatch({
-                                    type: ActionType$3.UpdateDBEntry,
+                                    type: ActionType$4.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -12507,7 +12514,7 @@ const AddOrEditDBEntry = (props) => {
                                 entry[field.objectKey] = (e.target.value
                                     .replace(/[^0-9]/g, ''));
                                 dispatch({
-                                    type: ActionType$3.UpdateDBEntry,
+                                    type: ActionType$4.UpdateDBEntry,
                                     dbEntry: entry,
                                 });
                             } }))));
@@ -12537,7 +12544,7 @@ const AddOrEditDBEntry = (props) => {
                                         }
                                         // Save
                                         dispatch({
-                                            type: ActionType$3.UpdateDBEntry,
+                                            type: ActionType$4.UpdateDBEntry,
                                             dbEntry: entry,
                                         });
                                     }, ariaLabel: choice.title }));
@@ -12552,7 +12559,7 @@ const AddOrEditDBEntry = (props) => {
                                     // Update entry and save
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$3.UpdateDBEntry,
+                                        type: ActionType$4.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -12565,7 +12572,7 @@ const AddOrEditDBEntry = (props) => {
                             React__default.createElement(CreatableMultiselect, { disabled: disabled, type: DBEntryFieldType$1.NumberArray, values: entry[field.objectKey] || [], onChange: (values) => {
                                     entry[field.objectKey] = values;
                                     dispatch({
-                                        type: ActionType$3.UpdateDBEntry,
+                                        type: ActionType$4.UpdateDBEntry,
                                         dbEntry: entry,
                                     });
                                 } })))));
@@ -12639,7 +12646,7 @@ const generateEndpointPath = (collectionName, adminsOnly) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$2;
+var ActionType$3;
 (function (ActionType) {
     // Show adder
     ActionType["ShowAdder"] = "ShowAdder";
@@ -12653,7 +12660,7 @@ var ActionType$2;
     ActionType["StartDelete"] = "StartDelete";
     // Finish deletion process
     ActionType["FinishDelete"] = "FinishDelete";
-})(ActionType$2 || (ActionType$2 = {}));
+})(ActionType$3 || (ActionType$3 = {}));
 /**
  * Reducer that executes actions
  * @author Yuen Ler Chow
@@ -12661,18 +12668,18 @@ var ActionType$2;
  * @param action action to execute
  * @returns updated state
  */
-const reducer$3 = (state, action) => {
+const reducer$4 = (state, action) => {
     switch (action.type) {
-        case ActionType$2.FinishLoading: {
+        case ActionType$3.FinishLoading: {
             return Object.assign(Object.assign({}, state), { loading: false, dbEntries: action.dbEntries });
         }
-        case ActionType$2.ShowAdder: {
+        case ActionType$3.ShowAdder: {
             return Object.assign(Object.assign({}, state), { adding: true, dbEntryToEdit: undefined });
         }
-        case ActionType$2.ShowEditor: {
+        case ActionType$3.ShowEditor: {
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: action.dbEntry });
         }
-        case ActionType$2.FinishAdd: {
+        case ActionType$3.FinishAdd: {
             // Handle cancel
             const finishedEntry = action.dbEntry;
             if (!finishedEntry) {
@@ -12696,10 +12703,10 @@ const reducer$3 = (state, action) => {
             // Update the state
             return Object.assign(Object.assign({}, state), { adding: false, dbEntryToEdit: undefined, dbEntries: updatedDbEntries });
         }
-        case ActionType$2.StartDelete: {
+        case ActionType$3.StartDelete: {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
-        case ActionType$2.FinishDelete: {
+        case ActionType$3.FinishDelete: {
             return Object.assign(Object.assign({}, state), { loading: false, 
                 // Remove the deleted entry from the list
                 dbEntries: state.dbEntries.filter((entry) => {
@@ -12725,7 +12732,7 @@ const DBEntryManagerPanel = (props) => {
         loading: true,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$3, initialState);
+    const [state, dispatch] = useReducer(reducer$4, initialState);
     // Destructure common state
     const { adding, dbEntryToEdit, dbEntries, loading, } = state;
     /*------------------------------------------------------------------------*/
@@ -12751,7 +12758,7 @@ const DBEntryManagerPanel = (props) => {
         try {
             // Start loader
             dispatch({
-                type: ActionType$2.StartDelete,
+                type: ActionType$3.StartDelete,
             });
             // Perform deletion
             yield visitServerEndpoint({
@@ -12760,7 +12767,7 @@ const DBEntryManagerPanel = (props) => {
             });
             // Finish loader
             dispatch({
-                type: ActionType$2.FinishDelete,
+                type: ActionType$3.FinishDelete,
                 dbEntry: entry,
                 idPropName,
             });
@@ -12789,7 +12796,7 @@ const DBEntryManagerPanel = (props) => {
                 });
                 // Save loaded data
                 dispatch({
-                    type: ActionType$2.FinishLoading,
+                    type: ActionType$3.FinishLoading,
                     dbEntries: data,
                 });
             }
@@ -12832,7 +12839,7 @@ const DBEntryManagerPanel = (props) => {
                                 React__default.createElement("span", { className: "d-none d-md-inline ms-1" }, "Remove")),
                             !disableEdit && (React__default.createElement("button", { type: "button", id: `DBEntryManagerPanel-edit-with-id-${entry[idPropName]}`, className: "btn btn-primary", "aria-label": `edit db entry: ${entry[titlePropName]}`, onClick: () => {
                                     dispatch({
-                                        type: ActionType$2.ShowEditor,
+                                        type: ActionType$3.ShowEditor,
                                         dbEntry: entry,
                                     });
                                 } },
@@ -12842,7 +12849,7 @@ const DBEntryManagerPanel = (props) => {
                 React__default.createElement("div", { className: "d-grid" },
                     React__default.createElement("button", { type: "button", id: "DBEntryManagerPanel-add-entry", className: "btn btn-lg btn-primary", "aria-label": `add a new ${itemName} entry to the list of entries`, onClick: () => {
                             dispatch({
-                                type: ActionType$2.ShowAdder,
+                                type: ActionType$3.ShowAdder,
                             });
                         } },
                         React__default.createElement(FontAwesomeIcon, { icon: faPlus, className: "me-2" }),
@@ -12854,7 +12861,7 @@ const DBEntryManagerPanel = (props) => {
     if (!loading && (adding || dbEntryToEdit)) {
         body = (React__default.createElement(AddOrEditDBEntry, { saveEndpointPath: endpoint, validateEntry: validateEntry, modifyEntry: modifyEntry, entryFields: entryFields, dbEntryToEdit: dbEntryToEdit, idPropName: idPropName, entries: dbEntries, itemName: itemName, onFinished: (entry) => {
                 dispatch({
-                    type: ActionType$2.FinishAdd,
+                    type: ActionType$3.FinishAdd,
                     dbEntry: entry,
                     idPropName,
                 });
@@ -13051,25 +13058,25 @@ const getItemIds = (items) => {
 };
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType$1;
+var ActionType$2;
 (function (ActionType) {
     // Hide the "jump to bottom" button
     ActionType["HideJumpToBottomButton"] = "HideJumpToBottomButton";
     // Show the "jump to bottom" button
     ActionType["ShowJumpToBottomButton"] = "ShowJumpToBottomButton";
-})(ActionType$1 || (ActionType$1 = {}));
+})(ActionType$2 || (ActionType$2 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$2 = (state, action) => {
+const reducer$3 = (state, action) => {
     switch (action.type) {
-        case ActionType$1.HideJumpToBottomButton: {
+        case ActionType$2.HideJumpToBottomButton: {
             return Object.assign(Object.assign({}, state), { jumpToBottomButtonVisible: false });
         }
-        case ActionType$1.ShowJumpToBottomButton: {
+        case ActionType$2.ShowJumpToBottomButton: {
             return Object.assign(Object.assign({}, state), { jumpToBottomButtonVisible: true });
         }
         default: {
@@ -13093,7 +13100,7 @@ const AutoscrollToBottomContainer = (props) => {
         jumpToBottomButtonVisible: false,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$2, initialState);
+    const [state, dispatch] = useReducer(reducer$3, initialState);
     // Destructure common state
     const { jumpToBottomButtonVisible, } = state;
     /* -------------- Refs -------------- */
@@ -13139,7 +13146,7 @@ const AutoscrollToBottomContainer = (props) => {
         }
         // Update state
         dispatch({
-            type: ActionType$1.HideJumpToBottomButton,
+            type: ActionType$2.HideJumpToBottomButton,
         });
         // Scroll to bottom
         container.current.scrollTop = (container.current.scrollHeight
@@ -13163,7 +13170,7 @@ const AutoscrollToBottomContainer = (props) => {
         if (isScrolledToBottom()) {
             // Hide button
             dispatch({
-                type: ActionType$1.HideJumpToBottomButton,
+                type: ActionType$2.HideJumpToBottomButton,
             });
         }
     };
@@ -13205,7 +13212,7 @@ const AutoscrollToBottomContainer = (props) => {
         else {
             // Not scrolled to bottom. Show "jump to bottom" button.
             dispatch({
-                type: ActionType$1.ShowJumpToBottomButton,
+                type: ActionType$2.ShowJumpToBottomButton,
             });
         }
     }, [items]);
@@ -13275,25 +13282,25 @@ const combineClassNames = (classNames) => {
  */
 /* ------------- Actions ------------ */
 // Types of actions
-var ActionType;
+var ActionType$1;
 (function (ActionType) {
     // Start hovering on an option
     ActionType["StartHover"] = "StartHover";
     // Stop hovering on an option
     ActionType["StopHover"] = "StopHover";
-})(ActionType || (ActionType = {}));
+})(ActionType$1 || (ActionType$1 = {}));
 /**
  * Reducer that executes actions
  * @author Gabe Abrams
  * @param state current state
  * @param action action to execute
  */
-const reducer$1 = (state, action) => {
+const reducer$2 = (state, action) => {
     switch (action.type) {
-        case ActionType.StartHover: {
+        case ActionType$1.StartHover: {
             return Object.assign(Object.assign({}, state), { hoveredOptionId: action.hoveredOptionId });
         }
-        case ActionType.StopHover: {
+        case ActionType$1.StopHover: {
             return Object.assign(Object.assign({}, state), { hoveredOptionId: undefined });
         }
         default: {
@@ -13317,7 +13324,7 @@ const MultiSwitch = (props) => {
         hoveredOptionId: undefined,
     };
     // Initialize state
-    const [state, dispatch] = useReducer(reducer$1, initialState);
+    const [state, dispatch] = useReducer(reducer$2, initialState);
     // Destructure common state
     const { hoveredOptionId, } = state;
     /*------------------------------------------------------------------------*/
@@ -13449,27 +13456,27 @@ const MultiSwitch = (props) => {
                 : `click to select option "${option.label}"`), onClick: () => {
                 // Remove hover
                 dispatch({
-                    type: ActionType.StopHover,
+                    type: ActionType$1.StopHover,
                 });
                 // Notify parent
                 onChange(option.id);
             }, onMouseEnter: () => {
                 dispatch({
-                    type: ActionType.StartHover,
+                    type: ActionType$1.StartHover,
                     hoveredOptionId: option.id,
                 });
             }, onMouseLeave: () => {
                 dispatch({
-                    type: ActionType.StopHover,
+                    type: ActionType$1.StopHover,
                 });
             }, onFocus: () => {
                 dispatch({
-                    type: ActionType.StartHover,
+                    type: ActionType$1.StartHover,
                     hoveredOptionId: option.id,
                 });
             }, onBlur: () => {
                 dispatch({
-                    type: ActionType.StopHover,
+                    type: ActionType$1.StopHover,
                 });
             }, style: {
                 pointerEvents: ((option.id === selectedOptionId)
@@ -13486,6 +13493,147 @@ const MultiSwitch = (props) => {
         React__default.createElement("style", null, style),
         React__default.createElement("div", { className: "MultiSwitch-options-container" }, optionElements),
         React__default.createElement("div", { className: "MultiSwitch-highlight-container" }, highlight)));
+};
+
+// Types of dropdown items
+var DropdownItemType;
+(function (DropdownItemType) {
+    // Dropdown header
+    DropdownItemType["Header"] = "Header";
+    // Dropdown divider
+    DropdownItemType["Divider"] = "Divider";
+    // Dropdown item
+    DropdownItemType["Item"] = "Item";
+})(DropdownItemType || (DropdownItemType = {}));
+var DropdownItemType$1 = DropdownItemType;
+
+/**
+ * A simple dropdown menu
+ * @author Alessandra De Lucas
+ * @author Yuen Ler Chow
+ * @author Gabe Abrams
+ */
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType;
+(function (ActionType) {
+    // Toggle opening the dropdown menu
+    ActionType["ToggleDropdown"] = "ToggleDropdown";
+    // Close the dropdown menu
+    ActionType["CloseDropdown"] = "CloseDropdown";
+})(ActionType || (ActionType = {}));
+/**
+ * Reducer that executes actions
+ * @author Alessandra De Lucas
+ * @author Yuen Ler Chow
+ * @param state current state
+ * @param action action to execute
+ */
+const reducer$1 = (state, action) => {
+    switch (action.type) {
+        case ActionType.ToggleDropdown: {
+            return Object.assign(Object.assign({}, state), { isDropdownOpen: !state.isDropdownOpen });
+        }
+        case ActionType.CloseDropdown: {
+            return Object.assign(Object.assign({}, state), { isDropdownOpen: false });
+        }
+        default: {
+            return state;
+        }
+    }
+};
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const Dropdown = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { dropdownButton, items, } = props;
+    /* -------------- State ------------- */
+    // Initial state
+    const initialState = {
+        isDropdownOpen: false,
+    };
+    // Initialize state
+    const [state, dispatch] = useReducer(reducer$1, initialState);
+    // Destructure common state
+    const { isDropdownOpen, } = state;
+    /* -------------- Refs -------------- */
+    // Initialize refs
+    const dropdownRef = useRef(null);
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Component Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Handle clicking outside of the dropdown menu to close it
+     * @author Yuen Ler Chow
+     * @param event the mouse event
+     */
+    const handleClickOutside = (event) => {
+        if (
+        // Dropdown has been rendered
+        dropdownRef.current
+            // Click occurred outside the dropdown
+            && !dropdownRef.current.contains(event.target)) {
+            dispatch({ type: ActionType.CloseDropdown });
+        }
+    };
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Lifecycle Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Mount
+     * @author Yuen Ler Chow
+     */
+    useEffect(() => {
+        // Add event listener to close dropdown when clicking outside
+        document.addEventListener('mousedown', handleClickOutside);
+        // Cleanup
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    return (React__default.createElement("div", { className: "dropdown", ref: dropdownRef, "data-bs-theme": isDarkModeOn() ? 'dark' : undefined },
+        React__default.createElement("button", { className: combineClassNames([
+                'btn dropdown-toggle border',
+                isDropdownOpen && 'show',
+                `btn-${dropdownButton.variant}`,
+                dropdownButton.variant === Variant$1.Light && 'text-dark',
+            ]), type: "button", id: dropdownButton.id, "aria-expanded": isDropdownOpen, "aria-label": dropdownButton.ariaLabel, onClick: () => {
+                dispatch({
+                    type: ActionType.ToggleDropdown,
+                });
+            } }, dropdownButton.content),
+        React__default.createElement("ul", { className: combineClassNames([
+                'dropdown-menu',
+                isDarkModeOn() && 'dropdown-menu-dark',
+                isDropdownOpen && 'show',
+            ]) }, Object.values(items).map((item) => {
+            if (item.type === DropdownItemType$1.Header) {
+                return (
+                // TODO: Implement header
+                React__default.createElement("span", null));
+            }
+            if (item.type === DropdownItemType$1.Divider) {
+                return (
+                // TODO: Implement divider
+                React__default.createElement("span", null));
+            }
+            return (React__default.createElement("li", { key: item.id },
+                React__default.createElement("button", { type: "button", "aria-label": item.ariaLabel, className: "dropdown-item", onClick: (e) => {
+                        e.preventDefault();
+                        dispatch({
+                            type: ActionType.CloseDropdown,
+                        });
+                        item.onClick();
+                    } }, item.content)));
+        }))));
 };
 
 /**
@@ -14295,6 +14443,12 @@ const parseUserAgent = (userAgent) => {
  * @param opts.handler function that processes the request
  * @param [opts.skipSessionCheck] if true, skip the session check (allow users
  *   to not be logged in and launched via LTI)
+ * @param [opts.allowedHosts] if included, only allow requests from these hosts
+ *   (start a hostname with a "*" to only check the end of the hostname)
+ *   you can include just one string instead of an array
+ * @param [opts.bannedHosts] if included, do not allow requests from these hosts
+ *   (start a hostname with a "*" to only check the end of the hostname)
+ *   you can include just one string instead of an array
  * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
  *   is not of type ErrorWithCode is thrown, the client will receive an error
  *   where the error message is prefixed with this string. For example,
@@ -14322,9 +14476,75 @@ const parseUserAgent = (userAgent) => {
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         // Output params
         const output = {};
+        /*----------------------------------------*/
+        /* ----------- Hostname Check ----------- */
+        /*----------------------------------------*/
+        // Get hostnames
+        const originURL = String(req.get('origin')
+            || req.headers.origin
+            || req.headers.referer);
+        const originHostname = (originURL
+            // Remove protocol
+            .replace(/(^\w+:|^)\/\//, '')
+            // Remove port
+            .replace(/:\d+$/, ''));
+        const serverHostname = String(req.hostname);
+        // Check allowed
+        if (opts.allowedHosts) {
+            // Only accept requests from allowed hosts
+            const allowedArray = (Array.isArray(opts.allowedHosts)
+                ? opts.allowedHosts
+                : [opts.allowedHosts]);
+            // Check if server is localhost
+            if (serverHostname === 'localhost') {
+                // Allow localhost
+                allowedArray.push('localhost');
+            }
+            // Check if current host is allowed
+            const allowed = allowedArray.some((allowedHost) => {
+                if (allowedHost.startsWith('*')) {
+                    // Check end of hostname
+                    return originHostname.endsWith(allowedHost.substring(1));
+                }
+                // Check full hostname
+                return originHostname.toLowerCase() === allowedHost.toLowerCase();
+            });
+            // If not allowed, return error
+            if (!allowed) {
+                return handleError(res, {
+                    message: 'You are not allowed to access this endpoint.',
+                    code: ReactKitErrorCode$1.HostNotAllowed,
+                    status: 403,
+                });
+            }
+        }
+        // Check banned
+        if (opts.bannedHosts) {
+            // Do not allow requests from banned hosts
+            const bannedArray = (Array.isArray(opts.bannedHosts)
+                ? opts.bannedHosts
+                : [opts.bannedHosts]);
+            // Check if current host is banned
+            const banned = bannedArray.some((bannedHost) => {
+                if (bannedHost.startsWith('*')) {
+                    // Check end of hostname
+                    return originHostname.endsWith(bannedHost.substring(1));
+                }
+                // Check full hostname
+                return originHostname.toLowerCase() === bannedHost.toLowerCase();
+            });
+            // If banned, return error
+            if (banned) {
+                return handleError(res, {
+                    message: 'You are not allowed to access this endpoint.',
+                    code: ReactKitErrorCode$1.HostBanned,
+                    status: 403,
+                });
+            }
+        }
         /*----------------------------------------*/
         /* ------------ Parse Params ------------ */
         /*----------------------------------------*/
@@ -14523,34 +14743,34 @@ const genRouteHandler = (opts) => {
         // Add launch info to output
         output.userId = (launchInfo
             ? launchInfo.userId
-            : undefined);
+            : ((_b = output.userId) !== null && _b !== void 0 ? _b : undefined));
         output.userFirstName = (launchInfo
             ? launchInfo.userFirstName
-            : undefined);
+            : ((_c = output.userFirstName) !== null && _c !== void 0 ? _c : undefined));
         output.userLastName = (launchInfo
             ? launchInfo.userLastName
-            : undefined);
+            : ((_d = output.userLastName) !== null && _d !== void 0 ? _d : undefined));
         output.userEmail = (launchInfo
             ? launchInfo.userEmail
-            : undefined);
+            : ((_e = output.userEmail) !== null && _e !== void 0 ? _e : undefined));
         output.userAvatarURL = (launchInfo
-            ? ((_b = launchInfo.userImage) !== null && _b !== void 0 ? _b : 'http://www.gravatar.com/avatar/?d=identicon')
-            : undefined);
+            ? ((_f = launchInfo.userImage) !== null && _f !== void 0 ? _f : 'http://www.gravatar.com/avatar/?d=identicon')
+            : ((_g = output.userAvatarURL) !== null && _g !== void 0 ? _g : undefined));
         output.isLearner = (launchInfo
             ? !!launchInfo.isLearner
-            : undefined);
+            : ((_h = output.isLearner) !== null && _h !== void 0 ? _h : undefined));
         output.isTTM = (launchInfo
             ? !!launchInfo.isTTM
-            : undefined);
+            : ((_j = output.isTTM) !== null && _j !== void 0 ? _j : undefined));
         output.isAdmin = (launchInfo
             ? !!launchInfo.isAdmin
-            : undefined);
+            : ((_k = output.isAdmin) !== null && _k !== void 0 ? _k : undefined));
         output.courseId = (launchInfo
-            ? ((_c = output.courseId) !== null && _c !== void 0 ? _c : launchInfo.courseId)
-            : undefined);
+            ? ((_l = output.courseId) !== null && _l !== void 0 ? _l : launchInfo.courseId)
+            : ((_m = output.courseId) !== null && _m !== void 0 ? _m : undefined));
         output.courseName = (launchInfo
             ? launchInfo.contextLabel
-            : undefined);
+            : ((_o = output.courseName) !== null && _o !== void 0 ? _o : undefined));
         // Add other session variables
         Object.keys(req.session).forEach((propName) => {
             // Skip if prop already in output
@@ -14624,7 +14844,7 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (logOpts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+            var _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
@@ -14656,24 +14876,24 @@ const genRouteHandler = (opts) => {
                     timestamp,
                     context: (typeof logOpts.context === 'string'
                         ? logOpts.context
-                        : ((_e = ((_d = logOpts.context) !== null && _d !== void 0 ? _d : {})._) !== null && _e !== void 0 ? _e : LogBuiltInMetadata.Context.Uncategorized)),
-                    subcontext: ((_f = logOpts.subcontext) !== null && _f !== void 0 ? _f : LogBuiltInMetadata.Context.Uncategorized),
-                    tags: ((_g = logOpts.tags) !== null && _g !== void 0 ? _g : []),
-                    level: ((_h = logOpts.level) !== null && _h !== void 0 ? _h : LogLevel$1.Info),
-                    metadata: ((_j = logOpts.metadata) !== null && _j !== void 0 ? _j : {}),
+                        : ((_q = ((_p = logOpts.context) !== null && _p !== void 0 ? _p : {})._) !== null && _q !== void 0 ? _q : LogBuiltInMetadata.Context.Uncategorized)),
+                    subcontext: ((_r = logOpts.subcontext) !== null && _r !== void 0 ? _r : LogBuiltInMetadata.Context.Uncategorized),
+                    tags: ((_s = logOpts.tags) !== null && _s !== void 0 ? _s : []),
+                    level: ((_t = logOpts.level) !== null && _t !== void 0 ? _t : LogLevel$1.Info),
+                    metadata: ((_u = logOpts.metadata) !== null && _u !== void 0 ? _u : {}),
                 };
                 // Type-specific info
                 const typeSpecificInfo = (('error' in opts && opts.error)
                     ? {
                         type: LogType$1.Error,
-                        errorMessage: (_k = logOpts.error.message) !== null && _k !== void 0 ? _k : 'Unknown message',
-                        errorCode: (_l = logOpts.error.code) !== null && _l !== void 0 ? _l : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_m = logOpts.error.stack) !== null && _m !== void 0 ? _m : 'No stack',
+                        errorMessage: (_v = logOpts.error.message) !== null && _v !== void 0 ? _v : 'Unknown message',
+                        errorCode: (_w = logOpts.error.code) !== null && _w !== void 0 ? _w : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_x = logOpts.error.stack) !== null && _x !== void 0 ? _x : 'No stack',
                     }
                     : {
                         type: LogType$1.Action,
-                        target: ((_o = logOpts.target) !== null && _o !== void 0 ? _o : LogBuiltInMetadata.Target.NoTarget),
-                        action: ((_p = logOpts.action) !== null && _p !== void 0 ? _p : LogAction$1.Unknown),
+                        target: ((_y = logOpts.target) !== null && _y !== void 0 ? _y : LogBuiltInMetadata.Target.NoTarget),
+                        action: ((_z = logOpts.action) !== null && _z !== void 0 ? _z : LogAction$1.Unknown),
                     });
                 // Source-specific info
                 const sourceSpecificInfo = (logOpts.overrideAsClientEvent
@@ -14708,7 +14928,7 @@ const genRouteHandler = (opts) => {
             catch (err) {
                 // Print because we cannot store the error
                 // eslint-disable-next-line no-console
-                console.error('Could not log the following:', logOpts, 'due to this error:', ((_q = err) !== null && _q !== void 0 ? _q : {}).message, ((_r = err) !== null && _r !== void 0 ? _r : {}).stack);
+                console.error('Could not log the following:', logOpts, 'due to this error:', ((_0 = err) !== null && _0 !== void 0 ? _0 : {}).message, ((_1 = err) !== null && _1 !== void 0 ? _1 : {}).stack);
                 // Create a dummy log to return
                 const dummyMainInfo = {
                     id: '-1',
@@ -15890,6 +16110,182 @@ const isValidURL = (url) => {
 };
 
 /**
+ * Sends and retries an http request
+ * @author Gabriel Abrams
+ * @param opts object containing all arguments
+ * @param opts.path path to send request to
+ * @param [opts.host] host to send request to
+ * @param [opts.method=GET] http method to use
+ * @param [opts.params] body/data to include in the request
+ * @param [opts.headers] headers to include in the request
+ * @param [opts.sendCrossDomainCredentials=true if in development mode] if true,
+ *   send cross-domain credentials even if not in dev mode
+ * @param [opts.responseType=JSON] expected response type
+ * @returns { body, status, headers } on success
+ */
+const sendServerToServerRequest = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Process method
+    const method = (opts.method || 'GET');
+    // Encode objects within params
+    let params;
+    if (opts.params) {
+        params = {};
+        Object.entries(opts.params).forEach(([key, val]) => {
+            if (typeof val === 'object' && !Array.isArray(val)) {
+                params[key] = JSON.stringify(val);
+            }
+            else {
+                params[key] = val;
+            }
+        });
+    }
+    // Stringify parameters
+    const stringifiedParams = qs.stringify(params || {}, {
+        encodeValuesOnly: true,
+        arrayFormat: 'brackets',
+    });
+    // Create url (include query if GET)
+    const query = (method === 'GET' ? `?${stringifiedParams}` : '');
+    let url;
+    if (!opts.host) {
+        // No host included at all. Just send to a path
+        url = `${opts.path}${query}`;
+    }
+    else {
+        url = `https://${opts.host}${opts.path}${query}`;
+    }
+    // Update headers
+    const headers = opts.headers || {};
+    let data = null;
+    if (!headers['Content-Type']) {
+        // Form encoded
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        // Add data if applicable
+        data = (method !== 'GET' ? stringifiedParams : null);
+    }
+    else {
+        // JSON encode
+        data = params;
+    }
+    // Encode data
+    let encodedData;
+    if (data) {
+        if (headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+            encodedData = new URLSearchParams(params);
+        }
+        else {
+            encodedData = JSON.stringify(data);
+        }
+    }
+    // Send request
+    try {
+        const response = yield fetch(url, {
+            method,
+            mode: 'cors',
+            headers: headers !== null && headers !== void 0 ? headers : {},
+            body: ((method !== 'GET' && encodedData)
+                ? encodedData
+                : undefined),
+            redirect: 'follow',
+        });
+        // Get headers map
+        const responseHeaders = {};
+        response.headers.forEach((value, key) => {
+            responseHeaders[key] = value;
+        });
+        // Process response based on responseType
+        try {
+            // Parse response
+            let responseBody;
+            if (opts.responseType
+                && opts.responseType === 'Text') {
+                // Response type is text
+                responseBody = yield response.text();
+            }
+            else {
+                // Response type is JSON
+                responseBody = yield response.json();
+            }
+            // Return response
+            return {
+                body: responseBody,
+                status: response.status,
+                headers: responseHeaders,
+            };
+        }
+        catch (err) {
+            throw new ErrorWithCode(`Failed to parse response as ${opts.responseType}: ${err === null || err === void 0 ? void 0 : err.message}`, ReactKitErrorCode$1.ResponseParseError);
+        }
+    }
+    catch (err) {
+        // Self-signed certificate error:
+        if ((_a = err === null || err === void 0 ? void 0 : err.message) === null || _a === void 0 ? void 0 : _a.includes('self signed certificate')) {
+            throw new ErrorWithCode('We refused to send a request because the receiver has self-signed certificates.', ReactKitErrorCode$1.SelfSigned);
+        }
+        // No tries left
+        throw new ErrorWithCode(`We encountered an error when trying to send a network request. If this issue persists, contact an admin. Error: ${err === null || err === void 0 ? void 0 : err.message}`, ReactKitErrorCode$1.NotConnected);
+    }
+});
+
+/**
+ * Send a server-to-server request from this sever to another server that uses
+ *   dce-reactkit [for server only]
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.host - the host of the other server
+ * @param opts.path - the path of the other server's endpoint
+ * @param [opts.method=GET] - the method of the endpoint
+ * @param [opts.params] - query/body parameters to include
+ * @param [opts.headers] - headers to include
+ * @returns response from server
+ */
+const visitEndpointOnAnotherServer = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Remove properties with undefined values
+    let params;
+    if (opts.params) {
+        params = Object.fromEntries(Object
+            .entries(opts.params)
+            .filter(([, value]) => {
+            return value !== undefined;
+        }));
+    }
+    // Automatically JSONify arrays and objects
+    if (params) {
+        params = Object.fromEntries(Object
+            .entries(params)
+            .map(([key, value]) => {
+            if (Array.isArray(value) || typeof value === 'object') {
+                return [key, JSON.stringify(value)];
+            }
+            return [key, value];
+        }));
+    }
+    // Send the request
+    const response = yield sendServerToServerRequest({
+        host: opts.host,
+        path: opts.path,
+        method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
+        params,
+    });
+    // Check for failure
+    if (!response || !response.body) {
+        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+    }
+    if (!response.body.success) {
+        // Other errors
+        throw new ErrorWithCode((response.body.message
+            || 'An unknown error occurred. Please contact an admin.'), (response.body.code
+            || ReactKitErrorCode$1.NoCode));
+    }
+    // Success! Extract the body
+    const { body } = response.body;
+    // Return
+    return body;
+});
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -15905,5 +16301,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, findURL as findURLs, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, isValidURL, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, toTitleCase, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, findURL as findURLs, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initLogCollection, initServer, isMobileOrTablet, isValidURL, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, toTitleCase, useForceRender, validateEmail, validatePhoneNumber, validateString, visitEndpointOnAnotherServer, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map

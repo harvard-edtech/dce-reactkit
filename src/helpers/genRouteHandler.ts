@@ -39,6 +39,12 @@ import LogLevel from '../types/LogLevel';
  * @param opts.handler function that processes the request
  * @param [opts.skipSessionCheck] if true, skip the session check (allow users
  *   to not be logged in and launched via LTI)
+ * @param [opts.allowedHosts] if included, only allow requests from these hosts
+ *   (start a hostname with a "*" to only check the end of the hostname)
+ *   you can include just one string instead of an array
+ * @param [opts.bannedHosts] if included, do not allow requests from these hosts
+ *   (start a hostname with a "*" to only check the end of the hostname)
+ *   you can include just one string instead of an array
  * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
  *   is not of type ErrorWithCode is thrown, the client will receive an error
  *   where the error message is prefixed with this string. For example,
@@ -102,6 +108,8 @@ const genRouteHandler = (
       },
     ) => any,
     skipSessionCheck?: boolean,
+    allowedHosts?: string[] | string,
+    bannedHosts?: string[] | string,
     unhandledErrorMessagePrefix?: string,
   },
 ) => {
@@ -109,6 +117,97 @@ const genRouteHandler = (
   return async (req: any, res: any, next: () => void) => {
     // Output params
     const output: { [k in string]: any } = {};
+
+    /*----------------------------------------*/
+    /* ----------- Hostname Check ----------- */
+    /*----------------------------------------*/
+
+    // Get hostnames
+    const originURL = String(
+      req.get('origin')
+      || req.headers.origin
+      || req.headers.referer
+    );
+    const originHostname = (
+      originURL
+        // Remove protocol
+        .replace(/(^\w+:|^)\/\//, '')
+        // Remove port
+        .replace(/:\d+$/, '')
+    );
+    const serverHostname = String(req.hostname);
+
+    // Check allowed
+    if (opts.allowedHosts) {
+      // Only accept requests from allowed hosts
+      const allowedArray = (
+        Array.isArray(opts.allowedHosts)
+          ? opts.allowedHosts
+          : [opts.allowedHosts]
+      );
+
+      // Check if server is localhost
+      if (serverHostname === 'localhost') {
+        // Allow localhost
+        allowedArray.push('localhost');
+      }
+
+      // Check if current host is allowed
+      const allowed = allowedArray.some((allowedHost) => {
+        if (allowedHost.startsWith('*')) {
+          // Check end of hostname
+          return originHostname.endsWith(allowedHost.substring(1));
+        }
+
+        // Check full hostname
+        return originHostname.toLowerCase() === allowedHost.toLowerCase();
+      });
+
+      // If not allowed, return error
+      if (!allowed) {
+        return handleError(
+          res,
+          {
+            message: 'You are not allowed to access this endpoint.',
+            code: ReactKitErrorCode.HostNotAllowed,
+            status: 403,
+          },
+        );
+      }
+    }
+
+    // Check banned
+    if (opts.bannedHosts) {
+      // Do not allow requests from banned hosts
+      const bannedArray = (
+        Array.isArray(opts.bannedHosts)
+          ? opts.bannedHosts
+          : [opts.bannedHosts]
+      );
+
+      // Check if current host is banned
+      const banned = bannedArray.some((bannedHost) => {
+        if (bannedHost.startsWith('*')) {
+          // Check end of hostname
+          return originHostname.endsWith(bannedHost.substring(1));
+        }
+
+        // Check full hostname
+        return originHostname.toLowerCase() === bannedHost.toLowerCase();
+      });
+
+      // If banned, return error
+      if (banned) {
+        return handleError(
+          res,
+          {
+            message: 'You are not allowed to access this endpoint.',
+            code: ReactKitErrorCode.HostBanned,
+            status: 403,
+          },
+        );
+      }
+    }
 
     /*----------------------------------------*/
     /* ------------ Parse Params ------------ */
@@ -354,22 +453,22 @@ const genRouteHandler = (
     output.userId = (
       launchInfo
         ? launchInfo.userId
-        : undefined
+        : (output.userId ?? undefined)
     );
     output.userFirstName = (
       launchInfo
         ? launchInfo.userFirstName
-        : undefined
+        : (output.userFirstName ?? undefined)
     );
     output.userLastName = (
       launchInfo
         ? launchInfo.userLastName
-        : undefined
+        : (output.userLastName ?? undefined)
     );
     output.userEmail = (
       launchInfo
         ? launchInfo.userEmail
-        : undefined
+        : (output.userEmail ?? undefined)
     );
     output.userAvatarURL = (
       launchInfo
@@ -377,32 +476,32 @@ const genRouteHandler = (
           launchInfo.userImage
           ?? 'http://www.gravatar.com/avatar/?d=identicon'
         )
-        : undefined
+        : (output.userAvatarURL ?? undefined)
     );
     output.isLearner = (
       launchInfo
         ? !!launchInfo.isLearner
-        : undefined
+        : (output.isLearner ?? undefined)
     );
     output.isTTM = (
       launchInfo
         ? !!launchInfo.isTTM
-        : undefined
+        : (output.isTTM ?? undefined)
     );
     output.isAdmin = (
       launchInfo
         ? !!launchInfo.isAdmin
-        : undefined
+        : (output.isAdmin ?? undefined)
     );
     output.courseId = (
       launchInfo
         ? (output.courseId ?? launchInfo.courseId)
-        : undefined
+        : (output.courseId ?? undefined)
     );
     output.courseName = (
       launchInfo
         ? launchInfo.contextLabel
-        : undefined
+        : (output.courseName ?? undefined)
     );
 
     // Add other session variables
