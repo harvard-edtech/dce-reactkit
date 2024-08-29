@@ -1,4 +1,4 @@
-// Highest error code = DRK16
+// Highest error code = DRK18
 
 /**
  * List of error codes built into the react kit
@@ -10,6 +10,8 @@ enum ReactKitErrorCode {
   SessionExpired = 'DRK3',
   MissingParameter = 'DRK4',
   InvalidParameter = 'DRK5',
+  HostNotAllowed = 'DRK17',
+  HostBanned = 'DRK18',
   WrongCourse = 'DRK6',
   NoCACCLSendRequestFunction = 'DRK7',
   NoCACCLGetLaunchInfoFunction = 'DRK8',
