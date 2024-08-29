@@ -93,6 +93,9 @@ import mapAsync from './helpers/asyncArrayFunctions/mapAsync';
 import someAsync from './helpers/asyncArrayFunctions/someAsync';
 import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
+import findURLs from './helpers/validators/findURL';
+import toTitleCase from './helpers/validators/toTitleCase';
+import isValidURL from './helpers/validators/isValidURL';
 import visitEndpointOnAnotherServer from './helpers/visitEndpointOnAnotherServer';
 
 // Import types
@@ -199,6 +202,9 @@ export {
   someAsync,
   capitalize,
   shuffleArray,
+  findURLs,
+  toTitleCase,
+  isValidURL,
   // Client helpers
   initClient,
   visitServerEndpoint,
