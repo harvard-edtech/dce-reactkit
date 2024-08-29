@@ -1,11 +1,10 @@
 /**
  * This function checks if a given input string is a valid URL.
  * @author Leisha Bhandari
- * @param URL The input string that needs checked as a URL or not.
- * @returns A true boolean value if the input string is a valid URL, and a false
- *          boolean value if the input string is a invalid URL
+ * @param url The input string that needs checked as a URL or not.
+ * @returns If true, input string is a valid URL, otherwise false
  */
-const isValid = (url: string): boolean => {
+const isValidURL = (url: string): boolean => {
   try {
     const parsed = new URL(url);
 
@@ -16,10 +15,12 @@ const isValid = (url: string): boolean => {
     // Checks that the hostname is not empty and doesn't start or end with a
     // dot and doesn't contain consecutive dots
     const hostname = parsed.hostname.trim();
-    if (hostname.length === 0
+    if (
+      hostname.length === 0
       || hostname.startsWith('.')
       || hostname.endsWith('.')
-      || hostname.includes('..')) {
+      || hostname.includes('..')
+    ) {
       return false;
     }
 
@@ -34,4 +35,4 @@ const isValid = (url: string): boolean => {
   }
 };
 
-export default isValid;
+export default isValidURL;

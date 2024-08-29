@@ -1,4 +1,4 @@
-import isValid from './isValid';
+import isValidURL from './isValidURL';
 
 /*------------------------------------------------------------------------*/
 /* ---------------------------- Valid Tests --------------------------- */
@@ -27,7 +27,7 @@ test(
   'Returns true for a given valid URL.',
   async () => {
     validUrls.forEach((url) => {
-      expect(isValid(url)).toBe(true);
+      expect(isValidURL(url)).toBe(true);
     });
   },
 );
@@ -63,7 +63,7 @@ test(
   'Returns false for a given invalid URL.',
   async () => {
     invalidUrls.forEach((url) => {
-      const result = isValid(url);
+      const result = isValidURL(url);
       expect(result).toBe(false);
     });
   },

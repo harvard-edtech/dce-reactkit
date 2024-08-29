@@ -6,23 +6,30 @@ const lowerCaseWords: string[] = [
   'yet',
 ];
 /**
- * Converts a string to title case based on Chicago Title Case Style rules.
+ * Converts a string to title case based on Chicago Title Case Style rules
  * @author Leisha Bhandari
- * @param input The string that needs to be converted to Chicago title case.
- * @returns Input string converted to title case
+ * @param input the string that needs to be converted to title case
+ * @returns input string converted to title case
  */
 const toTitleCase = (input: string) => {
   return (
     input
-      // The entire input string is converted to lowercase
+      // Convert to lowercase
       .toLowerCase()
-      // Splits string into separate words
+      // Splits into words
       .split(' ')
+      // Capitalize appropriate words
       .map((word, index, words) => {
-        // Capitalize the first and last word, and any word that is not in the lowerCaseWords list
         return (
-          (index === 0 || index === words.length - 1 || !lowerCaseWords.includes(word))
-            ? `${word.charAt(0).toUpperCase()}${word.slice(1)}`
+          (
+            // Capitalize if first word...
+            index === 0
+            // ...or last word...
+            || index === words.length - 1
+            // ...or not in list of lowercase words
+            || !lowerCaseWords.includes(word)
+          )
+            ? `${word.charAt(0).toUpperCase()}${word.substring(1)}`
             : word
         );
       })
