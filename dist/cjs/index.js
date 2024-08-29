@@ -15825,6 +15825,98 @@ const shuffleArray = (arr) => {
 };
 
 /**
+ * This function finds URLs within a given string and returns an array of
+ * their locations
+ * @author Leisha Bhandari
+ * @param text text to search for URLs
+ * @returns list of found URLs
+ */
+const findURL = (text) => {
+    const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*[^\s.,]/gi;
+    // Array containing start and end indices of URLs
+    const matches = [];
+    let match;
+    // Finds URLs in the block of texts using the URL regex constant
+    // eslint-disable-next-line no-cond-assign
+    while ((match = urlRegex.exec(text)) !== null) {
+        // With every match, an object with the start and end index of the matched URL is pushed
+        matches.push({
+            startIndex: match.index,
+            endIndex: match.index + match[0].length - 1,
+        });
+    }
+    return matches;
+};
+
+// List of lowercase words that must not be capitalized unless they're the
+// first or last word of the input string
+const lowerCaseWords = [
+    'in', 'nor', 'of', 'on', 'or', 'as', 'at', 'but', 'by',
+    'for', 'if', 'so', 'the', 'a', 'an', 'and', 'to', 'up',
+    'yet',
+];
+/**
+ * Converts a string to title case based on Chicago Title Case Style rules
+ * @author Leisha Bhandari
+ * @param input the string that needs to be converted to title case
+ * @returns input string converted to title case
+ */
+const toTitleCase = (input) => {
+    return (input
+        // Convert to lowercase
+        .toLowerCase()
+        // Splits into words
+        .split(' ')
+        // Capitalize appropriate words
+        .map((word, index, words) => {
+        return ((
+        // Capitalize if first word...
+        index === 0
+            // ...or last word...
+            || index === words.length - 1
+            // ...or not in list of lowercase words
+            || !lowerCaseWords.includes(word))
+            ? `${word.charAt(0).toUpperCase()}${word.substring(1)}`
+            : word);
+    })
+        // Join the words back
+        .join(' '));
+};
+
+/**
+ * This function checks if a given input string is a valid URL.
+ * @author Leisha Bhandari
+ * @param url The input string that needs checked as a URL or not.
+ * @returns If true, input string is a valid URL, otherwise false
+ */
+const isValidURL = (url) => {
+    try {
+        const parsed = new URL(url);
+        // Checks that the URL's protocol is valid
+        if (!['https:', 'http:'].includes(parsed.protocol)) {
+            return false;
+        }
+        // Checks that the hostname is not empty and doesn't start or end with a
+        // dot and doesn't contain consecutive dots
+        const hostname = parsed.hostname.trim();
+        if (hostname.length === 0
+            || hostname.startsWith('.')
+            || hostname.endsWith('.')
+            || hostname.includes('..')) {
+            return false;
+        }
+        // Checks that if the port is given, it is a valid number
+        if (parsed.port && Number.isNaN(Number.parseInt(parsed.port, 10))) {
+            return false;
+        }
+        return true;
+    }
+    catch (err) {
+        return false;
+    }
+};
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -15894,6 +15986,7 @@ exports.confirm = confirm;
 exports.everyAsync = everyAsync;
 exports.extractProp = extractProp;
 exports.filterAsync = filterAsync;
+exports.findURLs = findURL;
 exports.floorToNumDecimals = floorToNumDecimals;
 exports.forEachAsync = forEachAsync;
 exports.forceNumIntoBounds = forceNumIntoBounds;
@@ -15913,6 +16006,7 @@ exports.initClient = initClient;
 exports.initLogCollection = initLogCollection;
 exports.initServer = initServer;
 exports.isMobileOrTablet = isMobileOrTablet;
+exports.isValidURL = isValidURL;
 exports.leaveToURL = leaveToURL;
 exports.logClientEvent = logClientEvent;
 exports.makeLinksClickable = makeLinksClickable;
@@ -15931,6 +16025,7 @@ exports.startMinWait = startMinWait;
 exports.stringsToHumanReadableList = stringsToHumanReadableList;
 exports.stubServerEndpoint = stubServerEndpoint;
 exports.sum = sum;
+exports.toTitleCase = toTitleCase;
 exports.useForceRender = useForceRender;
 exports.validateEmail = validateEmail;
 exports.validatePhoneNumber = validatePhoneNumber;

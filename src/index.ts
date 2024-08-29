@@ -94,7 +94,7 @@ import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
 import findURLs from './helpers/validators/findURL';
 import toTitleCase from './helpers/validators/toTitleCase';
-import validURL from './helpers/validators/validURL';
+import isValidURL from './helpers/validators/isValidURL';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -200,7 +200,7 @@ export {
   shuffleArray,
   findURLs,
   toTitleCase,
-  validURL,
+  isValidURL,
   // Client helpers
   initClient,
   visitServerEndpoint,
