@@ -5,7 +5,7 @@
  */
 
 // Import React
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Import FontAwesome
 import { faHourglassEnd } from '@fortawesome/free-solid-svg-icons';
@@ -241,6 +241,84 @@ export const confirm = async (
 };
 
 /*----------------------------------------*/
+/* --------------- Prompt -------------- */
+/*----------------------------------------*/
+
+// Stored copies of setters
+let setPromptInfo: (
+  info:
+  | undefined
+  | {
+    title: string;
+    text: string;
+    opts: {
+      placeholder?: string;
+      defaultText?: string;
+      confirmButtonText?: string;
+      confirmButtonVariant?: Variant;
+      cancelButtonText?: string;
+      cancelButtonVariant?: Variant;
+    }
+  },
+) => void;
+
+let onPromptClosed: (result: string | null) => void;
+
+/**
+ * Show a prompt modal with an input field
+ * @author Yuen Ler Chow
+ * @param title the title text to display at the top of the prompt
+ * @param text the text to display in the prompt
+ * @param [opts={}] additional options for the prompt dialog
+ * @param [opts.placeholder] the placeholder text for the input field
+ * @param [opts.defaultText] the default text for the input field
+ * @param [opts.confirmButtonText=Okay] the text of the confirm button
+ * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm button
+ * @param [opts.cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel button
+ * @returns Promise that resolves with the input string or null if canceled
+ */
+export const prompt = async (
+  title: string,
+  text: string,
+  opts?: {
+    placeholder?: string;
+    defaultText?: string;
+    confirmButtonText?: string;
+    confirmButtonVariant?: Variant;
+    cancelButtonText?: string;
+    cancelButtonVariant?: Variant;
+  },
+): Promise<string | null> => {
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return !!setPromptInfo;
+  });
+
+  // Fallback if prompt is not available
+  if (!setPromptInfo) {
+    // eslint-disable-next-line no-alert
+    const result = window.prompt(`${title}\n\n${text}`, opts?.defaultText ?? '');
+    return result;
+  }
+
+  // Return promise that resolves with result of prompt
+  return new Promise((resolve) => {
+    // Setup handler
+    onPromptClosed = (result: string | null) => {
+      resolve(result);
+    };
+
+    // Show the prompt
+    setPromptInfo({
+      title,
+      text,
+      opts: (opts ?? {}),
+    });
+  });
+};
+
+/*----------------------------------------*/
 /* ------------- Fatal Error ------------ */
 /*----------------------------------------*/
 
@@ -465,6 +543,34 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   >(undefined);
   setConfirmInfo = setConfirmInfoInner;
 
+  // Prompt
+  const [promptInfo, setPromptInfoInner] = useState<
+  | undefined
+  | {
+    title: string;
+    text: string;
+    opts: {
+      placeholder?: string;
+      defaultText?: string;
+      confirmButtonText?: string;
+      confirmButtonVariant?: Variant;
+      cancelButtonText?: string;
+      cancelButtonVariant?: Variant;
+    }
+  }
+  >(undefined);
+  setPromptInfo = setPromptInfoInner;
+
+  // Current prompt input field text
+  const [currentPromptInputFieldText, setCurrentPromptInputFieldText] = useState<string>('');
+
+  // Update input field text when promptInfo changes
+  useEffect(() => {
+    if (promptInfo) {
+      setCurrentPromptInputFieldText(promptInfo.opts.defaultText ?? '');
+    }
+  }, [promptInfo]);
+
   // Session expired
   const [
     sessionHasExpired,
@@ -527,6 +633,44 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         dontAllowBackdropExit
       >
         {confirmInfo.text}
+      </ModalForWrapper>
+    );
+  }
+
+  /* ------------- Prompt ------------ */
+
+  if (promptInfo) {
+    modal = (
+      <ModalForWrapper
+        key={`prompt-${promptInfo.title}-${promptInfo.text}`}
+        title={promptInfo.title}
+        type={ModalType.OkayCancel}
+        okayLabel={promptInfo.opts.confirmButtonText}
+        okayVariant={promptInfo.opts.confirmButtonVariant}
+        cancelLabel={promptInfo.opts.cancelButtonText}
+        cancelVariant={promptInfo.opts.cancelButtonVariant}
+        onClose={(buttonType) => {
+          const result = buttonType === ModalButtonType.Okay ? currentPromptInputFieldText : null;
+          setPromptInfo(undefined);
+          if (onPromptClosed) {
+            onPromptClosed(result);
+          }
+        }}
+        onTopOfOtherModals
+        dontAllowBackdropExit
+      >
+        <div className="d-flex flex-column align-items-center">
+          <p>{promptInfo.text}</p>
+          <input
+            type="text"
+            placeholder={promptInfo.opts.placeholder}
+            value={currentPromptInputFieldText}
+            onChange={(e) => {
+              return setCurrentPromptInputFieldText(e.target.value);
+            }}
+          />
+        </div>
+
       </ModalForWrapper>
     );
   }
