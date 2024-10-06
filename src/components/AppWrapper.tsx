@@ -251,6 +251,7 @@ let setPromptInfo: (
   | {
     title: string;
     text: string;
+    currentInputFieldText: string,
     opts: {
       placeholder?: string;
       defaultText?: string;
@@ -258,6 +259,8 @@ let setPromptInfo: (
       confirmButtonVariant?: Variant;
       cancelButtonText?: string;
       cancelButtonVariant?: Variant;
+      minNumChars?: number;
+      findValidationError?: (text: string) => string | undefined;
     }
   },
 ) => void;
@@ -281,6 +284,7 @@ let onPromptClosed: (result: string | null) => void;
 export const prompt = async (
   title: string,
   text: string,
+  currentInputFieldText: string,
   opts?: {
     placeholder?: string;
     defaultText?: string;
@@ -288,6 +292,8 @@ export const prompt = async (
     confirmButtonVariant?: Variant;
     cancelButtonText?: string;
     cancelButtonVariant?: Variant;
+    minNumChars?: number;
+    findValidationError?: (text: string) => string | undefined;
   },
 ): Promise<string | null> => {
   // Wait for helper to exist
@@ -313,6 +319,7 @@ export const prompt = async (
     setPromptInfo({
       title,
       text,
+      currentInputFieldText,
       opts: (opts ?? {}),
     });
   });
@@ -549,6 +556,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   | {
     title: string;
     text: string;
+    currentInputFieldText: string,
     opts: {
       placeholder?: string;
       defaultText?: string;
@@ -556,20 +564,12 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
       confirmButtonVariant?: Variant;
       cancelButtonText?: string;
       cancelButtonVariant?: Variant;
+      minNumChars?: number;
+      findValidationError?: (text: string) => string | undefined;
     }
   }
   >(undefined);
   setPromptInfo = setPromptInfoInner;
-
-  // Current prompt input field text
-  const [currentPromptInputFieldText, setCurrentPromptInputFieldText] = useState<string>('');
-
-  // Update input field text when promptInfo changes
-  useEffect(() => {
-    if (promptInfo) {
-      setCurrentPromptInputFieldText(promptInfo.opts.defaultText ?? '');
-    }
-  }, [promptInfo]);
 
   // Session expired
   const [
@@ -638,19 +638,32 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   }
 
   /* ------------- Prompt ------------ */
-
   if (promptInfo) {
+    const minNumCharsValidationError = (
+      promptInfo.opts.minNumChars
+      && promptInfo.currentInputFieldText.length < promptInfo.opts.minNumChars
+        ? (
+          `Please enter at least ${promptInfo.opts.minNumChars} characters.`
+        ) : undefined
+    );
+
+    const customValidationError = (
+      promptInfo.opts.findValidationError
+      && promptInfo.opts.findValidationError(promptInfo.currentInputFieldText)
+    );
+
     modal = (
       <ModalForWrapper
         key={`prompt-${promptInfo.title}-${promptInfo.text}`}
         title={promptInfo.title}
-        type={ModalType.OkayCancel}
+        // only show the cancel button if there is a validation error
+        type={customValidationError || minNumCharsValidationError ? ModalType.Cancel : ModalType.OkayCancel}
         okayLabel={promptInfo.opts.confirmButtonText}
         okayVariant={promptInfo.opts.confirmButtonVariant}
         cancelLabel={promptInfo.opts.cancelButtonText}
         cancelVariant={promptInfo.opts.cancelButtonVariant}
         onClose={(buttonType) => {
-          const result = buttonType === ModalButtonType.Okay ? currentPromptInputFieldText : null;
+          const result = buttonType === ModalButtonType.Okay ? promptInfo.currentInputFieldText : null;
           setPromptInfo(undefined);
           if (onPromptClosed) {
             onPromptClosed(result);
@@ -664,11 +677,24 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
           <input
             type="text"
             placeholder={promptInfo.opts.placeholder}
-            value={currentPromptInputFieldText}
+            value={promptInfo.currentInputFieldText}
             onChange={(e) => {
-              return setCurrentPromptInputFieldText(e.target.value);
+              return setPromptInfo({
+                ...promptInfo,
+                currentInputFieldText: e.target.value,
+              });
             }}
           />
+          {minNumCharsValidationError && (
+          <div className="text-danger bg-danger bg-opacity-25 p-2 m-1 rounded">
+            {minNumCharsValidationError}
+          </div>
+          )}
+          {customValidationError && (
+          <div className="text-danger bg-danger bg-opacity-25 p-2 m-1 rounded">
+            {customValidationError}
+          </div>
+          )}
         </div>
 
       </ModalForWrapper>
