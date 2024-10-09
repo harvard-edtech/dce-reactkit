@@ -5,7 +5,7 @@
  */
 
 // Import React
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 // Import FontAwesome
 import { faHourglassEnd } from '@fortawesome/free-solid-svg-icons';
@@ -303,9 +303,37 @@ export const prompt = async (
 
   // Fallback if prompt is not available
   if (!setPromptInfo) {
+    const resultPassesValidation = false;
     // eslint-disable-next-line no-alert
-    const result = window.prompt(`${title}\n\n${text}`, opts?.defaultText ?? '');
-    return result;
+    while (!resultPassesValidation) {
+      const result = window.prompt(`${title}\n\n${text}`, opts?.defaultText ?? '');
+
+      if (result === null) {
+        return null;
+      }
+
+      const minNumCharsValidationError = (
+        opts?.minNumChars
+      && result.length < opts.minNumChars
+          ? (
+            `Please enter at least ${opts.minNumChars} characters.`
+          ) : undefined
+      );
+
+      const customValidationError = (
+        opts?.findValidationError
+      && opts.findValidationError(result)
+      );
+
+      if (minNumCharsValidationError || customValidationError) {
+        alert(
+          'Invalid Input',
+          `${minNumCharsValidationError ?? ''} ${customValidationError ?? ''}`,
+        );
+      } else {
+        return result;
+      }
+    }
   }
 
   // Return promise that resolves with result of prompt
@@ -554,18 +582,18 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   const [promptInfo, setPromptInfoInner] = useState<
   | undefined
   | {
-    title: string;
-    text: string;
+    title: string,
+    text: string,
     currentInputFieldText: string,
     opts: {
-      placeholder?: string;
-      defaultText?: string;
-      confirmButtonText?: string;
-      confirmButtonVariant?: Variant;
-      cancelButtonText?: string;
-      cancelButtonVariant?: Variant;
-      minNumChars?: number;
-      findValidationError?: (text: string) => string | undefined;
+      placeholder?: string,
+      defaultText?: string,
+      confirmButtonText?: string,
+      confirmButtonVariant?: Variant,
+      cancelButtonText?: string,
+      cancelButtonVariant?: Variant,
+      minNumChars?: number,
+      findValidationError?: (text: string) => string | undefined,
     }
   }
   >(undefined);
@@ -686,17 +714,16 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
             }}
           />
           {minNumCharsValidationError && (
-          <div className="text-danger bg-danger bg-opacity-25 p-2 m-1 rounded">
-            {minNumCharsValidationError}
-          </div>
+            <div className="text-danger bg-danger bg-opacity-25 p-2 m-1 rounded">
+              {minNumCharsValidationError}
+            </div>
           )}
           {customValidationError && (
-          <div className="text-danger bg-danger bg-opacity-25 p-2 m-1 rounded">
-            {customValidationError}
-          </div>
+            <div className="text-danger bg-danger bg-opacity-25 p-2 m-1 rounded">
+              {customValidationError}
+            </div>
           )}
         </div>
-
       </ModalForWrapper>
     );
   }
