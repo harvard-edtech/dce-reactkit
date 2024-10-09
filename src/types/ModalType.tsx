@@ -4,6 +4,7 @@
  */
 enum ModalType {
   Okay = 'okay', // [Okay]
+  Cancel = 'cancel', // [Cancel]
   OkayCancel = 'okay-cancel', // [Okay] [Cancel]
   YesNo = 'yes-no', // [Yes] [No]
   YesNoCancel = 'yes-no-cancel', // [Yes] [No] [Cancel]
