@@ -186,6 +186,7 @@ var ModalButtonType$1 = ModalButtonType;
 var ModalType;
 (function (ModalType) {
     ModalType["Okay"] = "okay";
+    ModalType["Cancel"] = "cancel";
     ModalType["OkayCancel"] = "okay-cancel";
     ModalType["YesNo"] = "yes-no";
     ModalType["YesNoCancel"] = "yes-no-cancel";
@@ -339,6 +340,9 @@ const MS_TO_ANIMATE = 200; // Animation duration
 const modalTypeToModalButtonTypes = {
     [ModalType$1.Okay]: [
         ModalButtonType$1.Okay,
+    ],
+    [ModalType$1.Cancel]: [
+        ModalButtonType$1.Cancel,
     ],
     [ModalType$1.OkayCancel]: [
         ModalButtonType$1.Okay,
@@ -1080,6 +1084,11 @@ const confirm = (title, text, opts) => __awaiter(void 0, void 0, void 0, functio
     });
 });
 /*----------------------------------------*/
+/* --------------- Prompt -------------- */
+/*----------------------------------------*/
+// Stored copies of setters
+let setPromptInfo;
+/*----------------------------------------*/
 /* ------------- Fatal Error ------------ */
 /*----------------------------------------*/
 // Stored copies of setters
@@ -1095,14 +1104,14 @@ const fatalErrorHandlers = [];
  * @param [errorTitle] title of the error box
  */
 const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _b, _c;
     // Determine message and code
     const message = (typeof error === 'string'
         ? error.trim()
-        : String((_a = error.message) !== null && _a !== void 0 ? _a : 'An unknown error occurred.'));
+        : String((_b = error.message) !== null && _b !== void 0 ? _b : 'An unknown error occurred.'));
     const code = (typeof error === 'string'
         ? ReactKitErrorCode$1.NoCode
-        : String((_b = error.code) !== null && _b !== void 0 ? _b : ReactKitErrorCode$1.NoCode));
+        : String((_c = error.code) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode));
     // Call all fatal error listeners
     try {
         fatalErrorHandlers.forEach((handler) => {
@@ -1229,6 +1238,9 @@ const AppWrapper = (props) => {
     // Confirm
     const [confirmInfo, setConfirmInfoInner,] = React.useState(undefined);
     setConfirmInfo = setConfirmInfoInner;
+    // Prompt
+    const [promptInfo, setPromptInfoInner] = React.useState(undefined);
+    setPromptInfo = setPromptInfoInner;
     // Session expired
     const [sessionHasExpired, setSessionHasExpiredInner,] = React.useState(false);
     setSessionHasExpired = setSessionHasExpiredInner;
@@ -1258,6 +1270,34 @@ const AppWrapper = (props) => {
                     onConfirmClosed(buttonType === ModalButtonType$1.Okay);
                 }
             }, onTopOfOtherModals: true, dontAllowBackdropExit: true }, confirmInfo.text));
+    }
+    /* ------------- Prompt ------------ */
+    if (promptInfo) {
+        // Run min char validation
+        const minNumCharsValidationError = ((promptInfo.opts.minNumChars
+            && promptInfo.currentInputFieldText.length < promptInfo.opts.minNumChars)
+            ? `Please enter at least ${promptInfo.opts.minNumChars} characters.`
+            : undefined);
+        // Run custom validation
+        const customValidationError = (promptInfo.opts.findValidationError
+            && promptInfo.opts.findValidationError(promptInfo.currentInputFieldText));
+        modal = (React__default["default"].createElement(Modal, { key: `prompt-${promptInfo.title}-${promptInfo.text}`, title: promptInfo.title, 
+            // only show the cancel button if there is a validation error
+            type: ((customValidationError || minNumCharsValidationError)
+                ? ModalType$1.Cancel
+                : ModalType$1.OkayCancel), okayLabel: promptInfo.opts.confirmButtonText, okayVariant: promptInfo.opts.confirmButtonVariant, cancelLabel: promptInfo.opts.cancelButtonText, cancelVariant: promptInfo.opts.cancelButtonVariant, onClose: (buttonType) => {
+                (buttonType === ModalButtonType$1.Okay
+                    ? promptInfo.currentInputFieldText
+                    : null);
+                setPromptInfo(undefined);
+            }, onTopOfOtherModals: true, dontAllowBackdropExit: true },
+            React__default["default"].createElement("div", { className: "d-flex flex-column align-items-center" },
+                React__default["default"].createElement("p", null, promptInfo.text),
+                React__default["default"].createElement("input", { type: "text", placeholder: promptInfo.opts.placeholder, value: promptInfo.currentInputFieldText, onChange: (e) => {
+                        return setPromptInfo(Object.assign(Object.assign({}, promptInfo), { currentInputFieldText: e.target.value }));
+                    } }),
+                minNumCharsValidationError && (React__default["default"].createElement("div", { className: "text-danger bg-danger bg-opacity-25 p-2 m-1 rounded" }, minNumCharsValidationError)),
+                customValidationError && (React__default["default"].createElement("div", { className: "text-danger bg-danger bg-opacity-25 p-2 m-1 rounded" }, customValidationError)))));
     }
     /* ------ Custom Modal Portals ------ */
     // Custom modal portals

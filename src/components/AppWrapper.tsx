@@ -253,22 +253,23 @@ let setPromptInfo: (
     text: string;
     currentInputFieldText: string,
     opts: {
-      placeholder?: string;
-      defaultText?: string;
-      confirmButtonText?: string;
-      confirmButtonVariant?: Variant;
-      cancelButtonText?: string;
-      cancelButtonVariant?: Variant;
-      minNumChars?: number;
-      findValidationError?: (text: string) => string | undefined;
-    }
+      placeholder?: string,
+      defaultText?: string,
+      confirmButtonText?: string,
+      confirmButtonVariant?: Variant,
+      cancelButtonText?: string,
+      cancelButtonVariant?: Variant,
+      minNumChars?: number,
+      findValidationError?: (text: string) => string | undefined,
+    },
   },
 ) => void;
 
+// Function to call when prompt is closed
 let onPromptClosed: (result: string | null) => void;
 
 /**
- * Show a prompt modal with an input field
+ * Show a prompt modal asking the user for input
  * @author Yuen Ler Chow
  * @param title the title text to display at the top of the prompt
  * @param text the text to display in the prompt
@@ -286,14 +287,14 @@ export const prompt = async (
   text: string,
   currentInputFieldText: string,
   opts?: {
-    placeholder?: string;
-    defaultText?: string;
-    confirmButtonText?: string;
-    confirmButtonVariant?: Variant;
-    cancelButtonText?: string;
-    cancelButtonVariant?: Variant;
-    minNumChars?: number;
-    findValidationError?: (text: string) => string | undefined;
+    placeholder?: string,
+    defaultText?: string,
+    confirmButtonText?: string,
+    confirmButtonVariant?: Variant,
+    cancelButtonText?: string,
+    cancelButtonVariant?: Variant,
+    minNumChars?: number,
+    findValidationError?: (text: string) => string | undefined,
   },
 ): Promise<string | null> => {
   // Wait for helper to exist
@@ -304,27 +305,31 @@ export const prompt = async (
   // Fallback if prompt is not available
   if (!setPromptInfo) {
     const resultPassesValidation = false;
-    // eslint-disable-next-line no-alert
     while (!resultPassesValidation) {
-      const result = window.prompt(`${title}\n\n${text}`, opts?.defaultText ?? '');
+      // eslint-disable-next-line no-alert
+      const result = window.prompt(
+        `${title}\n\n${text}`,
+        opts?.defaultText ?? '',
+      );
 
       if (result === null) {
         return null;
       }
 
+      // Validate min num chars
       const minNumCharsValidationError = (
-        opts?.minNumChars
-      && result.length < opts.minNumChars
-          ? (
-            `Please enter at least ${opts.minNumChars} characters.`
-          ) : undefined
+        (opts?.minNumChars && result.length < opts.minNumChars)
+          ? `Please enter at least ${opts.minNumChars} characters.`
+          : undefined
       );
 
+      // Run custom validation
       const customValidationError = (
         opts?.findValidationError
-      && opts.findValidationError(result)
+        && opts.findValidationError(result)
       );
 
+      // Show validation issue
       if (minNumCharsValidationError || customValidationError) {
         alert(
           'Invalid Input',
@@ -666,15 +671,19 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   }
 
   /* ------------- Prompt ------------ */
+
   if (promptInfo) {
+    // Run min char validation
     const minNumCharsValidationError = (
-      promptInfo.opts.minNumChars
-      && promptInfo.currentInputFieldText.length < promptInfo.opts.minNumChars
-        ? (
-          `Please enter at least ${promptInfo.opts.minNumChars} characters.`
-        ) : undefined
+      (
+        promptInfo.opts.minNumChars
+        && promptInfo.currentInputFieldText.length < promptInfo.opts.minNumChars
+      )
+        ? `Please enter at least ${promptInfo.opts.minNumChars} characters.`
+        : undefined
     );
 
+    // Run custom validation
     const customValidationError = (
       promptInfo.opts.findValidationError
       && promptInfo.opts.findValidationError(promptInfo.currentInputFieldText)
@@ -685,14 +694,24 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         key={`prompt-${promptInfo.title}-${promptInfo.text}`}
         title={promptInfo.title}
         // only show the cancel button if there is a validation error
-        type={customValidationError || minNumCharsValidationError ? ModalType.Cancel : ModalType.OkayCancel}
+        type={(
+          (customValidationError || minNumCharsValidationError)
+            ? ModalType.Cancel
+            : ModalType.OkayCancel
+        )}
         okayLabel={promptInfo.opts.confirmButtonText}
         okayVariant={promptInfo.opts.confirmButtonVariant}
         cancelLabel={promptInfo.opts.cancelButtonText}
         cancelVariant={promptInfo.opts.cancelButtonVariant}
         onClose={(buttonType) => {
-          const result = buttonType === ModalButtonType.Okay ? promptInfo.currentInputFieldText : null;
+          const result = (
+            buttonType === ModalButtonType.Okay
+              ? promptInfo.currentInputFieldText
+              : null
+          );
+
           setPromptInfo(undefined);
+
           if (onPromptClosed) {
             onPromptClosed(result);
           }

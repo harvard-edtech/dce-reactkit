@@ -131,6 +131,7 @@ declare enum ModalSize {
  */
 declare enum ModalType {
     Okay = "okay",
+    Cancel = "cancel",
     OkayCancel = "okay-cancel",
     YesNo = "yes-no",
     YesNoCancel = "yes-no-cancel",
