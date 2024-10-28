@@ -1088,6 +1088,68 @@ const confirm = (title, text, opts) => __awaiter(void 0, void 0, void 0, functio
 /*----------------------------------------*/
 // Stored copies of setters
 let setPromptInfo;
+// Function to call when prompt is closed
+let onPromptClosed;
+/**
+ * Show a prompt modal asking the user for input
+ * @author Yuen Ler Chow
+ * @param title the title text to display at the top of the prompt
+ * @param text the text to display in the prompt
+ * @param [opts={}] additional options for the prompt dialog
+ * @param [opts.placeholder] the placeholder text for the input field
+ * @param [opts.defaultText] the default text for the input field
+ * @param [opts.confirmButtonText=Okay] the text of the confirm button
+ * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm button
+ * @param [opts.cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel button
+ * @returns Promise that resolves with the input string or null if canceled
+ */
+const prompt = (title, text, currentInputFieldText, opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Wait for helper to exist
+    yield waitForHelper(() => {
+        return !!setPromptInfo;
+    });
+    // Fallback if prompt is not available
+    if (!setPromptInfo) {
+        const resultPassesValidation = false;
+        while (!resultPassesValidation) {
+            // eslint-disable-next-line no-alert
+            const result = window.prompt(`${title}\n\n${text}`, (_a = opts === null || opts === void 0 ? void 0 : opts.defaultText) !== null && _a !== void 0 ? _a : '');
+            if (result === null) {
+                return null;
+            }
+            // Validate min num chars
+            const minNumCharsValidationError = (((opts === null || opts === void 0 ? void 0 : opts.minNumChars) && result.length < opts.minNumChars)
+                ? `Please enter at least ${opts.minNumChars} characters.`
+                : undefined);
+            // Run custom validation
+            const customValidationError = ((opts === null || opts === void 0 ? void 0 : opts.findValidationError)
+                && opts.findValidationError(result));
+            // Show validation issue
+            if (minNumCharsValidationError || customValidationError) {
+                alert('Invalid Input', `${minNumCharsValidationError !== null && minNumCharsValidationError !== void 0 ? minNumCharsValidationError : ''} ${customValidationError !== null && customValidationError !== void 0 ? customValidationError : ''}`);
+            }
+            else {
+                return result;
+            }
+        }
+    }
+    // Return promise that resolves with result of prompt
+    return new Promise((resolve) => {
+        // Setup handler
+        onPromptClosed = (result) => {
+            resolve(result);
+        };
+        // Show the prompt
+        setPromptInfo({
+            title,
+            text,
+            currentInputFieldText,
+            opts: (opts !== null && opts !== void 0 ? opts : {}),
+        });
+    });
+});
 /*----------------------------------------*/
 /* ------------- Fatal Error ------------ */
 /*----------------------------------------*/
@@ -1282,14 +1344,17 @@ const AppWrapper = (props) => {
         const customValidationError = (promptInfo.opts.findValidationError
             && promptInfo.opts.findValidationError(promptInfo.currentInputFieldText));
         modal = (React__default["default"].createElement(Modal, { key: `prompt-${promptInfo.title}-${promptInfo.text}`, title: promptInfo.title, 
-            // only show the cancel button if there is a validation error
+            // Don't show ok button if there is a validation error
             type: ((customValidationError || minNumCharsValidationError)
                 ? ModalType$1.Cancel
                 : ModalType$1.OkayCancel), okayLabel: promptInfo.opts.confirmButtonText, okayVariant: promptInfo.opts.confirmButtonVariant, cancelLabel: promptInfo.opts.cancelButtonText, cancelVariant: promptInfo.opts.cancelButtonVariant, onClose: (buttonType) => {
-                (buttonType === ModalButtonType$1.Okay
+                const result = (buttonType === ModalButtonType$1.Okay
                     ? promptInfo.currentInputFieldText
                     : null);
                 setPromptInfo(undefined);
+                if (onPromptClosed) {
+                    onPromptClosed(result);
+                }
             }, onTopOfOtherModals: true, dontAllowBackdropExit: true },
             React__default["default"].createElement("div", { className: "d-flex flex-column align-items-center" },
                 React__default["default"].createElement("p", null, promptInfo.text),
@@ -16361,6 +16426,7 @@ exports.padDecimalZeros = padDecimalZeros;
 exports.padZerosLeft = padZerosLeft;
 exports.parallelLimit = parallelLimit;
 exports.prefixWithAOrAn = prefixWithAOrAn;
+exports.prompt = prompt;
 exports.roundToNumDecimals = roundToNumDecimals;
 exports.setClientEventMetadataPopulator = setClientEventMetadataPopulator;
 exports.showFatalError = showFatalError;
