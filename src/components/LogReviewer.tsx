@@ -959,10 +959,23 @@ const LogReviewer: React.FC<Props> = (props) => {
         const { year, month } = toLoad[i];
 
         // Load
-        const logs = await visitServerEndpoint({
-          path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/${year}/months/${month}`,
-          method: 'GET',
-        });
+        let logs: Log[] = [];
+        let pageNumber = 1;
+        let hasAnotherPage = true;
+
+        while (hasAnotherPage) {
+          const response = await visitServerEndpoint({
+            path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/${year}/months/${month}`,
+            method: 'GET',
+            params: {
+              pageNumber,
+            },
+          });
+
+          logs = logs.concat(response.items);
+          hasAnotherPage = response.hasAnotherPage;
+          pageNumber += 1;
+        }
 
         // Add to map
         if (!logMap[year]) {

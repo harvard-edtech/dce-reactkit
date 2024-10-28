@@ -246,12 +246,14 @@ const initServer = (
       paramTypes: {
         year: ParamType.Int,
         month: ParamType.Int,
+        pageNumber: ParamType.Int,
       },
       handler: async ({ params }) => {
         // Get user info
         const {
           year,
           month,
+          pageNumber,
           userId,
           isAdmin,
         } = params;
@@ -266,13 +268,17 @@ const initServer = (
         }
 
         // Query for logs
-        const logs: Log[] = await _logCollection.find({
-          year,
-          month,
+        const response = await _logCollection.findPaged({
+          query: {
+            year,
+            month,
+          },
+          perPage: 1000,
+          pageNumber,
         });
 
-        // Return logs
-        return logs;
+        // Return response
+        return response;
       },
     }),
   );
