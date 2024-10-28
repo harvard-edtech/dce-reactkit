@@ -1,6 +1,7 @@
 // Import components
 import AppWrapper, {
   alert,
+  prompt,
   confirm,
   showFatalError,
   addFatalErrorHandler,
@@ -148,6 +149,7 @@ export {
   Dropdown,
   // Global functions
   alert,
+  prompt,
   confirm,
   showFatalError,
   // Errors
