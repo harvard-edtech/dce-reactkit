@@ -693,7 +693,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
       <ModalForWrapper
         key={`prompt-${promptInfo.title}-${promptInfo.text}`}
         title={promptInfo.title}
-        // only show the cancel button if there is a validation error
+        // Don't show ok button if there is a validation error
         type={(
           (customValidationError || minNumCharsValidationError)
             ? ModalType.Cancel
