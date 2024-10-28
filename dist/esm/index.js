@@ -3763,10 +3763,21 @@ const LogReviewer = (props) => {
                 // Destructure
                 const { year, month } = toLoad[i];
                 // Load
-                const logs = yield visitServerEndpoint({
-                    path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/${year}/months/${month}`,
-                    method: 'GET',
-                });
+                let logs = [];
+                let pageNumber = 1;
+                let hasAnotherPage = true;
+                while (hasAnotherPage) {
+                    const response = yield visitServerEndpoint({
+                        path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/${year}/months/${month}`,
+                        method: 'GET',
+                        params: {
+                            pageNumber,
+                        },
+                    });
+                    logs = logs.concat(response.items);
+                    hasAnotherPage = response.hasAnotherPage;
+                    pageNumber += 1;
+                }
                 // Add to map
                 if (!logMap[year]) {
                     logMap[year] = {};
@@ -14026,22 +14037,27 @@ const initServer = (opts) => {
         paramTypes: {
             year: ParamType$1.Int,
             month: ParamType$1.Int,
+            pageNumber: ParamType$1.Int,
         },
         handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
             // Get user info
-            const { year, month, userId, isAdmin, } = params;
+            const { year, month, pageNumber, userId, isAdmin, } = params;
             // Validate user
             const canReview = yield canReviewLogs(userId, isAdmin);
             if (!canReview) {
                 throw new ErrorWithCode('You cannot access this resource because you do not have the appropriate permissions.', ReactKitErrorCode$1.NotAllowedToReviewLogs);
             }
             // Query for logs
-            const logs = yield _logCollection.find({
-                year,
-                month,
+            const response = yield _logCollection.findPaged({
+                query: {
+                    year,
+                    month,
+                },
+                perPage: 1000,
+                pageNumber,
             });
-            // Return logs
-            return logs;
+            // Return response
+            return response;
         }),
     }));
 };
