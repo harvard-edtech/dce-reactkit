@@ -288,7 +288,6 @@ export const prompt = async (
   currentInputFieldText: string,
   opts?: {
     placeholder?: string,
-    defaultText?: string,
     confirmButtonText?: string,
     confirmButtonVariant?: Variant,
     cancelButtonText?: string,
@@ -309,7 +308,7 @@ export const prompt = async (
       // eslint-disable-next-line no-alert
       const result = window.prompt(
         `${title}\n\n${text}`,
-        opts?.defaultText ?? '',
+        currentInputFieldText,
       );
 
       if (result === null) {
@@ -719,10 +718,11 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         onTopOfOtherModals
         dontAllowBackdropExit
       >
-        <div className="d-flex flex-column align-items-center">
+        <div className="p-3">
           <p>{promptInfo.text}</p>
           <input
             type="text"
+            className="form-control mb-2"
             placeholder={promptInfo.opts.placeholder}
             value={promptInfo.currentInputFieldText}
             onChange={(e) => {
@@ -733,14 +733,14 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
             }}
           />
           {minNumCharsValidationError && (
-            <div className="text-danger bg-danger bg-opacity-25 p-2 m-1 rounded">
-              {minNumCharsValidationError}
-            </div>
+          <div className="text-danger fw-bold mt-2">
+            {minNumCharsValidationError}
+          </div>
           )}
           {customValidationError && (
-            <div className="text-danger bg-danger bg-opacity-25 p-2 m-1 rounded">
-              {customValidationError}
-            </div>
+          <div className="text-danger fw-bold mt-2">
+            {customValidationError}
+          </div>
           )}
         </div>
       </ModalForWrapper>
