@@ -285,8 +285,8 @@ let onPromptClosed: (result: string | null) => void;
 export const prompt = async (
   title: string,
   text: string,
-  currentInputFieldText: string,
   opts?: {
+    defaultText?: string,
     placeholder?: string,
     confirmButtonText?: string,
     confirmButtonVariant?: Variant,
@@ -308,7 +308,7 @@ export const prompt = async (
       // eslint-disable-next-line no-alert
       const result = window.prompt(
         `${title}\n\n${text}`,
-        currentInputFieldText,
+        opts?.defaultText ?? '',
       );
 
       if (result === null) {
@@ -351,7 +351,7 @@ export const prompt = async (
     setPromptInfo({
       title,
       text,
-      currentInputFieldText,
+      currentInputFieldText: (opts?.defaultText ?? ''),
       opts: (opts ?? {}),
     });
   });
