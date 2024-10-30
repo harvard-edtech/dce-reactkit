@@ -77,9 +77,9 @@ declare const confirm: (title: string, text: string, opts?: {
  * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel button
  * @returns Promise that resolves with the input string or null if canceled
  */
-declare const prompt: (title: string, text: string, currentInputFieldText: string, opts?: {
-    placeholder?: string | undefined;
+declare const prompt: (title: string, text: string, opts?: {
     defaultText?: string | undefined;
+    placeholder?: string | undefined;
     confirmButtonText?: string | undefined;
     confirmButtonVariant?: Variant | undefined;
     cancelButtonText?: string | undefined;

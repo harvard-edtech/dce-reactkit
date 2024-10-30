@@ -1076,7 +1076,7 @@ let onPromptClosed;
  * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel button
  * @returns Promise that resolves with the input string or null if canceled
  */
-const prompt = (title, text, currentInputFieldText, opts) => __awaiter(void 0, void 0, void 0, function* () {
+const prompt = (title, text, opts) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     // Wait for helper to exist
     yield waitForHelper(() => {
@@ -1109,6 +1109,7 @@ const prompt = (title, text, currentInputFieldText, opts) => __awaiter(void 0, v
     }
     // Return promise that resolves with result of prompt
     return new Promise((resolve) => {
+        var _a;
         // Setup handler
         onPromptClosed = (result) => {
             resolve(result);
@@ -1117,7 +1118,7 @@ const prompt = (title, text, currentInputFieldText, opts) => __awaiter(void 0, v
         setPromptInfo({
             title,
             text,
-            currentInputFieldText,
+            currentInputFieldText: ((_a = opts === null || opts === void 0 ? void 0 : opts.defaultText) !== null && _a !== void 0 ? _a : ''),
             opts: (opts !== null && opts !== void 0 ? opts : {}),
         });
     });
@@ -1328,13 +1329,13 @@ const AppWrapper = (props) => {
                     onPromptClosed(result);
                 }
             }, onTopOfOtherModals: true, dontAllowBackdropExit: true },
-            React__default.createElement("div", { className: "d-flex flex-column align-items-center" },
+            React__default.createElement("div", { className: "p-3" },
                 React__default.createElement("p", null, promptInfo.text),
-                React__default.createElement("input", { type: "text", placeholder: promptInfo.opts.placeholder, value: promptInfo.currentInputFieldText, onChange: (e) => {
+                React__default.createElement("input", { type: "text", className: "form-control mb-2", placeholder: promptInfo.opts.placeholder, value: promptInfo.currentInputFieldText, onChange: (e) => {
                         return setPromptInfo(Object.assign(Object.assign({}, promptInfo), { currentInputFieldText: e.target.value }));
                     } }),
-                minNumCharsValidationError && (React__default.createElement("div", { className: "text-danger bg-danger bg-opacity-25 p-2 m-1 rounded" }, minNumCharsValidationError)),
-                customValidationError && (React__default.createElement("div", { className: "text-danger bg-danger bg-opacity-25 p-2 m-1 rounded" }, customValidationError)))));
+                minNumCharsValidationError && (React__default.createElement("div", { className: "text-danger fw-bold mt-2" }, minNumCharsValidationError)),
+                customValidationError && (React__default.createElement("div", { className: "text-danger fw-bold mt-2" }, customValidationError)))));
     }
     /* ------ Custom Modal Portals ------ */
     // Custom modal portals
