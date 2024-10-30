@@ -10,6 +10,8 @@ import React, { useReducer, useEffect } from 'react';
 // Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faArrowLeft,
+  faArrowRight,
   faCalendar,
   faCircle,
   faHammer,
@@ -61,13 +63,6 @@ type Props = {
   LogMetadata: LogMetadataType,
   // Function to call when the user wants to close the log reviewer
   onClose: () => void,
-};
-
-// Map of loaded logs (year => month => Log[])
-type LogMap = {
-  [k: string]: {
-    [k: string]: Log[]
-  }
 };
 
 // Triple of year/month/day
@@ -532,8 +527,8 @@ type State = {
   /* -------------- Logs -------------- */
   // True if currently loading
   loading: boolean,
-  // Loaded logs (year => month => Log[])
-  logMap: LogMap,
+  // Loaded logs
+  logs: Log[],
   /* ------------- Filters ------------ */
   // Current expanded filter drawer
   expandedFilterDrawer: FilterDrawer | undefined,
@@ -547,6 +542,10 @@ type State = {
   actionErrorFilterState: ActionErrorFilterState,
   // State of the advanced filter
   advancedFilterState: AdvancedFilterState,
+  // Current page number
+  pageNumber: number,
+  // If true, there is another page to load
+  hasAnotherPage: boolean,
 };
 
 /* ------------- Actions ------------ */
@@ -555,7 +554,7 @@ type State = {
 enum ActionType {
   // Show the loading bar
   StartLoading = 'start-loading',
-  // Finish loading one or more months of logs
+  // Finish loading logs
   FinishLoading = 'finish-loading',
   // Reset filters to initial values
   ResetFilters = 'reset-filters',
@@ -573,6 +572,12 @@ enum ActionType {
   UpdateActionErrorFilterState = 'update-action-error-filter-state',
   // Update the advanced filter state
   UpdateAdvancedFilterState = 'update-advanced-filter-state',
+  // Increment the page number
+  IncrementPageNumber = 'increment-page-number',
+  // Decrement the page number
+  DecrementPageNumber = 'decrement-page-number',
+  // Set has another page
+  SetHasAnotherPage = 'set-has-another-page',
 }
 
 // Action definitions
@@ -580,8 +585,8 @@ type Action = (
   | {
     // Action type
     type: ActionType.FinishLoading,
-    // Updated logMap
-    logMap: LogMap,
+    // Updated logs
+    logs: Log[],
   }
   | {
     // Action type
@@ -630,6 +635,16 @@ type Action = (
     advancedFilterState: AdvancedFilterState,
   }
   | {
+    type: ActionType.IncrementPageNumber,
+  }
+  | {
+    type: ActionType.DecrementPageNumber,
+  }
+  | {
+    type: ActionType.SetHasAnotherPage,
+    hasAnotherPage: boolean,
+  }
+  | {
     // Action type
     type: (
       | ActionType.StartLoading
@@ -656,7 +671,7 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         loading: false,
-        logMap: action.logMap,
+        logs: action.logs,
       };
     }
     case ActionType.ToggleFilterDrawer: {
@@ -713,6 +728,18 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         advancedFilterState: action.advancedFilterState,
+      };
+    }
+    case ActionType.IncrementPageNumber: {
+      return {
+        ...state,
+        pageNumber: state.pageNumber + 1,
+      };
+    }
+    case ActionType.DecrementPageNumber: {
+      return {
+        ...state,
+        pageNumber: state.pageNumber - 1,
       };
     }
     default: {
@@ -850,13 +877,15 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Initial state
   const initialState: State = {
     loading: true,
-    logMap: {},
+    logs: [],
     expandedFilterDrawer: undefined,
     dateFilterState: initDateFilterState,
     contextFilterState: initContextFilterState,
     tagFilterState: initTagFilterState,
     actionErrorFilterState: initActionErrorFilterState,
     advancedFilterState: initAdvancedFilterState,
+    pageNumber: 1,
+    hasAnotherPage: false,
   };
 
   // Initialize state
@@ -865,13 +894,15 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Destructure common state
   const {
     loading,
-    logMap,
+    logs,
     expandedFilterDrawer,
     dateFilterState,
     contextFilterState,
     tagFilterState,
     actionErrorFilterState,
     advancedFilterState,
+    pageNumber,
+    hasAnotherPage,
   } = state;
 
   /*------------------------------------------------------------------------*/
@@ -879,119 +910,48 @@ const LogReviewer: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
 
   /**
-   * Get the list of year/month combos that need to be loaded given a new
-   *   start or end date and the existing logMap
-   * @author Gabe Abrams
-   * @param newDateFilterState the new date filter state
-   * @returns list of year/month combos that need to be loaded
+   * Fetch logs from the server based on current filters
    */
-  const listMonthsToLoad = (
-    newDateFilterState: DateFilterState,
-  ): { year: number, month: number }[] => {
-    // List of year/month combos that need to be loaded
-    const toLoad: { year: number, month: number }[] = [];
+  const fetchLogs = async () => {
+    dispatch({ type: ActionType.StartLoading });
 
-    // Loop through dates
-    let { year, month } = newDateFilterState.startDate;
-    while (
-      // Earlier year
-      (year < newDateFilterState.endDate.year)
-      // Current year but included month
-      || (
-        year === newDateFilterState.endDate.year
-        && month <= newDateFilterState.endDate.month
-      )
-    ) {
-      // Add to list if not already loaded
-      if (
-        !logMap[year]
-        || !logMap[year][month]
-      ) {
-        toLoad.push({
-          year,
-          month,
-        });
-      }
-
-      // Increment
-      month += 1;
-      if (month > 12) {
-        month -= 12;
-        year += 1;
-      }
-    }
-
-    // Return
-    return toLoad;
-  };
-
-  /**
-   * Handle updated start/end dates (updates state, loads if necessary)
-   * @author Gabe Abrams
-   * @param newDateFilterState the new date filter state
-   */
-  const handleDateRangeUpdated = async (
-    newDateFilterState: DateFilterState,
-  ) => {
-    // Update state
-    dispatch({
-      type: ActionType.UpdateDateFilterState,
-      dateFilterState: newDateFilterState,
-    });
-
-    // Check which year/month combos we need to load
-    const toLoad = listMonthsToLoad(newDateFilterState);
-
-    // If nothing to load, finished
-    if (toLoad.length === 0) {
-      return;
-    }
-
-    // Start loading
-    dispatch({
-      type: ActionType.StartLoading,
-    });
-
-    // Load required months
     try {
-      for (let i = 0; i < toLoad.length; i++) {
-        // Destructure
-        const { year, month } = toLoad[i];
+      // Prepare filter parameters
+      const filters = {
+        startDate: dateFilterState.startDate,
+        endDate: dateFilterState.endDate,
+        contextFilterState,
+        tagFilterState,
+        actionErrorFilterState,
+        advancedFilterState,
+      };
 
-        // Load
-        let logs: Log[] = [];
-        let pageNumber = 1;
-        let hasAnotherPage = true;
+      // Send filters to the server
+      let fetchedLogs: Log[] = [];
 
-        while (hasAnotherPage) {
-          const response = await visitServerEndpoint({
-            path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/${year}/months/${month}`,
-            method: 'GET',
-            params: {
-              pageNumber,
-            },
-          });
+      const response = await visitServerEndpoint({
+        path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/logs`,
+        method: 'GET',
+        params: {
+          pageNumber,
+          filters,
+        },
+      });
 
-          logs = logs.concat(response.items);
-          hasAnotherPage = response.hasAnotherPage;
-          pageNumber += 1;
-        }
+      fetchedLogs = fetchedLogs.concat(response.items);
+      dispatch({
+        type: ActionType.SetHasAnotherPage,
+        hasAnotherPage: response.hasAnotherPage,
+      });
 
-        // Add to map
-        if (!logMap[year]) {
-          logMap[year] = {};
-        }
-        logMap[year][month] = logs;
-      }
+      // Update logs in state
+      dispatch({
+        type: ActionType.FinishLoading,
+        logs: fetchedLogs,
+      });
     } catch (err) {
       return showFatalError(err);
     }
-
-    // Finish loading
-    dispatch({
-      type: ActionType.FinishLoading,
-      logMap,
-    });
   };
 
   /*------------------------------------------------------------------------*/
@@ -999,21 +959,21 @@ const LogReviewer: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
 
   /**
-   * Mount
-   * @author Gabe Abrams
+   * Fetch logs whenever filters change
    */
-  useEffect(
-    () => {
-      // Perform initial load
-      handleDateRangeUpdated(dateFilterState);
-    },
-    [],
-  );
+  useEffect(() => {
+    fetchLogs();
+  }, [
+    dateFilterState,
+    contextFilterState,
+    tagFilterState,
+    actionErrorFilterState,
+    advancedFilterState,
+  ]);
 
   /*------------------------------------------------------------------------*/
   /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
-
   /*----------------------------------------*/
   /* --------------- Main UI -------------- */
   /*----------------------------------------*/
@@ -1033,176 +993,218 @@ const LogReviewer: React.FC<Props> = (props) => {
 
   /* ------------ Review UI ----------- */
 
-  if (!loading) {
-    /*----------------------------------------*/
-    /* --------------- Filters -------------- */
-    /*----------------------------------------*/
+  /*----------------------------------------*/
+  /* ------------ Pagination -------------- */
+  /*----------------------------------------*/
 
-    // Filter toggle
-    const filterToggles = (
-      <div className="LogReviewer-filter-toggles">
-        <h3 className="m-0">
-          Filters:
-        </h3>
-        <div className="LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0">
-          {/* Date */}
-          <button
-            type="button"
-            id="LogReviewer-toggle-date-filter-drawer"
-            className={`btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
-            aria-label="toggle date filter drawer"
-            onClick={() => {
-              dispatch({
-                type: ActionType.ToggleFilterDrawer,
-                filterDrawer: FilterDrawer.Date,
-              });
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faCalendar}
-              className="me-2"
-            />
-            Date
-          </button>
-          {/* Context */}
-          <button
-            type="button"
-            id="LogReviewer-toggle-context-filter-drawer"
-            className={`btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
-            aria-label="toggle context filter drawer"
-            onClick={() => {
-              dispatch({
-                type: ActionType.ToggleFilterDrawer,
-                filterDrawer: FilterDrawer.Context,
-              });
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faCircle}
-              className="me-2"
-            />
-            Context
-          </button>
-          {/* Tag */}
-          {/* Skip if no tags are used */}
-          {(LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (
-            <button
-              type="button"
-              id="LogReviewer-toggle-tag-filter-drawer"
-              className={`btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
-              aria-label="toggle tag filter drawer"
-              onClick={() => {
-                dispatch({
-                  type: ActionType.ToggleFilterDrawer,
-                  filterDrawer: FilterDrawer.Tag,
-                });
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faTag}
-                className="me-2"
-              />
-              Tag
-            </button>
-          )}
-          {/* Action */}
-          <button
-            type="button"
-            id="LogReviewer-toggle-action-filter-drawer"
-            className={`btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
-            aria-label="toggle action and error filter drawer"
-            onClick={() => {
-              dispatch({
-                type: ActionType.ToggleFilterDrawer,
-                filterDrawer: FilterDrawer.Action,
-              });
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faHammer}
-              className="me-2"
-            />
-            Action
-          </button>
-          {/* Advanced */}
-          <button
-            type="button"
-            id="LogReviewer-toggle-advanced-filter-drawer"
-            className={`btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
-            aria-label="toggle advanced filter drawer"
-            onClick={() => {
-              dispatch({
-                type: ActionType.ToggleFilterDrawer,
-                filterDrawer: FilterDrawer.Advanced,
-              });
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faList}
-              className="me-2"
-            />
-            Advanced
-          </button>
-          {/* Reset */}
-          <button
-            type="button"
-            id="LogReviewer-reset-filters-button"
-            className="btn btn-light"
-            aria-label="reset filters"
-            onClick={() => {
-              dispatch({
-                type: ActionType.ResetFilters,
-                initActionErrorFilterState,
-                initAdvancedFilterState,
-                initContextFilterState,
-                initDateFilterState,
-                initTagFilterState,
-              });
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faTimes}
-            />
-            {' '}
-            Reset
-          </button>
-        </div>
+  const paginationControls = logs.length > 0 && (
+    <div className="text-center mt-3">
+      <button
+        type="button"
+        className="btn btn-secondary me-2"
+        disabled={pageNumber <= 1}
+        onClick={() => {
+          dispatch({
+            type: ActionType.DecrementPageNumber,
+          });
+        }}
+      >
+        <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
+        Previous Page
+      </button>
+      <span className="mx-3">
+        Page
+        {' '}
+        {pageNumber}
+      </span>
+      <button
+        type="button"
+        className="btn btn-secondary ms-2"
+        disabled={!hasAnotherPage}
+        onClick={() => {
+          dispatch({
+            type: ActionType.IncrementPageNumber,
+          });
+        }}
+      >
+        Next Page
+        <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
+      </button>
+    </div>
+  );
+
+  /*----------------------------------------*/
+  /* --------------- Filters -------------- */
+  /*----------------------------------------*/
+
+  // Filter toggle
+  const filterToggles = (
+    <div className="LogReviewer-filter-toggles">
+      <h3 className="m-0">
+        Filters:
+      </h3>
+      <div className="LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0">
+        {/* Date */}
+        <button
+          type="button"
+          id="LogReviewer-toggle-date-filter-drawer"
+          className={`btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
+          aria-label="toggle date filter drawer"
+          onClick={() => {
+            dispatch({
+              type: ActionType.ToggleFilterDrawer,
+              filterDrawer: FilterDrawer.Date,
+            });
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faCalendar}
+            className="me-2"
+          />
+          Date
+        </button>
+        {/* Context */}
+        <button
+          type="button"
+          id="LogReviewer-toggle-context-filter-drawer"
+          className={`btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
+          aria-label="toggle context filter drawer"
+          onClick={() => {
+            dispatch({
+              type: ActionType.ToggleFilterDrawer,
+              filterDrawer: FilterDrawer.Context,
+            });
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faCircle}
+            className="me-2"
+          />
+          Context
+        </button>
+        {/* Tag */}
+        {/* Skip if no tags are used */}
+        {(LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (
+        <button
+          type="button"
+          id="LogReviewer-toggle-tag-filter-drawer"
+          className={`btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
+          aria-label="toggle tag filter drawer"
+          onClick={() => {
+            dispatch({
+              type: ActionType.ToggleFilterDrawer,
+              filterDrawer: FilterDrawer.Tag,
+            });
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faTag}
+            className="me-2"
+          />
+          Tag
+        </button>
+        )}
+        {/* Action */}
+        <button
+          type="button"
+          id="LogReviewer-toggle-action-filter-drawer"
+          className={`btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
+          aria-label="toggle action and error filter drawer"
+          onClick={() => {
+            dispatch({
+              type: ActionType.ToggleFilterDrawer,
+              filterDrawer: FilterDrawer.Action,
+            });
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faHammer}
+            className="me-2"
+          />
+          Action
+        </button>
+        {/* Advanced */}
+        <button
+          type="button"
+          id="LogReviewer-toggle-advanced-filter-drawer"
+          className={`btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`}
+          aria-label="toggle advanced filter drawer"
+          onClick={() => {
+            dispatch({
+              type: ActionType.ToggleFilterDrawer,
+              filterDrawer: FilterDrawer.Advanced,
+            });
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faList}
+            className="me-2"
+          />
+          Advanced
+        </button>
+        {/* Reset */}
+        <button
+          type="button"
+          id="LogReviewer-reset-filters-button"
+          className="btn btn-light"
+          aria-label="reset filters"
+          onClick={() => {
+            dispatch({
+              type: ActionType.ResetFilters,
+              initActionErrorFilterState,
+              initAdvancedFilterState,
+              initContextFilterState,
+              initDateFilterState,
+              initTagFilterState,
+            });
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faTimes}
+          />
+          {' '}
+          Reset
+        </button>
       </div>
-    );
+    </div>
+  );
 
-    // Filter drawer
-    let filterDrawer: React.ReactNode;
-    if (expandedFilterDrawer) {
-      if (expandedFilterDrawer === FilterDrawer.Date) {
-        filterDrawer = (
-          <TabBox title="Date">
-            <SimpleDateChooser
-              ariaLabel="filter start date"
-              name="filter-start-date"
-              year={dateFilterState.startDate.year}
-              month={dateFilterState.startDate.month}
-              day={dateFilterState.startDate.day}
-              chooseFromPast
-              numMonthsToShow={36}
-              onChange={(month, day, year) => {
-                dateFilterState.startDate = { month, day, year };
-                handleDateRangeUpdated(dateFilterState);
-              }}
-            />
-            {' '}
-            to
-            {' '}
-            <SimpleDateChooser
-              ariaLabel="filter end date"
-              name="filter-end-date"
-              year={dateFilterState.endDate.year}
-              month={dateFilterState.endDate.month}
-              day={dateFilterState.endDate.day}
-              chooseFromPast
-              numMonthsToShow={12}
-              onChange={(month, day, year) => {
-                if (
-                  year < dateFilterState.startDate.year
+  // Filter drawer
+  let filterDrawer: React.ReactNode;
+  if (expandedFilterDrawer) {
+    if (expandedFilterDrawer === FilterDrawer.Date) {
+      filterDrawer = (
+        <TabBox title="Date">
+          <SimpleDateChooser
+            ariaLabel="filter start date"
+            name="filter-start-date"
+            year={dateFilterState.startDate.year}
+            month={dateFilterState.startDate.month}
+            day={dateFilterState.startDate.day}
+            chooseFromPast
+            numMonthsToShow={36}
+            onChange={(month, day, year) => {
+              dateFilterState.startDate = { month, day, year };
+              dispatch({
+                type: ActionType.UpdateDateFilterState,
+                dateFilterState,
+              });
+            }}
+          />
+          {' '}
+          to
+          {' '}
+          <SimpleDateChooser
+            ariaLabel="filter end date"
+            name="filter-end-date"
+            year={dateFilterState.endDate.year}
+            month={dateFilterState.endDate.month}
+            day={dateFilterState.endDate.day}
+            chooseFromPast
+            numMonthsToShow={12}
+            onChange={(month, day, year) => {
+              if (
+                year < dateFilterState.startDate.year
                   || (
                     year === dateFilterState.startDate.year
                     && month < dateFilterState.startDate.month
@@ -1212,137 +1214,140 @@ const LogReviewer: React.FC<Props> = (props) => {
                     && month === dateFilterState.startDate.month
                     && day < dateFilterState.startDate.day
                   )
-                ) {
-                  return alert(
-                    'Invalid Start Date',
-                    'The start date cannot be before the end date.',
-                  );
-                }
-                dateFilterState.endDate = { month, day, year };
-                handleDateRangeUpdated(dateFilterState);
-              }}
-            />
-          </TabBox>
-        );
-      } else if (expandedFilterDrawer === FilterDrawer.Context) {
-        // Create item picker items
-        const builtInPickableItem: PickableItem = {
-          id: 'built-in-contexts',
-          name: 'Auto-logged',
-          isGroup: true,
-          children: [],
-        };
-        const pickableItems: PickableItem[] = [];
-        Object.keys(contextMap)
-          .forEach((context) => {
-            const value = contextMap[context];
-            if (typeof value === 'string') {
-              // No subcategories
-              const item: PickableItem = {
-                id: context,
-                name: genHumanReadableName(context),
-                isGroup: false,
-                checked: !!contextFilterState[context],
-              };
-
-              // Add built-in items to its own folder
-              const isBuiltIn = context in LogBuiltInMetadata.Context;
-              if (isBuiltIn) {
-                // Add to built-in pickable item
-                builtInPickableItem.children.push(item);
-              } else {
-                // Add to pickable items list
-                pickableItems.push(item);
+              ) {
+                return alert(
+                  'Invalid Start Date',
+                  'The start date cannot be before the end date.',
+                );
               }
-              return;
-            }
-
-            // Has subcategories
-            const children: PickableItem[] = (
-              Object.keys(value)
-                // Remove parent name
-                .filter((subcontext) => {
-                  return subcontext !== '_';
-                })
-                // Create child pickable items
-                .map((subcontext) => {
-                  return {
-                    id: subcontext,
-                    name: genHumanReadableName(subcontext),
-                    isGroup: false,
-                    checked: (contextFilterState[context] as any)[subcontext],
-                  };
-                })
-            );
-            const item: PickableItem = {
-              id: context,
-              name: genHumanReadableName(context),
-              isGroup: true,
-              children,
-            };
-            pickableItems.push(item);
-          });
-        // Add built-in contexts to end ofl ist
-        pickableItems.push(builtInPickableItem);
-
-        // Create filter UI
-        filterDrawer = (
-          <ItemPicker
-            title="Context"
-            items={pickableItems}
-            onChanged={(updatedItems) => {
-              // Update our state
-              updatedItems.forEach((pickableItem) => {
-                if (pickableItem.isGroup) {
-                  // Has subcontexts
-
-                  if (pickableItem.id === 'built-in-contexts') {
-                    // Built-in
-
-                    // Treat as if these were top-level contexts
-                    pickableItem.children.forEach((subcontextItem) => {
-                      contextFilterState[subcontextItem.id] = (
-                        'checked' in subcontextItem
-                        && subcontextItem.checked
-                      );
-                    });
-                  } else {
-                    // Not built-in
-                    pickableItem.children.forEach((subcontextItem) => {
-                      if (!subcontextItem.isGroup) {
-                        (
-                          contextFilterState[pickableItem.id] as { [k: string]: boolean }
-                        )[subcontextItem.id] = (
-                          subcontextItem.checked
-                        );
-                      }
-                    });
-                  }
-                } else {
-                  // No subcontexts
-                  (contextFilterState as any)[pickableItem.id] = (
-                    pickableItem.checked
-                  );
-                }
-              });
+              dateFilterState.endDate = { month, day, year };
               dispatch({
-                type: ActionType.UpdateContextFilterState,
-                contextFilterState,
+                type: ActionType.UpdateDateFilterState,
+                dateFilterState,
               });
             }}
           />
-        );
-      } else if (expandedFilterDrawer === FilterDrawer.Tag) {
-        // Create filter UI
-        filterDrawer = (
-          <TabBox title="Tags">
-            <div>
-              If any tags are selected, logs must contain at least one
-              (but not necessarily all) of the
-              selected tags.
-            </div>
-            <div className="d-flex gap-1 flex-wrap">
-              {
+        </TabBox>
+      );
+    } else if (expandedFilterDrawer === FilterDrawer.Context) {
+      // Create item picker items
+      const builtInPickableItem: PickableItem = {
+        id: 'built-in-contexts',
+        name: 'Auto-logged',
+        isGroup: true,
+        children: [],
+      };
+      const pickableItems: PickableItem[] = [];
+      Object.keys(contextMap)
+        .forEach((context) => {
+          const value = contextMap[context];
+          if (typeof value === 'string') {
+            // No subcategories
+            const item: PickableItem = {
+              id: context,
+              name: genHumanReadableName(context),
+              isGroup: false,
+              checked: !!contextFilterState[context],
+            };
+
+            // Add built-in items to its own folder
+            const isBuiltIn = context in LogBuiltInMetadata.Context;
+            if (isBuiltIn) {
+              // Add to built-in pickable item
+              builtInPickableItem.children.push(item);
+            } else {
+              // Add to pickable items list
+              pickableItems.push(item);
+            }
+            return;
+          }
+
+          // Has subcategories
+          const children: PickableItem[] = (
+            Object.keys(value)
+            // Remove parent name
+              .filter((subcontext) => {
+                return subcontext !== '_';
+              })
+            // Create child pickable items
+              .map((subcontext) => {
+                return {
+                  id: subcontext,
+                  name: genHumanReadableName(subcontext),
+                  isGroup: false,
+                  checked: (contextFilterState[context] as any)[subcontext],
+                };
+              })
+          );
+          const item: PickableItem = {
+            id: context,
+            name: genHumanReadableName(context),
+            isGroup: true,
+            children,
+          };
+          pickableItems.push(item);
+        });
+      // Add built-in contexts to end ofl ist
+      pickableItems.push(builtInPickableItem);
+
+      // Create filter UI
+      filterDrawer = (
+        <ItemPicker
+          title="Context"
+          items={pickableItems}
+          onChanged={(updatedItems) => {
+            // Update our state
+            updatedItems.forEach((pickableItem) => {
+              if (pickableItem.isGroup) {
+                // Has subcontexts
+
+                if (pickableItem.id === 'built-in-contexts') {
+                  // Built-in
+
+                  // Treat as if these were top-level contexts
+                  pickableItem.children.forEach((subcontextItem) => {
+                    contextFilterState[subcontextItem.id] = (
+                      'checked' in subcontextItem
+                        && subcontextItem.checked
+                    );
+                  });
+                } else {
+                  // Not built-in
+                  pickableItem.children.forEach((subcontextItem) => {
+                    if (!subcontextItem.isGroup) {
+                      (
+                        contextFilterState[pickableItem.id] as { [k: string]: boolean }
+                      )[subcontextItem.id] = (
+                        subcontextItem.checked
+                      );
+                    }
+                  });
+                }
+              } else {
+                // No subcontexts
+                (contextFilterState as any)[pickableItem.id] = (
+                  pickableItem.checked
+                );
+              }
+            });
+            dispatch({
+              type: ActionType.UpdateContextFilterState,
+              contextFilterState,
+            });
+          }}
+        />
+      );
+    } else if (expandedFilterDrawer === FilterDrawer.Tag) {
+      // Create filter UI
+      filterDrawer = (
+        <TabBox title="Tags">
+          <div>
+            If any tags are selected, logs must contain at least one
+            (but not necessarily all) of the
+            selected tags.
+          </div>
+          <div className="d-flex gap-1 flex-wrap">
+            {
                 Object.keys(LogMetadata.Tag ?? {})
                   .map((tag) => {
                     const description = genHumanReadableName(tag);
@@ -1364,58 +1369,58 @@ const LogReviewer: React.FC<Props> = (props) => {
                     );
                   })
               }
-            </div>
+          </div>
+        </TabBox>
+      );
+    } else if (expandedFilterDrawer === FilterDrawer.Action) {
+      // Create filter UI
+      filterDrawer = (
+        <>
+          {/* Log Type */}
+          <TabBox title="Log Type">
+            <RadioButton
+              id="LogReviewer-type-all"
+              text="All Logs"
+              onSelected={() => {
+                actionErrorFilterState.type = undefined;
+                dispatch({
+                  type: ActionType.UpdateActionErrorFilterState,
+                  actionErrorFilterState,
+                });
+              }}
+              ariaLabel="show logs of all types"
+              selected={actionErrorFilterState.type === undefined}
+            />
+            <RadioButton
+              id="LogReviewer-type-action-only"
+              text="Action Logs Only"
+              onSelected={() => {
+                actionErrorFilterState.type = LogType.Action;
+                dispatch({
+                  type: ActionType.UpdateActionErrorFilterState,
+                  actionErrorFilterState,
+                });
+              }}
+              ariaLabel="only show action logs"
+              selected={actionErrorFilterState.type === LogType.Action}
+            />
+            <RadioButton
+              id="LogReviewer-type-error-only"
+              text="Action Error Only"
+              onSelected={() => {
+                actionErrorFilterState.type = LogType.Error;
+                dispatch({
+                  type: ActionType.UpdateActionErrorFilterState,
+                  actionErrorFilterState,
+                });
+              }}
+              ariaLabel="only show error logs"
+              selected={actionErrorFilterState.type === LogType.Error}
+              noMarginOnRight
+            />
           </TabBox>
-        );
-      } else if (expandedFilterDrawer === FilterDrawer.Action) {
-        // Create filter UI
-        filterDrawer = (
-          <>
-            {/* Log Type */}
-            <TabBox title="Log Type">
-              <RadioButton
-                id="LogReviewer-type-all"
-                text="All Logs"
-                onSelected={() => {
-                  actionErrorFilterState.type = undefined;
-                  dispatch({
-                    type: ActionType.UpdateActionErrorFilterState,
-                    actionErrorFilterState,
-                  });
-                }}
-                ariaLabel="show logs of all types"
-                selected={actionErrorFilterState.type === undefined}
-              />
-              <RadioButton
-                id="LogReviewer-type-action-only"
-                text="Action Logs Only"
-                onSelected={() => {
-                  actionErrorFilterState.type = LogType.Action;
-                  dispatch({
-                    type: ActionType.UpdateActionErrorFilterState,
-                    actionErrorFilterState,
-                  });
-                }}
-                ariaLabel="only show action logs"
-                selected={actionErrorFilterState.type === LogType.Action}
-              />
-              <RadioButton
-                id="LogReviewer-type-error-only"
-                text="Action Error Only"
-                onSelected={() => {
-                  actionErrorFilterState.type = LogType.Error;
-                  dispatch({
-                    type: ActionType.UpdateActionErrorFilterState,
-                    actionErrorFilterState,
-                  });
-                }}
-                ariaLabel="only show error logs"
-                selected={actionErrorFilterState.type === LogType.Error}
-                noMarginOnRight
-              />
-            </TabBox>
-            {/* Actions */}
-            {
+          {/* Actions */}
+          {
               (
                 actionErrorFilterState.type === undefined
                 || actionErrorFilterState.type === LogType.Action
@@ -1484,8 +1489,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                 </TabBox>
               )
             }
-            {/* Errors */}
-            {
+          {/* Errors */}
+          {
               (
                 actionErrorFilterState.type === undefined
                 || actionErrorFilterState.type === LogType.Error
@@ -1538,67 +1543,297 @@ const LogReviewer: React.FC<Props> = (props) => {
                 </TabBox>
               )
             }
-          </>
-        );
-      } else if (expandedFilterDrawer === FilterDrawer.Advanced) {
-        // Create advanced filter ui
-        filterDrawer = (
-          <>
-            {/* User Info */}
-            <TabBox title="User">
-              {/* First Name */}
+        </>
+      );
+    } else if (expandedFilterDrawer === FilterDrawer.Advanced) {
+      // Create advanced filter ui
+      filterDrawer = (
+        <>
+          {/* User Info */}
+          <TabBox title="User">
+            {/* First Name */}
+            <div className="input-group mb-2">
+              <span className="input-group-text">
+                User First Name
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                aria-label="query for user first name"
+                value={advancedFilterState.userFirstName}
+                placeholder="e.g. Divardo"
+                onChange={(e) => {
+                  advancedFilterState.userFirstName = e.target.value;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+            </div>
+            {/* Last Name */}
+            <div className="input-group mb-2">
+              <span className="input-group-text">
+                User Last Name
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                aria-label="query for user last name"
+                value={advancedFilterState.userLastName}
+                placeholder="e.g. Calicci"
+                onChange={(e) => {
+                  advancedFilterState.userLastName = e.target.value;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+            </div>
+            {/* Email */}
+            <div className="input-group mb-2">
+              <span className="input-group-text">
+                User Email
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                aria-label="query for user email"
+                value={advancedFilterState.userEmail}
+                placeholder="e.g. calicci@fas.harvard.edu"
+                onChange={(e) => {
+                  advancedFilterState.userEmail = (
+                    (e.target.value)
+                      .trim()
+                  );
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+            </div>
+            {/* Canvas Id */}
+            <div className="input-group mb-2">
+              <span className="input-group-text">
+                User Canvas Id
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                aria-label="query for user canvas id"
+                value={advancedFilterState.userId}
+                placeholder="e.g. 104985"
+                onChange={(e) => {
+                  const { value } = e.target;
+                  // Only update if value contains only numbers
+                  if (/^\d+$/.test(value)) {
+                    advancedFilterState.userId = (
+                      (e.target.value)
+                        .trim()
+                    );
+                  }
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+            </div>
+            {/* Role */}
+            <ButtonInputGroup label="Role">
+              <CheckboxButton
+                text="Students"
+                onChanged={(checked) => {
+                  advancedFilterState.includeLearners = checked;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+                checked={advancedFilterState.includeLearners}
+                ariaLabel="show logs from students"
+              />
+              <CheckboxButton
+                text="Teaching Team Members"
+                onChanged={(checked) => {
+                  advancedFilterState.includeTTMs = checked;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+                checked={advancedFilterState.includeTTMs}
+                ariaLabel="show logs from teaching team members"
+              />
+              <CheckboxButton
+                text="Admins"
+                onChanged={(checked) => {
+                  advancedFilterState.includeAdmins = checked;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+                checked={advancedFilterState.includeAdmins}
+                ariaLabel="show logs from admins"
+              />
+            </ButtonInputGroup>
+          </TabBox>
+
+          {/* Course Info */}
+          <TabBox title="Course">
+            {/* Name */}
+            <div className="input-group mb-2">
+              <span className="input-group-text">
+                Course Name
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                aria-label="query for course name"
+                value={advancedFilterState.courseName}
+                placeholder="e.g. GLC 200"
+                onChange={(e) => {
+                  advancedFilterState.courseName = e.target.value;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+            </div>
+            {/* Canvas Id */}
+            <div className="input-group mb-2">
+              <span className="input-group-text">
+                Course Canvas Id
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                aria-label="query for course canvas id"
+                value={advancedFilterState.courseId}
+                placeholder="e.g. 15948"
+                onChange={(e) => {
+                  const { value } = e.target;
+                  // Only update if value contains only numbers
+                  if (/^\d+$/.test(value)) {
+                    advancedFilterState.courseId = (
+                      (e.target.value)
+                        .trim()
+                    );
+                  }
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+            </div>
+          </TabBox>
+
+          {/* Device Info */}
+          <TabBox title="Device">
+            <ButtonInputGroup label="Device Type">
+              <RadioButton
+                text="All Devices"
+                ariaLabel="show logs from all devices"
+                selected={advancedFilterState.isMobile === undefined}
+                onSelected={() => {
+                  advancedFilterState.isMobile = undefined;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+              <RadioButton
+                text="Mobile Only"
+                ariaLabel="show logs from mobile devices"
+                selected={advancedFilterState.isMobile === true}
+                onSelected={() => {
+                  advancedFilterState.isMobile = true;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+              <RadioButton
+                text="Desktop Only"
+                ariaLabel="show logs from desktop devices"
+                selected={advancedFilterState.isMobile === false}
+                onSelected={() => {
+                  advancedFilterState.isMobile = false;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+                noMarginOnRight
+              />
+            </ButtonInputGroup>
+          </TabBox>
+
+          {/* Source */}
+          <TabBox title="Source">
+            <ButtonInputGroup label="Source Type">
+              <RadioButton
+                text="Both"
+                ariaLabel="show logs from all sources"
+                selected={advancedFilterState.source === undefined}
+                onSelected={() => {
+                  advancedFilterState.source = undefined;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+              <RadioButton
+                text="Client Only"
+                ariaLabel="show logs from client source"
+                selected={advancedFilterState.source === LogSource.Client}
+                onSelected={() => {
+                  advancedFilterState.source = LogSource.Client;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+              />
+              <RadioButton
+                text="Server Only"
+                ariaLabel="show logs from server source"
+                selected={advancedFilterState.source === LogSource.Server}
+                onSelected={() => {
+                  advancedFilterState.source = LogSource.Server;
+                  dispatch({
+                    type: ActionType.UpdateAdvancedFilterState,
+                    advancedFilterState,
+                  });
+                }}
+                noMarginOnRight
+              />
+            </ButtonInputGroup>
+
+            {/* Server filters */}
+            {advancedFilterState.source !== LogSource.Client && (
+            <div className="mt-2">
+              {/* Route path */}
               <div className="input-group mb-2">
                 <span className="input-group-text">
-                  User First Name
+                  Server Route Path
                 </span>
                 <input
                   type="text"
                   className="form-control"
-                  aria-label="query for user first name"
-                  value={advancedFilterState.userFirstName}
-                  placeholder="e.g. Divardo"
+                  aria-label="query for server route path"
+                  value={advancedFilterState.routePath}
+                  placeholder="e.g. /api/ttm/courses/12345"
                   onChange={(e) => {
-                    advancedFilterState.userFirstName = e.target.value;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-              </div>
-              {/* Last Name */}
-              <div className="input-group mb-2">
-                <span className="input-group-text">
-                  User Last Name
-                </span>
-                <input
-                  type="text"
-                  className="form-control"
-                  aria-label="query for user last name"
-                  value={advancedFilterState.userLastName}
-                  placeholder="e.g. Calicci"
-                  onChange={(e) => {
-                    advancedFilterState.userLastName = e.target.value;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-              </div>
-              {/* Email */}
-              <div className="input-group mb-2">
-                <span className="input-group-text">
-                  User Email
-                </span>
-                <input
-                  type="text"
-                  className="form-control"
-                  aria-label="query for user email"
-                  value={advancedFilterState.userEmail}
-                  placeholder="e.g. calicci@fas.harvard.edu"
-                  onChange={(e) => {
-                    advancedFilterState.userEmail = (
+                    advancedFilterState.courseName = (
                       (e.target.value)
                         .trim()
                     );
@@ -1609,26 +1844,23 @@ const LogReviewer: React.FC<Props> = (props) => {
                   }}
                 />
               </div>
-              {/* Canvas Id */}
+
+              {/* Route template */}
               <div className="input-group mb-2">
                 <span className="input-group-text">
-                  User Canvas Id
+                  Server Route Template
                 </span>
                 <input
                   type="text"
                   className="form-control"
-                  aria-label="query for user canvas id"
-                  value={advancedFilterState.userId}
-                  placeholder="e.g. 104985"
+                  aria-label="query for server route template"
+                  value={advancedFilterState.routeTemplate}
+                  placeholder="e.g. /api/ttm/courses/:courseId"
                   onChange={(e) => {
-                    const { value } = e.target;
-                    // Only update if value contains only numbers
-                    if (/^\d+$/.test(value)) {
-                      advancedFilterState.userId = (
-                        (e.target.value)
-                          .trim()
-                      );
-                    }
+                    advancedFilterState.courseName = (
+                      (e.target.value)
+                        .trim()
+                    );
                     dispatch({
                       type: ActionType.UpdateAdvancedFilterState,
                       advancedFilterState,
@@ -1636,624 +1868,51 @@ const LogReviewer: React.FC<Props> = (props) => {
                   }}
                 />
               </div>
-              {/* Role */}
-              <ButtonInputGroup label="Role">
-                <CheckboxButton
-                  text="Students"
-                  onChanged={(checked) => {
-                    advancedFilterState.includeLearners = checked;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                  checked={advancedFilterState.includeLearners}
-                  ariaLabel="show logs from students"
-                />
-                <CheckboxButton
-                  text="Teaching Team Members"
-                  onChanged={(checked) => {
-                    advancedFilterState.includeTTMs = checked;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                  checked={advancedFilterState.includeTTMs}
-                  ariaLabel="show logs from teaching team members"
-                />
-                <CheckboxButton
-                  text="Admins"
-                  onChanged={(checked) => {
-                    advancedFilterState.includeAdmins = checked;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                  checked={advancedFilterState.includeAdmins}
-                  ariaLabel="show logs from admins"
-                />
-              </ButtonInputGroup>
-            </TabBox>
-
-            {/* Course Info */}
-            <TabBox title="Course">
-              {/* Name */}
-              <div className="input-group mb-2">
-                <span className="input-group-text">
-                  Course Name
-                </span>
-                <input
-                  type="text"
-                  className="form-control"
-                  aria-label="query for course name"
-                  value={advancedFilterState.courseName}
-                  placeholder="e.g. GLC 200"
-                  onChange={(e) => {
-                    advancedFilterState.courseName = e.target.value;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-              </div>
-              {/* Canvas Id */}
-              <div className="input-group mb-2">
-                <span className="input-group-text">
-                  Course Canvas Id
-                </span>
-                <input
-                  type="text"
-                  className="form-control"
-                  aria-label="query for course canvas id"
-                  value={advancedFilterState.courseId}
-                  placeholder="e.g. 15948"
-                  onChange={(e) => {
-                    const { value } = e.target;
-                    // Only update if value contains only numbers
-                    if (/^\d+$/.test(value)) {
-                      advancedFilterState.courseId = (
-                        (e.target.value)
-                          .trim()
-                      );
-                    }
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-              </div>
-            </TabBox>
-
-            {/* Device Info */}
-            <TabBox title="Device">
-              <ButtonInputGroup label="Device Type">
-                <RadioButton
-                  text="All Devices"
-                  ariaLabel="show logs from all devices"
-                  selected={advancedFilterState.isMobile === undefined}
-                  onSelected={() => {
-                    advancedFilterState.isMobile = undefined;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-                <RadioButton
-                  text="Mobile Only"
-                  ariaLabel="show logs from mobile devices"
-                  selected={advancedFilterState.isMobile === true}
-                  onSelected={() => {
-                    advancedFilterState.isMobile = true;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-                <RadioButton
-                  text="Desktop Only"
-                  ariaLabel="show logs from desktop devices"
-                  selected={advancedFilterState.isMobile === false}
-                  onSelected={() => {
-                    advancedFilterState.isMobile = false;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                  noMarginOnRight
-                />
-              </ButtonInputGroup>
-            </TabBox>
-
-            {/* Source */}
-            <TabBox title="Source">
-              <ButtonInputGroup label="Source Type">
-                <RadioButton
-                  text="Both"
-                  ariaLabel="show logs from all sources"
-                  selected={advancedFilterState.source === undefined}
-                  onSelected={() => {
-                    advancedFilterState.source = undefined;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-                <RadioButton
-                  text="Client Only"
-                  ariaLabel="show logs from client source"
-                  selected={advancedFilterState.source === LogSource.Client}
-                  onSelected={() => {
-                    advancedFilterState.source = LogSource.Client;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                />
-                <RadioButton
-                  text="Server Only"
-                  ariaLabel="show logs from server source"
-                  selected={advancedFilterState.source === LogSource.Server}
-                  onSelected={() => {
-                    advancedFilterState.source = LogSource.Server;
-                    dispatch({
-                      type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState,
-                    });
-                  }}
-                  noMarginOnRight
-                />
-              </ButtonInputGroup>
-
-              {/* Server filters */}
-              {advancedFilterState.source !== LogSource.Client && (
-                <div className="mt-2">
-                  {/* Route path */}
-                  <div className="input-group mb-2">
-                    <span className="input-group-text">
-                      Server Route Path
-                    </span>
-                    <input
-                      type="text"
-                      className="form-control"
-                      aria-label="query for server route path"
-                      value={advancedFilterState.routePath}
-                      placeholder="e.g. /api/ttm/courses/12345"
-                      onChange={(e) => {
-                        advancedFilterState.courseName = (
-                          (e.target.value)
-                            .trim()
-                        );
-                        dispatch({
-                          type: ActionType.UpdateAdvancedFilterState,
-                          advancedFilterState,
-                        });
-                      }}
-                    />
-                  </div>
-
-                  {/* Route template */}
-                  <div className="input-group mb-2">
-                    <span className="input-group-text">
-                      Server Route Template
-                    </span>
-                    <input
-                      type="text"
-                      className="form-control"
-                      aria-label="query for server route template"
-                      value={advancedFilterState.routeTemplate}
-                      placeholder="e.g. /api/ttm/courses/:courseId"
-                      onChange={(e) => {
-                        advancedFilterState.courseName = (
-                          (e.target.value)
-                            .trim()
-                        );
-                        dispatch({
-                          type: ActionType.UpdateAdvancedFilterState,
-                          advancedFilterState,
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-            </TabBox>
-          </>
-        );
-      }
+            </div>
+            )}
+          </TabBox>
+        </>
+      );
     }
+  }
 
-    // Filters UI
-    const filters = (
-      <>
-        {filterToggles}
-        {filterDrawer && (
-          <Drawer customBackgroundColor="#eee">
-            {filterDrawer}
-          </Drawer>
-        )}
-      </>
-    );
+  // Filters UI
+  const filters = (
+    <>
+      {filterToggles}
+      {filterDrawer && (
+      <Drawer customBackgroundColor="#eee">
+        {filterDrawer}
+      </Drawer>
+      )}
+    </>
+  );
 
-    // Actually filter the logs
-    // > Perform filters
-    const logs: Log[] = [];
-    Object.keys(logMap).forEach((year) => {
-      Object.keys(logMap[year]).forEach((month) => {
-        logMap[year][month].forEach((log) => {
-          /* ----------- Date Filter ---------- */
-
-          // Before start date
-          if (
-            // Previous year
-            log.year < dateFilterState.startDate.year
-            // Same year, earlier month
-            || (
-              (log.year === dateFilterState.startDate.year)
-              && (log.month < dateFilterState.startDate.month)
-            )
-            // Same year, same month, earlier day
-            || (
-              (log.year === dateFilterState.startDate.year)
-              && (log.month === dateFilterState.startDate.month)
-              && (log.day < dateFilterState.startDate.day)
-            )
-          ) {
-            return;
-          }
-
-          // After end date
-          if (
-            // Later year
-            log.year > dateFilterState.endDate.year
-            // Same year, later month
-            || (
-              (log.year === dateFilterState.endDate.year)
-              && (log.month > dateFilterState.endDate.month)
-            )
-            // Same year, same month, later day
-            || (
-              (log.year === dateFilterState.endDate.year)
-              && (log.month === dateFilterState.endDate.month)
-              && (log.day > dateFilterState.endDate.day)
-            )
-          ) {
-            return;
-          }
-
-          /* --------- Context Filter --------- */
-
-          // Context doesn't match
-          if (
-            // Whole context is deselected
-            contextFilterState[log.context] === false
-            // None of the subcontexts are selected
-            || (
-              // Has subcontexts
-              typeof contextFilterState[log.context] !== 'boolean'
-              // None of the subcontexts are selected
-              && Object.values(contextFilterState[log.context] ?? {})
-                .every((isSelected) => {
-                  return !isSelected;
-                })
-            )
-          ) {
-            return;
-          }
-
-          // Subcontext doesn't match
-          if (
-            // Log context is not "uncategorized" (no point in further filters)
-            log.context !== LogBuiltInMetadata.Context.Uncategorized
-            // Log has a subcontext
-            && log.subcontext
-            // Context has subcontexts
-            && (
-              contextFilterState[log.context]
-              && contextFilterState[log.context] !== false
-              && contextFilterState[log.context] !== true
-            )
-            // Subcontext is not selected
-            && !(contextFilterState as any)[log.context][log.subcontext]
-          ) {
-            return;
-          }
-
-          /* -------------- Tags -------------- */
-
-          // No tags match
-          if (
-            // At least one tag is required
-            Object.values(tagFilterState)
-              .filter((isSelected) => {
-                return isSelected;
-              })
-              .length > 0
-            // No tags match
-            && log.tags.every((tag) => {
-              return !tagFilterState[tag];
-            })
-          ) {
-            return;
-          }
-
-          /* ------- Actions and Errors ------- */
-
-          // Log type doesn't match
-          if (
-            // Filter won't allow all types
-            actionErrorFilterState.type !== undefined
-            // Log type doesn't match
-            && actionErrorFilterState.type !== log.type
-          ) {
-            return;
-          }
-
-          // Filter errors
-          if (log.type === LogType.Error) {
-            // Message doesn't match
-            if (
-              // Message exists
-              log.errorMessage
-              // Message filter exists
-              && actionErrorFilterState.errorMessage.trim().length > 0
-              // Message doesn't match
-              && log.errorMessage.toLowerCase().includes(
-                actionErrorFilterState.errorMessage.trim().toLowerCase(),
-              )
-            ) {
-              return;
-            }
-
-            // Code doesn't match
-            if (
-              // Code exists
-              log.errorCode
-              // Code filter exists
-              && actionErrorFilterState.errorCode.trim().length > 0
-              // Code doesn't match
-              && log.errorCode.toUpperCase().includes(
-                actionErrorFilterState.errorCode.trim().toUpperCase(),
-              )
-            ) {
-              return;
-            }
-          }
-
-          // Filter actions
-          if (log.type === LogType.Action) {
-            // Target isn't selected
-            if (
-              // Target exists
-              log.target
-              // Target isn't selected
-              && !actionErrorFilterState.target[log.target]
-            ) {
-              return;
-            }
-
-            // Action
-            if (
-              // Action exists
-              log.action
-              // Action isn't selected
-              && !actionErrorFilterState.action[log.action]
-            ) {
-              return;
-            }
-          }
-
-          /* --------- Advanced Filter -------- */
-
-          // First name doesn't match
-          if (
-            // First name exists
-            log.userFirstName
-            // First name query doesn't match
-            && !log.userFirstName.toLowerCase().includes(
-              advancedFilterState.userFirstName.toLowerCase().trim(),
-            )
-          ) {
-            return;
-          }
-
-          // Last name doesn't match
-          if (
-            // Last name exists
-            log.userLastName
-            // Last name query doesn't match
-            && !log.userLastName.toLowerCase().includes(
-              advancedFilterState.userLastName.toLowerCase().trim(),
-            )
-          ) {
-            return;
-          }
-
-          // Email doesn't match
-          if (
-            // Email exists
-            log.userEmail
-            // Email query doesn't match
-            && !log.userEmail.toLowerCase().includes(
-              advancedFilterState.userEmail.toLowerCase().trim(),
-            )
-          ) {
-            return;
-          }
-
-          // User id doesn't match
-          if (
-            // User id exists
-            log.userId
-            // User id doesn't match
-            && !String(log.userId).includes(
-              advancedFilterState.userId.trim(),
-            )
-          ) {
-            return;
-          }
-
-          // Learner not allowed
-          if (
-            // User is a learner
-            log.isLearner
-            // Learners aren't included
-            && !advancedFilterState.includeLearners
-          ) {
-            return;
-          }
-
-          // TTM not allowed
-          if (
-            // User is a ttm
-            log.isTTM
-            // TTMs aren't included
-            && !advancedFilterState.includeTTMs
-          ) {
-            return;
-          }
-
-          // Admin not allowed
-          if (
-            // User is an admin
-            log.isAdmin
-            // Admins aren't included
-            && !advancedFilterState.includeAdmins
-          ) {
-            return;
-          }
-
-          // Course Id doesn't match
-          if (
-            // Course Id exists
-            log.courseId
-            // Course Id doesn't match
-            && !String(log.courseId).includes(
-              advancedFilterState.courseId.trim(),
-            )
-          ) {
-            return;
-          }
-
-          // Course name doesn't match
-          if (
-            // Course name exists
-            log.courseName
-            // Course name doesn't match
-            && !String(log.courseName).includes(
-              advancedFilterState.courseName.trim(),
-            )
-          ) {
-            return;
-          }
-
-          // Mobile filter doesn't match
-          if (
-            // Mobile filter exists
-            advancedFilterState.isMobile !== undefined
-            // Device info exists
-            && log.device
-            // Mobile filter doesn't match
-            && (advancedFilterState.isMobile !== log.device.isMobile)
-          ) {
-            return;
-          }
-
-          // Log source doesn't match
-          if (
-            // Source filter exists
-            advancedFilterState.source !== undefined
-            // Source info exists
-            && log.source
-            // Source filter doesn't match
-            && (advancedFilterState.source !== log.source)
-          ) {
-            return;
-          }
-
-          // Route path doesn't match (Only for server source)
-          if (
-            // Source is server
-            (log.source === LogSource.Server)
-            // Route path is being filtered
-            && (advancedFilterState.routePath.trim().length)
-            // Route path doesn't match
-            && !(log.routePath.includes(advancedFilterState.routePath.trim()))
-          ) {
-            return;
-          }
-
-          // Route template doesn't match (Only for server source)
-          if (
-            // Source is server
-            (log.source === LogSource.Server)
-            // Route template is being filtered
-            && (advancedFilterState.routeTemplate.trim().length)
-            // Route template doesn't match
-            && !(log.routeTemplate.includes(advancedFilterState.routeTemplate.trim()))
-          ) {
-            return;
-          }
-
-          /* -------------- Done -------------- */
-
-          // Made it past all filters. Add to the list
-          logs.push(log);
-        });
-      });
-    });
-
-    /*----------------------------------------*/
-    /* ---------------- Data ---------------- */
-    /*----------------------------------------*/
-
-    // Nothing to show notice
-    const noLogsNotice = (
-      logs.length === 0
-        ? (
+  // Main body
+  body = (
+    <>
+      {filters}
+      <div className="mt-2">
+        <IntelliTable
+          title="Matching Logs:"
+          csvName={`Logs from ${getHumanReadableDate()}`}
+          id="logs"
+          data={logs}
+          columns={columns}
+        />
+        {logs.length === 0 && (
           <div className="alert alert-warning text-center mt-2">
-            <h4 className="m-1">
-              No Logs to Show
-            </h4>
+            <h4 className="m-1">No Logs to Show</h4>
             <div>
               Either your filters are too strict or no matching logs have been
               created yet.
             </div>
           </div>
-        )
-        : undefined
-    );
-
-    // Create intelliTable
-    const dataTable = (
-      <IntelliTable
-        title="Matching Logs:"
-        csvName={`Logs from ${getHumanReadableDate()}`}
-        id="logs"
-        data={logs}
-        columns={columns}
-      />
-    );
-
-    // Main body
-    body = (
-      <>
-        {filters}
-        <div className="mt-2">
-          {dataTable}
-          {noLogsNotice}
-        </div>
-      </>
-    );
-  }
+        )}
+        {paginationControls}
+      </div>
+    </>
+  );
 
   /* ---------- Wrap in Modal --------- */
 
@@ -2265,9 +1924,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       <div className="LogReviewer-inner-container">
         <div className="LogReviewer-header">
           <div className="LogReviewer-header-title">
-            <h3 className="text-center m-0">
-              Log Review Dashboard
-            </h3>
+            <h3 className="text-center m-0">Log Review Dashboard</h3>
           </div>
           <div style={{ width: 0 }}>
             <button
@@ -2276,15 +1933,11 @@ const LogReviewer: React.FC<Props> = (props) => {
               aria-label="close log reviewer panel"
               onClick={onClose}
             >
-              <FontAwesomeIcon
-                icon={faTimes}
-              />
+              <FontAwesomeIcon icon={faTimes} />
             </button>
           </div>
         </div>
-        <div className="LogReviewer-contents">
-          {body}
-        </div>
+        <div className="LogReviewer-contents">{body}</div>
       </div>
     </div>
   );
