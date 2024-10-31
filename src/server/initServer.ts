@@ -239,7 +239,7 @@ const initServer = (
  * @returns {Log[]} list of logs that match the filters
  */
   opts.app.get(
-    `${LOG_REVIEW_ROUTE_PATH_PREFIX}/logs`,
+    `${LOG_REVIEW_ROUTE_PATH_PREFIX}`,
     genRouteHandler({
       paramTypes: {
         pageNumber: ParamType.Int,
