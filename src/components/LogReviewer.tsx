@@ -18,6 +18,7 @@ import {
   faList,
   faTag,
   faTimes,
+  faSearch,
 } from '@fortawesome/free-solid-svg-icons';
 
 // Import shared helpers
@@ -742,6 +743,12 @@ const reducer = (state: State, action: Action): State => {
         pageNumber: state.pageNumber - 1,
       };
     }
+    case ActionType.SetHasAnotherPage: {
+      return {
+        ...state,
+        hasAnotherPage: action.hasAnotherPage,
+      };
+    }
     default: {
       return state;
     }
@@ -918,8 +925,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     try {
       // Prepare filter parameters
       const filters = {
-        startDate: dateFilterState.startDate,
-        endDate: dateFilterState.endDate,
+        dateFilterState,
         contextFilterState,
         tagFilterState,
         actionErrorFilterState,
@@ -930,7 +936,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       let fetchedLogs: Log[] = [];
 
       const response = await visitServerEndpoint({
-        path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/logs`,
+        path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}`,
         method: 'GET',
         params: {
           pageNumber,
@@ -959,16 +965,12 @@ const LogReviewer: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
 
   /**
-   * Fetch logs whenever filters change
+   * Fetch logs whenever page number changes
    */
   useEffect(() => {
     fetchLogs();
   }, [
-    dateFilterState,
-    contextFilterState,
-    tagFilterState,
-    actionErrorFilterState,
-    advancedFilterState,
+    pageNumber,
   ]);
 
   /*------------------------------------------------------------------------*/
@@ -1164,6 +1166,26 @@ const LogReviewer: React.FC<Props> = (props) => {
           />
           {' '}
           Reset
+        </button>
+
+        {/* Submit filter changes */}
+        <button
+          type="button"
+          id="LogReviewer-submit-filters-button"
+          className="btn btn-primary ms-2"
+          aria-label="submit filters"
+          onClick={() => {
+            dispatch({
+              type: ActionType.HideFilterDrawer,
+            });
+            fetchLogs();
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faSearch}
+          />
+          {' '}
+          Filter
         </button>
       </div>
     </div>
