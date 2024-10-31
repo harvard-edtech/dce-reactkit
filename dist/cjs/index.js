@@ -4475,7 +4475,7 @@ var ActionType$6;
 (function (ActionType) {
     // Show the loading bar
     ActionType["StartLoading"] = "start-loading";
-    // Finish loading one or more months of logs
+    // Finish loading logs
     ActionType["FinishLoading"] = "finish-loading";
     // Reset filters to initial values
     ActionType["ResetFilters"] = "reset-filters";
@@ -4493,6 +4493,12 @@ var ActionType$6;
     ActionType["UpdateActionErrorFilterState"] = "update-action-error-filter-state";
     // Update the advanced filter state
     ActionType["UpdateAdvancedFilterState"] = "update-advanced-filter-state";
+    // Increment the page number
+    ActionType["IncrementPageNumber"] = "increment-page-number";
+    // Decrement the page number
+    ActionType["DecrementPageNumber"] = "decrement-page-number";
+    // Set has another page
+    ActionType["SetHasAnotherPage"] = "set-has-another-page";
 })(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
@@ -4506,7 +4512,7 @@ const reducer$7 = (state, action) => {
             return Object.assign(Object.assign({}, state), { loading: true });
         }
         case ActionType$6.FinishLoading: {
-            return Object.assign(Object.assign({}, state), { loading: false, logMap: action.logMap });
+            return Object.assign(Object.assign({}, state), { loading: false, logs: action.logs });
         }
         case ActionType$6.ToggleFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
@@ -4533,6 +4539,12 @@ const reducer$7 = (state, action) => {
         }
         case ActionType$6.UpdateAdvancedFilterState: {
             return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
+        }
+        case ActionType$6.IncrementPageNumber: {
+            return Object.assign(Object.assign({}, state), { pageNumber: state.pageNumber + 1 });
+        }
+        case ActionType$6.DecrementPageNumber: {
+            return Object.assign(Object.assign({}, state), { pageNumber: state.pageNumber - 1 });
         }
         default: {
             return state;
@@ -4651,126 +4663,78 @@ const LogReviewer = (props) => {
     // Initial state
     const initialState = {
         loading: true,
-        logMap: {},
+        logs: [],
         expandedFilterDrawer: undefined,
         dateFilterState: initDateFilterState,
         contextFilterState: initContextFilterState,
         tagFilterState: initTagFilterState,
         actionErrorFilterState: initActionErrorFilterState,
         advancedFilterState: initAdvancedFilterState,
+        pageNumber: 1,
+        hasAnotherPage: false,
     };
     // Initialize state
     const [state, dispatch] = React.useReducer(reducer$7, initialState);
     // Destructure common state
-    const { loading, logMap, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = state;
+    const { loading, logs, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, pageNumber, hasAnotherPage, } = state;
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
-     * Get the list of year/month combos that need to be loaded given a new
-     *   start or end date and the existing logMap
-     * @author Gabe Abrams
-     * @param newDateFilterState the new date filter state
-     * @returns list of year/month combos that need to be loaded
+     * Fetch logs from the server based on current filters
      */
-    const listMonthsToLoad = (newDateFilterState) => {
-        // List of year/month combos that need to be loaded
-        const toLoad = [];
-        // Loop through dates
-        let { year, month } = newDateFilterState.startDate;
-        while (
-        // Earlier year
-        (year < newDateFilterState.endDate.year)
-            // Current year but included month
-            || (year === newDateFilterState.endDate.year
-                && month <= newDateFilterState.endDate.month)) {
-            // Add to list if not already loaded
-            if (!logMap[year]
-                || !logMap[year][month]) {
-                toLoad.push({
-                    year,
-                    month,
-                });
-            }
-            // Increment
-            month += 1;
-            if (month > 12) {
-                month -= 12;
-                year += 1;
-            }
-        }
-        // Return
-        return toLoad;
-    };
-    /**
-     * Handle updated start/end dates (updates state, loads if necessary)
-     * @author Gabe Abrams
-     * @param newDateFilterState the new date filter state
-     */
-    const handleDateRangeUpdated = (newDateFilterState) => __awaiter(void 0, void 0, void 0, function* () {
-        // Update state
-        dispatch({
-            type: ActionType$6.UpdateDateFilterState,
-            dateFilterState: newDateFilterState,
-        });
-        // Check which year/month combos we need to load
-        const toLoad = listMonthsToLoad(newDateFilterState);
-        // If nothing to load, finished
-        if (toLoad.length === 0) {
-            return;
-        }
-        // Start loading
-        dispatch({
-            type: ActionType$6.StartLoading,
-        });
-        // Load required months
+    const fetchLogs = () => __awaiter(void 0, void 0, void 0, function* () {
+        dispatch({ type: ActionType$6.StartLoading });
         try {
-            for (let i = 0; i < toLoad.length; i++) {
-                // Destructure
-                const { year, month } = toLoad[i];
-                // Load
-                let logs = [];
-                let pageNumber = 1;
-                let hasAnotherPage = true;
-                while (hasAnotherPage) {
-                    const response = yield visitServerEndpoint({
-                        path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/${year}/months/${month}`,
-                        method: 'GET',
-                        params: {
-                            pageNumber,
-                        },
-                    });
-                    logs = logs.concat(response.items);
-                    hasAnotherPage = response.hasAnotherPage;
-                    pageNumber += 1;
-                }
-                // Add to map
-                if (!logMap[year]) {
-                    logMap[year] = {};
-                }
-                logMap[year][month] = logs;
-            }
+            // Prepare filter parameters
+            const filters = {
+                startDate: dateFilterState.startDate,
+                endDate: dateFilterState.endDate,
+                contextFilterState,
+                tagFilterState,
+                actionErrorFilterState,
+                advancedFilterState,
+            };
+            // Send filters to the server
+            let fetchedLogs = [];
+            const response = yield visitServerEndpoint({
+                path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/logs`,
+                method: 'GET',
+                params: {
+                    pageNumber,
+                    filters,
+                },
+            });
+            fetchedLogs = fetchedLogs.concat(response.items);
+            dispatch({
+                type: ActionType$6.SetHasAnotherPage,
+                hasAnotherPage: response.hasAnotherPage,
+            });
+            // Update logs in state
+            dispatch({
+                type: ActionType$6.FinishLoading,
+                logs: fetchedLogs,
+            });
         }
         catch (err) {
             return showFatalError(err);
         }
-        // Finish loading
-        dispatch({
-            type: ActionType$6.FinishLoading,
-            logMap,
-        });
     });
     /*------------------------------------------------------------------------*/
     /* ------------------------- Lifecycle Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
-     * Mount
-     * @author Gabe Abrams
+     * Fetch logs whenever filters change
      */
     React.useEffect(() => {
-        // Perform initial load
-        handleDateRangeUpdated(dateFilterState);
-    }, []);
+        fetchLogs();
+    }, [
+        dateFilterState,
+        contextFilterState,
+        tagFilterState,
+        actionErrorFilterState,
+        advancedFilterState,
+    ]);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -4785,297 +4749,441 @@ const LogReviewer = (props) => {
             React__default["default"].createElement(LoadingSpinner, null)));
     }
     /* ------------ Review UI ----------- */
-    if (!loading) {
-        /*----------------------------------------*/
-        /* --------------- Filters -------------- */
-        /*----------------------------------------*/
-        // Filter toggle
-        const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles" },
-            React__default["default"].createElement("h3", { className: "m-0" }, "Filters:"),
-            React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
+    /*----------------------------------------*/
+    /* ------------ Pagination -------------- */
+    /*----------------------------------------*/
+    const paginationControls = logs.length > 0 && (React__default["default"].createElement("div", { className: "text-center mt-3" },
+        React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary me-2", disabled: pageNumber <= 1, onClick: () => {
+                dispatch({
+                    type: ActionType$6.DecrementPageNumber,
+                });
+            } },
+            React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faArrowLeft, className: "me-2" }),
+            "Previous Page"),
+        React__default["default"].createElement("span", { className: "mx-3" },
+            "Page",
+            ' ',
+            pageNumber),
+        React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary ms-2", disabled: !hasAnotherPage, onClick: () => {
+                dispatch({
+                    type: ActionType$6.IncrementPageNumber,
+                });
+            } },
+            "Next Page",
+            React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faArrowRight, className: "ms-2" }))));
+    /*----------------------------------------*/
+    /* --------------- Filters -------------- */
+    /*----------------------------------------*/
+    // Filter toggle
+    const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles" },
+        React__default["default"].createElement("h3", { className: "m-0" }, "Filters:"),
+        React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
+            React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
+                    dispatch({
+                        type: ActionType$6.ToggleFilterDrawer,
+                        filterDrawer: FilterDrawer.Date,
+                    });
+                } },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCalendar, className: "me-2" }),
+                "Date"),
+            React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
+                    dispatch({
+                        type: ActionType$6.ToggleFilterDrawer,
+                        filterDrawer: FilterDrawer.Context,
+                    });
+                } },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "me-2" }),
+                "Context"),
+            (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
+                    dispatch({
+                        type: ActionType$6.ToggleFilterDrawer,
+                        filterDrawer: FilterDrawer.Tag,
+                    });
+                } },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTag, className: "me-2" }),
+                "Tag")),
+            React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
+                    dispatch({
+                        type: ActionType$6.ToggleFilterDrawer,
+                        filterDrawer: FilterDrawer.Action,
+                    });
+                } },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faHammer, className: "me-2" }),
+                "Action"),
+            React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle advanced filter drawer", onClick: () => {
+                    dispatch({
+                        type: ActionType$6.ToggleFilterDrawer,
+                        filterDrawer: FilterDrawer.Advanced,
+                    });
+                } },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faList, className: "me-2" }),
+                "Advanced"),
+            React__default["default"].createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
+                    dispatch({
+                        type: ActionType$6.ResetFilters,
+                        initActionErrorFilterState,
+                        initAdvancedFilterState,
+                        initContextFilterState,
+                        initDateFilterState,
+                        initTagFilterState,
+                    });
+                } },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTimes }),
+                ' ',
+                "Reset"))));
+    // Filter drawer
+    let filterDrawer;
+    if (expandedFilterDrawer) {
+        if (expandedFilterDrawer === FilterDrawer.Date) {
+            filterDrawer = (React__default["default"].createElement(TabBox, { title: "Date" },
+                React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, numMonthsToShow: 36, onChange: (month, day, year) => {
+                        dateFilterState.startDate = { month, day, year };
                         dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
-                            filterDrawer: FilterDrawer.Date,
+                            type: ActionType$6.UpdateDateFilterState,
+                            dateFilterState,
                         });
-                    } },
-                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCalendar, className: "me-2" }),
-                    "Date"),
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-context-filter-drawer", className: `btn btn-${FilterDrawer.Context === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle context filter drawer", onClick: () => {
-                        dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
-                            filterDrawer: FilterDrawer.Context,
-                        });
-                    } },
-                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "me-2" }),
-                    "Context"),
-                (LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-tag-filter-drawer", className: `btn btn-${FilterDrawer.Tag === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle tag filter drawer", onClick: () => {
-                        dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
-                            filterDrawer: FilterDrawer.Tag,
-                        });
-                    } },
-                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTag, className: "me-2" }),
-                    "Tag")),
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-action-filter-drawer", className: `btn btn-${FilterDrawer.Action === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle action and error filter drawer", onClick: () => {
-                        dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
-                            filterDrawer: FilterDrawer.Action,
-                        });
-                    } },
-                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faHammer, className: "me-2" }),
-                    "Action"),
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-advanced-filter-drawer", className: `btn btn-${FilterDrawer.Advanced === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle advanced filter drawer", onClick: () => {
-                        dispatch({
-                            type: ActionType$6.ToggleFilterDrawer,
-                            filterDrawer: FilterDrawer.Advanced,
-                        });
-                    } },
-                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faList, className: "me-2" }),
-                    "Advanced"),
-                React__default["default"].createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
-                        dispatch({
-                            type: ActionType$6.ResetFilters,
-                            initActionErrorFilterState,
-                            initAdvancedFilterState,
-                            initContextFilterState,
-                            initDateFilterState,
-                            initTagFilterState,
-                        });
-                    } },
-                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTimes }),
-                    ' ',
-                    "Reset"))));
-        // Filter drawer
-        let filterDrawer;
-        if (expandedFilterDrawer) {
-            if (expandedFilterDrawer === FilterDrawer.Date) {
-                filterDrawer = (React__default["default"].createElement(TabBox, { title: "Date" },
-                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, numMonthsToShow: 36, onChange: (month, day, year) => {
-                            dateFilterState.startDate = { month, day, year };
-                            handleDateRangeUpdated(dateFilterState);
-                        } }),
-                    ' ',
-                    "to",
-                    ' ',
-                    React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, numMonthsToShow: 12, onChange: (month, day, year) => {
-                            if (year < dateFilterState.startDate.year
-                                || (year === dateFilterState.startDate.year
-                                    && month < dateFilterState.startDate.month)
-                                || (year === dateFilterState.startDate.year
-                                    && month === dateFilterState.startDate.month
-                                    && day < dateFilterState.startDate.day)) {
-                                return alert('Invalid Start Date', 'The start date cannot be before the end date.');
-                            }
-                            dateFilterState.endDate = { month, day, year };
-                            handleDateRangeUpdated(dateFilterState);
-                        } })));
-            }
-            else if (expandedFilterDrawer === FilterDrawer.Context) {
-                // Create item picker items
-                const builtInPickableItem = {
-                    id: 'built-in-contexts',
-                    name: 'Auto-logged',
-                    isGroup: true,
-                    children: [],
-                };
-                const pickableItems = [];
-                Object.keys(contextMap)
-                    .forEach((context) => {
-                    const value = contextMap[context];
-                    if (typeof value === 'string') {
-                        // No subcategories
-                        const item = {
-                            id: context,
-                            name: genHumanReadableName(context),
-                            isGroup: false,
-                            checked: !!contextFilterState[context],
-                        };
-                        // Add built-in items to its own folder
-                        const isBuiltIn = context in LogBuiltInMetadata.Context;
-                        if (isBuiltIn) {
-                            // Add to built-in pickable item
-                            builtInPickableItem.children.push(item);
+                    } }),
+                ' ',
+                "to",
+                ' ',
+                React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, numMonthsToShow: 12, onChange: (month, day, year) => {
+                        if (year < dateFilterState.startDate.year
+                            || (year === dateFilterState.startDate.year
+                                && month < dateFilterState.startDate.month)
+                            || (year === dateFilterState.startDate.year
+                                && month === dateFilterState.startDate.month
+                                && day < dateFilterState.startDate.day)) {
+                            return alert('Invalid Start Date', 'The start date cannot be before the end date.');
                         }
-                        else {
-                            // Add to pickable items list
-                            pickableItems.push(item);
-                        }
-                        return;
-                    }
-                    // Has subcategories
-                    const children = (Object.keys(value)
-                        // Remove parent name
-                        .filter((subcontext) => {
-                        return subcontext !== '_';
-                    })
-                        // Create child pickable items
-                        .map((subcontext) => {
-                        return {
-                            id: subcontext,
-                            name: genHumanReadableName(subcontext),
-                            isGroup: false,
-                            checked: contextFilterState[context][subcontext],
-                        };
-                    }));
+                        dateFilterState.endDate = { month, day, year };
+                        dispatch({
+                            type: ActionType$6.UpdateDateFilterState,
+                            dateFilterState,
+                        });
+                    } })));
+        }
+        else if (expandedFilterDrawer === FilterDrawer.Context) {
+            // Create item picker items
+            const builtInPickableItem = {
+                id: 'built-in-contexts',
+                name: 'Auto-logged',
+                isGroup: true,
+                children: [],
+            };
+            const pickableItems = [];
+            Object.keys(contextMap)
+                .forEach((context) => {
+                const value = contextMap[context];
+                if (typeof value === 'string') {
+                    // No subcategories
                     const item = {
                         id: context,
                         name: genHumanReadableName(context),
-                        isGroup: true,
-                        children,
+                        isGroup: false,
+                        checked: !!contextFilterState[context],
                     };
-                    pickableItems.push(item);
-                });
-                // Add built-in contexts to end ofl ist
-                pickableItems.push(builtInPickableItem);
-                // Create filter UI
-                filterDrawer = (React__default["default"].createElement(ItemPicker, { title: "Context", items: pickableItems, onChanged: (updatedItems) => {
-                        // Update our state
-                        updatedItems.forEach((pickableItem) => {
-                            if (pickableItem.isGroup) {
-                                // Has subcontexts
-                                if (pickableItem.id === 'built-in-contexts') {
-                                    // Built-in
-                                    // Treat as if these were top-level contexts
-                                    pickableItem.children.forEach((subcontextItem) => {
-                                        contextFilterState[subcontextItem.id] = ('checked' in subcontextItem
-                                            && subcontextItem.checked);
-                                    });
-                                }
-                                else {
-                                    // Not built-in
-                                    pickableItem.children.forEach((subcontextItem) => {
-                                        if (!subcontextItem.isGroup) {
-                                            contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
-                                        }
-                                    });
-                                }
+                    // Add built-in items to its own folder
+                    const isBuiltIn = context in LogBuiltInMetadata.Context;
+                    if (isBuiltIn) {
+                        // Add to built-in pickable item
+                        builtInPickableItem.children.push(item);
+                    }
+                    else {
+                        // Add to pickable items list
+                        pickableItems.push(item);
+                    }
+                    return;
+                }
+                // Has subcategories
+                const children = (Object.keys(value)
+                    // Remove parent name
+                    .filter((subcontext) => {
+                    return subcontext !== '_';
+                })
+                    // Create child pickable items
+                    .map((subcontext) => {
+                    return {
+                        id: subcontext,
+                        name: genHumanReadableName(subcontext),
+                        isGroup: false,
+                        checked: contextFilterState[context][subcontext],
+                    };
+                }));
+                const item = {
+                    id: context,
+                    name: genHumanReadableName(context),
+                    isGroup: true,
+                    children,
+                };
+                pickableItems.push(item);
+            });
+            // Add built-in contexts to end ofl ist
+            pickableItems.push(builtInPickableItem);
+            // Create filter UI
+            filterDrawer = (React__default["default"].createElement(ItemPicker, { title: "Context", items: pickableItems, onChanged: (updatedItems) => {
+                    // Update our state
+                    updatedItems.forEach((pickableItem) => {
+                        if (pickableItem.isGroup) {
+                            // Has subcontexts
+                            if (pickableItem.id === 'built-in-contexts') {
+                                // Built-in
+                                // Treat as if these were top-level contexts
+                                pickableItem.children.forEach((subcontextItem) => {
+                                    contextFilterState[subcontextItem.id] = ('checked' in subcontextItem
+                                        && subcontextItem.checked);
+                                });
                             }
                             else {
-                                // No subcontexts
-                                contextFilterState[pickableItem.id] = (pickableItem.checked);
+                                // Not built-in
+                                pickableItem.children.forEach((subcontextItem) => {
+                                    if (!subcontextItem.isGroup) {
+                                        contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
+                                    }
+                                });
                             }
-                        });
-                        dispatch({
-                            type: ActionType$6.UpdateContextFilterState,
-                            contextFilterState,
-                        });
-                    } }));
-            }
-            else if (expandedFilterDrawer === FilterDrawer.Tag) {
-                // Create filter UI
-                filterDrawer = (React__default["default"].createElement(TabBox, { title: "Tags" },
-                    React__default["default"].createElement("div", null, "If any tags are selected, logs must contain at least one (but not necessarily all) of the selected tags."),
-                    React__default["default"].createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys((_d = LogMetadata.Tag) !== null && _d !== void 0 ? _d : {})
-                        .map((tag) => {
-                        const description = genHumanReadableName(tag);
-                        return (React__default["default"].createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
-                                tagFilterState[tag] = checked;
+                        }
+                        else {
+                            // No subcontexts
+                            contextFilterState[pickableItem.id] = (pickableItem.checked);
+                        }
+                    });
+                    dispatch({
+                        type: ActionType$6.UpdateContextFilterState,
+                        contextFilterState,
+                    });
+                } }));
+        }
+        else if (expandedFilterDrawer === FilterDrawer.Tag) {
+            // Create filter UI
+            filterDrawer = (React__default["default"].createElement(TabBox, { title: "Tags" },
+                React__default["default"].createElement("div", null, "If any tags are selected, logs must contain at least one (but not necessarily all) of the selected tags."),
+                React__default["default"].createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys((_d = LogMetadata.Tag) !== null && _d !== void 0 ? _d : {})
+                    .map((tag) => {
+                    const description = genHumanReadableName(tag);
+                    return (React__default["default"].createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
+                            tagFilterState[tag] = checked;
+                            dispatch({
+                                type: ActionType$6.UpdateTagFilterState,
+                                tagFilterState,
+                            });
+                        } }));
+                }))));
+        }
+        else if (expandedFilterDrawer === FilterDrawer.Action) {
+            // Create filter UI
+            filterDrawer = (React__default["default"].createElement(React__default["default"].Fragment, null,
+                React__default["default"].createElement(TabBox, { title: "Log Type" },
+                    React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
+                            actionErrorFilterState.type = undefined;
+                            dispatch({
+                                type: ActionType$6.UpdateActionErrorFilterState,
+                                actionErrorFilterState,
+                            });
+                        }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
+                    React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
+                            actionErrorFilterState.type = LogType$1.Action;
+                            dispatch({
+                                type: ActionType$6.UpdateActionErrorFilterState,
+                                actionErrorFilterState,
+                            });
+                        }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
+                    React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
+                            actionErrorFilterState.type = LogType$1.Error;
+                            dispatch({
+                                type: ActionType$6.UpdateActionErrorFilterState,
+                                actionErrorFilterState,
+                            });
+                        }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
+                (actionErrorFilterState.type === undefined
+                    || actionErrorFilterState.type === LogType$1.Action) && (React__default["default"].createElement(TabBox, { title: "Action Log Details" },
+                    React__default["default"].createElement(ButtonInputGroup, { label: "Action", className: "mb-2", wrapButtonsAndAddGaps: true }, Object.keys(LogAction$1)
+                        .map((action) => {
+                        const description = genHumanReadableName(action);
+                        return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
+                                actionErrorFilterState.action[action] = checked;
                                 dispatch({
-                                    type: ActionType$6.UpdateTagFilterState,
-                                    tagFilterState,
+                                    type: ActionType$6.UpdateActionErrorFilterState,
+                                    actionErrorFilterState,
                                 });
                             } }));
-                    }))));
-            }
-            else if (expandedFilterDrawer === FilterDrawer.Action) {
-                // Create filter UI
-                filterDrawer = (React__default["default"].createElement(React__default["default"].Fragment, null,
-                    React__default["default"].createElement(TabBox, { title: "Log Type" },
-                        React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
-                                actionErrorFilterState.type = undefined;
+                    })),
+                    React__default["default"].createElement(ButtonInputGroup, { label: "Target", wrapButtonsAndAddGaps: true }, Object.keys(targetMap)
+                        .map((target) => {
+                        const description = genHumanReadableName(target);
+                        return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
+                                actionErrorFilterState.target[target] = checked;
                                 dispatch({
                                     type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
-                            }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
-                        React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
-                                actionErrorFilterState.type = LogType$1.Action;
+                            } }));
+                    })))),
+                (actionErrorFilterState.type === undefined
+                    || actionErrorFilterState.type === LogType$1.Error) && (React__default["default"].createElement(TabBox, { title: "Error Log Details" },
+                    React__default["default"].createElement("div", { className: "input-group mb-2" },
+                        React__default["default"].createElement("span", { className: "input-group-text" }, "Error Message"),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
+                                actionErrorFilterState.errorMessage = e.target.value;
                                 dispatch({
                                     type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
-                            }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
-                        React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
-                                actionErrorFilterState.type = LogType$1.Error;
+                            } })),
+                    React__default["default"].createElement("div", { className: "input-group mb-2" },
+                        React__default["default"].createElement("span", { className: "input-group-text" }, "Error Code"),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error code", value: actionErrorFilterState.errorCode, placeholder: "e.g. GC22", onChange: (e) => {
+                                actionErrorFilterState.errorCode = ((e.target.value)
+                                    .trim()
+                                    .toUpperCase());
                                 dispatch({
                                     type: ActionType$6.UpdateActionErrorFilterState,
                                     actionErrorFilterState,
                                 });
-                            }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
-                    (actionErrorFilterState.type === undefined
-                        || actionErrorFilterState.type === LogType$1.Action) && (React__default["default"].createElement(TabBox, { title: "Action Log Details" },
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Action", className: "mb-2", wrapButtonsAndAddGaps: true }, Object.keys(LogAction$1)
-                            .map((action) => {
-                            const description = genHumanReadableName(action);
-                            return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
-                                    actionErrorFilterState.action[action] = checked;
-                                    dispatch({
-                                        type: ActionType$6.UpdateActionErrorFilterState,
-                                        actionErrorFilterState,
-                                    });
-                                } }));
-                        })),
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Target", wrapButtonsAndAddGaps: true }, Object.keys(targetMap)
-                            .map((target) => {
-                            const description = genHumanReadableName(target);
-                            return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
-                                    actionErrorFilterState.target[target] = checked;
-                                    dispatch({
-                                        type: ActionType$6.UpdateActionErrorFilterState,
-                                        actionErrorFilterState,
-                                    });
-                                } }));
-                        })))),
-                    (actionErrorFilterState.type === undefined
-                        || actionErrorFilterState.type === LogType$1.Error) && (React__default["default"].createElement(TabBox, { title: "Error Log Details" },
+                            } }))))));
+        }
+        else if (expandedFilterDrawer === FilterDrawer.Advanced) {
+            // Create advanced filter ui
+            filterDrawer = (React__default["default"].createElement(React__default["default"].Fragment, null,
+                React__default["default"].createElement(TabBox, { title: "User" },
+                    React__default["default"].createElement("div", { className: "input-group mb-2" },
+                        React__default["default"].createElement("span", { className: "input-group-text" }, "User First Name"),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
+                                advancedFilterState.userFirstName = e.target.value;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } })),
+                    React__default["default"].createElement("div", { className: "input-group mb-2" },
+                        React__default["default"].createElement("span", { className: "input-group-text" }, "User Last Name"),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
+                                advancedFilterState.userLastName = e.target.value;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } })),
+                    React__default["default"].createElement("div", { className: "input-group mb-2" },
+                        React__default["default"].createElement("span", { className: "input-group-text" }, "User Email"),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user email", value: advancedFilterState.userEmail, placeholder: "e.g. calicci@fas.harvard.edu", onChange: (e) => {
+                                advancedFilterState.userEmail = ((e.target.value)
+                                    .trim());
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } })),
+                    React__default["default"].createElement("div", { className: "input-group mb-2" },
+                        React__default["default"].createElement("span", { className: "input-group-text" }, "User Canvas Id"),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user canvas id", value: advancedFilterState.userId, placeholder: "e.g. 104985", onChange: (e) => {
+                                const { value } = e.target;
+                                // Only update if value contains only numbers
+                                if (/^\d+$/.test(value)) {
+                                    advancedFilterState.userId = ((e.target.value)
+                                        .trim());
+                                }
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } })),
+                    React__default["default"].createElement(ButtonInputGroup, { label: "Role" },
+                        React__default["default"].createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
+                                advancedFilterState.includeLearners = checked;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
+                        React__default["default"].createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
+                                advancedFilterState.includeTTMs = checked;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
+                        React__default["default"].createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
+                                advancedFilterState.includeAdmins = checked;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
+                React__default["default"].createElement(TabBox, { title: "Course" },
+                    React__default["default"].createElement("div", { className: "input-group mb-2" },
+                        React__default["default"].createElement("span", { className: "input-group-text" }, "Course Name"),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
+                                advancedFilterState.courseName = e.target.value;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } })),
+                    React__default["default"].createElement("div", { className: "input-group mb-2" },
+                        React__default["default"].createElement("span", { className: "input-group-text" }, "Course Canvas Id"),
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course canvas id", value: advancedFilterState.courseId, placeholder: "e.g. 15948", onChange: (e) => {
+                                const { value } = e.target;
+                                // Only update if value contains only numbers
+                                if (/^\d+$/.test(value)) {
+                                    advancedFilterState.courseId = ((e.target.value)
+                                        .trim());
+                                }
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } }))),
+                React__default["default"].createElement(TabBox, { title: "Device" },
+                    React__default["default"].createElement(ButtonInputGroup, { label: "Device Type" },
+                        React__default["default"].createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
+                                advancedFilterState.isMobile = undefined;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } }),
+                        React__default["default"].createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
+                                advancedFilterState.isMobile = true;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } }),
+                        React__default["default"].createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
+                                advancedFilterState.isMobile = false;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            }, noMarginOnRight: true }))),
+                React__default["default"].createElement(TabBox, { title: "Source" },
+                    React__default["default"].createElement(ButtonInputGroup, { label: "Source Type" },
+                        React__default["default"].createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
+                                advancedFilterState.source = undefined;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } }),
+                        React__default["default"].createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
+                                advancedFilterState.source = LogSource$1.Client;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            } }),
+                        React__default["default"].createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
+                                advancedFilterState.source = LogSource$1.Server;
+                                dispatch({
+                                    type: ActionType$6.UpdateAdvancedFilterState,
+                                    advancedFilterState,
+                                });
+                            }, noMarginOnRight: true })),
+                    advancedFilterState.source !== LogSource$1.Client && (React__default["default"].createElement("div", { className: "mt-2" },
                         React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "Error Message"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
-                                    actionErrorFilterState.errorMessage = e.target.value;
-                                    dispatch({
-                                        type: ActionType$6.UpdateActionErrorFilterState,
-                                        actionErrorFilterState,
-                                    });
-                                } })),
-                        React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "Error Code"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error code", value: actionErrorFilterState.errorCode, placeholder: "e.g. GC22", onChange: (e) => {
-                                    actionErrorFilterState.errorCode = ((e.target.value)
-                                        .trim()
-                                        .toUpperCase());
-                                    dispatch({
-                                        type: ActionType$6.UpdateActionErrorFilterState,
-                                        actionErrorFilterState,
-                                    });
-                                } }))))));
-            }
-            else if (expandedFilterDrawer === FilterDrawer.Advanced) {
-                // Create advanced filter ui
-                filterDrawer = (React__default["default"].createElement(React__default["default"].Fragment, null,
-                    React__default["default"].createElement(TabBox, { title: "User" },
-                        React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "User First Name"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
-                                    advancedFilterState.userFirstName = e.target.value;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } })),
-                        React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "User Last Name"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
-                                    advancedFilterState.userLastName = e.target.value;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } })),
-                        React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "User Email"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user email", value: advancedFilterState.userEmail, placeholder: "e.g. calicci@fas.harvard.edu", onChange: (e) => {
-                                    advancedFilterState.userEmail = ((e.target.value)
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Path"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route path", value: advancedFilterState.routePath, placeholder: "e.g. /api/ttm/courses/12345", onChange: (e) => {
+                                    advancedFilterState.courseName = ((e.target.value)
                                         .trim());
                                     dispatch({
                                         type: ActionType$6.UpdateAdvancedFilterState,
@@ -5083,405 +5191,30 @@ const LogReviewer = (props) => {
                                     });
                                 } })),
                         React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "User Canvas Id"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user canvas id", value: advancedFilterState.userId, placeholder: "e.g. 104985", onChange: (e) => {
-                                    const { value } = e.target;
-                                    // Only update if value contains only numbers
-                                    if (/^\d+$/.test(value)) {
-                                        advancedFilterState.userId = ((e.target.value)
-                                            .trim());
-                                    }
+                            React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Template"),
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route template", value: advancedFilterState.routeTemplate, placeholder: "e.g. /api/ttm/courses/:courseId", onChange: (e) => {
+                                    advancedFilterState.courseName = ((e.target.value)
+                                        .trim());
                                     dispatch({
                                         type: ActionType$6.UpdateAdvancedFilterState,
                                         advancedFilterState,
                                     });
-                                } })),
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Role" },
-                            React__default["default"].createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
-                                    advancedFilterState.includeLearners = checked;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
-                            React__default["default"].createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
-                                    advancedFilterState.includeTTMs = checked;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
-                            React__default["default"].createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
-                                    advancedFilterState.includeAdmins = checked;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
-                    React__default["default"].createElement(TabBox, { title: "Course" },
-                        React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "Course Name"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
-                                    advancedFilterState.courseName = e.target.value;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } })),
-                        React__default["default"].createElement("div", { className: "input-group mb-2" },
-                            React__default["default"].createElement("span", { className: "input-group-text" }, "Course Canvas Id"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course canvas id", value: advancedFilterState.courseId, placeholder: "e.g. 15948", onChange: (e) => {
-                                    const { value } = e.target;
-                                    // Only update if value contains only numbers
-                                    if (/^\d+$/.test(value)) {
-                                        advancedFilterState.courseId = ((e.target.value)
-                                            .trim());
-                                    }
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } }))),
-                    React__default["default"].createElement(TabBox, { title: "Device" },
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Device Type" },
-                            React__default["default"].createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
-                                    advancedFilterState.isMobile = undefined;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } }),
-                            React__default["default"].createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
-                                    advancedFilterState.isMobile = true;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } }),
-                            React__default["default"].createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
-                                    advancedFilterState.isMobile = false;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                }, noMarginOnRight: true }))),
-                    React__default["default"].createElement(TabBox, { title: "Source" },
-                        React__default["default"].createElement(ButtonInputGroup, { label: "Source Type" },
-                            React__default["default"].createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
-                                    advancedFilterState.source = undefined;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } }),
-                            React__default["default"].createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
-                                    advancedFilterState.source = LogSource$1.Client;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                } }),
-                            React__default["default"].createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
-                                    advancedFilterState.source = LogSource$1.Server;
-                                    dispatch({
-                                        type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
-                                    });
-                                }, noMarginOnRight: true })),
-                        advancedFilterState.source !== LogSource$1.Client && (React__default["default"].createElement("div", { className: "mt-2" },
-                            React__default["default"].createElement("div", { className: "input-group mb-2" },
-                                React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Path"),
-                                React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route path", value: advancedFilterState.routePath, placeholder: "e.g. /api/ttm/courses/12345", onChange: (e) => {
-                                        advancedFilterState.courseName = ((e.target.value)
-                                            .trim());
-                                        dispatch({
-                                            type: ActionType$6.UpdateAdvancedFilterState,
-                                            advancedFilterState,
-                                        });
-                                    } })),
-                            React__default["default"].createElement("div", { className: "input-group mb-2" },
-                                React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Template"),
-                                React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route template", value: advancedFilterState.routeTemplate, placeholder: "e.g. /api/ttm/courses/:courseId", onChange: (e) => {
-                                        advancedFilterState.courseName = ((e.target.value)
-                                            .trim());
-                                        dispatch({
-                                            type: ActionType$6.UpdateAdvancedFilterState,
-                                            advancedFilterState,
-                                        });
-                                    } })))))));
-            }
+                                } })))))));
         }
-        // Filters UI
-        const filters = (React__default["default"].createElement(React__default["default"].Fragment, null,
-            filterToggles,
-            filterDrawer && (React__default["default"].createElement(Drawer, { customBackgroundColor: "#eee" }, filterDrawer))));
-        // Actually filter the logs
-        // > Perform filters
-        const logs = [];
-        Object.keys(logMap).forEach((year) => {
-            Object.keys(logMap[year]).forEach((month) => {
-                logMap[year][month].forEach((log) => {
-                    /* ----------- Date Filter ---------- */
-                    var _a;
-                    // Before start date
-                    if (
-                    // Previous year
-                    log.year < dateFilterState.startDate.year
-                        // Same year, earlier month
-                        || ((log.year === dateFilterState.startDate.year)
-                            && (log.month < dateFilterState.startDate.month))
-                        // Same year, same month, earlier day
-                        || ((log.year === dateFilterState.startDate.year)
-                            && (log.month === dateFilterState.startDate.month)
-                            && (log.day < dateFilterState.startDate.day))) {
-                        return;
-                    }
-                    // After end date
-                    if (
-                    // Later year
-                    log.year > dateFilterState.endDate.year
-                        // Same year, later month
-                        || ((log.year === dateFilterState.endDate.year)
-                            && (log.month > dateFilterState.endDate.month))
-                        // Same year, same month, later day
-                        || ((log.year === dateFilterState.endDate.year)
-                            && (log.month === dateFilterState.endDate.month)
-                            && (log.day > dateFilterState.endDate.day))) {
-                        return;
-                    }
-                    /* --------- Context Filter --------- */
-                    // Context doesn't match
-                    if (
-                    // Whole context is deselected
-                    contextFilterState[log.context] === false
-                        // None of the subcontexts are selected
-                        || (
-                        // Has subcontexts
-                        typeof contextFilterState[log.context] !== 'boolean'
-                            // None of the subcontexts are selected
-                            && Object.values((_a = contextFilterState[log.context]) !== null && _a !== void 0 ? _a : {})
-                                .every((isSelected) => {
-                                return !isSelected;
-                            }))) {
-                        return;
-                    }
-                    // Subcontext doesn't match
-                    if (
-                    // Log context is not "uncategorized" (no point in further filters)
-                    log.context !== LogBuiltInMetadata.Context.Uncategorized
-                        // Log has a subcontext
-                        && log.subcontext
-                        // Context has subcontexts
-                        && (contextFilterState[log.context]
-                            && contextFilterState[log.context] !== false
-                            && contextFilterState[log.context] !== true)
-                        // Subcontext is not selected
-                        && !contextFilterState[log.context][log.subcontext]) {
-                        return;
-                    }
-                    /* -------------- Tags -------------- */
-                    // No tags match
-                    if (
-                    // At least one tag is required
-                    Object.values(tagFilterState)
-                        .filter((isSelected) => {
-                        return isSelected;
-                    })
-                        .length > 0
-                        // No tags match
-                        && log.tags.every((tag) => {
-                            return !tagFilterState[tag];
-                        })) {
-                        return;
-                    }
-                    /* ------- Actions and Errors ------- */
-                    // Log type doesn't match
-                    if (
-                    // Filter won't allow all types
-                    actionErrorFilterState.type !== undefined
-                        // Log type doesn't match
-                        && actionErrorFilterState.type !== log.type) {
-                        return;
-                    }
-                    // Filter errors
-                    if (log.type === LogType$1.Error) {
-                        // Message doesn't match
-                        if (
-                        // Message exists
-                        log.errorMessage
-                            // Message filter exists
-                            && actionErrorFilterState.errorMessage.trim().length > 0
-                            // Message doesn't match
-                            && log.errorMessage.toLowerCase().includes(actionErrorFilterState.errorMessage.trim().toLowerCase())) {
-                            return;
-                        }
-                        // Code doesn't match
-                        if (
-                        // Code exists
-                        log.errorCode
-                            // Code filter exists
-                            && actionErrorFilterState.errorCode.trim().length > 0
-                            // Code doesn't match
-                            && log.errorCode.toUpperCase().includes(actionErrorFilterState.errorCode.trim().toUpperCase())) {
-                            return;
-                        }
-                    }
-                    // Filter actions
-                    if (log.type === LogType$1.Action) {
-                        // Target isn't selected
-                        if (
-                        // Target exists
-                        log.target
-                            // Target isn't selected
-                            && !actionErrorFilterState.target[log.target]) {
-                            return;
-                        }
-                        // Action
-                        if (
-                        // Action exists
-                        log.action
-                            // Action isn't selected
-                            && !actionErrorFilterState.action[log.action]) {
-                            return;
-                        }
-                    }
-                    /* --------- Advanced Filter -------- */
-                    // First name doesn't match
-                    if (
-                    // First name exists
-                    log.userFirstName
-                        // First name query doesn't match
-                        && !log.userFirstName.toLowerCase().includes(advancedFilterState.userFirstName.toLowerCase().trim())) {
-                        return;
-                    }
-                    // Last name doesn't match
-                    if (
-                    // Last name exists
-                    log.userLastName
-                        // Last name query doesn't match
-                        && !log.userLastName.toLowerCase().includes(advancedFilterState.userLastName.toLowerCase().trim())) {
-                        return;
-                    }
-                    // Email doesn't match
-                    if (
-                    // Email exists
-                    log.userEmail
-                        // Email query doesn't match
-                        && !log.userEmail.toLowerCase().includes(advancedFilterState.userEmail.toLowerCase().trim())) {
-                        return;
-                    }
-                    // User id doesn't match
-                    if (
-                    // User id exists
-                    log.userId
-                        // User id doesn't match
-                        && !String(log.userId).includes(advancedFilterState.userId.trim())) {
-                        return;
-                    }
-                    // Learner not allowed
-                    if (
-                    // User is a learner
-                    log.isLearner
-                        // Learners aren't included
-                        && !advancedFilterState.includeLearners) {
-                        return;
-                    }
-                    // TTM not allowed
-                    if (
-                    // User is a ttm
-                    log.isTTM
-                        // TTMs aren't included
-                        && !advancedFilterState.includeTTMs) {
-                        return;
-                    }
-                    // Admin not allowed
-                    if (
-                    // User is an admin
-                    log.isAdmin
-                        // Admins aren't included
-                        && !advancedFilterState.includeAdmins) {
-                        return;
-                    }
-                    // Course Id doesn't match
-                    if (
-                    // Course Id exists
-                    log.courseId
-                        // Course Id doesn't match
-                        && !String(log.courseId).includes(advancedFilterState.courseId.trim())) {
-                        return;
-                    }
-                    // Course name doesn't match
-                    if (
-                    // Course name exists
-                    log.courseName
-                        // Course name doesn't match
-                        && !String(log.courseName).includes(advancedFilterState.courseName.trim())) {
-                        return;
-                    }
-                    // Mobile filter doesn't match
-                    if (
-                    // Mobile filter exists
-                    advancedFilterState.isMobile !== undefined
-                        // Device info exists
-                        && log.device
-                        // Mobile filter doesn't match
-                        && (advancedFilterState.isMobile !== log.device.isMobile)) {
-                        return;
-                    }
-                    // Log source doesn't match
-                    if (
-                    // Source filter exists
-                    advancedFilterState.source !== undefined
-                        // Source info exists
-                        && log.source
-                        // Source filter doesn't match
-                        && (advancedFilterState.source !== log.source)) {
-                        return;
-                    }
-                    // Route path doesn't match (Only for server source)
-                    if (
-                    // Source is server
-                    (log.source === LogSource$1.Server)
-                        // Route path is being filtered
-                        && (advancedFilterState.routePath.trim().length)
-                        // Route path doesn't match
-                        && !(log.routePath.includes(advancedFilterState.routePath.trim()))) {
-                        return;
-                    }
-                    // Route template doesn't match (Only for server source)
-                    if (
-                    // Source is server
-                    (log.source === LogSource$1.Server)
-                        // Route template is being filtered
-                        && (advancedFilterState.routeTemplate.trim().length)
-                        // Route template doesn't match
-                        && !(log.routeTemplate.includes(advancedFilterState.routeTemplate.trim()))) {
-                        return;
-                    }
-                    /* -------------- Done -------------- */
-                    // Made it past all filters. Add to the list
-                    logs.push(log);
-                });
-            });
-        });
-        /*----------------------------------------*/
-        /* ---------------- Data ---------------- */
-        /*----------------------------------------*/
-        // Nothing to show notice
-        const noLogsNotice = (logs.length === 0
-            ? (React__default["default"].createElement("div", { className: "alert alert-warning text-center mt-2" },
-                React__default["default"].createElement("h4", { className: "m-1" }, "No Logs to Show"),
-                React__default["default"].createElement("div", null, "Either your filters are too strict or no matching logs have been created yet.")))
-            : undefined);
-        // Create intelliTable
-        const dataTable = (React__default["default"].createElement(IntelliTable, { title: "Matching Logs:", csvName: `Logs from ${getHumanReadableDate()}`, id: "logs", data: logs, columns: columns }));
-        // Main body
-        body = (React__default["default"].createElement(React__default["default"].Fragment, null,
-            filters,
-            React__default["default"].createElement("div", { className: "mt-2" },
-                dataTable,
-                noLogsNotice)));
     }
+    // Filters UI
+    const filters = (React__default["default"].createElement(React__default["default"].Fragment, null,
+        filterToggles,
+        filterDrawer && (React__default["default"].createElement(Drawer, { customBackgroundColor: "#eee" }, filterDrawer))));
+    // Main body
+    body = (React__default["default"].createElement(React__default["default"].Fragment, null,
+        filters,
+        React__default["default"].createElement("div", { className: "mt-2" },
+            React__default["default"].createElement(IntelliTable, { title: "Matching Logs:", csvName: `Logs from ${getHumanReadableDate()}`, id: "logs", data: logs, columns: columns }),
+            logs.length === 0 && (React__default["default"].createElement("div", { className: "alert alert-warning text-center mt-2" },
+                React__default["default"].createElement("h4", { className: "m-1" }, "No Logs to Show"),
+                React__default["default"].createElement("div", null, "Either your filters are too strict or no matching logs have been created yet."))),
+            paginationControls)));
     /* ---------- Wrap in Modal --------- */
     return (React__default["default"].createElement("div", { className: "LogReviewer-outer-container" },
         React__default["default"].createElement("style", null, style$2),
