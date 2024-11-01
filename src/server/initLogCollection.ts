@@ -14,6 +14,11 @@ const initLogCollection = (Collection: any) => {
         'context',
         'subcontext',
         'tags',
+        'year',
+        'month',
+        'day',
+        'hour',
+        'type',
       ],
     },
   );
