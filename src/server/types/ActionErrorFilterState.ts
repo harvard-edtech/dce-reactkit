@@ -1,4 +1,4 @@
-import LogType from './LogType';
+import LogType from '../../types/LogType';
 
 // Action filter state (only relevant for action logs)
 type ActionErrorFilterState = {

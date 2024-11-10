@@ -13,11 +13,11 @@ import genRouteHandler from '../helpers/genRouteHandler';
 import LogFunction from '../types/LogFunction';
 import ParamType from '../types/ParamType';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
-import DateFilterState from '../types/DateFilterState';
-import ContextFilterState from '../types/ContextFilterState';
-import TagFilterState from '../types/TagFilterState';
-import ActionErrorFilterState from '../types/ActionErrorFilterState';
-import AdvancedFilterState from '../types/AdvancedFilterState';
+import DateFilterState from './types/DateFilterState';
+import ContextFilterState from './types/ContextFilterState';
+import TagFilterState from './types/TagFilterState';
+import ActionErrorFilterState from './types/ActionErrorFilterState';
+import AdvancedFilterState from './types/AdvancedFilterState';
 import LogType from '../types/LogType';
 
 // Types
