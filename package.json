@@ -7,7 +7,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && rollup -c",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "copy-server-types": "rm -rf ./src/client/types/from-server; cp -r ./src/server/types ./src/client/types/from-server"
   },
   "jest": {
     "preset": "ts-jest",
