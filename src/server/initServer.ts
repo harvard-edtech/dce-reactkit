@@ -10,10 +10,15 @@ import LOG_REVIEW_STATUS_ROUTE from '../constants/LOG_REVIEW_STATUS_ROUTE';
 import genRouteHandler from '../helpers/genRouteHandler';
 
 // Import shared types
-import Log from '../types/Log';
 import LogFunction from '../types/LogFunction';
 import ParamType from '../types/ParamType';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
+import DateFilterState from './types/DateFilterState';
+import ContextFilterState from './types/ContextFilterState';
+import TagFilterState from './types/TagFilterState';
+import ActionErrorFilterState from './types/ActionErrorFilterState';
+import AdvancedFilterState from './types/AdvancedFilterState';
+import LogType from '../types/LogType';
 
 // Types
 type GetLaunchInfoFunction = (req: any) => {
@@ -234,29 +239,39 @@ const initServer = (
   );
 
   /**
-   * Get all logs for a certain month
-   * @author Gabe Abrams
-   * @param {number} year the year to query (e.g. 2022)
-   * @param {number} month the month to query (e.g. 1 = January)
-   * @returns {Log[]} list of logs from the given month
-   */
+ * Get filtered logs based on provided filters
+ * @author Gabe Abrams, Yuen Ler Chow
+ * @returns {Log[]} list of logs that match the filters
+ */
   opts.app.get(
-    `${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`,
+    `${LOG_REVIEW_ROUTE_PATH_PREFIX}`,
     genRouteHandler({
       paramTypes: {
-        year: ParamType.Int,
-        month: ParamType.Int,
         pageNumber: ParamType.Int,
+        filters: ParamType.JSON,
       },
       handler: async ({ params }) => {
-        // Get user info
+      // Get user info
         const {
-          year,
-          month,
           pageNumber,
           userId,
           isAdmin,
+          filters,
         } = params;
+
+        const {
+          dateFilterState,
+          contextFilterState,
+          tagFilterState,
+          actionErrorFilterState,
+          advancedFilterState,
+        } = filters as {
+          dateFilterState: DateFilterState,
+          contextFilterState: ContextFilterState,
+          tagFilterState: TagFilterState,
+          actionErrorFilterState: ActionErrorFilterState,
+          advancedFilterState: AdvancedFilterState,
+        };
 
         // Validate user
         const canReview = await canReviewLogs(userId, isAdmin);
@@ -267,13 +282,155 @@ const initServer = (
           );
         }
 
+        // Build MongoDB query based on filters
+        const query: { [k: string]: any } = {};
+
+        /* -------------- Date Filter ------------- */
+        // Convert start and end dates from the dateFilterState into timestamps
+        const { startDate, endDate } = dateFilterState;
+        const startTimestamp = new Date(startDate.year, startDate.month - 1, startDate.day).getTime();
+        const endTimestamp = new Date(endDate.year, endDate.month - 1, endDate.day + 1).getTime() - 1;
+
+        // Add a date range condition to the query
+        query.timestamp = {
+          $gte: startTimestamp,
+          $lte: endTimestamp,
+        };
+
+        /* ------------ Context Filter ------------ */
+        // Process context filters to include selected contexts and subcontexts
+        const selectedContexts: string[] = [];
+        const selectedSubcontexts: string[] = [];
+
+        Object.keys(contextFilterState).forEach((context) => {
+          const value = contextFilterState[context];
+          if (typeof value === 'boolean') {
+            if (value) {
+              selectedContexts.push(context);
+            }
+          } else {
+            // At least one subcontext is selected
+            if (Object.values(value).some((subcontextValue) => { return subcontextValue; })) {
+              selectedContexts.push(context);
+            }
+            // Add all selected subcontexts
+            Object.keys(value).forEach((subcontext) => {
+              if (value[subcontext]) {
+                selectedSubcontexts.push(subcontext);
+              }
+            });
+          }
+        });
+
+        // Add context and subcontext conditions to the query if any are selected
+        if (selectedContexts.length > 0) {
+          query.context = { $in: selectedContexts };
+        }
+
+        if (selectedSubcontexts.length > 0) {
+          query.subcontext = { $in: selectedSubcontexts };
+        }
+
+        /* -------------- Tag Filter -------------- */
+        const selectedTags = Object.keys(tagFilterState).filter((tag) => { return tagFilterState[tag]; });
+        if (selectedTags.length > 0) {
+          query.tags = { $in: selectedTags };
+        }
+
+        /* --------- Action/Error Filter ---------- */
+        if (actionErrorFilterState.type) {
+          query.type = actionErrorFilterState.type;
+        }
+
+        if (actionErrorFilterState.type === LogType.Error) {
+          if (actionErrorFilterState.errorMessage) {
+            // Add error message to the query.
+            // $i is used for case-insensitive search, and $regex is used for partial matching
+            query.errorMessage = { $regex: actionErrorFilterState.errorMessage, $options: 'i' };
+          }
+
+          if (actionErrorFilterState.errorCode) {
+            query.errorCode = { $regex: actionErrorFilterState.errorCode, $options: 'i' };
+          }
+        }
+
+        if (actionErrorFilterState.type === LogType.Action) {
+          const selectedTargets = Object.keys(actionErrorFilterState.target).filter(
+            (target) => { return actionErrorFilterState.target[target]; },
+          );
+          const selectedActions = Object.keys(actionErrorFilterState.action).filter(
+            (action) => { return actionErrorFilterState.action[action]; },
+          );
+          if (selectedTargets.length > 0) {
+            query.target = { $in: selectedTargets };
+          }
+          if (selectedActions.length > 0) {
+            query.action = { $in: selectedActions };
+          }
+        }
+
+        /* ------------ Advanced Filter ----------- */
+        if (advancedFilterState.userFirstName) {
+          query.userFirstName = { $regex: advancedFilterState.userFirstName, $options: 'i' };
+        }
+
+        if (advancedFilterState.userLastName) {
+          query.userLastName = { $regex: advancedFilterState.userLastName, $options: 'i' };
+        }
+
+        if (advancedFilterState.userEmail) {
+          query.userEmail = { $regex: advancedFilterState.userEmail, $options: 'i' };
+        }
+
+        if (advancedFilterState.userId) {
+          query.userId = Number.parseInt(advancedFilterState.userId, 10);
+        }
+
+        const roles = [];
+        if (advancedFilterState.includeLearners) {
+          roles.push({ isLearner: true });
+        }
+        if (advancedFilterState.includeTTMs) {
+          roles.push({ isTTM: true });
+        }
+        if (advancedFilterState.includeAdmins) {
+          roles.push({ isAdmin: true });
+        }
+        // If any roles are selected, add them to the query
+        if (roles.length > 0) {
+          // The $or operator is used to match any of the roles
+          // The $and operator is to ensure that other conditions in the query are met
+          query.$and = [{ $or: roles }];
+        }
+
+        if (advancedFilterState.courseId) {
+          query.courseId = Number.parseInt(advancedFilterState.courseId, 10);
+        }
+
+        if (advancedFilterState.courseName) {
+          query.courseName = { $regex: advancedFilterState.courseName, $options: 'i' };
+        }
+
+        if (advancedFilterState.isMobile !== undefined) {
+          query['device.isMobile'] = Boolean(advancedFilterState.isMobile);
+        }
+
+        if (advancedFilterState.source) {
+          query.source = advancedFilterState.source;
+        }
+
+        if (advancedFilterState.routePath) {
+          query.routePath = { $regex: advancedFilterState.routePath, $options: 'i' };
+        }
+
+        if (advancedFilterState.routeTemplate) {
+          query.routeTemplate = { $regex: advancedFilterState.routeTemplate, $options: 'i' };
+        }
+
         // Query for logs
         const response = await _logCollection.findPaged({
-          query: {
-            year,
-            month,
-          },
-          perPage: 1000,
+          query,
+          perPage: 50,
           pageNumber,
         });
 
