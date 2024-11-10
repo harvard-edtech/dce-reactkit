@@ -404,7 +404,7 @@ const initServer = (
         }
 
         if (advancedFilterState.courseId) {
-          query.courseId = parseInt(advancedFilterState.courseId, 10);
+          query.courseId = Number.parseInt(advancedFilterState.courseId, 10);
         }
 
         if (advancedFilterState.courseName) {
