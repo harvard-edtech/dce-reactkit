@@ -250,9 +250,9 @@ let setPromptInfo: (
   | undefined
   | {
     title: string;
-    text: string;
     currentInputFieldText: string,
     opts: {
+      textAboveInputField?: string;
       placeholder?: string,
       defaultText?: string,
       confirmButtonText?: string,
@@ -261,6 +261,7 @@ let setPromptInfo: (
       cancelButtonVariant?: Variant,
       minNumChars?: number,
       findValidationError?: (text: string) => string | undefined,
+      ariaLabel?: string,
     },
   },
 ) => void;
@@ -284,8 +285,8 @@ let onPromptClosed: (result: string | null) => void;
  */
 export const prompt = async (
   title: string,
-  text: string,
   opts?: {
+    textAboveInputField?: string,
     defaultText?: string,
     placeholder?: string,
     confirmButtonText?: string,
@@ -294,6 +295,7 @@ export const prompt = async (
     cancelButtonVariant?: Variant,
     minNumChars?: number,
     findValidationError?: (text: string) => string | undefined,
+    ariaLabel?: string,
   },
 ): Promise<string | null> => {
   // Wait for helper to exist
@@ -307,7 +309,7 @@ export const prompt = async (
     while (!resultPassesValidation) {
       // eslint-disable-next-line no-alert
       const result = window.prompt(
-        `${title}\n\n${text}`,
+        `${title}\n\n${opts?.textAboveInputField ?? ''}`,
         opts?.defaultText ?? '',
       );
 
@@ -350,7 +352,6 @@ export const prompt = async (
     // Show the prompt
     setPromptInfo({
       title,
-      text,
       currentInputFieldText: (opts?.defaultText ?? ''),
       opts: (opts ?? {}),
     });
@@ -587,9 +588,9 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   | undefined
   | {
     title: string,
-    text: string,
     currentInputFieldText: string,
     opts: {
+      textAboveInputField?: string,
       placeholder?: string,
       defaultText?: string,
       confirmButtonText?: string,
@@ -598,6 +599,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
       cancelButtonVariant?: Variant,
       minNumChars?: number,
       findValidationError?: (text: string) => string | undefined,
+      ariaLabel?: string,
     }
   }
   >(undefined);
@@ -690,7 +692,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
     modal = (
       <ModalForWrapper
-        key={`prompt-${promptInfo.title}-${promptInfo.text}`}
+        key={`prompt-${promptInfo.title}`}
         title={promptInfo.title}
         // Don't show ok button if there is a validation error
         type={(
@@ -718,11 +720,12 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         onTopOfOtherModals
         dontAllowBackdropExit
       >
-        <div className="p-3">
-          <p>{promptInfo.text}</p>
+        <div>
+          <p>{promptInfo.opts.textAboveInputField}</p>
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control"
+            aria-label={promptInfo.opts.ariaLabel}
             placeholder={promptInfo.opts.placeholder}
             value={promptInfo.currentInputFieldText}
             onChange={(e) => {
@@ -731,6 +734,8 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
                 currentInputFieldText: e.target.value,
               });
             }}
+            // eslint-disable-next-line jsx-a11y/no-autofocus
+            autoFocus
           />
           {minNumCharsValidationError && (
           <div className="text-danger fw-bold mt-2">
