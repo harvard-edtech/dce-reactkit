@@ -41,11 +41,11 @@ import IntelliTableColumn from '../types/IntelliTableColumn';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 import LogMetadataContextMap from '../types/LogMetadataContextMap';
 import LogMetadataTargetMap from '../types/LogMetadataTargetMap';
-import DateFilterState from '../types/DateFilterState';
-import ContextFilterState from '../types/ContextFilterState';
-import TagFilterState from '../types/TagFilterState';
-import ActionErrorFilterState from '../types/ActionErrorFilterState';
-import AdvancedFilterState from '../types/AdvancedFilterState';
+import DateFilterState from '../client/types/from-server/DateFilterState';
+import ContextFilterState from '../client/types/from-server/ContextFilterState';
+import TagFilterState from '../client/types/from-server/TagFilterState';
+import ActionErrorFilterState from '../client/types/from-server/ActionErrorFilterState';
+import AdvancedFilterState from '../client/types/from-server/AdvancedFilterState';
 
 // Import shared components
 import SimpleDateChooser from './SimpleDateChooser';
