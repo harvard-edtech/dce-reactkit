@@ -41,6 +41,11 @@ import IntelliTableColumn from '../types/IntelliTableColumn';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 import LogMetadataContextMap from '../types/LogMetadataContextMap';
 import LogMetadataTargetMap from '../types/LogMetadataTargetMap';
+import DateFilterState from '../types/DateFilterState';
+import ContextFilterState from '../types/ContextFilterState';
+import TagFilterState from '../types/TagFilterState';
+import ActionErrorFilterState from '../types/ActionErrorFilterState';
+import AdvancedFilterState from '../types/AdvancedFilterState';
 
 // Import shared components
 import SimpleDateChooser from './SimpleDateChooser';
@@ -84,93 +89,6 @@ enum FilterDrawer {
   Action = 'action',
   Advanced = 'advanced',
 }
-
-// Date filter state
-type DateFilterState = {
-  // Current start date
-  startDate: {
-    // Full year
-    year: number,
-    // 1-indexed month
-    month: number,
-    // 1-indexed day
-    day: number,
-  },
-  // Current end date
-  endDate: {
-    // Full year
-    year: number,
-    // 1-indexed month
-    month: number,
-    // 1-indexed day
-    day: number,
-  },
-};
-
-// Context filter state
-type ContextFilterState = {
-  [k: string]: (
-    // No subcontexts
-    | boolean // True if selected
-    // Includes subcontexts
-    | {
-      [k: string]: boolean // True if selected
-    }
-  )
-};
-
-// Tag filter state
-type TagFilterState = {
-  [k: string]: boolean // tag => true if in the list of tags to show
-};
-
-// Action filter state (only relevant for action logs)
-type ActionErrorFilterState = {
-  // Required type of log
-  type: LogType | undefined, // If undefined, no filter applied
-  // Query for error message (only relevant if type is error)
-  errorMessage: string, // If empty, no filter applied
-  // Query for error code (only relevant if type is error)
-  errorCode: string, // If empty, no filter applied
-  // Action targets to include (only relevant if type is action)
-  target: {
-    [k: string]: boolean
-  },
-  // Action types to include (only relevant if type is action)
-  action: {
-    [k: string]: boolean
-  },
-};
-
-// Advanced filter state
-type AdvancedFilterState = {
-  // Query for user first name (case insensitive)
-  userFirstName: string, // If empty, no filter applied
-  // Query for user last name (case insensitive)
-  userLastName: string, // If empty, no filter applied
-  // Query for user email (case insensitive)
-  userEmail: string, // If empty, no filter applied
-  // Match for userId (numerical)
-  userId: string, // If empty, no filter applied
-  // If true, include students
-  includeLearners: boolean,
-  // If true, include ttms
-  includeTTMs: boolean,
-  // If true, include admins
-  includeAdmins: boolean,
-  // Match for courseId (numerical)
-  courseId: string, // If empty, no filter applied
-  // Query for course name (case insensitive)
-  courseName: string, // If empty, no filter applied
-  // Required isMobile value
-  isMobile: (true | false | undefined), // If undefined, no filter applied
-  // Required log source value
-  source: LogSource | undefined, // If undefined, no filter applied
-  // Query for route path (only relevant if source is server)
-  routePath: string, // If empty, no filter applied
-  // Query for route template (only relevant if source is server)
-  routeTemplate: string, // If empty, no filter applied
-};
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */

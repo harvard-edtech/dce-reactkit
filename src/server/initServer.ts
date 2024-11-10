@@ -10,10 +10,15 @@ import LOG_REVIEW_STATUS_ROUTE from '../constants/LOG_REVIEW_STATUS_ROUTE';
 import genRouteHandler from '../helpers/genRouteHandler';
 
 // Import shared types
-import Log from '../types/Log';
 import LogFunction from '../types/LogFunction';
 import ParamType from '../types/ParamType';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
+import DateFilterState from '../types/DateFilterState';
+import ContextFilterState from '../types/ContextFilterState';
+import TagFilterState from '../types/TagFilterState';
+import ActionErrorFilterState from '../types/ActionErrorFilterState';
+import AdvancedFilterState from '../types/AdvancedFilterState';
+import LogType from '../types/LogType';
 
 // Types
 type GetLaunchInfoFunction = (req: any) => {
@@ -254,6 +259,20 @@ const initServer = (
           filters,
         } = params;
 
+        const {
+          dateFilterState,
+          contextFilterState,
+          tagFilterState,
+          actionErrorFilterState,
+          advancedFilterState,
+        } = filters as {
+          dateFilterState: DateFilterState,
+          contextFilterState: ContextFilterState,
+          tagFilterState: TagFilterState,
+          actionErrorFilterState: ActionErrorFilterState,
+          advancedFilterState: AdvancedFilterState,
+        };
+
         // Validate user
         const canReview = await canReviewLogs(userId, isAdmin);
         if (!canReview) {
@@ -264,68 +283,78 @@ const initServer = (
         }
 
         // Build MongoDB query based on filters
-        const query: any = {};
+        const query: { [k: string]: any } = {};
 
         /* -------------- Date Filter ------------- */
-        const { startDate, endDate } = filters.dateFilterState;
+        // Convert start and end dates from the dateFilterState into timestamps
+        const { startDate, endDate } = dateFilterState;
         const startTimestamp = new Date(startDate.year, startDate.month - 1, startDate.day).getTime();
         const endTimestamp = new Date(endDate.year, endDate.month - 1, endDate.day + 1).getTime() - 1;
 
+        // Add a date range condition to the query
         query.timestamp = {
           $gte: startTimestamp,
           $lte: endTimestamp,
         };
 
         /* ------------ Context Filter ------------ */
-        const { contextFilterState } = filters;
-        const contextConditions: any[] = [];
+        // Process context filters to include selected contexts and subcontexts
+        const selectedContexts: string[] = [];
+        const selectedSubcontexts: string[] = [];
 
         Object.keys(contextFilterState).forEach((context) => {
           const value = contextFilterState[context];
           if (typeof value === 'boolean') {
             if (value) {
-              // The entire context is selected
-              contextConditions.push({ context });
+              selectedContexts.push(context);
             }
           } else {
-            // The context has subcontexts
-            const subcontexts = Object.keys(value).filter((subcontext) => { return value[subcontext]; });
-            if (subcontexts.length > 0) {
-              contextConditions.push({
-                context,
-                subcontext: { $in: subcontexts },
-              });
+            // At least one subcontext is selected
+            if (Object.values(value).some((subcontextValue) => { return subcontextValue; })) {
+              selectedContexts.push(context);
             }
+            // Add all selected subcontexts
+            Object.keys(value).forEach((subcontext) => {
+              if (value[subcontext]) {
+                selectedSubcontexts.push(subcontext);
+              }
+            });
           }
         });
 
-        if (contextConditions.length > 0) {
-          query.$or = contextConditions;
+        // Add context and subcontext conditions to the query if any are selected
+        if (selectedContexts.length > 0) {
+          query.context = { $in: selectedContexts };
+        }
+
+        if (selectedSubcontexts.length > 0) {
+          query.subcontext = { $in: selectedSubcontexts };
         }
 
         /* -------------- Tag Filter -------------- */
-        const { tagFilterState } = filters;
         const selectedTags = Object.keys(tagFilterState).filter((tag) => { return tagFilterState[tag]; });
         if (selectedTags.length > 0) {
           query.tags = { $in: selectedTags };
         }
 
         /* --------- Action/Error Filter ---------- */
-        const { actionErrorFilterState } = filters;
-
         if (actionErrorFilterState.type) {
           query.type = actionErrorFilterState.type;
         }
 
-        if (actionErrorFilterState.type === 'error' && actionErrorFilterState.errorMessage) {
-          query.errorMessage = { $regex: actionErrorFilterState.errorMessage, $options: 'i' };
+        if (actionErrorFilterState.type === LogType.Error) {
+          if (actionErrorFilterState.errorMessage) {
+            // Add error message to the query.
+            // $i is used for case-insensitive search, and $regex is used for partial matching
+            query.errorMessage = { $regex: actionErrorFilterState.errorMessage, $options: 'i' };
+          }
+
+          if (actionErrorFilterState.errorCode) {
+            query.errorCode = { $regex: actionErrorFilterState.errorCode, $options: 'i' };
+          }
         }
 
-        if (actionErrorFilterState.type === 'error' && actionErrorFilterState.errorCode) {
-          query.errorCode = { $regex: actionErrorFilterState.errorCode, $options: 'i' };
-        }
-
-        if (actionErrorFilterState.type === 'action') {
+        if (actionErrorFilterState.type === LogType.Action) {
           const selectedTargets = Object.keys(actionErrorFilterState.target).filter(
             (target) => { return actionErrorFilterState.target[target]; },
           );
@@ -341,8 +370,6 @@ const initServer = (
         }
 
         /* ------------ Advanced Filter ----------- */
-        const { advancedFilterState } = filters;
-
         if (advancedFilterState.userFirstName) {
           query.userFirstName = { $regex: advancedFilterState.userFirstName, $options: 'i' };
         }
@@ -356,7 +383,7 @@ const initServer = (
         }
 
         if (advancedFilterState.userId) {
-          query.userId = parseInt(advancedFilterState.userId, 10);
+          query.userId = Number.parseInt(advancedFilterState.userId, 10);
         }
 
         const roles = [];
@@ -369,7 +396,10 @@ const initServer = (
         if (advancedFilterState.includeAdmins) {
           roles.push({ isAdmin: true });
         }
+        // If any roles are selected, add them to the query
         if (roles.length > 0) {
+          // The $or operator is used to match any of the roles
+          // The $and operator is to ensure that other conditions in the query are met
           query.$and = [{ $or: roles }];
         }
 
@@ -382,7 +412,7 @@ const initServer = (
         }
 
         if (advancedFilterState.isMobile !== undefined) {
-          query['device.isMobile'] = advancedFilterState.isMobile;
+          query['device.isMobile'] = Boolean(advancedFilterState.isMobile);
         }
 
         if (advancedFilterState.source) {
