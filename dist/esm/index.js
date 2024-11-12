@@ -15417,6 +15417,11 @@ const initLogCollection = (Collection) => {
             'context',
             'subcontext',
             'tags',
+            'year',
+            'month',
+            'day',
+            'hour',
+            'type',
         ],
     });
 };
