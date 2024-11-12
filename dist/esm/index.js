@@ -1,6 +1,6 @@
 import * as React from 'react';
 import React__default, { useState, useRef, useEffect, useReducer, forwardRef, useContext, useLayoutEffect, createContext, useMemo, useCallback, Component, Fragment } from 'react';
-import { faExclamationTriangle, faCircle, faHourglassEnd, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faArrowLeft, faArrowRight, faCalendar, faTag, faHammer, faList, faTimes, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle, faCircle, faHourglassEnd, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faArrowLeft, faArrowRight, faCalendar, faTag, faHammer, faList, faTimes, faSearch, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactDOM, { createPortal } from 'react-dom';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
@@ -2788,10 +2788,10 @@ const getHumanReadableDate = (dateOrTimestamp) => {
 };
 
 /**
- * Path of the route for storing client-side logs
+ * Path of the route for getting logs for log review
  * @author Gabe Abrams
  */
-const LOG_REVIEW_ROUTE_PATH_PREFIX = `/admin${ROUTE_PATH_PREFIX}/logs`;
+const LOG_REVIEW_GET_LOGS_ROUTE = `/admin${ROUTE_PATH_PREFIX}/logs`;
 
 /**
  * Source of a log event
@@ -3822,6 +3822,9 @@ const reducer$7 = (state, action) => {
         case ActionType$6.DecrementPageNumber: {
             return Object.assign(Object.assign({}, state), { pageNumber: state.pageNumber - 1 });
         }
+        case ActionType$6.SetHasAnotherPage: {
+            return Object.assign(Object.assign({}, state), { hasAnotherPage: action.hasAnotherPage });
+        }
         default: {
             return state;
         }
@@ -3964,8 +3967,7 @@ const LogReviewer = (props) => {
         try {
             // Prepare filter parameters
             const filters = {
-                startDate: dateFilterState.startDate,
-                endDate: dateFilterState.endDate,
+                dateFilterState,
                 contextFilterState,
                 tagFilterState,
                 actionErrorFilterState,
@@ -3973,8 +3975,9 @@ const LogReviewer = (props) => {
             };
             // Send filters to the server
             let fetchedLogs = [];
+            // Get logs from server
             const response = yield visitServerEndpoint({
-                path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/logs`,
+                path: LOG_REVIEW_GET_LOGS_ROUTE,
                 method: 'GET',
                 params: {
                     pageNumber,
@@ -4000,16 +4003,12 @@ const LogReviewer = (props) => {
     /* ------------------------- Lifecycle Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
-     * Fetch logs whenever filters change
+     * Fetch logs whenever page number changes
      */
     useEffect(() => {
         fetchLogs();
     }, [
-        dateFilterState,
-        contextFilterState,
-        tagFilterState,
-        actionErrorFilterState,
-        advancedFilterState,
+        pageNumber,
     ]);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
@@ -4106,7 +4105,16 @@ const LogReviewer = (props) => {
                 } },
                 React__default.createElement(FontAwesomeIcon, { icon: faTimes }),
                 ' ',
-                "Reset"))));
+                "Reset"),
+            React__default.createElement("button", { type: "button", id: "LogReviewer-submit-filters-button", className: "btn btn-primary ms-2", "aria-label": "submit filters", onClick: () => {
+                    dispatch({
+                        type: ActionType$6.HideFilterDrawer,
+                    });
+                    fetchLogs();
+                } },
+                React__default.createElement(FontAwesomeIcon, { icon: faSearch }),
+                ' ',
+                "Filter"))));
     // Filter drawer
     let filterDrawer;
     if (expandedFilterDrawer) {
@@ -14004,9 +14012,11 @@ const initServer = (opts) => {
     /**
    * Get filtered logs based on provided filters
    * @author Gabe Abrams, Yuen Ler Chow
+   * @param pageNumber the page number to get
+   * @param filters the filters to apply to the logs
    * @returns {Log[]} list of logs that match the filters
    */
-    opts.app.get(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/logs`, genRouteHandler({
+    opts.app.get(`${LOG_REVIEW_GET_LOGS_ROUTE}`, genRouteHandler({
         paramTypes: {
             pageNumber: ParamType$1.Int,
             filters: ParamType$1.JSON,
@@ -14014,6 +14024,7 @@ const initServer = (opts) => {
         handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
             // Get user info
             const { pageNumber, userId, isAdmin, filters, } = params;
+            const { dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = filters;
             // Validate user
             const canReview = yield canReviewLogs(userId, isAdmin);
             if (!canReview) {
@@ -14022,58 +14033,85 @@ const initServer = (opts) => {
             // Build MongoDB query based on filters
             const query = {};
             /* -------------- Date Filter ------------- */
-            const { startDate, endDate } = filters.dateFilterState;
+            // Convert start and end dates from the dateFilterState into timestamps
+            const { startDate, endDate } = dateFilterState;
             const startTimestamp = new Date(startDate.year, startDate.month - 1, startDate.day).getTime();
             const endTimestamp = new Date(endDate.year, endDate.month - 1, endDate.day + 1).getTime() - 1;
+            // Add a date range condition to the query
             query.timestamp = {
                 $gte: startTimestamp,
                 $lte: endTimestamp,
             };
             /* ------------ Context Filter ------------ */
-            const { contextFilterState } = filters;
-            const contextConditions = [];
+            // Process context filters to include selected contexts and subcontexts
+            const selectedContexts = [];
+            const selectedSubcontexts = [];
+            // Process each context filter
             Object.keys(contextFilterState).forEach((context) => {
                 const value = contextFilterState[context];
                 if (typeof value === 'boolean') {
                     if (value) {
-                        // The entire context is selected
-                        contextConditions.push({ context });
+                        selectedContexts.push(context);
                     }
                 }
                 else {
-                    // The context has subcontexts
-                    const subcontexts = Object.keys(value).filter((subcontext) => { return value[subcontext]; });
-                    if (subcontexts.length > 0) {
-                        contextConditions.push({
-                            context,
-                            subcontext: { $in: subcontexts },
-                        });
+                    // At least one subcontext is selected
+                    const atLeastOneSubcontextSelected = (Object.values(value)
+                        .some((subcontextValue) => {
+                        return subcontextValue;
+                    }));
+                    if (atLeastOneSubcontextSelected) {
+                        selectedContexts.push(context);
                     }
+                    // Add all selected subcontexts
+                    Object.keys(value).forEach((subcontext) => {
+                        if (value[subcontext]) {
+                            selectedSubcontexts.push(subcontext);
+                        }
+                    });
                 }
             });
-            if (contextConditions.length > 0) {
-                query.$or = contextConditions;
+            // Add context and subcontext conditions to the query if any are selected
+            if (selectedContexts.length > 0) {
+                query.context = { $in: selectedContexts };
+            }
+            if (selectedSubcontexts.length > 0) {
+                query.subcontext = { $in: selectedSubcontexts };
             }
             /* -------------- Tag Filter -------------- */
-            const { tagFilterState } = filters;
             const selectedTags = Object.keys(tagFilterState).filter((tag) => { return tagFilterState[tag]; });
             if (selectedTags.length > 0) {
                 query.tags = { $in: selectedTags };
             }
             /* --------- Action/Error Filter ---------- */
-            const { actionErrorFilterState } = filters;
             if (actionErrorFilterState.type) {
                 query.type = actionErrorFilterState.type;
             }
-            if (actionErrorFilterState.type === 'error' && actionErrorFilterState.errorMessage) {
-                query.errorMessage = { $regex: actionErrorFilterState.errorMessage, $options: 'i' };
+            if (actionErrorFilterState.type === LogType$1.Error) {
+                if (actionErrorFilterState.errorMessage) {
+                    // Add error message to the query.
+                    // $i is used for case-insensitive search, and $regex is used for partial matching
+                    query.errorMessage = {
+                        $regex: actionErrorFilterState.errorMessage,
+                        $options: 'i',
+                    };
+                }
+                if (actionErrorFilterState.errorCode) {
+                    query.errorCode = {
+                        $regex: actionErrorFilterState.errorCode,
+                        $options: 'i',
+                    };
+                }
             }
-            if (actionErrorFilterState.type === 'error' && actionErrorFilterState.errorCode) {
-                query.errorCode = { $regex: actionErrorFilterState.errorCode, $options: 'i' };
-            }
-            if (actionErrorFilterState.type === 'action') {
-                const selectedTargets = Object.keys(actionErrorFilterState.target).filter((target) => { return actionErrorFilterState.target[target]; });
-                const selectedActions = Object.keys(actionErrorFilterState.action).filter((action) => { return actionErrorFilterState.action[action]; });
+            if (actionErrorFilterState.type === LogType$1.Action) {
+                const selectedTargets = (Object.keys(actionErrorFilterState.target)
+                    .filter((target) => {
+                    return actionErrorFilterState.target[target];
+                }));
+                const selectedActions = (Object.keys(actionErrorFilterState.action)
+                    .filter((action) => {
+                    return actionErrorFilterState.action[action];
+                }));
                 if (selectedTargets.length > 0) {
                     query.target = { $in: selectedTargets };
                 }
@@ -14082,18 +14120,26 @@ const initServer = (opts) => {
                 }
             }
             /* ------------ Advanced Filter ----------- */
-            const { advancedFilterState } = filters;
             if (advancedFilterState.userFirstName) {
-                query.userFirstName = { $regex: advancedFilterState.userFirstName, $options: 'i' };
+                query.userFirstName = {
+                    $regex: advancedFilterState.userFirstName,
+                    $options: 'i',
+                };
             }
             if (advancedFilterState.userLastName) {
-                query.userLastName = { $regex: advancedFilterState.userLastName, $options: 'i' };
+                query.userLastName = {
+                    $regex: advancedFilterState.userLastName,
+                    $options: 'i',
+                };
             }
             if (advancedFilterState.userEmail) {
-                query.userEmail = { $regex: advancedFilterState.userEmail, $options: 'i' };
+                query.userEmail = {
+                    $regex: advancedFilterState.userEmail,
+                    $options: 'i',
+                };
             }
             if (advancedFilterState.userId) {
-                query.userId = parseInt(advancedFilterState.userId, 10);
+                query.userId = Number.parseInt(advancedFilterState.userId, 10);
             }
             const roles = [];
             if (advancedFilterState.includeLearners) {
@@ -14105,26 +14151,38 @@ const initServer = (opts) => {
             if (advancedFilterState.includeAdmins) {
                 roles.push({ isAdmin: true });
             }
+            // If any roles are selected, add them to the query
             if (roles.length > 0) {
+                // The $or operator is used to match any of the roles
+                // The $and operator is to ensure that other conditions in the query are met
                 query.$and = [{ $or: roles }];
             }
             if (advancedFilterState.courseId) {
-                query.courseId = parseInt(advancedFilterState.courseId, 10);
+                query.courseId = Number.parseInt(advancedFilterState.courseId, 10);
             }
             if (advancedFilterState.courseName) {
-                query.courseName = { $regex: advancedFilterState.courseName, $options: 'i' };
+                query.courseName = {
+                    $regex: advancedFilterState.courseName,
+                    $options: 'i',
+                };
             }
             if (advancedFilterState.isMobile !== undefined) {
-                query['device.isMobile'] = advancedFilterState.isMobile;
+                query['device.isMobile'] = Boolean(advancedFilterState.isMobile);
             }
             if (advancedFilterState.source) {
                 query.source = advancedFilterState.source;
             }
             if (advancedFilterState.routePath) {
-                query.routePath = { $regex: advancedFilterState.routePath, $options: 'i' };
+                query.routePath = {
+                    $regex: advancedFilterState.routePath,
+                    $options: 'i',
+                };
             }
             if (advancedFilterState.routeTemplate) {
-                query.routeTemplate = { $regex: advancedFilterState.routeTemplate, $options: 'i' };
+                query.routeTemplate = {
+                    $regex: advancedFilterState.routeTemplate,
+                    $options: 'i',
+                };
             }
             // Query for logs
             const response = yield _logCollection.findPaged({

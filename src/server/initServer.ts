@@ -2,7 +2,7 @@
 import ErrorWithCode from '../errors/ErrorWithCode';
 
 // Import shared constants
-import LOG_REVIEW_ROUTE_PATH_PREFIX from '../constants/LOG_REVIEW_ROUTE_PATH_PREFIX';
+import LOG_REVIEW_ROUTE_PATH_PREFIX from '../constants/LOG_REVIEW_GET_LOGS_ROUTE';
 import LOG_ROUTE_PATH from '../constants/LOG_ROUTE_PATH';
 import LOG_REVIEW_STATUS_ROUTE from '../constants/LOG_REVIEW_STATUS_ROUTE';
 
@@ -13,11 +13,7 @@ import genRouteHandler from '../helpers/genRouteHandler';
 import LogFunction from '../types/LogFunction';
 import ParamType from '../types/ParamType';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
-import DateFilterState from './types/DateFilterState';
-import ContextFilterState from './types/ContextFilterState';
-import TagFilterState from './types/TagFilterState';
-import ActionErrorFilterState from './types/ActionErrorFilterState';
-import AdvancedFilterState from './types/AdvancedFilterState';
+import LogReviewerFilterState from '../types/LogReviewerFilterState';
 import LogType from '../types/LogType';
 
 // Types
@@ -241,6 +237,8 @@ const initServer = (
   /**
  * Get filtered logs based on provided filters
  * @author Gabe Abrams, Yuen Ler Chow
+ * @param pageNumber the page number to get
+ * @param filters the filters to apply to the logs
  * @returns {Log[]} list of logs that match the filters
  */
   opts.app.get(
@@ -265,13 +263,7 @@ const initServer = (
           tagFilterState,
           actionErrorFilterState,
           advancedFilterState,
-        } = filters as {
-          dateFilterState: DateFilterState,
-          contextFilterState: ContextFilterState,
-          tagFilterState: TagFilterState,
-          actionErrorFilterState: ActionErrorFilterState,
-          advancedFilterState: AdvancedFilterState,
-        };
+        } = filters as LogReviewerFilterState;
 
         // Validate user
         const canReview = await canReviewLogs(userId, isAdmin);
@@ -286,6 +278,7 @@ const initServer = (
         const query: { [k: string]: any } = {};
 
         /* -------------- Date Filter ------------- */
+
         // Convert start and end dates from the dateFilterState into timestamps
         const { startDate, endDate } = dateFilterState;
         const startTimestamp = new Date(startDate.year, startDate.month - 1, startDate.day).getTime();
@@ -298,10 +291,12 @@ const initServer = (
         };
 
         /* ------------ Context Filter ------------ */
+
         // Process context filters to include selected contexts and subcontexts
         const selectedContexts: string[] = [];
         const selectedSubcontexts: string[] = [];
 
+        // Process each context filter
         Object.keys(contextFilterState).forEach((context) => {
           const value = contextFilterState[context];
           if (typeof value === 'boolean') {
@@ -310,7 +305,13 @@ const initServer = (
             }
           } else {
             // At least one subcontext is selected
-            if (Object.values(value).some((subcontextValue) => { return subcontextValue; })) {
+            const atLeastOneSubcontextSelected = (
+              Object.values(value)
+                .some((subcontextValue) => {
+                  return subcontextValue;
+                })
+            );
+            if (atLeastOneSubcontextSelected) {
               selectedContexts.push(context);
             }
             // Add all selected subcontexts
@@ -332,12 +333,14 @@ const initServer = (
         }
 
         /* -------------- Tag Filter -------------- */
+
         const selectedTags = Object.keys(tagFilterState).filter((tag) => { return tagFilterState[tag]; });
         if (selectedTags.length > 0) {
           query.tags = { $in: selectedTags };
         }
 
         /* --------- Action/Error Filter ---------- */
+
         if (actionErrorFilterState.type) {
           query.type = actionErrorFilterState.type;
         }
@@ -346,20 +349,32 @@ const initServer = (
           if (actionErrorFilterState.errorMessage) {
             // Add error message to the query.
             // $i is used for case-insensitive search, and $regex is used for partial matching
-            query.errorMessage = { $regex: actionErrorFilterState.errorMessage, $options: 'i' };
+            query.errorMessage = {
+              $regex: actionErrorFilterState.errorMessage,
+              $options: 'i',
+            };
           }
 
           if (actionErrorFilterState.errorCode) {
-            query.errorCode = { $regex: actionErrorFilterState.errorCode, $options: 'i' };
+            query.errorCode = {
+              $regex: actionErrorFilterState.errorCode,
+              $options: 'i',
+            };
           }
         }
 
         if (actionErrorFilterState.type === LogType.Action) {
-          const selectedTargets = Object.keys(actionErrorFilterState.target).filter(
-            (target) => { return actionErrorFilterState.target[target]; },
+          const selectedTargets = (
+            Object.keys(actionErrorFilterState.target)
+              .filter((target) => {
+                return actionErrorFilterState.target[target];
+              })
           );
-          const selectedActions = Object.keys(actionErrorFilterState.action).filter(
-            (action) => { return actionErrorFilterState.action[action]; },
+          const selectedActions = (
+            Object.keys(actionErrorFilterState.action)
+              .filter((action) => {
+                return actionErrorFilterState.action[action];
+              })
           );
           if (selectedTargets.length > 0) {
             query.target = { $in: selectedTargets };
@@ -370,16 +385,26 @@ const initServer = (
         }
 
         /* ------------ Advanced Filter ----------- */
+
         if (advancedFilterState.userFirstName) {
-          query.userFirstName = { $regex: advancedFilterState.userFirstName, $options: 'i' };
+          query.userFirstName = {
+            $regex: advancedFilterState.userFirstName,
+            $options: 'i',
+          };
         }
 
         if (advancedFilterState.userLastName) {
-          query.userLastName = { $regex: advancedFilterState.userLastName, $options: 'i' };
+          query.userLastName = {
+            $regex: advancedFilterState.userLastName,
+            $options: 'i',
+          };
         }
 
         if (advancedFilterState.userEmail) {
-          query.userEmail = { $regex: advancedFilterState.userEmail, $options: 'i' };
+          query.userEmail = {
+            $regex: advancedFilterState.userEmail,
+            $options: 'i',
+          };
         }
 
         if (advancedFilterState.userId) {
@@ -408,7 +433,10 @@ const initServer = (
         }
 
         if (advancedFilterState.courseName) {
-          query.courseName = { $regex: advancedFilterState.courseName, $options: 'i' };
+          query.courseName = {
+            $regex: advancedFilterState.courseName,
+            $options: 'i',
+          };
         }
 
         if (advancedFilterState.isMobile !== undefined) {
@@ -420,11 +448,17 @@ const initServer = (
         }
 
         if (advancedFilterState.routePath) {
-          query.routePath = { $regex: advancedFilterState.routePath, $options: 'i' };
+          query.routePath = {
+            $regex: advancedFilterState.routePath,
+            $options: 'i',
+          };
         }
 
         if (advancedFilterState.routeTemplate) {
-          query.routeTemplate = { $regex: advancedFilterState.routeTemplate, $options: 'i' };
+          query.routeTemplate = {
+            $regex: advancedFilterState.routeTemplate,
+            $options: 'i',
+          };
         }
 
         // Query for logs
