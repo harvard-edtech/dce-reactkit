@@ -241,6 +241,147 @@ export const confirm = async (
 };
 
 /*----------------------------------------*/
+/* --------------- Prompt -------------- */
+/*----------------------------------------*/
+
+// Stored copies of setters
+let setPromptInfo: (
+  info: (
+    | undefined
+    | {
+      title: string,
+      currentInputFieldText: string,
+      opts: {
+        textAboveInputField?: string,
+        placeholder?: string,
+        defaultText?: string,
+        confirmButtonText?: string,
+        confirmButtonVariant?: Variant,
+        cancelButtonText?: string,
+        cancelButtonVariant?: Variant,
+        minNumChars?: number,
+        findValidationError?: (text: string) => string | undefined,
+        ariaLabel?: string,
+      },
+    }
+  ),
+) => void;
+
+// Function to call when prompt is closed
+let onPromptClosed: (result: string | null) => void;
+
+/**
+ * Show a prompt modal asking the user for input
+ * @author Yuen Ler Chow
+ * @param title the title text to display at the top of the prompt
+ * @param [opts={}] additional options for the prompt dialog
+ * @param [opts.textAboveInputField] the text to display in the prompt
+ * @param [opts.defaultText] the default text for the input field
+ * @param [opts.placeholder] the placeholder text for the input field
+ * @param [opts.confirmButtonText=Okay] the text of the confirm button
+ * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm button
+ * @param [opts.cancelButtonText=Cancel] the text of the cancel button
+ * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel button
+ * @param [opts.minNumChars] the minimum number of characters required for
+ *   the input to be valid
+ * @param [opts.findValidationError] a function that takes the input text and
+ *   returns an error message if the input is invalid, returns undefined if the
+ *   input is valid
+ * @param [opts.ariaLabel] the aria label for the input field
+ * @returns Promise that resolves with the input string or null if canceled
+ */
+export const prompt = async (
+  title: string,
+  opts?: {
+    textAboveInputField?: string,
+    defaultText?: string,
+    placeholder?: string,
+    confirmButtonText?: string,
+    confirmButtonVariant?: Variant,
+    cancelButtonText?: string,
+    cancelButtonVariant?: Variant,
+    minNumChars?: number,
+    findValidationError?: (text: string) => string | undefined,
+    ariaLabel?: string,
+  },
+): Promise<string | null> => {
+  // Wait for helper to exist
+  await waitForHelper(() => {
+    return !!setPromptInfo;
+  });
+
+  // Fallback if prompt is not available
+  if (!setPromptInfo) {
+    const resultPassesValidation = false;
+    while (!resultPassesValidation) {
+      // eslint-disable-next-line no-alert
+      const result = window.prompt(
+        `${title}\n\n${opts?.textAboveInputField ?? ''}`,
+        opts?.defaultText ?? '',
+      );
+
+      // Exit loop if user cancels
+      if (result === null) {
+        return null;
+      }
+
+      // Validate min num chars
+      const minNumCharsValidationError = (
+        (opts?.minNumChars && result.length < opts.minNumChars)
+          ? `Please enter at least ${opts.minNumChars} characters.`
+          : undefined
+      );
+
+      // Run custom validation
+      const customValidationError = (
+        opts?.findValidationError
+        && opts.findValidationError(result)
+      );
+
+      // Show validation issue
+      if (minNumCharsValidationError || customValidationError) {
+        // Create error message
+        const errorMessage = (
+          [
+            minNumCharsValidationError,
+            customValidationError,
+          ]
+            // Filter out undefined messages
+            .filter((msg) => {
+              return !!msg;
+            })
+            // Join messages with newlines
+            .join('\n')
+        );
+
+        // Show alert
+        alert(
+          'Invalid Input',
+          errorMessage,
+        );
+      } else {
+        return result;
+      }
+    }
+  }
+
+  // Return promise that resolves with result of prompt
+  return new Promise((resolve) => {
+    // Setup handler
+    onPromptClosed = (result: string | null) => {
+      resolve(result);
+    };
+
+    // Show the prompt
+    setPromptInfo({
+      title,
+      currentInputFieldText: (opts?.defaultText ?? ''),
+      opts: (opts ?? {}),
+    });
+  });
+};
+
+/*----------------------------------------*/
 /* ------------- Fatal Error ------------ */
 /*----------------------------------------*/
 
@@ -465,6 +606,28 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
   >(undefined);
   setConfirmInfo = setConfirmInfoInner;
 
+  // Prompt
+  const [promptInfo, setPromptInfoInner] = useState<
+    | undefined
+    | {
+      title: string,
+      currentInputFieldText: string,
+      opts: {
+        textAboveInputField?: string,
+        placeholder?: string,
+        defaultText?: string,
+        confirmButtonText?: string,
+        confirmButtonVariant?: Variant,
+        cancelButtonText?: string,
+        cancelButtonVariant?: Variant,
+        minNumChars?: number,
+        findValidationError?: (text: string) => string | undefined,
+        ariaLabel?: string,
+      }
+    }
+  >(undefined);
+  setPromptInfo = setPromptInfoInner;
+
   // Session expired
   const [
     sessionHasExpired,
@@ -527,6 +690,99 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         dontAllowBackdropExit
       >
         {confirmInfo.text}
+      </ModalForWrapper>
+    );
+  }
+
+  /* ------------- Prompt ------------ */
+
+  if (promptInfo) {
+    // Run min char validation
+    const minNumCharsValidationError = (
+      (
+        promptInfo.opts.minNumChars
+        && promptInfo.currentInputFieldText.length < promptInfo.opts.minNumChars
+      )
+        ? `Please enter at least ${promptInfo.opts.minNumChars} characters.`
+        : undefined
+    );
+
+    // Run custom validation
+    const customValidationError = (
+      promptInfo.opts.findValidationError
+      && promptInfo.opts.findValidationError(promptInfo.currentInputFieldText)
+    );
+
+    modal = (
+      <ModalForWrapper
+        key={`prompt-${promptInfo.title}`}
+        title={promptInfo.title}
+        // Don't show ok button if there is a validation error
+        type={(
+          (customValidationError || minNumCharsValidationError)
+            ? ModalType.Cancel
+            : ModalType.OkayCancel
+        )}
+        okayLabel={promptInfo.opts.confirmButtonText}
+        okayVariant={promptInfo.opts.confirmButtonVariant}
+        cancelLabel={promptInfo.opts.cancelButtonText}
+        cancelVariant={promptInfo.opts.cancelButtonVariant}
+        onClose={(buttonType) => {
+          // Get result
+          const result = (
+            buttonType === ModalButtonType.Okay
+              ? promptInfo.currentInputFieldText
+              : null
+          );
+
+          // Close prompt
+          setPromptInfo(undefined);
+
+          // Call handler
+          if (onPromptClosed) {
+            onPromptClosed(result);
+          }
+        }}
+        onTopOfOtherModals
+        dontAllowBackdropExit
+      >
+        <div>
+          {/* Message above input field */}
+          {promptInfo.opts.textAboveInputField && (
+            <div>
+              {promptInfo.opts.textAboveInputField}
+            </div>
+          )}
+
+          {/* Input field */}
+          <input
+            type="text"
+            className="form-control"
+            aria-label={promptInfo.opts.ariaLabel}
+            placeholder={promptInfo.opts.placeholder}
+            value={promptInfo.currentInputFieldText}
+            onChange={(e) => {
+              return setPromptInfo({
+                ...promptInfo,
+                currentInputFieldText: e.target.value,
+              });
+            }}
+            // eslint-disable-next-line jsx-a11y/no-autofocus
+            autoFocus
+          />
+
+          {/* Validation errors */}
+          {minNumCharsValidationError && (
+            <div className="text-danger fw-bold mt-2">
+              {minNumCharsValidationError}
+            </div>
+          )}
+          {customValidationError && (
+            <div className="text-danger fw-bold mt-2">
+              {customValidationError}
+            </div>
+          )}
+        </div>
       </ModalForWrapper>
     );
   }

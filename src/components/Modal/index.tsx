@@ -49,6 +49,9 @@ const modalTypeToModalButtonTypes: {
   [ModalType.Okay]: [
     ModalButtonType.Okay,
   ],
+  [ModalType.Cancel]: [
+    ModalButtonType.Cancel,
+  ],
   [ModalType.OkayCancel]: [
     ModalButtonType.Okay,
     ModalButtonType.Cancel,
