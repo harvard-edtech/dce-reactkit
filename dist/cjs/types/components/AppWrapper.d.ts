@@ -48,17 +48,24 @@ export declare const confirm: (title: string, text: string, opts?: {
  * Show a prompt modal asking the user for input
  * @author Yuen Ler Chow
  * @param title the title text to display at the top of the prompt
- * @param text the text to display in the prompt
  * @param [opts={}] additional options for the prompt dialog
- * @param [opts.placeholder] the placeholder text for the input field
+ * @param [opts.textAboveInputField] the text to display in the prompt
  * @param [opts.defaultText] the default text for the input field
+ * @param [opts.placeholder] the placeholder text for the input field
  * @param [opts.confirmButtonText=Okay] the text of the confirm button
  * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm button
  * @param [opts.cancelButtonText=Cancel] the text of the cancel button
  * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel button
+ * @param [opts.minNumChars] the minimum number of characters required for
+ *   the input to be valid
+ * @param [opts.findValidationError] a function that takes the input text and
+ *   returns an error message if the input is invalid, returns undefined if the
+ *   input is valid
+ * @param [opts.ariaLabel] the aria label for the input field
  * @returns Promise that resolves with the input string or null if canceled
  */
-export declare const prompt: (title: string, text: string, opts?: {
+export declare const prompt: (title: string, opts?: {
+    textAboveInputField?: string | undefined;
     defaultText?: string | undefined;
     placeholder?: string | undefined;
     confirmButtonText?: string | undefined;
@@ -67,6 +74,7 @@ export declare const prompt: (title: string, text: string, opts?: {
     cancelButtonVariant?: Variant | undefined;
     minNumChars?: number | undefined;
     findValidationError?: ((text: string) => string | undefined) | undefined;
+    ariaLabel?: string | undefined;
 } | undefined) => Promise<string | null>;
 /**
  * Show a fatal error message

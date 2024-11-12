@@ -246,24 +246,25 @@ export const confirm = async (
 
 // Stored copies of setters
 let setPromptInfo: (
-  info:
-  | undefined
-  | {
-    title: string;
-    currentInputFieldText: string,
-    opts: {
-      textAboveInputField?: string;
-      placeholder?: string,
-      defaultText?: string,
-      confirmButtonText?: string,
-      confirmButtonVariant?: Variant,
-      cancelButtonText?: string,
-      cancelButtonVariant?: Variant,
-      minNumChars?: number,
-      findValidationError?: (text: string) => string | undefined,
-      ariaLabel?: string,
-    },
-  },
+  info: (
+    | undefined
+    | {
+      title: string,
+      currentInputFieldText: string,
+      opts: {
+        textAboveInputField?: string,
+        placeholder?: string,
+        defaultText?: string,
+        confirmButtonText?: string,
+        confirmButtonVariant?: Variant,
+        cancelButtonText?: string,
+        cancelButtonVariant?: Variant,
+        minNumChars?: number,
+        findValidationError?: (text: string) => string | undefined,
+        ariaLabel?: string,
+      },
+    }
+  ),
 ) => void;
 
 // Function to call when prompt is closed
@@ -273,14 +274,20 @@ let onPromptClosed: (result: string | null) => void;
  * Show a prompt modal asking the user for input
  * @author Yuen Ler Chow
  * @param title the title text to display at the top of the prompt
- * @param text the text to display in the prompt
  * @param [opts={}] additional options for the prompt dialog
- * @param [opts.placeholder] the placeholder text for the input field
+ * @param [opts.textAboveInputField] the text to display in the prompt
  * @param [opts.defaultText] the default text for the input field
+ * @param [opts.placeholder] the placeholder text for the input field
  * @param [opts.confirmButtonText=Okay] the text of the confirm button
  * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm button
  * @param [opts.cancelButtonText=Cancel] the text of the cancel button
  * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel button
+ * @param [opts.minNumChars] the minimum number of characters required for
+ *   the input to be valid
+ * @param [opts.findValidationError] a function that takes the input text and
+ *   returns an error message if the input is invalid, returns undefined if the
+ *   input is valid
+ * @param [opts.ariaLabel] the aria label for the input field
  * @returns Promise that resolves with the input string or null if canceled
  */
 export const prompt = async (
@@ -313,6 +320,7 @@ export const prompt = async (
         opts?.defaultText ?? '',
       );
 
+      // Exit loop if user cancels
       if (result === null) {
         return null;
       }
@@ -332,9 +340,24 @@ export const prompt = async (
 
       // Show validation issue
       if (minNumCharsValidationError || customValidationError) {
+        // Create error message
+        const errorMessage = (
+          [
+            minNumCharsValidationError,
+            customValidationError,
+          ]
+            // Filter out undefined messages
+            .filter((msg) => {
+              return !!msg;
+            })
+            // Join messages with newlines
+            .join('\n')
+        );
+
+        // Show alert
         alert(
           'Invalid Input',
-          `${minNumCharsValidationError ?? ''} ${customValidationError ?? ''}`,
+          errorMessage,
         );
       } else {
         return result;
@@ -585,23 +608,23 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   // Prompt
   const [promptInfo, setPromptInfoInner] = useState<
-  | undefined
-  | {
-    title: string,
-    currentInputFieldText: string,
-    opts: {
-      textAboveInputField?: string,
-      placeholder?: string,
-      defaultText?: string,
-      confirmButtonText?: string,
-      confirmButtonVariant?: Variant,
-      cancelButtonText?: string,
-      cancelButtonVariant?: Variant,
-      minNumChars?: number,
-      findValidationError?: (text: string) => string | undefined,
-      ariaLabel?: string,
+    | undefined
+    | {
+      title: string,
+      currentInputFieldText: string,
+      opts: {
+        textAboveInputField?: string,
+        placeholder?: string,
+        defaultText?: string,
+        confirmButtonText?: string,
+        confirmButtonVariant?: Variant,
+        cancelButtonText?: string,
+        cancelButtonVariant?: Variant,
+        minNumChars?: number,
+        findValidationError?: (text: string) => string | undefined,
+        ariaLabel?: string,
+      }
     }
-  }
   >(undefined);
   setPromptInfo = setPromptInfoInner;
 
@@ -705,14 +728,17 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         cancelLabel={promptInfo.opts.cancelButtonText}
         cancelVariant={promptInfo.opts.cancelButtonVariant}
         onClose={(buttonType) => {
+          // Get result
           const result = (
             buttonType === ModalButtonType.Okay
               ? promptInfo.currentInputFieldText
               : null
           );
 
+          // Close prompt
           setPromptInfo(undefined);
 
+          // Call handler
           if (onPromptClosed) {
             onPromptClosed(result);
           }
@@ -721,7 +747,14 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
         dontAllowBackdropExit
       >
         <div>
-          <p>{promptInfo.opts.textAboveInputField}</p>
+          {/* Message above input field */}
+          {promptInfo.opts.textAboveInputField && (
+            <div>
+              {promptInfo.opts.textAboveInputField}
+            </div>
+          )}
+
+          {/* Input field */}
           <input
             type="text"
             className="form-control"
@@ -737,15 +770,17 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
+
+          {/* Validation errors */}
           {minNumCharsValidationError && (
-          <div className="text-danger fw-bold mt-2">
-            {minNumCharsValidationError}
-          </div>
+            <div className="text-danger fw-bold mt-2">
+              {minNumCharsValidationError}
+            </div>
           )}
           {customValidationError && (
-          <div className="text-danger fw-bold mt-2">
-            {customValidationError}
-          </div>
+            <div className="text-danger fw-bold mt-2">
+              {customValidationError}
+            </div>
           )}
         </div>
       </ModalForWrapper>

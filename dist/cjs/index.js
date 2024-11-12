@@ -1094,18 +1094,24 @@ let onPromptClosed;
  * Show a prompt modal asking the user for input
  * @author Yuen Ler Chow
  * @param title the title text to display at the top of the prompt
- * @param text the text to display in the prompt
  * @param [opts={}] additional options for the prompt dialog
- * @param [opts.placeholder] the placeholder text for the input field
+ * @param [opts.textAboveInputField] the text to display in the prompt
  * @param [opts.defaultText] the default text for the input field
+ * @param [opts.placeholder] the placeholder text for the input field
  * @param [opts.confirmButtonText=Okay] the text of the confirm button
  * @param [opts.confirmButtonVariant=Variant.Dark] the variant of the confirm button
  * @param [opts.cancelButtonText=Cancel] the text of the cancel button
  * @param [opts.cancelButtonVariant=Variant.Secondary] the variant of the cancel button
+ * @param [opts.minNumChars] the minimum number of characters required for
+ *   the input to be valid
+ * @param [opts.findValidationError] a function that takes the input text and
+ *   returns an error message if the input is invalid, returns undefined if the
+ *   input is valid
+ * @param [opts.ariaLabel] the aria label for the input field
  * @returns Promise that resolves with the input string or null if canceled
  */
-const prompt = (title, text, opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const prompt = (title, opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     // Wait for helper to exist
     yield waitForHelper(() => {
         return !!setPromptInfo;
@@ -1115,7 +1121,8 @@ const prompt = (title, text, opts) => __awaiter(void 0, void 0, void 0, function
         const resultPassesValidation = false;
         while (!resultPassesValidation) {
             // eslint-disable-next-line no-alert
-            const result = window.prompt(`${title}\n\n${text}`, (_a = opts === null || opts === void 0 ? void 0 : opts.defaultText) !== null && _a !== void 0 ? _a : '');
+            const result = window.prompt(`${title}\n\n${(_a = opts === null || opts === void 0 ? void 0 : opts.textAboveInputField) !== null && _a !== void 0 ? _a : ''}`, (_b = opts === null || opts === void 0 ? void 0 : opts.defaultText) !== null && _b !== void 0 ? _b : '');
+            // Exit loop if user cancels
             if (result === null) {
                 return null;
             }
@@ -1128,7 +1135,19 @@ const prompt = (title, text, opts) => __awaiter(void 0, void 0, void 0, function
                 && opts.findValidationError(result));
             // Show validation issue
             if (minNumCharsValidationError || customValidationError) {
-                alert('Invalid Input', `${minNumCharsValidationError !== null && minNumCharsValidationError !== void 0 ? minNumCharsValidationError : ''} ${customValidationError !== null && customValidationError !== void 0 ? customValidationError : ''}`);
+                // Create error message
+                const errorMessage = ([
+                    minNumCharsValidationError,
+                    customValidationError,
+                ]
+                    // Filter out undefined messages
+                    .filter((msg) => {
+                    return !!msg;
+                })
+                    // Join messages with newlines
+                    .join('\n'));
+                // Show alert
+                alert('Invalid Input', errorMessage);
             }
             else {
                 return result;
@@ -1145,7 +1164,6 @@ const prompt = (title, text, opts) => __awaiter(void 0, void 0, void 0, function
         // Show the prompt
         setPromptInfo({
             title,
-            text,
             currentInputFieldText: ((_a = opts === null || opts === void 0 ? void 0 : opts.defaultText) !== null && _a !== void 0 ? _a : ''),
             opts: (opts !== null && opts !== void 0 ? opts : {}),
         });
@@ -1167,14 +1185,14 @@ const fatalErrorHandlers = [];
  * @param [errorTitle] title of the error box
  */
 const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(void 0, void 0, void 0, function* () {
-    var _b, _c;
+    var _c, _d;
     // Determine message and code
     const message = (typeof error === 'string'
         ? error.trim()
-        : String((_b = error.message) !== null && _b !== void 0 ? _b : 'An unknown error occurred.'));
+        : String((_c = error.message) !== null && _c !== void 0 ? _c : 'An unknown error occurred.'));
     const code = (typeof error === 'string'
         ? ReactKitErrorCode$1.NoCode
-        : String((_c = error.code) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode));
+        : String((_d = error.code) !== null && _d !== void 0 ? _d : ReactKitErrorCode$1.NoCode));
     // Call all fatal error listeners
     try {
         fatalErrorHandlers.forEach((handler) => {
@@ -1344,24 +1362,29 @@ const AppWrapper = (props) => {
         // Run custom validation
         const customValidationError = (promptInfo.opts.findValidationError
             && promptInfo.opts.findValidationError(promptInfo.currentInputFieldText));
-        modal = (React__default["default"].createElement(Modal, { key: `prompt-${promptInfo.title}-${promptInfo.text}`, title: promptInfo.title, 
+        modal = (React__default["default"].createElement(Modal, { key: `prompt-${promptInfo.title}`, title: promptInfo.title, 
             // Don't show ok button if there is a validation error
             type: ((customValidationError || minNumCharsValidationError)
                 ? ModalType$1.Cancel
                 : ModalType$1.OkayCancel), okayLabel: promptInfo.opts.confirmButtonText, okayVariant: promptInfo.opts.confirmButtonVariant, cancelLabel: promptInfo.opts.cancelButtonText, cancelVariant: promptInfo.opts.cancelButtonVariant, onClose: (buttonType) => {
+                // Get result
                 const result = (buttonType === ModalButtonType$1.Okay
                     ? promptInfo.currentInputFieldText
                     : null);
+                // Close prompt
                 setPromptInfo(undefined);
+                // Call handler
                 if (onPromptClosed) {
                     onPromptClosed(result);
                 }
             }, onTopOfOtherModals: true, dontAllowBackdropExit: true },
-            React__default["default"].createElement("div", { className: "p-3" },
-                React__default["default"].createElement("p", null, promptInfo.text),
-                React__default["default"].createElement("input", { type: "text", className: "form-control mb-2", placeholder: promptInfo.opts.placeholder, value: promptInfo.currentInputFieldText, onChange: (e) => {
+            React__default["default"].createElement("div", null,
+                promptInfo.opts.textAboveInputField && (React__default["default"].createElement("div", null, promptInfo.opts.textAboveInputField)),
+                React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": promptInfo.opts.ariaLabel, placeholder: promptInfo.opts.placeholder, value: promptInfo.currentInputFieldText, onChange: (e) => {
                         return setPromptInfo(Object.assign(Object.assign({}, promptInfo), { currentInputFieldText: e.target.value }));
-                    } }),
+                    }, 
+                    // eslint-disable-next-line jsx-a11y/no-autofocus
+                    autoFocus: true }),
                 minNumCharsValidationError && (React__default["default"].createElement("div", { className: "text-danger fw-bold mt-2" }, minNumCharsValidationError)),
                 customValidationError && (React__default["default"].createElement("div", { className: "text-danger fw-bold mt-2" }, customValidationError)))));
     }
