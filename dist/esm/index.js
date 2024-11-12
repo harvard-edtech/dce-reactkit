@@ -1,6 +1,6 @@
 import * as React from 'react';
 import React__default, { useState, useRef, useEffect, useReducer, forwardRef, useContext, useLayoutEffect, createContext, useMemo, useCallback, Component, Fragment } from 'react';
-import { faExclamationTriangle, faCircle, faHourglassEnd, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faArrowLeft, faArrowRight, faCalendar, faTag, faHammer, faList, faTimes, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle, faCircle, faHourglassEnd, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faArrowLeft, faArrowRight, faCalendar, faTag, faHammer, faList, faTimes, faSearch, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
 
@@ -3486,10 +3486,10 @@ const getHumanReadableDate = (dateOrTimestamp) => {
 };
 
 /**
- * Path of the route for storing client-side logs
+ * Path of the route for getting logs for log review
  * @author Gabe Abrams
  */
-const LOG_REVIEW_ROUTE_PATH_PREFIX = `/admin${ROUTE_PATH_PREFIX}/logs`;
+const LOG_REVIEW_GET_LOGS_ROUTE = `/admin${ROUTE_PATH_PREFIX}/logs`;
 
 /**
  * Source of a log event
@@ -4520,6 +4520,9 @@ const reducer$7 = (state, action) => {
         case ActionType$6.DecrementPageNumber: {
             return Object.assign(Object.assign({}, state), { pageNumber: state.pageNumber - 1 });
         }
+        case ActionType$6.SetHasAnotherPage: {
+            return Object.assign(Object.assign({}, state), { hasAnotherPage: action.hasAnotherPage });
+        }
         default: {
             return state;
         }
@@ -4662,8 +4665,7 @@ const LogReviewer = (props) => {
         try {
             // Prepare filter parameters
             const filters = {
-                startDate: dateFilterState.startDate,
-                endDate: dateFilterState.endDate,
+                dateFilterState,
                 contextFilterState,
                 tagFilterState,
                 actionErrorFilterState,
@@ -4671,8 +4673,9 @@ const LogReviewer = (props) => {
             };
             // Send filters to the server
             let fetchedLogs = [];
+            // Get logs from server
             const response = yield visitServerEndpoint({
-                path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}/logs`,
+                path: LOG_REVIEW_GET_LOGS_ROUTE,
                 method: 'GET',
                 params: {
                     pageNumber,
@@ -4698,16 +4701,12 @@ const LogReviewer = (props) => {
     /* ------------------------- Lifecycle Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
-     * Fetch logs whenever filters change
+     * Fetch logs whenever page number changes
      */
     useEffect(() => {
         fetchLogs();
     }, [
-        dateFilterState,
-        contextFilterState,
-        tagFilterState,
-        actionErrorFilterState,
-        advancedFilterState,
+        pageNumber,
     ]);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
@@ -4804,7 +4803,16 @@ const LogReviewer = (props) => {
                 } },
                 React__default.createElement(FontAwesomeIcon, { icon: faTimes }),
                 ' ',
-                "Reset"))));
+                "Reset"),
+            React__default.createElement("button", { type: "button", id: "LogReviewer-submit-filters-button", className: "btn btn-primary ms-2", "aria-label": "submit filters", onClick: () => {
+                    dispatch({
+                        type: ActionType$6.HideFilterDrawer,
+                    });
+                    fetchLogs();
+                } },
+                React__default.createElement(FontAwesomeIcon, { icon: faSearch }),
+                ' ',
+                "Filter"))));
     // Filter drawer
     let filterDrawer;
     if (expandedFilterDrawer) {
@@ -14870,6 +14878,12 @@ const HOUR_IN_MS = 3600000;
  * @author Gabe Abrams
  */
 const DAY_IN_MS = 86400000;
+
+/**
+ * Path of the route for storing client-side logs
+ * @author Gabe Abrams
+ */
+const LOG_REVIEW_ROUTE_PATH_PREFIX = `/admin${ROUTE_PATH_PREFIX}/logs`;
 
 /**
  * Route for checking the status of the current user's

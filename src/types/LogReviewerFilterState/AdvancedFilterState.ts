@@ -1,4 +1,4 @@
-import LogSource from '../../types/LogSource';
+import LogSource from '../LogSource';
 
 // Advanced filter state
 type AdvancedFilterState = {

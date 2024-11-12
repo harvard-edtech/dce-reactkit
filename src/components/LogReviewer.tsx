@@ -28,7 +28,7 @@ import { alert, showFatalError } from './AppWrapper';
 import getHumanReadableDate from '../helpers/getHumanReadableDate';
 
 // Import shared constants
-import LOG_REVIEW_ROUTE_PATH_PREFIX from '../constants/LOG_REVIEW_ROUTE_PATH_PREFIX';
+import LOG_REVIEW_GET_LOGS_ROUTE from '../constants/LOG_REVIEW_GET_LOGS_ROUTE';
 
 // Import shared types
 import Log from '../types/Log';
@@ -41,11 +41,12 @@ import IntelliTableColumn from '../types/IntelliTableColumn';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 import LogMetadataContextMap from '../types/LogMetadataContextMap';
 import LogMetadataTargetMap from '../types/LogMetadataTargetMap';
-import DateFilterState from '../client/types/from-server/DateFilterState';
-import ContextFilterState from '../client/types/from-server/ContextFilterState';
-import TagFilterState from '../client/types/from-server/TagFilterState';
-import ActionErrorFilterState from '../client/types/from-server/ActionErrorFilterState';
-import AdvancedFilterState from '../client/types/from-server/AdvancedFilterState';
+import LogReviewerFilterState from '../types/LogReviewerFilterState';
+import DateFilterState from '../types/LogReviewerFilterState/DateFilterState';
+import ContextFilterState from '../types/LogReviewerFilterState/ContextFilterState';
+import TagFilterState from '../types/LogReviewerFilterState/TagFilterState';
+import ActionErrorFilterState from '../types/LogReviewerFilterState/ActionErrorFilterState';
+import AdvancedFilterState from '../types/LogReviewerFilterState/AdvancedFilterState';
 
 // Import shared components
 import SimpleDateChooser from './SimpleDateChooser';
@@ -842,7 +843,7 @@ const LogReviewer: React.FC<Props> = (props) => {
 
     try {
       // Prepare filter parameters
-      const filters = {
+      const filters: LogReviewerFilterState = {
         dateFilterState,
         contextFilterState,
         tagFilterState,
@@ -853,8 +854,9 @@ const LogReviewer: React.FC<Props> = (props) => {
       // Send filters to the server
       let fetchedLogs: Log[] = [];
 
+      // Get logs from server
       const response = await visitServerEndpoint({
-        path: `${LOG_REVIEW_ROUTE_PATH_PREFIX}`,
+        path: LOG_REVIEW_GET_LOGS_ROUTE,
         method: 'GET',
         params: {
           pageNumber,
