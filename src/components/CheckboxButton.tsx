@@ -134,7 +134,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
             {text}
           </pre>
         ) : (
-          <div className="flex-grow-1">
+          <div className="flex-grow-1 text-start text-break ps-2">
             {text}
           </div>
         )}
