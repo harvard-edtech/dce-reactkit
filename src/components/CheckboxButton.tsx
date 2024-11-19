@@ -82,7 +82,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
     ),
     small,
     dashed,
-    useComplexFormatting = false,
+    useComplexFormatting,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -124,20 +124,24 @@ const CheckboxButton: React.FC<Props> = (props) => {
             className="me-1"
           />
         </div>
-        { useComplexFormatting ? (
-          <pre
-            className="ps-2 text-start text-break"
-            style={{
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            {text}
-          </pre>
-        ) : (
-          <div className="flex-grow-1 text-start text-break ps-2">
-            {text}
-          </div>
-        )}
+        {
+          useComplexFormatting
+          ? (
+            <pre
+              className="ps-2 text-start text-break"
+              style={{
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {text}
+            </pre>
+          )
+          : (
+            <div className="flex-grow-1 text-start text-break ps-2">
+              {text}
+            </div>
+          )
+        }
       </div>
     </button>
   );
