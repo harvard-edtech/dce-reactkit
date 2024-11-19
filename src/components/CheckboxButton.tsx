@@ -46,8 +46,8 @@ type Props = {
   small?: boolean,
   // If true, show a dash in the checkbox (only relevant if unchecked)
   dashed?: boolean,
-  // If true, support complex formatting (tabs, newlines) in the text
-  supportComplexFormatting?: boolean,
+  // If true, use complex formatting (tabs, newlines) in the text
+  useComplexFormatting?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -82,7 +82,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
     ),
     small,
     dashed,
-    supportComplexFormatting = false,
+    useComplexFormatting = false,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -124,7 +124,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
             className="me-1"
           />
         </div>
-        { supportComplexFormatting ? (
+        { useComplexFormatting ? (
           <pre
             className="ps-2 text-start text-break"
             style={{
