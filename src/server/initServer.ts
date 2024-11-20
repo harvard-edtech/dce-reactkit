@@ -2,7 +2,7 @@
 import ErrorWithCode from '../errors/ErrorWithCode';
 
 // Import shared constants
-import LOG_REVIEW_ROUTE_PATH_PREFIX from '../constants/LOG_REVIEW_GET_LOGS_ROUTE';
+import LOG_REVIEW_GET_LOGS_ROUTE from '../constants/LOG_REVIEW_GET_LOGS_ROUTE';
 import LOG_ROUTE_PATH from '../constants/LOG_ROUTE_PATH';
 import LOG_REVIEW_STATUS_ROUTE from '../constants/LOG_REVIEW_STATUS_ROUTE';
 
@@ -242,7 +242,7 @@ const initServer = (
  * @returns {Log[]} list of logs that match the filters
  */
   opts.app.get(
-    `${LOG_REVIEW_ROUTE_PATH_PREFIX}`,
+    LOG_REVIEW_GET_LOGS_ROUTE,
     genRouteHandler({
       paramTypes: {
         pageNumber: ParamType.Int,
