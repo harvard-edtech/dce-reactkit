@@ -4497,7 +4497,7 @@ const reducer$7 = (state, action) => {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
         }
         case ActionType$6.ResetFilters: {
-            return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState });
+            return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState, numTimesFiltersReset: state.numTimesFiltersReset + 1 });
         }
         case ActionType$6.UpdateDateFilterState: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
@@ -4649,11 +4649,12 @@ const LogReviewer = (props) => {
         advancedFilterState: initAdvancedFilterState,
         pageNumber: 1,
         hasAnotherPage: false,
+        numTimesFiltersReset: 0,
     };
     // Initialize state
     const [state, dispatch] = useReducer(reducer$7, initialState);
     // Destructure common state
-    const { loading, logs, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, pageNumber, hasAnotherPage, } = state;
+    const { loading, logs, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, pageNumber, hasAnotherPage, numTimesFiltersReset, } = state;
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
@@ -4701,12 +4702,12 @@ const LogReviewer = (props) => {
     /* ------------------------- Lifecycle Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
-     * Fetch logs whenever page number changes
+     * Fetch logs whenever page number changes or filters are reset
      */
     useEffect(() => {
         fetchLogs();
     }, [
-        pageNumber,
+        pageNumber, numTimesFiltersReset,
     ]);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
@@ -4799,6 +4800,9 @@ const LogReviewer = (props) => {
                         initContextFilterState,
                         initDateFilterState,
                         initTagFilterState,
+                    });
+                    dispatch({
+                        type: ActionType$6.HideFilterDrawer,
                     });
                 } },
                 React__default.createElement(FontAwesomeIcon, { icon: faTimes }),
@@ -5060,7 +5064,7 @@ const LogReviewer = (props) => {
                         React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for user canvas id", value: advancedFilterState.userId, placeholder: "e.g. 104985", onChange: (e) => {
                                 const { value } = e.target;
                                 // Only update if value contains only numbers
-                                if (/^\d+$/.test(value)) {
+                                if (/^\d+$/.test(value) || value === '') {
                                     advancedFilterState.userId = ((e.target.value)
                                         .trim());
                                 }
