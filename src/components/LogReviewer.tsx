@@ -466,6 +466,8 @@ type State = {
   pageNumber: number,
   // If true, there is another page to load
   hasAnotherPage: boolean,
+  // number of times filters have been reset
+  numTimesFiltersReset: number,
 };
 
 /* ------------- Actions ------------ */
@@ -618,6 +620,7 @@ const reducer = (state: State, action: Action): State => {
         tagFilterState: action.initTagFilterState,
         actionErrorFilterState: action.initActionErrorFilterState,
         advancedFilterState: action.initAdvancedFilterState,
+        numTimesFiltersReset: state.numTimesFiltersReset + 1,
       };
     }
     case ActionType.UpdateDateFilterState: {
@@ -812,6 +815,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     advancedFilterState: initAdvancedFilterState,
     pageNumber: 1,
     hasAnotherPage: false,
+    numTimesFiltersReset: 0,
   };
 
   // Initialize state
@@ -829,6 +833,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     advancedFilterState,
     pageNumber,
     hasAnotherPage,
+    numTimesFiltersReset,
   } = state;
 
   /*------------------------------------------------------------------------*/
@@ -885,12 +890,12 @@ const LogReviewer: React.FC<Props> = (props) => {
   /*------------------------------------------------------------------------*/
 
   /**
-   * Fetch logs whenever page number changes
+   * Fetch logs whenever page number changes or filters are reset
    */
   useEffect(() => {
     fetchLogs();
   }, [
-    pageNumber,
+    pageNumber, numTimesFiltersReset,
   ]);
 
   /*------------------------------------------------------------------------*/
@@ -1078,6 +1083,9 @@ const LogReviewer: React.FC<Props> = (props) => {
               initContextFilterState,
               initDateFilterState,
               initTagFilterState,
+            });
+            dispatch({
+              type: ActionType.HideFilterDrawer,
             });
           }}
         >
@@ -1570,7 +1578,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                 onChange={(e) => {
                   const { value } = e.target;
                   // Only update if value contains only numbers
-                  if (/^\d+$/.test(value)) {
+                  if (/^\d+$/.test(value) || value === '') {
                     advancedFilterState.userId = (
                       (e.target.value)
                         .trim()
