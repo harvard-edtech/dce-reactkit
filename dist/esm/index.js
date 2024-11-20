@@ -1697,7 +1697,7 @@ const CheckboxButton = (props) => {
         ? Variant$1.Light
         : Variant$1.Secondary), uncheckedVariant = (isDarkModeOn()
         ? Variant$1.Secondary
-        : Variant$1.Light), small, dashed, } = props;
+        : Variant$1.Light), small, dashed, useComplexFormatting, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -1721,7 +1721,11 @@ const CheckboxButton = (props) => {
         React__default.createElement("div", { className: "d-flex" },
             React__default.createElement("div", { className: "align-items-center" },
                 React__default.createElement(FontAwesomeIcon, { icon: icon, className: "me-1" })),
-            React__default.createElement("div", { className: "flex-grow-1" }, text))));
+            useComplexFormatting
+                ? (React__default.createElement("pre", { className: "ps-2 text-start text-break", style: {
+                        whiteSpace: 'pre-wrap',
+                    } }, text))
+                : (React__default.createElement("div", { className: "flex-grow-1 text-start text-break ps-2" }, text)))));
 };
 
 /**

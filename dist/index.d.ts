@@ -269,6 +269,7 @@ type Props$h = {
     uncheckedVariant?: Variant;
     small?: boolean;
     dashed?: boolean;
+    useComplexFormatting?: boolean;
 };
 declare const CheckboxButton: React$1.FC<Props$h>;
 
