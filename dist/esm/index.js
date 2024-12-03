@@ -1911,7 +1911,13 @@ const SimpleDateChooser = (props) => {
         }
         const monthName = getMonthName(month).full;
         // Year is start year +1 for each 12 months
-        const year = (startYear + (Math.floor(unmoddedMonth / 12)));
+        let yearsToAdd = 0;
+        let monthsOfYearsToAdd = unmoddedMonth;
+        while (monthsOfYearsToAdd > 12) {
+            monthsOfYearsToAdd -= 12;
+            yearsToAdd += 1;
+        }
+        const year = startYear + yearsToAdd;
         // Figure out which days are allowed
         const days = [];
         const numDaysInMonth = (new Date(year, month, 0)).getDate();
@@ -1962,7 +1968,7 @@ const SimpleDateChooser = (props) => {
             });
         }
     });
-    return (React__default.createElement("div", { className: "SimpleDateChooser d-inline-block", "aria-label": `date chooser with selected date: ${month} ${day}, ${year}` },
+    return (React__default.createElement("div", { className: "SimpleDateChooser d-inline-block", "aria-label": `date chooser with selected date: ${month}/${day}/${year}` },
         React__default.createElement("select", { "aria-label": `month for ${ariaLabel}`, className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: `${month}-${year}`, onChange: (e) => {
                 const choice = choices[e.target.selectedIndex];
                 // Change day, month, and year

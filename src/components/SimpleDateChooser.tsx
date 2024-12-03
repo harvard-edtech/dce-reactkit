@@ -94,7 +94,13 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     }
     const monthName = getMonthName(month).full;
     // Year is start year +1 for each 12 months
-    const year = (startYear + (Math.floor(unmoddedMonth / 12)));
+    let yearsToAdd = 0;
+    let monthsOfYearsToAdd = unmoddedMonth;
+    while (monthsOfYearsToAdd > 12) {
+      monthsOfYearsToAdd -= 12;
+      yearsToAdd += 1;
+    }
+    const year = startYear + yearsToAdd;
 
     // Figure out which days are allowed
     const days = [];
@@ -174,7 +180,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   return (
     <div
       className="SimpleDateChooser d-inline-block"
-      aria-label={`date chooser with selected date: ${month} ${day}, ${year}`}
+      aria-label={`date chooser with selected date: ${month}/${day}/${year}`}
     >
       {/* Month Chooser */}
       <select
