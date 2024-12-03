@@ -937,6 +937,11 @@ const shared = `
 .tooltip {
   z-index: 9000000000 !important;
 }
+
+/* Tooltip White Text */
+.tooltip .tooltip-inner {
+  color: white !important;
+}
 `;
 
 /**
