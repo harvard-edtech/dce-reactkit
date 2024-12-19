@@ -40,6 +40,8 @@ type Props = {
   unselectedVariant?: Variant,
   // True if using a small button
   small?: boolean,
+  // If true, use complex formatting (tabs, newlines) in the text
+  useComplexFormatting?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -72,6 +74,7 @@ const RadioButton: React.FC<Props> = (props) => {
         : Variant.Light
     ),
     small,
+    useComplexFormatting,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -99,7 +102,24 @@ const RadioButton: React.FC<Props> = (props) => {
         icon={selected ? faDotCircle : faCircle}
         className="me-1"
       />
-      {text}
+      {
+          useComplexFormatting
+            ? (
+              <pre
+                className="ps-2 text-start text-break"
+                style={{
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {text}
+              </pre>
+            )
+            : (
+              <div className="flex-grow-1 text-start text-break ps-2">
+                {text}
+              </div>
+            )
+        }
     </button>
   );
 };
