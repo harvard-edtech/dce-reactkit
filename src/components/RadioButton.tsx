@@ -32,6 +32,8 @@ type Props = {
   selected?: boolean,
   // The id of the button
   id?: string,
+  // Custom class name of the button
+  className?: string,
   // If true, no margin on right
   noMarginOnRight?: boolean,
   // Variant for when radio is selected
@@ -62,6 +64,7 @@ const RadioButton: React.FC<Props> = (props) => {
     title,
     selected,
     id,
+    className,
     noMarginOnRight,
     selectedVariant = (
       isDarkModeOn()
@@ -90,7 +93,7 @@ const RadioButton: React.FC<Props> = (props) => {
       type="button"
       id={id}
       title={title}
-      className={`btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`}
+      className={`btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'} ${className ?? ''}`}
       aria-label={`${ariaLabel}${selected ? ': currently selected' : ''}`}
       onClick={() => {
         if (!selected) {
