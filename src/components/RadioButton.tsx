@@ -32,6 +32,8 @@ type Props = {
   selected?: boolean,
   // The id of the button
   id?: string,
+  // Custom class name of the button
+  className?: string,
   // If true, no margin on right
   noMarginOnRight?: boolean,
   // Variant for when radio is selected
@@ -40,6 +42,8 @@ type Props = {
   unselectedVariant?: Variant,
   // True if using a small button
   small?: boolean,
+  // If true, use complex formatting (tabs, newlines) in the text
+  useComplexFormatting?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -60,6 +64,7 @@ const RadioButton: React.FC<Props> = (props) => {
     title,
     selected,
     id,
+    className,
     noMarginOnRight,
     selectedVariant = (
       isDarkModeOn()
@@ -72,6 +77,7 @@ const RadioButton: React.FC<Props> = (props) => {
         : Variant.Light
     ),
     small,
+    useComplexFormatting,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -87,7 +93,7 @@ const RadioButton: React.FC<Props> = (props) => {
       type="button"
       id={id}
       title={title}
-      className={`btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`}
+      className={`btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'} ${className ?? ''}`}
       aria-label={`${ariaLabel}${selected ? ': currently selected' : ''}`}
       onClick={() => {
         if (!selected) {
@@ -99,7 +105,24 @@ const RadioButton: React.FC<Props> = (props) => {
         icon={selected ? faDotCircle : faCircle}
         className="me-1"
       />
-      {text}
+      {
+          useComplexFormatting
+            ? (
+              <pre
+                className="ps-2 text-start text-break"
+                style={{
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {text}
+              </pre>
+            )
+            : (
+              <div className="flex-grow-1 text-start text-break ps-2">
+                {text}
+              </div>
+            )
+        }
     </button>
   );
 };
