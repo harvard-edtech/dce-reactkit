@@ -1666,24 +1666,28 @@ const RadioButton = (props) => {
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { text, onSelected, ariaLabel, title, selected, id, noMarginOnRight, selectedVariant = (isDarkModeOn()
+    const { text, onSelected, ariaLabel, title, selected, id, className, noMarginOnRight, selectedVariant = (isDarkModeOn()
         ? Variant$1.Light
         : Variant$1.Secondary), unselectedVariant = (isDarkModeOn()
         ? Variant$1.Secondary
-        : Variant$1.Light), small, } = props;
+        : Variant$1.Light), small, useComplexFormatting, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
-    return (React__default.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
+    return (React__default.createElement("button", { type: "button", id: id, title: title, className: `btn btn-${selected ? selectedVariant : unselectedVariant}${selected ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'} ${className !== null && className !== void 0 ? className : ''}`, "aria-label": `${ariaLabel}${selected ? ': currently selected' : ''}`, onClick: () => {
             if (!selected) {
                 onSelected();
             }
         } },
         React__default.createElement(FontAwesomeIcon, { icon: selected ? faDotCircle : faCircle$1, className: "me-1" }),
-        text));
+        useComplexFormatting
+            ? (React__default.createElement("pre", { className: "ps-2 text-start text-break", style: {
+                    whiteSpace: 'pre-wrap',
+                } }, text))
+            : (React__default.createElement("div", { className: "flex-grow-1 text-start text-break ps-2" }, text))));
 };
 
 /**

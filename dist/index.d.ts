@@ -244,10 +244,12 @@ type Props$i = {
     title?: string;
     selected?: boolean;
     id?: string;
+    className?: string;
     noMarginOnRight?: boolean;
     selectedVariant?: Variant;
     unselectedVariant?: Variant;
     small?: boolean;
+    useComplexFormatting?: boolean;
 };
 declare const RadioButton: React$1.FC<Props$i>;
 
