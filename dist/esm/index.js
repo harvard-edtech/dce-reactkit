@@ -15020,16 +15020,16 @@ const genRouteHandler = (opts) => {
                 const { timestamp, year, month, day, hour, minute, } = getTimeInfoInET();
                 // Main log info
                 const mainLogInfo = {
-                    id: `${launchInfo ? 'unknown' : launchInfo.userId}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
-                    userFirstName: (launchInfo ? 'unknown' : launchInfo.userFirstName),
-                    userLastName: (launchInfo ? 'unknown' : launchInfo.userLastName),
-                    userEmail: (launchInfo ? 'unknown' : launchInfo.userEmail),
-                    userId: (launchInfo ? 'unknown' : launchInfo.userId),
+                    id: `${launchInfo ? launchInfo.userId : 'unknown'}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
+                    userFirstName: (launchInfo ? launchInfo.userFirstName : 'unknown'),
+                    userLastName: (launchInfo ? launchInfo.userLastName : 'unknown'),
+                    userEmail: (launchInfo ? launchInfo.userEmail : 'unknown'),
+                    userId: (launchInfo ? launchInfo.userId : 'unknown'),
                     isLearner: (launchInfo && !!launchInfo.isLearner),
                     isAdmin: (launchInfo && !!launchInfo.isAdmin),
                     isTTM: (launchInfo && !!launchInfo.isTTM),
-                    courseId: (launchInfo ? 'unknown' : launchInfo.courseId),
-                    courseName: (launchInfo ? 'unknown' : launchInfo.contextLabel),
+                    courseId: (launchInfo ? launchInfo.courseId : 'unknown'),
+                    courseName: (launchInfo ? launchInfo.contextLabel : 'unknown'),
                     browser,
                     device,
                     year,
