@@ -101,11 +101,14 @@ const RadioButton: React.FC<Props> = (props) => {
         }
       }}
     >
-      <FontAwesomeIcon
-        icon={selected ? faDotCircle : faCircle}
-        className="me-1"
-      />
-      {
+      <div className="d-flex">
+        <div className="align-items-center">
+          <FontAwesomeIcon
+            icon={selected ? faDotCircle : faCircle}
+            className="me-1"
+          />
+        </div>
+        {
           useComplexFormatting
             ? (
               <pre
@@ -123,6 +126,8 @@ const RadioButton: React.FC<Props> = (props) => {
               </div>
             )
         }
+      </div>
+
     </button>
   );
 };
