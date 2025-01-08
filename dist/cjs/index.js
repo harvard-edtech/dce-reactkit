@@ -1710,12 +1710,14 @@ const RadioButton = (props) => {
                 onSelected();
             }
         } },
-        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: selected ? freeSolidSvgIcons.faDotCircle : freeRegularSvgIcons.faCircle, className: "me-1" }),
-        useComplexFormatting
-            ? (React__default["default"].createElement("pre", { className: "ps-2 text-start text-break", style: {
-                    whiteSpace: 'pre-wrap',
-                } }, text))
-            : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break ps-2" }, text))));
+        React__default["default"].createElement("div", { className: "d-flex" },
+            React__default["default"].createElement("div", { className: "align-items-center" },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: selected ? freeSolidSvgIcons.faDotCircle : freeRegularSvgIcons.faCircle, className: "me-1" })),
+            useComplexFormatting
+                ? (React__default["default"].createElement("pre", { className: "ps-2 text-start text-break", style: {
+                        whiteSpace: 'pre-wrap',
+                    } }, text))
+                : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break ps-2" }, text)))));
 };
 
 /**
