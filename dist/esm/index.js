@@ -1688,6 +1688,7 @@ const RadioButton = (props) => {
             useComplexFormatting
                 ? (React__default.createElement("pre", { className: "ps-1 text-start text-break", style: {
                         whiteSpace: 'pre-wrap',
+                        tabSize: 2,
                     } }, text))
                 : (React__default.createElement("div", { className: "flex-grow-1 text-start text-break" }, text)))));
 };
@@ -1735,6 +1736,7 @@ const CheckboxButton = (props) => {
             useComplexFormatting
                 ? (React__default.createElement("pre", { className: "ps-1 text-start text-break", style: {
                         whiteSpace: 'pre-wrap',
+                        tabSize: 2,
                     } }, text))
                 : (React__default.createElement("div", { className: "flex-grow-1 text-start text-break" }, text)))));
 };
