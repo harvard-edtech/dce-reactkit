@@ -117,18 +117,17 @@ const CheckboxButton: React.FC<Props> = (props) => {
         onChanged(!checked);
       }}
     >
-      <div className="d-flex">
-        <div className="align-items-center">
+      <div className="d-flex align-items-center">
+        <div className="me-1">
           <FontAwesomeIcon
             icon={icon}
-            className="me-1"
           />
         </div>
         {
           useComplexFormatting
             ? (
               <pre
-                className="ps-2 text-start text-break"
+                className="ps-1 text-start text-break"
                 style={{
                   whiteSpace: 'pre-wrap',
                 }}
@@ -137,7 +136,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
               </pre>
             )
             : (
-              <div className="flex-grow-1 text-start text-break ps-2">
+              <div className="flex-grow-1 text-start text-break">
                 {text}
               </div>
             )

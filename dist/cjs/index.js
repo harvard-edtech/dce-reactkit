@@ -1710,14 +1710,14 @@ const RadioButton = (props) => {
                 onSelected();
             }
         } },
-        React__default["default"].createElement("div", { className: "d-flex" },
-            React__default["default"].createElement("div", { className: "align-items-center" },
-                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: selected ? freeSolidSvgIcons.faDotCircle : freeRegularSvgIcons.faCircle, className: "me-1" })),
+        React__default["default"].createElement("div", { className: "d-flex flex-row align-items-center" },
+            React__default["default"].createElement("div", { className: "me-1" },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: selected ? freeSolidSvgIcons.faDotCircle : freeRegularSvgIcons.faCircle })),
             useComplexFormatting
-                ? (React__default["default"].createElement("pre", { className: "ps-2 text-start text-break", style: {
+                ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break", style: {
                         whiteSpace: 'pre-wrap',
                     } }, text))
-                : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break ps-2" }, text)))));
+                : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break" }, text)))));
 };
 
 /**
@@ -1757,14 +1757,14 @@ const CheckboxButton = (props) => {
     return (React__default["default"].createElement("button", { type: "button", id: id, title: title, className: `CheckboxButton-status-${checked ? 'checked' : 'unchecked'} ${dashed ? 'CheckboxButton-dashed ' : ''}btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'} ${className !== null && className !== void 0 ? className : ''}`, "aria-label": `${ariaLabel}${checked ? ': currently checked' : ''}`, onClick: () => {
             onChanged(!checked);
         } },
-        React__default["default"].createElement("div", { className: "d-flex" },
-            React__default["default"].createElement("div", { className: "align-items-center" },
-                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: icon, className: "me-1" })),
+        React__default["default"].createElement("div", { className: "d-flex align-items-center" },
+            React__default["default"].createElement("div", { className: "me-1" },
+                React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: icon })),
             useComplexFormatting
-                ? (React__default["default"].createElement("pre", { className: "ps-2 text-start text-break", style: {
+                ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break", style: {
                         whiteSpace: 'pre-wrap',
                     } }, text))
-                : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break ps-2" }, text)))));
+                : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break" }, text)))));
 };
 
 /**
