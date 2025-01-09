@@ -608,23 +608,23 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
 
   // Prompt
   const [promptInfo, setPromptInfoInner] = useState<
-    | undefined
-    | {
-      title: string,
-      currentInputFieldText: string,
-      opts: {
-        textAboveInputField?: string,
-        placeholder?: string,
-        defaultText?: string,
-        confirmButtonText?: string,
-        confirmButtonVariant?: Variant,
-        cancelButtonText?: string,
-        cancelButtonVariant?: Variant,
-        minNumChars?: number,
-        findValidationError?: (text: string) => string | undefined,
-        ariaLabel?: string,
-      }
+  | undefined
+  | {
+    title: string,
+    currentInputFieldText: string,
+    opts: {
+      textAboveInputField?: string,
+      placeholder?: string,
+      defaultText?: string,
+      confirmButtonText?: string,
+      confirmButtonVariant?: Variant,
+      cancelButtonText?: string,
+      cancelButtonVariant?: Variant,
+      minNumChars?: number,
+      findValidationError?: (text: string) => string | undefined,
+      ariaLabel?: string,
     }
+  }
   >(undefined);
   setPromptInfo = setPromptInfoInner;
 
@@ -918,7 +918,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
       ? `
         .tooltip-inner {
           background-color: white;
-          color: black;
+          color: black !important;
           border: 0.1rem solid black;
           pointer-events: none;
         }
@@ -931,7 +931,7 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
       : `
         .tooltip-inner {
           background-color: black;
-          color: white;
+          color: white !important;
           border: 0.1rem solid white;
           pointer-events: none;
         }
