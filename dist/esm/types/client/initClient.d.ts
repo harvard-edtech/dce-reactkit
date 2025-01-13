@@ -19,6 +19,12 @@ type SendRequestFunction = (opts: {
         [x: string]: any;
     };
 }>;
+declare let noServer: boolean;
+/**
+ * Check if there is no server for this app
+ * @author Gabe Abrams
+ */
+export declare const appHasNoServer: () => boolean;
 /**
  * Get the send request function
  * @author Gabe Abrams
@@ -44,10 +50,18 @@ export declare const isDarkModeOn: () => boolean;
  * @param opts object containing all arguments
  * @param opts.sendRequest caccl send request functions
  * @param [opts.sessionExpiredMessage] a custom session expired message
+ * @param [opts.darkModeOn] if true, dark mode is enabled
+ * @param [opts.noServer] if true, there is no server for this app
  */
-declare const initClient: (opts: {
+declare const initClient: (opts: ({
     sendRequest: SendRequestFunction;
     sessionExpiredMessage?: string;
     darkModeOn?: boolean;
-}) => void;
+    noServer?: false;
+} | {
+    darkModeOn?: boolean;
+    noServer: true;
+    sendRequest?: undefined;
+    sessionExpiredMessage?: undefined;
+})) => void;
 export default initClient;

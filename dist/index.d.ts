@@ -810,12 +810,20 @@ type SendRequestFunction = (opts: {
  * @param opts object containing all arguments
  * @param opts.sendRequest caccl send request functions
  * @param [opts.sessionExpiredMessage] a custom session expired message
+ * @param [opts.darkModeOn] if true, dark mode is enabled
+ * @param [opts.noServer] if true, there is no server for this app
  */
-declare const initClient: (opts: {
+declare const initClient: (opts: ({
     sendRequest: SendRequestFunction;
     sessionExpiredMessage?: string;
     darkModeOn?: boolean;
-}) => void;
+    noServer?: false;
+} | {
+    darkModeOn?: boolean;
+    noServer: true;
+    sendRequest?: undefined;
+    sessionExpiredMessage?: undefined;
+})) => void;
 
 /**
  * Shorten text so it fits into a certain number of chars

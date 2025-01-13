@@ -7,6 +7,9 @@ import LogLevel from '../types/LogLevel';
 // Import shared functions
 import visitServerEndpoint from './visitServerEndpoint';
 
+// Import status
+import { appHasNoServer } from '../client/initClient';
+
 /* ------- Metadata Populator ------- */
 
 // Type of a metadata populator function
@@ -36,6 +39,11 @@ export const setClientEventMetadataPopulator = (
  * @author Gabe Abrams
  */
 const logClientEvent: LogFunction = async (opts) => {
+  // Don't write to the server if there is none
+  if (appHasNoServer()) {
+    return;
+  }
+
   // Populate metadata
   let metadata = (opts.metadata ?? {});
   if (metadataPopulator) {
