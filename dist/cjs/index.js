@@ -937,11 +937,6 @@ const shared = `
 .tooltip {
   z-index: 9000000000 !important;
 }
-
-/* Tooltip White Text */
-.tooltip .tooltip-inner {
-  color: white !important;
-}
 `;
 
 /**
@@ -1462,7 +1457,7 @@ const AppWrapper = (props) => {
         ? `
         .tooltip-inner {
           background-color: white;
-          color: black;
+          color: black !important;
           border: 0.1rem solid black;
           pointer-events: none;
         }
@@ -1475,7 +1470,7 @@ const AppWrapper = (props) => {
         : `
         .tooltip-inner {
           background-color: black;
-          color: white;
+          color: white !important;
           border: 0.1rem solid white;
           pointer-events: none;
         }
