@@ -102,6 +102,7 @@ const visitServerEndpoint = async (
     params?: { [key in string]: any },
   },
 ): Promise<any> => {
+  // Set default method
   const method = (opts.method ?? 'GET');
   // Handle stubs
   const stubResponse = stubResponses[method]?.[opts.path];

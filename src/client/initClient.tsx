@@ -47,6 +47,18 @@ const initialized = new Promise((resolve) => {
   onInitialized = resolve;
 });
 
+/* ------------ No Server ----------- */
+
+let noServer = false;
+
+/**
+ * Check if there is no server for this app
+ * @author Gabe Abrams
+ */
+export const appHasNoServer = () => {
+  return noServer;
+};
+
 /* ---------- Send Request ---------- */
 
 let storedSendRequest: SendRequestFunction;
@@ -119,20 +131,46 @@ export const isDarkModeOn = () => {
  * @param opts object containing all arguments
  * @param opts.sendRequest caccl send request functions
  * @param [opts.sessionExpiredMessage] a custom session expired message
+ * @param [opts.darkModeOn] if true, dark mode is enabled
+ * @param [opts.noServer] if true, there is no server for this app
  */
 const initClient = (
-  opts: {
-    // Copy of CACCL's send request function
-    sendRequest: SendRequestFunction,
-    // Custom session expired message
-    sessionExpiredMessage?: string,
-    // If true, dark mode is enabled
-    darkModeOn?: boolean,
-  },
+  opts: (
+    | {
+      // Copy of CACCL's send request function
+      sendRequest: SendRequestFunction,
+      // Custom session expired message
+      sessionExpiredMessage?: string,
+      // If true, dark mode is enabled
+      darkModeOn?: boolean,
+      // If true, there is no server for this app
+      noServer?: false,
+    }
+    | {
+      // If true, dark mode is enabled
+      darkModeOn?: boolean,
+      // If true, there is no server for this app
+      noServer: true
+      // Copy of CACCL's send request function
+      sendRequest?: undefined,
+      // Custom session expired message
+      sessionExpiredMessage?: undefined,
+    }
+  ),
 ) => {
-  // Store values
-  storedSendRequest = opts.sendRequest;
-  sessionExpiredMessage = opts.sessionExpiredMessage;
+  // Handle separately if there is no server
+  if (opts.noServer) {
+    // Store values
+    storedSendRequest = async () => {
+      throw new Error('Cannot send requests because there is no server');
+    };
+  } else {
+    // Store values
+    storedSendRequest = opts.sendRequest;
+    sessionExpiredMessage = opts.sessionExpiredMessage;
+  }
+
+  // Handle universal parts
   darkModeOn = !!opts.darkModeOn;
 
   // Mark as initialized

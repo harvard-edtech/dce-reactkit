@@ -317,11 +317,23 @@ const isDarkModeOn = () => {
  * @param opts object containing all arguments
  * @param opts.sendRequest caccl send request functions
  * @param [opts.sessionExpiredMessage] a custom session expired message
+ * @param [opts.darkModeOn] if true, dark mode is enabled
+ * @param [opts.noServer] if true, there is no server for this app
  */
 const initClient = (opts) => {
-    // Store values
-    storedSendRequest = opts.sendRequest;
-    sessionExpiredMessage = opts.sessionExpiredMessage;
+    // Handle separately if there is no server
+    if (opts.noServer) {
+        // Store values
+        storedSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
+            throw new Error('Cannot send requests because there is no server');
+        });
+    }
+    else {
+        // Store values
+        storedSendRequest = opts.sendRequest;
+        sessionExpiredMessage = opts.sessionExpiredMessage;
+    }
+    // Handle universal parts
     darkModeOn = !!opts.darkModeOn;
     // Mark as initialized
     onInitialized(null);
@@ -785,6 +797,7 @@ const _setStubResponse = (opts) => {
  */
 const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
+    // Set default method
     const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET');
     // Handle stubs
     const stubResponse = (_b = stubResponses[method]) === null || _b === void 0 ? void 0 : _b[opts.path];
@@ -1711,6 +1724,7 @@ const RadioButton = (props) => {
             useComplexFormatting
                 ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break", style: {
                         whiteSpace: 'pre-wrap',
+                        tabSize: 2,
                     } }, text))
                 : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break" }, text)))));
 };
@@ -1758,6 +1772,7 @@ const CheckboxButton = (props) => {
             useComplexFormatting
                 ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break", style: {
                         whiteSpace: 'pre-wrap',
+                        tabSize: 2,
                     } }, text))
                 : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break" }, text)))));
 };

@@ -114,6 +114,7 @@ const RadioButton: React.FC<Props> = (props) => {
                 className="ps-1 text-start text-break"
                 style={{
                   whiteSpace: 'pre-wrap',
+                  tabSize: 2,
                 }}
               >
                 {text}
