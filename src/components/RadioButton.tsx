@@ -111,7 +111,7 @@ const RadioButton: React.FC<Props> = (props) => {
           useComplexFormatting
             ? (
               <pre
-                className="ps-1 text-start text-break"
+                className="ps-1 text-start text-break m-0"
                 style={{
                   whiteSpace: 'pre-wrap',
                   tabSize: 2,
