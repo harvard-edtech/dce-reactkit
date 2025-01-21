@@ -1722,7 +1722,7 @@ const RadioButton = (props) => {
             React__default["default"].createElement("div", { className: "me-1" },
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: selected ? freeSolidSvgIcons.faDotCircle : freeRegularSvgIcons.faCircle })),
             useComplexFormatting
-                ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break", style: {
+                ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break m-0", style: {
                         whiteSpace: 'pre-wrap',
                         tabSize: 2,
                     } }, text))
@@ -1770,7 +1770,7 @@ const CheckboxButton = (props) => {
             React__default["default"].createElement("div", { className: "me-1" },
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: icon })),
             useComplexFormatting
-                ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break", style: {
+                ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break m-0", style: {
                         whiteSpace: 'pre-wrap',
                         tabSize: 2,
                     } }, text))
