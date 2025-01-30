@@ -5,7 +5,7 @@
  */
 
 // Import React
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer } from 'react';
 
 // Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -466,8 +466,8 @@ type State = {
   pageNumber: number,
   // If true, there is another page to load
   hasAnotherPage: boolean,
-  // number of times filters have been reset
-  numTimesFiltersReset: number,
+  // Total number of pages
+  numPages: number,
 };
 
 /* ------------- Actions ------------ */
@@ -500,6 +500,8 @@ enum ActionType {
   DecrementPageNumber = 'decrement-page-number',
   // Set has another page
   SetHasAnotherPage = 'set-has-another-page',
+  // Set the number of pages
+  SetNumPages = 'set-num-pages',
 }
 
 // Action definitions
@@ -567,6 +569,10 @@ type Action = (
     hasAnotherPage: boolean,
   }
   | {
+    type: ActionType.SetNumPages,
+    numPages: number,
+  }
+  | {
     // Action type
     type: (
       | ActionType.StartLoading
@@ -620,7 +626,7 @@ const reducer = (state: State, action: Action): State => {
         tagFilterState: action.initTagFilterState,
         actionErrorFilterState: action.initActionErrorFilterState,
         advancedFilterState: action.initAdvancedFilterState,
-        numTimesFiltersReset: state.numTimesFiltersReset + 1,
+        pageNumber: 1,
       };
     }
     case ActionType.UpdateDateFilterState: {
@@ -669,6 +675,12 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         hasAnotherPage: action.hasAnotherPage,
+      };
+    }
+    case ActionType.SetNumPages: {
+      return {
+        ...state,
+        numPages: action.numPages,
       };
     }
     default: {
@@ -815,7 +827,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     advancedFilterState: initAdvancedFilterState,
     pageNumber: 1,
     hasAnotherPage: false,
-    numTimesFiltersReset: 0,
+    numPages: 1,
   };
 
   // Initialize state
@@ -833,7 +845,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     advancedFilterState,
     pageNumber,
     hasAnotherPage,
-    numTimesFiltersReset,
+    numPages,
   } = state;
 
   /*------------------------------------------------------------------------*/
@@ -843,19 +855,22 @@ const LogReviewer: React.FC<Props> = (props) => {
   /**
    * Fetch logs from the server based on current filters
    */
-  const fetchLogs = async () => {
+  const fetchLogs = async (
+    opts: {
+      filters: LogReviewerFilterState,
+      pageNum: number,
+      countDocuments: boolean,
+    },
+  ) => {
+    const {
+      filters,
+      pageNum,
+      countDocuments,
+    } = opts;
+
     dispatch({ type: ActionType.StartLoading });
 
     try {
-      // Prepare filter parameters
-      const filters: LogReviewerFilterState = {
-        dateFilterState,
-        contextFilterState,
-        tagFilterState,
-        actionErrorFilterState,
-        advancedFilterState,
-      };
-
       // Send filters to the server
       let fetchedLogs: Log[] = [];
 
@@ -864,8 +879,9 @@ const LogReviewer: React.FC<Props> = (props) => {
         path: LOG_REVIEW_GET_LOGS_ROUTE,
         method: 'GET',
         params: {
-          pageNumber,
+          pageNumber: pageNum,
           filters,
+          countDocuments,
         },
       });
 
@@ -873,6 +889,11 @@ const LogReviewer: React.FC<Props> = (props) => {
       dispatch({
         type: ActionType.SetHasAnotherPage,
         hasAnotherPage: response.hasAnotherPage,
+      });
+
+      dispatch({
+        type: ActionType.SetNumPages,
+        numPages: response.numPages,
       });
 
       // Update logs in state
@@ -884,19 +905,6 @@ const LogReviewer: React.FC<Props> = (props) => {
       return showFatalError(err);
     }
   };
-
-  /*------------------------------------------------------------------------*/
-  /* ------------------------- Lifecycle Functions ------------------------ */
-  /*------------------------------------------------------------------------*/
-
-  /**
-   * Fetch logs whenever page number changes or filters are reset
-   */
-  useEffect(() => {
-    fetchLogs();
-  }, [
-    pageNumber, numTimesFiltersReset,
-  ]);
 
   /*------------------------------------------------------------------------*/
   /* ------------------------------- Render ------------------------------- */
@@ -931,6 +939,19 @@ const LogReviewer: React.FC<Props> = (props) => {
         className="btn btn-secondary me-2"
         disabled={pageNumber <= 1}
         onClick={() => {
+          fetchLogs(
+            {
+              filters: {
+                dateFilterState,
+                contextFilterState,
+                tagFilterState,
+                actionErrorFilterState,
+                advancedFilterState,
+              },
+              pageNum: pageNumber - 1,
+              countDocuments: false,
+            },
+          );
           dispatch({
             type: ActionType.DecrementPageNumber,
           });
@@ -943,12 +964,29 @@ const LogReviewer: React.FC<Props> = (props) => {
         Page
         {' '}
         {pageNumber}
+        {' '}
+        of
+        {' '}
+        {numPages}
       </span>
       <button
         type="button"
         className="btn btn-secondary ms-2"
         disabled={!hasAnotherPage}
         onClick={() => {
+          fetchLogs(
+            {
+              filters: {
+                dateFilterState,
+                contextFilterState,
+                tagFilterState,
+                actionErrorFilterState,
+                advancedFilterState,
+              },
+              pageNum: pageNumber + 1,
+              countDocuments: false,
+            },
+          );
           dispatch({
             type: ActionType.IncrementPageNumber,
           });
@@ -1076,6 +1114,19 @@ const LogReviewer: React.FC<Props> = (props) => {
           className="btn btn-light"
           aria-label="reset filters"
           onClick={() => {
+            fetchLogs(
+              {
+                filters: {
+                  dateFilterState: initDateFilterState,
+                  contextFilterState: initContextFilterState,
+                  tagFilterState: initTagFilterState,
+                  actionErrorFilterState: initActionErrorFilterState,
+                  advancedFilterState: initAdvancedFilterState,
+                },
+                pageNum: 1,
+                countDocuments: true,
+              },
+            );
             dispatch({
               type: ActionType.ResetFilters,
               initActionErrorFilterState,
@@ -1106,7 +1157,19 @@ const LogReviewer: React.FC<Props> = (props) => {
             dispatch({
               type: ActionType.HideFilterDrawer,
             });
-            fetchLogs();
+            fetchLogs(
+              {
+                filters: {
+                  dateFilterState,
+                  contextFilterState,
+                  tagFilterState,
+                  actionErrorFilterState,
+                  advancedFilterState,
+                },
+                pageNum: 1,
+                countDocuments: true,
+              },
+            );
           }}
         >
           <FontAwesomeIcon

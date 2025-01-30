@@ -247,6 +247,7 @@ const initServer = (
       paramTypes: {
         pageNumber: ParamType.Int,
         filters: ParamType.JSON,
+        countDocuments: ParamType.Boolean,
       },
       handler: async ({ params }) => {
       // Get user info
@@ -255,6 +256,7 @@ const initServer = (
           userId,
           isAdmin,
           filters,
+          countDocuments,
         } = params;
 
         const {
@@ -467,6 +469,11 @@ const initServer = (
           perPage: 50,
           pageNumber,
         });
+
+        // Count documents if requested
+        if (countDocuments) {
+          response.numPages = Math.ceil(await _logCollection.count(query) / 50);
+        }
 
         // Return response
         return response;
