@@ -891,10 +891,12 @@ const LogReviewer: React.FC<Props> = (props) => {
         hasAnotherPage: response.hasAnotherPage,
       });
 
-      dispatch({
-        type: ActionType.SetNumPages,
-        numPages: response.numPages,
-      });
+      if (countDocuments && response.numPages) {
+        dispatch({
+          type: ActionType.SetNumPages,
+          numPages: response.numPages,
+        });
+      }
 
       // Update logs in state
       dispatch({
