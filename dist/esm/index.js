@@ -3775,6 +3775,8 @@ var ActionType$6;
     ActionType["DecrementPageNumber"] = "decrement-page-number";
     // Set has another page
     ActionType["SetHasAnotherPage"] = "set-has-another-page";
+    // Set the number of pages
+    ActionType["SetNumPages"] = "set-num-pages";
 })(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
@@ -3799,7 +3801,7 @@ const reducer$7 = (state, action) => {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
         }
         case ActionType$6.ResetFilters: {
-            return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState, numTimesFiltersReset: state.numTimesFiltersReset + 1 });
+            return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState, pageNumber: 1 });
         }
         case ActionType$6.UpdateDateFilterState: {
             return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
@@ -3824,6 +3826,9 @@ const reducer$7 = (state, action) => {
         }
         case ActionType$6.SetHasAnotherPage: {
             return Object.assign(Object.assign({}, state), { hasAnotherPage: action.hasAnotherPage });
+        }
+        case ActionType$6.SetNumPages: {
+            return Object.assign(Object.assign({}, state), { numPages: action.numPages });
         }
         default: {
             return state;
@@ -3951,29 +3956,22 @@ const LogReviewer = (props) => {
         advancedFilterState: initAdvancedFilterState,
         pageNumber: 1,
         hasAnotherPage: false,
-        numTimesFiltersReset: 0,
+        numPages: 1,
     };
     // Initialize state
     const [state, dispatch] = useReducer(reducer$7, initialState);
     // Destructure common state
-    const { loading, logs, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, pageNumber, hasAnotherPage, numTimesFiltersReset, } = state;
+    const { loading, logs, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, pageNumber, hasAnotherPage, numPages, } = state;
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
     /**
      * Fetch logs from the server based on current filters
      */
-    const fetchLogs = () => __awaiter(void 0, void 0, void 0, function* () {
+    const fetchLogs = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+        const { filters, pageNum, countDocuments, } = opts;
         dispatch({ type: ActionType$6.StartLoading });
         try {
-            // Prepare filter parameters
-            const filters = {
-                dateFilterState,
-                contextFilterState,
-                tagFilterState,
-                actionErrorFilterState,
-                advancedFilterState,
-            };
             // Send filters to the server
             let fetchedLogs = [];
             // Get logs from server
@@ -3981,8 +3979,9 @@ const LogReviewer = (props) => {
                 path: LOG_REVIEW_GET_LOGS_ROUTE,
                 method: 'GET',
                 params: {
-                    pageNumber,
+                    pageNumber: pageNum,
                     filters,
+                    countDocuments,
                 },
             });
             fetchedLogs = fetchedLogs.concat(response.items);
@@ -3990,6 +3989,12 @@ const LogReviewer = (props) => {
                 type: ActionType$6.SetHasAnotherPage,
                 hasAnotherPage: response.hasAnotherPage,
             });
+            if (countDocuments && response.numPages) {
+                dispatch({
+                    type: ActionType$6.SetNumPages,
+                    numPages: response.numPages,
+                });
+            }
             // Update logs in state
             dispatch({
                 type: ActionType$6.FinishLoading,
@@ -4000,17 +4005,6 @@ const LogReviewer = (props) => {
             return showFatalError(err);
         }
     });
-    /*------------------------------------------------------------------------*/
-    /* ------------------------- Lifecycle Functions ------------------------ */
-    /*------------------------------------------------------------------------*/
-    /**
-     * Fetch logs whenever page number changes or filters are reset
-     */
-    useEffect(() => {
-        fetchLogs();
-    }, [
-        pageNumber, numTimesFiltersReset,
-    ]);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -4030,6 +4024,17 @@ const LogReviewer = (props) => {
     /*----------------------------------------*/
     const paginationControls = logs.length > 0 && (React__default.createElement("div", { className: "text-center mt-3" },
         React__default.createElement("button", { type: "button", className: "btn btn-secondary me-2", disabled: pageNumber <= 1, onClick: () => {
+                fetchLogs({
+                    filters: {
+                        dateFilterState,
+                        contextFilterState,
+                        tagFilterState,
+                        actionErrorFilterState,
+                        advancedFilterState,
+                    },
+                    pageNum: pageNumber - 1,
+                    countDocuments: false,
+                });
                 dispatch({
                     type: ActionType$6.DecrementPageNumber,
                 });
@@ -4039,8 +4044,23 @@ const LogReviewer = (props) => {
         React__default.createElement("span", { className: "mx-3" },
             "Page",
             ' ',
-            pageNumber),
+            pageNumber,
+            ' ',
+            "of",
+            ' ',
+            numPages),
         React__default.createElement("button", { type: "button", className: "btn btn-secondary ms-2", disabled: !hasAnotherPage, onClick: () => {
+                fetchLogs({
+                    filters: {
+                        dateFilterState,
+                        contextFilterState,
+                        tagFilterState,
+                        actionErrorFilterState,
+                        advancedFilterState,
+                    },
+                    pageNum: pageNumber + 1,
+                    countDocuments: false,
+                });
                 dispatch({
                     type: ActionType$6.IncrementPageNumber,
                 });
@@ -4095,6 +4115,17 @@ const LogReviewer = (props) => {
                 React__default.createElement(FontAwesomeIcon, { icon: faList, className: "me-2" }),
                 "Advanced"),
             React__default.createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
+                    fetchLogs({
+                        filters: {
+                            dateFilterState: initDateFilterState,
+                            contextFilterState: initContextFilterState,
+                            tagFilterState: initTagFilterState,
+                            actionErrorFilterState: initActionErrorFilterState,
+                            advancedFilterState: initAdvancedFilterState,
+                        },
+                        pageNum: 1,
+                        countDocuments: true,
+                    });
                     dispatch({
                         type: ActionType$6.ResetFilters,
                         initActionErrorFilterState,
@@ -4114,7 +4145,17 @@ const LogReviewer = (props) => {
                     dispatch({
                         type: ActionType$6.HideFilterDrawer,
                     });
-                    fetchLogs();
+                    fetchLogs({
+                        filters: {
+                            dateFilterState,
+                            contextFilterState,
+                            tagFilterState,
+                            actionErrorFilterState,
+                            advancedFilterState,
+                        },
+                        pageNum: 1,
+                        countDocuments: true,
+                    });
                 } },
                 React__default.createElement(FontAwesomeIcon, { icon: faSearch }),
                 ' ',
@@ -14024,10 +14065,11 @@ const initServer = (opts) => {
         paramTypes: {
             pageNumber: ParamType$1.Int,
             filters: ParamType$1.JSON,
+            countDocuments: ParamType$1.Boolean,
         },
         handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
             // Get user info
-            const { pageNumber, userId, isAdmin, filters, } = params;
+            const { pageNumber, userId, isAdmin, filters, countDocuments, } = params;
             const { dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, } = filters;
             // Validate user
             const canReview = yield canReviewLogs(userId, isAdmin);
@@ -14194,6 +14236,10 @@ const initServer = (opts) => {
                 perPage: 50,
                 pageNumber,
             });
+            // Count documents if requested
+            if (countDocuments) {
+                response.numPages = Math.ceil((yield _logCollection.count(query)) / 50);
+            }
             // Return response
             return response;
         }),
