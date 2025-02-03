@@ -4,6 +4,7 @@ import { faExclamationTriangle, faHourglassEnd, faCircle, faDotCircle, faCheckSq
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactDOM, { createPortal } from 'react-dom';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
+import { createHash } from 'crypto';
 import qs from 'qs';
 
 /******************************************************************************
@@ -31,7 +32,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK18
+// Highest error code = DRK29
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -57,6 +58,17 @@ var ReactKitErrorCode;
     ReactKitErrorCode["NotConnected"] = "DRK14";
     ReactKitErrorCode["SelfSigned"] = "DRK15";
     ReactKitErrorCode["ResponseParseError"] = "DRK16";
+    ReactKitErrorCode["PackUnparseable"] = "DRK28";
+    ReactKitErrorCode["PackInvalidMethod"] = "DRK19";
+    ReactKitErrorCode["PackInvalidPath"] = "DRK20";
+    ReactKitErrorCode["PackInvalidCollection"] = "DRK21";
+    ReactKitErrorCode["PackInvalidCredential"] = "DRK23";
+    ReactKitErrorCode["PackInvalidScope"] = "DRK22";
+    ReactKitErrorCode["PackInvalidTimestamp"] = "DRK24";
+    ReactKitErrorCode["PackInvalidSignature"] = "DRK25";
+    ReactKitErrorCode["PackInvalidBody"] = "DRK26";
+    ReactKitErrorCode["CrossServerNoCredentialsToSignWith"] = "DRK27";
+    ReactKitErrorCode["CrossServerNoPack"] = "DRK29";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -14021,6 +14033,8 @@ const LOG_REVIEW_STATUS_ROUTE = `${ROUTE_PATH_PREFIX}/logs/access_allowed`;
 let _cacclGetLaunchInfo;
 // Stored copy of dce-mango log collection
 let _logCollection;
+// Stored copy of dce-mango cross-server credential collection
+let _crossServerCredentialCollection;
 /*------------------------------------------------------------------------*/
 /*                                 Helpers                                */
 /*------------------------------------------------------------------------*/
@@ -14045,6 +14059,15 @@ const cacclGetLaunchInfo = (req) => {
 const internalGetLogCollection = () => {
     return _logCollection !== null && _logCollection !== void 0 ? _logCollection : null;
 };
+/**
+ * Get cross-server credential collection
+ * @author Gabe Abrams
+ * @return cross-server credential collection if one was included during launch or null
+ *   if we don't have a cross-server credential collection (yet)
+ */
+const internalGetCrossServerCredentialCollection = () => {
+    return _crossServerCredentialCollection !== null && _crossServerCredentialCollection !== void 0 ? _crossServerCredentialCollection : null;
+};
 /*------------------------------------------------------------------------*/
 /*                                  Main                                  */
 /*------------------------------------------------------------------------*/
@@ -14064,10 +14087,14 @@ const internalGetLogCollection = () => {
  *   userIds are allowed to review logs. If a dce-mango collection, only
  *   Canvas admins with entries in that collection ({ userId, ...}) are allowed
  *   to review logs
+ * @param [opts.crossServerCredentialCollection] mongo collection from dce-mango to use for
+ *   storing cross-server credentials. If none is included, cross-server credentials
+ *   are not supported
  */
 const initServer = (opts) => {
     _cacclGetLaunchInfo = opts.getLaunchInfo;
     _logCollection = opts.logCollection;
+    _crossServerCredentialCollection = opts.crossServerCredentialCollection;
     /*----------------------------------------*/
     /*                Logging                 */
     /*----------------------------------------*/
@@ -14611,20 +14638,146 @@ const parseUserAgent = (userAgent) => {
 };
 
 /**
+ * Sign using sha 256
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.pack the pack to sign
+ * @param opts.secret the reactkit secret to sign with
+ * @return the signed hash
+ */
+const genSignature = (opts) => {
+    // Generate signature
+    return (createHash('sha256')
+        .update(JSON.stringify({ pack: opts.pack, secret: opts.secret }))
+        .digest('base64'));
+};
+/**
+ * Sign data with a private reactkit key, package it into a signed data pack
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.method the method to sign
+ * @param opts.path the http request path
+ * @param opts.params the data in the body to sign
+ * @param opts.key the reactkit key to sign with
+ * @param opts.secret the reactkit secret to sign with
+ * @return the signed data
+ */
+const createSignedPack = (opts) => {
+    // Create a timestamp
+    const timestamp = Date.now();
+    // Create the pack
+    const pack = JSON.stringify({
+        method: opts.method,
+        path: opts.path,
+        params: opts.params,
+        key: opts.key,
+        timestamp,
+    });
+    // Generate signature
+    const signature = genSignature({
+        pack,
+        secret: opts.secret,
+    });
+    // Create a signed pack
+    const signedPack = encodeURIComponent(JSON.stringify({
+        pack,
+        signature,
+    }));
+    // Return the signed pack
+    return signedPack;
+};
+/**
+ * Parse signed pack. Throws an error if invalid
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.method the method of the data validate
+ * @param opts.path the http request path to validate
+ * @param opts.scope the name of the scope to validate
+ * @param opts.signedPack the signed data pack to validate
+ * @returns parsed and validated params
+ */
+const parseSignedPack = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    // Extract signature
+    let pack;
+    let signature;
+    let method;
+    let path;
+    let key;
+    let timestamp;
+    let params;
+    try {
+        ({
+            pack,
+            signature,
+        } = JSON.parse(decodeURIComponent(opts.signedPack)));
+        // Unpack
+        ({
+            method,
+            path,
+            params,
+            key,
+            timestamp,
+        } = JSON.parse(pack));
+    }
+    catch (err) {
+        throw new ErrorWithCode('Could not validate a cross-server request because the request could not be parsed.', ReactKitErrorCode$1.PackUnparseable);
+    }
+    // Make sure the method and path match
+    if (method !== opts.method) {
+        throw new ErrorWithCode('Could not validate a cross-server request because the method did not match.', ReactKitErrorCode$1.PackInvalidMethod);
+    }
+    if (path !== opts.path) {
+        throw new ErrorWithCode('Could not validate a cross-server request because the path did not match.', ReactKitErrorCode$1.PackInvalidPath);
+    }
+    // Make sure the timestamp was recent enough
+    const elapsedMs = Math.abs(Date.now() - timestamp);
+    if (elapsedMs < MINUTE_IN_MS) {
+        throw new ErrorWithCode('Could not validate a cross-server request because the request was too old.', ReactKitErrorCode$1.PackInvalidTimestamp);
+    }
+    // Get the cross-server credential collection
+    const crossServerCredentialCollection = internalGetCrossServerCredentialCollection();
+    if (!crossServerCredentialCollection) {
+        throw new ErrorWithCode('Could not validate a cross-server request because the cross-server credential collection was not ready in time.', ReactKitErrorCode$1.PackInvalidCollection);
+    }
+    // Get the cross-server credential
+    const crossServerCredential = yield crossServerCredentialCollection.find({ key });
+    if (!crossServerCredential) {
+        throw new ErrorWithCode('Could not validate a cross-server request because the credential was not found.', ReactKitErrorCode$1.PackInvalidCredential);
+    }
+    // Make sure the scope is included
+    const allowedScopes = crossServerCredential.scopes;
+    if (!allowedScopes.includes(opts.scope)) {
+        throw new ErrorWithCode('Could not validate a cross-server request because the scope was not included.', ReactKitErrorCode$1.PackInvalidScope);
+    }
+    // Generate signature
+    const expectedSignature = genSignature({
+        pack,
+        secret: crossServerCredential.secret,
+    });
+    // Make sure the signature matches
+    if (signature !== expectedSignature) {
+        throw new ErrorWithCode('Could not validate a cross-server request because the signature did not match.', ReactKitErrorCode$1.PackInvalidSignature);
+    }
+    // Return body
+    return params !== null && params !== void 0 ? params : {};
+});
+
+/**
  * Generate an express API route handler
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.paramTypes map containing the types for each parameter that is
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
- * @param [opts.skipSessionCheck] if true, skip the session check (allow users
- *   to not be logged in and launched via LTI)
- * @param [opts.allowedHosts] if included, only allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
- * @param [opts.bannedHosts] if included, do not allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
+ * @param [opts.crossServerScope] the scope associated with this endpoint.
+ *   If defined, this is a cross-server endpoint, which will never
+ *   have any launch data, will never check Canvas roles or launch status, and will
+ *   instead use scopes and reactkit credentials to sign and validate requests.
+ *   Never start the path with /api/ttm or /api/admin if the endpoint is a cross-server
+ *   endpoint because those roles will not be validated
+ * @param [opts.skipSessionCheck=true if crossServerScope defined] if true, skip
+ *   the session check (allow users to not be logged in and launched via LTI).
+ *   If crossServerScope is defined, this is always true
  * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
  *   is not of type ErrorWithCode is thrown, the client will receive an error
  *   where the error message is prefixed with this string. For example,
@@ -14652,86 +14805,51 @@ const parseUserAgent = (userAgent) => {
 const genRouteHandler = (opts) => {
     // Return a route handler
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+        /*----------------------------------------*/
+        /* ------------- Preparation ------------ */
+        /*----------------------------------------*/
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
         // Output params
         const output = {};
-        /*----------------------------------------*/
-        /* ----------- Hostname Check ----------- */
-        /*----------------------------------------*/
-        // Get hostnames
-        const originURL = String(req.get('origin')
-            || req.headers.origin
-            || req.headers.referer);
-        const originHostname = (originURL
-            // Remove protocol
-            .replace(/(^\w+:|^)\/\//, '')
-            // Remove port
-            .replace(/:\d+$/, ''));
-        const serverHostname = String(req.hostname);
-        // Check allowed
-        if (opts.allowedHosts) {
-            // Only accept requests from allowed hosts
-            const allowedArray = (Array.isArray(opts.allowedHosts)
-                ? opts.allowedHosts
-                : [opts.allowedHosts]);
-            // Check if server is localhost
-            if (serverHostname === 'localhost') {
-                // Allow localhost
-                allowedArray.push('localhost');
-            }
-            // Check if current host is allowed
-            const allowed = allowedArray.some((allowedHost) => {
-                if (allowedHost.startsWith('*')) {
-                    // Check end of hostname
-                    return originHostname.endsWith(allowedHost.substring(1));
-                }
-                // Check full hostname
-                return originHostname.toLowerCase() === allowedHost.toLowerCase();
-            });
-            // If not allowed, return error
-            if (!allowed) {
-                return handleError(res, {
-                    message: 'You are not allowed to access this endpoint.',
-                    code: ReactKitErrorCode$1.HostNotAllowed,
-                    status: 403,
-                });
-            }
+        // Determine cross server scopes
+        let crossServerScope = null;
+        if (opts.crossServerScope) {
+            crossServerScope = (_a = opts.crossServerScope) !== null && _a !== void 0 ? _a : null;
         }
-        // Check banned
-        if (opts.bannedHosts) {
-            // Do not allow requests from banned hosts
-            const bannedArray = (Array.isArray(opts.bannedHosts)
-                ? opts.bannedHosts
-                : [opts.bannedHosts]);
-            // Check if current host is banned
-            const banned = bannedArray.some((bannedHost) => {
-                if (bannedHost.startsWith('*')) {
-                    // Check end of hostname
-                    return originHostname.endsWith(bannedHost.substring(1));
-                }
-                // Check full hostname
-                return originHostname.toLowerCase() === bannedHost.toLowerCase();
-            });
-            // If banned, return error
-            if (banned) {
-                return handleError(res, {
-                    message: 'You are not allowed to access this endpoint.',
-                    code: ReactKitErrorCode$1.HostBanned,
-                    status: 403,
-                });
+        // Determine whether we're skipping the session check
+        const skipSessionCheck = !!(opts.skipSessionCheck
+            || crossServerScope);
+        // Get body from everywhere it can come from
+        let requestBody = Object.assign(Object.assign(Object.assign({}, req.body), req.query), req.params);
+        /*----------------------------------------*/
+        /* ------- Cross-Server Validation ------ */
+        /*----------------------------------------*/
+        if (crossServerScope) {
+            // Get the signed pack
+            const { signedPack } = requestBody;
+            // If no pack, throw error
+            if (!signedPack || typeof signedPack !== 'string') {
+                throw new ErrorWithCode('Could not process a cross server request because there was no valid signed pack.', ReactKitErrorCode$1.CrossServerNoPack);
             }
+            // Validate the request
+            const crossServerParams = yield parseSignedPack({
+                method: (_b = req.method) !== null && _b !== void 0 ? _b : 'GET',
+                path: req.path,
+                scope: crossServerScope,
+                signedPack,
+            });
+            // Replace body with params from the pack
+            requestBody = crossServerParams !== null && crossServerParams !== void 0 ? crossServerParams : {};
         }
         /*----------------------------------------*/
         /* ------------ Parse Params ------------ */
         /*----------------------------------------*/
         // Process items one by one
-        const paramList = Object.entries((_a = opts.paramTypes) !== null && _a !== void 0 ? _a : {});
+        const paramList = Object.entries((_c = opts.paramTypes) !== null && _c !== void 0 ? _c : {});
         for (let i = 0; i < paramList.length; i++) {
             const [name, type] = paramList[i];
             // Find the value as a string
-            const value = (req.params[name]
-                || req.query[name]
-                || req.body[name]);
+            const value = requestBody[name];
             // Parse
             if (type === ParamType$1.Boolean || type === ParamType$1.BooleanOptional) {
                 // Boolean
@@ -14889,7 +15007,7 @@ const genRouteHandler = (opts) => {
         // Not launched
         (!launched || !launchInfo)
             // Not skipping the session check
-            && !opts.skipSessionCheck) {
+            && !skipSessionCheck) {
             return handleError(res, {
                 message: 'Your session has expired. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.SessionExpired,
@@ -14909,7 +15027,7 @@ const genRouteHandler = (opts) => {
                 && !launchInfo.isLearner
                 && !launchInfo.isAdmin))
             // Not skipping the session check
-            && !opts.skipSessionCheck) {
+            && !skipSessionCheck) {
             return handleError(res, {
                 message: 'Your session was invalid. Please refresh the page and try again.',
                 code: ReactKitErrorCode$1.SessionExpired,
@@ -14919,34 +15037,34 @@ const genRouteHandler = (opts) => {
         // Add launch info to output
         output.userId = (launchInfo
             ? launchInfo.userId
-            : ((_b = output.userId) !== null && _b !== void 0 ? _b : undefined));
+            : ((_d = output.userId) !== null && _d !== void 0 ? _d : undefined));
         output.userFirstName = (launchInfo
             ? launchInfo.userFirstName
-            : ((_c = output.userFirstName) !== null && _c !== void 0 ? _c : undefined));
+            : ((_e = output.userFirstName) !== null && _e !== void 0 ? _e : undefined));
         output.userLastName = (launchInfo
             ? launchInfo.userLastName
-            : ((_d = output.userLastName) !== null && _d !== void 0 ? _d : undefined));
+            : ((_f = output.userLastName) !== null && _f !== void 0 ? _f : undefined));
         output.userEmail = (launchInfo
             ? launchInfo.userEmail
-            : ((_e = output.userEmail) !== null && _e !== void 0 ? _e : undefined));
+            : ((_g = output.userEmail) !== null && _g !== void 0 ? _g : undefined));
         output.userAvatarURL = (launchInfo
-            ? ((_f = launchInfo.userImage) !== null && _f !== void 0 ? _f : 'http://www.gravatar.com/avatar/?d=identicon')
-            : ((_g = output.userAvatarURL) !== null && _g !== void 0 ? _g : undefined));
+            ? ((_h = launchInfo.userImage) !== null && _h !== void 0 ? _h : 'http://www.gravatar.com/avatar/?d=identicon')
+            : ((_j = output.userAvatarURL) !== null && _j !== void 0 ? _j : undefined));
         output.isLearner = (launchInfo
             ? !!launchInfo.isLearner
-            : ((_h = output.isLearner) !== null && _h !== void 0 ? _h : undefined));
+            : ((_k = output.isLearner) !== null && _k !== void 0 ? _k : undefined));
         output.isTTM = (launchInfo
             ? !!launchInfo.isTTM
-            : ((_j = output.isTTM) !== null && _j !== void 0 ? _j : undefined));
+            : ((_l = output.isTTM) !== null && _l !== void 0 ? _l : undefined));
         output.isAdmin = (launchInfo
             ? !!launchInfo.isAdmin
-            : ((_k = output.isAdmin) !== null && _k !== void 0 ? _k : undefined));
+            : ((_m = output.isAdmin) !== null && _m !== void 0 ? _m : undefined));
         output.courseId = (launchInfo
-            ? ((_l = output.courseId) !== null && _l !== void 0 ? _l : launchInfo.courseId)
-            : ((_m = output.courseId) !== null && _m !== void 0 ? _m : undefined));
+            ? ((_o = output.courseId) !== null && _o !== void 0 ? _o : launchInfo.courseId)
+            : ((_p = output.courseId) !== null && _p !== void 0 ? _p : undefined));
         output.courseName = (launchInfo
             ? launchInfo.contextLabel
-            : ((_o = output.courseName) !== null && _o !== void 0 ? _o : undefined));
+            : ((_q = output.courseName) !== null && _q !== void 0 ? _q : undefined));
         // Add other session variables
         Object.keys(req.session).forEach((propName) => {
             // Skip if prop already in output
@@ -15020,7 +15138,7 @@ const genRouteHandler = (opts) => {
          * @author Gabe Abrams
          */
         const logServerEvent = (logOpts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1;
+            var _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3;
             // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
             // that indicates that this is actually a client event, but we don't
             // include that in the LogFunction type because this is internal and
@@ -15052,24 +15170,24 @@ const genRouteHandler = (opts) => {
                     timestamp,
                     context: (typeof logOpts.context === 'string'
                         ? logOpts.context
-                        : ((_q = ((_p = logOpts.context) !== null && _p !== void 0 ? _p : {})._) !== null && _q !== void 0 ? _q : LogBuiltInMetadata.Context.Uncategorized)),
-                    subcontext: ((_r = logOpts.subcontext) !== null && _r !== void 0 ? _r : LogBuiltInMetadata.Context.Uncategorized),
-                    tags: ((_s = logOpts.tags) !== null && _s !== void 0 ? _s : []),
-                    level: ((_t = logOpts.level) !== null && _t !== void 0 ? _t : LogLevel$1.Info),
-                    metadata: ((_u = logOpts.metadata) !== null && _u !== void 0 ? _u : {}),
+                        : ((_s = ((_r = logOpts.context) !== null && _r !== void 0 ? _r : {})._) !== null && _s !== void 0 ? _s : LogBuiltInMetadata.Context.Uncategorized)),
+                    subcontext: ((_t = logOpts.subcontext) !== null && _t !== void 0 ? _t : LogBuiltInMetadata.Context.Uncategorized),
+                    tags: ((_u = logOpts.tags) !== null && _u !== void 0 ? _u : []),
+                    level: ((_v = logOpts.level) !== null && _v !== void 0 ? _v : LogLevel$1.Info),
+                    metadata: ((_w = logOpts.metadata) !== null && _w !== void 0 ? _w : {}),
                 };
                 // Type-specific info
                 const typeSpecificInfo = (('error' in opts && opts.error)
                     ? {
                         type: LogType$1.Error,
-                        errorMessage: (_v = logOpts.error.message) !== null && _v !== void 0 ? _v : 'Unknown message',
-                        errorCode: (_w = logOpts.error.code) !== null && _w !== void 0 ? _w : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_x = logOpts.error.stack) !== null && _x !== void 0 ? _x : 'No stack',
+                        errorMessage: (_x = logOpts.error.message) !== null && _x !== void 0 ? _x : 'Unknown message',
+                        errorCode: (_y = logOpts.error.code) !== null && _y !== void 0 ? _y : ReactKitErrorCode$1.NoCode,
+                        errorStack: (_z = logOpts.error.stack) !== null && _z !== void 0 ? _z : 'No stack',
                     }
                     : {
                         type: LogType$1.Action,
-                        target: ((_y = logOpts.target) !== null && _y !== void 0 ? _y : LogBuiltInMetadata.Target.NoTarget),
-                        action: ((_z = logOpts.action) !== null && _z !== void 0 ? _z : LogAction$1.Unknown),
+                        target: ((_0 = logOpts.target) !== null && _0 !== void 0 ? _0 : LogBuiltInMetadata.Target.NoTarget),
+                        action: ((_1 = logOpts.action) !== null && _1 !== void 0 ? _1 : LogAction$1.Unknown),
                     });
                 // Source-specific info
                 const sourceSpecificInfo = (logOpts.overrideAsClientEvent
@@ -15104,7 +15222,7 @@ const genRouteHandler = (opts) => {
             catch (err) {
                 // Print because we cannot store the error
                 // eslint-disable-next-line no-console
-                console.error('Could not log the following:', logOpts, 'due to this error:', ((_0 = err) !== null && _0 !== void 0 ? _0 : {}).message, ((_1 = err) !== null && _1 !== void 0 ? _1 : {}).stack);
+                console.error('Could not log the following:', logOpts, 'due to this error:', ((_2 = err) !== null && _2 !== void 0 ? _2 : {}).message, ((_3 = err) !== null && _3 !== void 0 ? _3 : {}).stack);
                 // Create a dummy log to return
                 const dummyMainInfo = {
                     id: '-1',
@@ -16206,9 +16324,6 @@ const shuffleArray = (arr) => {
  * @param [opts.host] host to send request to
  * @param [opts.method=GET] http method to use
  * @param [opts.params] body/data to include in the request
- * @param [opts.headers] headers to include in the request
- * @param [opts.sendCrossDomainCredentials=true if in development mode] if true,
- *   send cross-domain credentials even if not in dev mode
  * @param [opts.responseType=JSON] expected response type
  * @returns { body, status, headers } on success
  */
@@ -16245,7 +16360,7 @@ const sendServerToServerRequest = (opts) => __awaiter(void 0, void 0, void 0, fu
         url = `https://${opts.host}${opts.path}${query}`;
     }
     // Update headers
-    const headers = opts.headers || {};
+    const headers = {};
     let data = null;
     if (!headers['Content-Type']) {
         // Form encoded
@@ -16318,49 +16433,49 @@ const sendServerToServerRequest = (opts) => __awaiter(void 0, void 0, void 0, fu
 });
 
 /**
- * Send a server-to-server request from this sever to another server that uses
- *   dce-reactkit [for server only]
+ * Visit an endpoint on another server
  * @author Gabe Abrams
  * @param opts object containing all arguments
- * @param opts.host - the host of the other server
- * @param opts.path - the path of the other server's endpoint
- * @param [opts.method=GET] - the method of the endpoint
- * @param [opts.params] - query/body parameters to include
- * @param [opts.headers] - headers to include
- * @returns response from server
+ * @param opts.method the method of the endpoint
+ * @param opts.path the path of the other server's endpoint
+ * @param opts.host the host of the other server
+ * @param [opts.key=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_KEY] reactkit cross-server
+ *   credential key
+ * @param [opts.secret=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_SECRET reactkit cross-server
+ *   credential secret
+ * @param [opts.params={}] query/body parameters to include
+ * @param [opts.responseType=JSON] the response type from the other server
  */
 const visitEndpointOnAnotherServer = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    // Remove properties with undefined values
-    let params;
-    if (opts.params) {
-        params = Object.fromEntries(Object
-            .entries(opts.params)
-            .filter(([, value]) => {
-            return value !== undefined;
-        }));
+    var _a, _b, _c;
+    // Get cross-server credentials
+    const key = (_a = opts.key) !== null && _a !== void 0 ? _a : process.env.REACTKIT_CROSS_SERVER_KEY;
+    const secret = (_b = opts.secret) !== null && _b !== void 0 ? _b : process.env.REACTKIT_CROSS_SERVER_SECRET;
+    // Throw error if no credentials
+    if (!key || !secret) {
+        throw new ErrorWithCode('Cannot send cross-server signed request because either or both the key and secret were not included or found in env.', ReactKitErrorCode$1.CrossServerNoCredentialsToSignWith);
     }
-    // Automatically JSONify arrays and objects
-    if (params) {
-        params = Object.fromEntries(Object
-            .entries(params)
-            .map(([key, value]) => {
-            if (Array.isArray(value) || typeof value === 'object') {
-                return [key, JSON.stringify(value)];
-            }
-            return [key, value];
-        }));
-    }
+    // Create signed pack
+    const signedPack = createSignedPack({
+        method: opts.method,
+        path: opts.path,
+        params: (_c = opts.params) !== null && _c !== void 0 ? _c : {},
+        key,
+        secret,
+    });
     // Send the request
     const response = yield sendServerToServerRequest({
-        host: opts.host,
         path: opts.path,
-        method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
-        params,
+        host: opts.host,
+        method: opts.method,
+        params: {
+            signedPack,
+        },
+        responseType: opts.responseType,
     });
     // Check for failure
     if (!response || !response.body) {
-        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+        throw new ErrorWithCode('We didn\'t get a response from the other server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
     }
     if (!response.body.success) {
         // Other errors

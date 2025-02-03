@@ -7,14 +7,15 @@ import LogFunction from '../types/LogFunction';
  * @param opts.paramTypes map containing the types for each parameter that is
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
- * @param [opts.skipSessionCheck] if true, skip the session check (allow users
- *   to not be logged in and launched via LTI)
- * @param [opts.allowedHosts] if included, only allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
- * @param [opts.bannedHosts] if included, do not allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
+ * @param [opts.crossServerScope] the scope associated with this endpoint.
+ *   If defined, this is a cross-server endpoint, which will never
+ *   have any launch data, will never check Canvas roles or launch status, and will
+ *   instead use scopes and reactkit credentials to sign and validate requests.
+ *   Never start the path with /api/ttm or /api/admin if the endpoint is a cross-server
+ *   endpoint because those roles will not be validated
+ * @param [opts.skipSessionCheck=true if crossServerScope defined] if true, skip
+ *   the session check (allow users to not be logged in and launched via LTI).
+ *   If crossServerScope is defined, this is always true
  * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
  *   is not of type ErrorWithCode is thrown, the client will receive an error
  *   where the error message is prefixed with this string. For example,
@@ -68,9 +69,8 @@ declare const genRouteHandler: (opts: {
         }) => void;
         logServerEvent: LogFunction;
     }) => any;
+    crossServerScope?: string | undefined;
     skipSessionCheck?: boolean | undefined;
-    allowedHosts?: string | string[] | undefined;
-    bannedHosts?: string | string[] | undefined;
     unhandledErrorMessagePrefix?: string | undefined;
 }) => (req: any, res: any, next: () => void) => Promise<undefined>;
 export default genRouteHandler;

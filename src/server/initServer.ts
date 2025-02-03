@@ -27,6 +27,9 @@ let _cacclGetLaunchInfo: GetLaunchInfoFunction;
 // Stored copy of dce-mango log collection
 let _logCollection: any;
 
+// Stored copy of dce-mango cross-server credential collection
+let _crossServerCredentialCollection: any;
+
 /*------------------------------------------------------------------------*/
 /*                                 Helpers                                */
 /*------------------------------------------------------------------------*/
@@ -58,6 +61,16 @@ export const internalGetLogCollection = () => {
   return _logCollection ?? null;
 };
 
+/**
+ * Get cross-server credential collection
+ * @author Gabe Abrams
+ * @return cross-server credential collection if one was included during launch or null
+ *   if we don't have a cross-server credential collection (yet)
+ */
+export const internalGetCrossServerCredentialCollection = () => {
+  return _crossServerCredentialCollection ?? null;
+};
+
 /*------------------------------------------------------------------------*/
 /*                                  Main                                  */
 /*------------------------------------------------------------------------*/
@@ -78,6 +91,9 @@ export const internalGetLogCollection = () => {
  *   userIds are allowed to review logs. If a dce-mango collection, only
  *   Canvas admins with entries in that collection ({ userId, ...}) are allowed
  *   to review logs
+ * @param [opts.crossServerCredentialCollection] mongo collection from dce-mango to use for
+ *   storing cross-server credentials. If none is included, cross-server credentials
+ *   are not supported
  */
 const initServer = (
   opts: {
@@ -85,10 +101,12 @@ const initServer = (
     getLaunchInfo: GetLaunchInfoFunction,
     logCollection?: any,
     logReviewAdmins?: (number[] | any),
+    crossServerCredentialCollection?: any,
   },
 ) => {
   _cacclGetLaunchInfo = opts.getLaunchInfo;
   _logCollection = opts.logCollection;
+  _crossServerCredentialCollection = opts.crossServerCredentialCollection;
 
   /*----------------------------------------*/
   /*                Logging                 */

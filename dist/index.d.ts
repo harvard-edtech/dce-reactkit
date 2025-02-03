@@ -1086,14 +1086,15 @@ type LogFunction = (opts: ({
  * @param opts.paramTypes map containing the types for each parameter that is
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
- * @param [opts.skipSessionCheck] if true, skip the session check (allow users
- *   to not be logged in and launched via LTI)
- * @param [opts.allowedHosts] if included, only allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
- * @param [opts.bannedHosts] if included, do not allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
+ * @param [opts.crossServerScope] the scope associated with this endpoint.
+ *   If defined, this is a cross-server endpoint, which will never
+ *   have any launch data, will never check Canvas roles or launch status, and will
+ *   instead use scopes and reactkit credentials to sign and validate requests.
+ *   Never start the path with /api/ttm or /api/admin if the endpoint is a cross-server
+ *   endpoint because those roles will not be validated
+ * @param [opts.skipSessionCheck=true if crossServerScope defined] if true, skip
+ *   the session check (allow users to not be logged in and launched via LTI).
+ *   If crossServerScope is defined, this is always true
  * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
  *   is not of type ErrorWithCode is thrown, the client will receive an error
  *   where the error message is prefixed with this string. For example,
@@ -1147,9 +1148,8 @@ declare const genRouteHandler: (opts: {
         }) => void;
         logServerEvent: LogFunction;
     }) => any;
+    crossServerScope?: string | undefined;
     skipSessionCheck?: boolean | undefined;
-    allowedHosts?: string | string[] | undefined;
-    bannedHosts?: string | string[] | undefined;
     unhandledErrorMessagePrefix?: string | undefined;
 }) => (req: any, res: any, next: () => void) => Promise<undefined>;
 
@@ -1199,12 +1199,16 @@ type GetLaunchInfoFunction = (req: any) => {
  *   userIds are allowed to review logs. If a dce-mango collection, only
  *   Canvas admins with entries in that collection ({ userId, ...}) are allowed
  *   to review logs
+ * @param [opts.crossServerCredentialCollection] mongo collection from dce-mango to use for
+ *   storing cross-server credentials. If none is included, cross-server credentials
+ *   are not supported
  */
 declare const initServer: (opts: {
     app: any;
     getLaunchInfo: GetLaunchInfoFunction;
     logCollection?: any;
     logReviewAdmins?: (number[] | any);
+    crossServerCredentialCollection?: any;
 }) => void;
 
 /**
@@ -1656,27 +1660,29 @@ declare const capitalize: (str: string) => string;
 declare const shuffleArray: <T>(arr: T[]) => T[];
 
 /**
- * Send a server-to-server request from this sever to another server that uses
- *   dce-reactkit [for server only]
+ * Visit an endpoint on another server
  * @author Gabe Abrams
  * @param opts object containing all arguments
- * @param opts.host - the host of the other server
- * @param opts.path - the path of the other server's endpoint
- * @param [opts.method=GET] - the method of the endpoint
- * @param [opts.params] - query/body parameters to include
- * @param [opts.headers] - headers to include
- * @returns response from server
+ * @param opts.method the method of the endpoint
+ * @param opts.path the path of the other server's endpoint
+ * @param opts.host the host of the other server
+ * @param [opts.key=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_KEY] reactkit cross-server
+ *   credential key
+ * @param [opts.secret=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_SECRET reactkit cross-server
+ *   credential secret
+ * @param [opts.params={}] query/body parameters to include
+ * @param [opts.responseType=JSON] the response type from the other server
  */
 declare const visitEndpointOnAnotherServer: (opts: {
-    host: string;
+    method: 'GET' | 'POST' | 'DELETE' | 'PUT';
     path: string;
-    method?: "GET" | "POST" | "DELETE" | "PUT" | undefined;
+    host: string;
+    key?: string | undefined;
+    secret?: string | undefined;
     params?: {
         [x: string]: any;
     } | undefined;
-    headers?: {
-        [x: string]: any;
-    } | undefined;
+    responseType?: "Text" | "JSON" | undefined;
 }) => Promise<any>;
 
 /**
@@ -1701,7 +1707,18 @@ declare enum ReactKitErrorCode {
     SessionExpiredMessageGottenBeforeReactKitReady = "DRK13",
     NotConnected = "DRK14",
     SelfSigned = "DRK15",
-    ResponseParseError = "DRK16"
+    ResponseParseError = "DRK16",
+    PackUnparseable = "DRK28",
+    PackInvalidMethod = "DRK19",
+    PackInvalidPath = "DRK20",
+    PackInvalidCollection = "DRK21",
+    PackInvalidCredential = "DRK23",
+    PackInvalidScope = "DRK22",
+    PackInvalidTimestamp = "DRK24",
+    PackInvalidSignature = "DRK25",
+    PackInvalidBody = "DRK26",
+    CrossServerNoCredentialsToSignWith = "DRK27",
+    CrossServerNoPack = "DRK29"
 }
 
 /**

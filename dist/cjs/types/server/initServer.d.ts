@@ -17,6 +17,13 @@ export declare const cacclGetLaunchInfo: GetLaunchInfoFunction;
  */
 export declare const internalGetLogCollection: () => any;
 /**
+ * Get cross-server credential collection
+ * @author Gabe Abrams
+ * @return cross-server credential collection if one was included during launch or null
+ *   if we don't have a cross-server credential collection (yet)
+ */
+export declare const internalGetCrossServerCredentialCollection: () => any;
+/**
  * Prepare dce-reactkit to run on the server
  * @author Gabe Abrams
  * @param opts object containing all arguments
@@ -32,11 +39,15 @@ export declare const internalGetLogCollection: () => any;
  *   userIds are allowed to review logs. If a dce-mango collection, only
  *   Canvas admins with entries in that collection ({ userId, ...}) are allowed
  *   to review logs
+ * @param [opts.crossServerCredentialCollection] mongo collection from dce-mango to use for
+ *   storing cross-server credentials. If none is included, cross-server credentials
+ *   are not supported
  */
 declare const initServer: (opts: {
     app: any;
     getLaunchInfo: GetLaunchInfoFunction;
     logCollection?: any;
     logReviewAdmins?: (number[] | any);
+    crossServerCredentialCollection?: any;
 }) => void;
 export default initServer;
