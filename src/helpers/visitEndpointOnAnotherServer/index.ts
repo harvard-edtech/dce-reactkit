@@ -1,71 +1,72 @@
-// Import custom error
-import ErrorWithCode from '../../errors/ErrorWithCode';
+// Import data signer
+import { createSignedPack } from '../dataSigner';
 
 // Import shared types
+import ErrorWithCode from '../../errors/ErrorWithCode';
 import ReactKitErrorCode from '../../types/ReactKitErrorCode';
-
-// Import other helpers
 import sendServerToServerRequest from './sendServerToServerRequest';
 
 /**
- * Send a server-to-server request from this sever to another server that uses
- *   dce-reactkit [for server only]
+ * Visit an endpoint on another server
  * @author Gabe Abrams
  * @param opts object containing all arguments
- * @param opts.host - the host of the other server
- * @param opts.path - the path of the other server's endpoint
- * @param [opts.method=GET] - the method of the endpoint
- * @param [opts.params] - query/body parameters to include
- * @param [opts.headers] - headers to include
- * @returns response from server
+ * @param opts.method the method of the endpoint
+ * @param opts.path the path of the other server's endpoint
+ * @param opts.host the host of the other server
+ * @param [opts.key=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_KEY] reactkit cross-server
+ *   credential key
+ * @param [opts.secret=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_SECRET reactkit cross-server
+ *   credential secret
+ * @param [opts.params={}] query/body parameters to include
+ * @param [opts.responseType=JSON] the response type from the other server
  */
 const visitEndpointOnAnotherServer = async (
   opts: {
-    host: string,
+    method: 'GET' | 'POST' | 'DELETE' | 'PUT',
     path: string,
-    method?: ('GET' | 'POST' | 'DELETE' | 'PUT'),
+    host: string,
+    key?: string,
+    secret?: string,
     params?: { [key in string]: any },
-    headers?: { [k in string]: any },
+    responseType?: 'JSON' | 'Text',
   },
 ): Promise<any> => {
-  // Remove properties with undefined values
-  let params: { [key in string]: any } | undefined;
-  if (opts.params) {
-    params = Object.fromEntries(
-      Object
-        .entries(opts.params)
-        .filter(([, value]) => {
-          return value !== undefined;
-        }),
+  // Get cross-server credentials
+  const key = opts.key ?? process.env.REACTKIT_CROSS_SERVER_KEY;
+  const secret = opts.secret ?? process.env.REACTKIT_CROSS_SERVER_SECRET;
+
+  // Throw error if no credentials
+  if (!key || !secret) {
+    throw new ErrorWithCode(
+      'Cannot send cross-server signed request because either or both the key and secret were not included or found in env.',
+      ReactKitErrorCode.CrossServerNoCredentialsToSignWith,
     );
   }
 
-  // Automatically JSONify arrays and objects
-  if (params) {
-    params = Object.fromEntries(
-      Object
-        .entries(params)
-        .map(([key, value]) => {
-          if (Array.isArray(value) || typeof value === 'object') {
-            return [key, JSON.stringify(value)];
-          }
-          return [key, value];
-        }),
-    );
-  }
+  // Create signed pack
+  const signedPack = createSignedPack({
+    method: opts.method,
+    path: opts.path,
+    params: opts.params ?? {},
+    key,
+    secret,
+  });
 
   // Send the request
   const response = await sendServerToServerRequest({
-    host: opts.host,
     path: opts.path,
-    method: opts.method ?? 'GET',
-    params,
+    host: opts.host,
+    method: opts.method,
+    params: {
+      signedPack,
+    },
+    responseType: opts.responseType,
   });
 
   // Check for failure
   if (!response || !response.body) {
     throw new ErrorWithCode(
-      'We didn\'t get a response from the server. Please check your internet connection.',
+      'We didn\'t get a response from the other server. Please check your internet connection.',
       ReactKitErrorCode.NoResponse,
     );
   }

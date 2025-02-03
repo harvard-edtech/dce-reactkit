@@ -20,6 +20,17 @@ declare enum ReactKitErrorCode {
     SessionExpiredMessageGottenBeforeReactKitReady = "DRK13",
     NotConnected = "DRK14",
     SelfSigned = "DRK15",
-    ResponseParseError = "DRK16"
+    ResponseParseError = "DRK16",
+    PackUnparseable = "DRK28",
+    PackInvalidMethod = "DRK19",
+    PackInvalidPath = "DRK20",
+    PackInvalidCollection = "DRK21",
+    PackInvalidCredential = "DRK23",
+    PackInvalidScope = "DRK22",
+    PackInvalidTimestamp = "DRK24",
+    PackInvalidSignature = "DRK25",
+    PackInvalidBody = "DRK26",
+    CrossServerNoCredentialsToSignWith = "DRK27",
+    CrossServerNoPack = "DRK29"
 }
 export default ReactKitErrorCode;

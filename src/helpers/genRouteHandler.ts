@@ -17,6 +17,7 @@ import genErrorPage from '../html/genErrorPage';
 import genInfoPage from '../html/genInfoPage';
 import parseUserAgent from './parseUserAgent';
 import getTimeInfoInET from './getTimeInfoInET';
+import { parseSignedPack } from './dataSigner';
 
 // Import shared types
 import LogFunction from '../types/LogFunction';
@@ -29,6 +30,7 @@ import LogSourceSpecificInfo from '../types/Log/LogSourceSpecificInfo';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 import LogAction from '../types/LogAction';
 import LogLevel from '../types/LogLevel';
+import ErrorWithCode from '../errors/ErrorWithCode';
 
 /**
  * Generate an express API route handler
@@ -37,14 +39,15 @@ import LogLevel from '../types/LogLevel';
  * @param opts.paramTypes map containing the types for each parameter that is
  *   included in the request (map: param name => type)
  * @param opts.handler function that processes the request
- * @param [opts.skipSessionCheck] if true, skip the session check (allow users
- *   to not be logged in and launched via LTI)
- * @param [opts.allowedHosts] if included, only allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
- * @param [opts.bannedHosts] if included, do not allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
+ * @param [opts.crossServerScope] the scope associated with this endpoint.
+ *   If defined, this is a cross-server endpoint, which will never
+ *   have any launch data, will never check Canvas roles or launch status, and will
+ *   instead use scopes and reactkit credentials to sign and validate requests.
+ *   Never start the path with /api/ttm or /api/admin if the endpoint is a cross-server
+ *   endpoint because those roles will not be validated
+ * @param [opts.skipSessionCheck=true if crossServerScope defined] if true, skip
+ *   the session check (allow users to not be logged in and launched via LTI).
+ *   If crossServerScope is defined, this is always true
  * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
  *   is not of type ErrorWithCode is thrown, the client will receive an error
  *   where the error message is prefixed with this string. For example,
@@ -107,106 +110,67 @@ const genRouteHandler = (
         logServerEvent: LogFunction,
       },
     ) => any,
+    crossServerScope?: string,
     skipSessionCheck?: boolean,
-    allowedHosts?: string[] | string,
-    bannedHosts?: string[] | string,
     unhandledErrorMessagePrefix?: string,
   },
 ) => {
   // Return a route handler
   return async (req: any, res: any, next: () => void) => {
+    /*----------------------------------------*/
+    /* ------------- Preparation ------------ */
+    /*----------------------------------------*/
+
     // Output params
     const output: { [k in string]: any } = {};
 
-    /*----------------------------------------*/
-    /* ----------- Hostname Check ----------- */
-    /*----------------------------------------*/
-
-    // Get hostnames
-    const originURL = String(
-      req.get('origin')
-      || req.headers.origin
-      || req.headers.referer,
-    );
-    const originHostname = (
-      originURL
-        // Remove protocol
-        .replace(/(^\w+:|^)\/\//, '')
-        // Remove port
-        .replace(/:\d+$/, '')
-    );
-    const serverHostname = String(req.hostname);
-
-    // Check allowed
-    if (opts.allowedHosts) {
-      // Only accept requests from allowed hosts
-      const allowedArray = (
-        Array.isArray(opts.allowedHosts)
-          ? opts.allowedHosts
-          : [opts.allowedHosts]
-      );
-
-      // Check if server is localhost
-      if (serverHostname === 'localhost') {
-        // Allow localhost
-        allowedArray.push('localhost');
-      }
-
-      // Check if current host is allowed
-      const allowed = allowedArray.some((allowedHost) => {
-        if (allowedHost.startsWith('*')) {
-          // Check end of hostname
-          return originHostname.endsWith(allowedHost.substring(1));
-        }
-
-        // Check full hostname
-        return originHostname.toLowerCase() === allowedHost.toLowerCase();
-      });
-
-      // If not allowed, return error
-      if (!allowed) {
-        return handleError(
-          res,
-          {
-            message: 'You are not allowed to access this endpoint.',
-            code: ReactKitErrorCode.HostNotAllowed,
-            status: 403,
-          },
-        );
-      }
+    // Determine cross server scopes
+    let crossServerScope: string | null = null;
+    if (opts.crossServerScope) {
+      crossServerScope = opts.crossServerScope ?? null;
     }
 
-    // Check banned
-    if (opts.bannedHosts) {
-      // Do not allow requests from banned hosts
-      const bannedArray = (
-        Array.isArray(opts.bannedHosts)
-          ? opts.bannedHosts
-          : [opts.bannedHosts]
-      );
+    // Determine whether we're skipping the session check
+    const skipSessionCheck = !!(
+      opts.skipSessionCheck
+      || crossServerScope
+    );
 
-      // Check if current host is banned
-      const banned = bannedArray.some((bannedHost) => {
-        if (bannedHost.startsWith('*')) {
-          // Check end of hostname
-          return originHostname.endsWith(bannedHost.substring(1));
-        }
+    // Get body from everywhere it can come from
+    let requestBody: {
+      [k: string]: any,
+    } = {
+      ...req.body,
+      ...req.query,
+      ...req.params,
+    };
 
-        // Check full hostname
-        return originHostname.toLowerCase() === bannedHost.toLowerCase();
-      });
+    /*----------------------------------------*/
+    /* ------- Cross-Server Validation ------ */
+    /*----------------------------------------*/
 
-      // If banned, return error
-      if (banned) {
-        return handleError(
-          res,
-          {
-            message: 'You are not allowed to access this endpoint.',
-            code: ReactKitErrorCode.HostBanned,
-            status: 403,
-          },
+    if (crossServerScope) {
+      // Get the signed pack
+      const { signedPack } = requestBody;
+
+      // If no pack, throw error
+      if (!signedPack || typeof signedPack !== 'string') {
+        throw new ErrorWithCode(
+          'Could not process a cross server request because there was no valid signed pack.',
+          ReactKitErrorCode.CrossServerNoPack,
         );
       }
+
+      // Validate the request
+      const crossServerParams = await parseSignedPack({
+        method: req.method ?? 'GET',
+        path: req.path,
+        scope: crossServerScope,
+        signedPack,
+      });
+
+      // Replace body with params from the pack
+      requestBody = crossServerParams ?? {};
     }
 
     /*----------------------------------------*/
@@ -219,11 +183,7 @@ const genRouteHandler = (
       const [name, type] = paramList[i];
 
       // Find the value as a string
-      const value = (
-        req.params[name]
-        || req.query[name]
-        || req.body[name]
-      );
+      const value = requestBody[name];
 
       // Parse
       if (type === ParamType.Boolean || type === ParamType.BooleanOptional) {
@@ -406,7 +366,7 @@ const genRouteHandler = (
       // Not launched
       (!launched || !launchInfo)
       // Not skipping the session check
-      && !opts.skipSessionCheck
+      && !skipSessionCheck
     ) {
       return handleError(
         res,
@@ -437,7 +397,7 @@ const genRouteHandler = (
         )
       )
       // Not skipping the session check
-      && !opts.skipSessionCheck
+      && !skipSessionCheck
     ) {
       return handleError(
         res,
