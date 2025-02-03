@@ -5,7 +5,7 @@
  */
 
 // Import React
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 
 // Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -445,8 +445,10 @@ const genHumanReadableName = (machineReadableName: string) => {
 
 type State = {
   /* -------------- Logs -------------- */
-  // True if currently loading
+  // True if currently loading new logs
   loading: boolean,
+  // True if loading spinner showing. We only show the spinner when filters change (not page number)
+  showSpinner: boolean,
   // Loaded logs
   logs: Log[],
   /* ------------- Filters ------------ */
@@ -494,14 +496,12 @@ enum ActionType {
   UpdateActionErrorFilterState = 'update-action-error-filter-state',
   // Update the advanced filter state
   UpdateAdvancedFilterState = 'update-advanced-filter-state',
-  // Increment the page number
-  IncrementPageNumber = 'increment-page-number',
-  // Decrement the page number
-  DecrementPageNumber = 'decrement-page-number',
   // Set has another page
   SetHasAnotherPage = 'set-has-another-page',
   // Set the number of pages
   SetNumPages = 'set-num-pages',
+  // Set page number
+  SetPageNumber = 'set-page-number',
 }
 
 // Action definitions
@@ -559,12 +559,6 @@ type Action = (
     advancedFilterState: AdvancedFilterState,
   }
   | {
-    type: ActionType.IncrementPageNumber,
-  }
-  | {
-    type: ActionType.DecrementPageNumber,
-  }
-  | {
     type: ActionType.SetHasAnotherPage,
     hasAnotherPage: boolean,
   }
@@ -573,9 +567,16 @@ type Action = (
     numPages: number,
   }
   | {
+    type: ActionType.SetPageNumber,
+    pageNumber: number,
+  }
+  | {
+    type: ActionType.StartLoading,
+    filtersChanged: boolean,
+  }
+  | {
     // Action type
     type: (
-      | ActionType.StartLoading
       | ActionType.HideFilterDrawer
     ),
   }
@@ -593,12 +594,14 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         loading: true,
+        showSpinner: action.filtersChanged,
       };
     }
     case ActionType.FinishLoading: {
       return {
         ...state,
         loading: false,
+        showSpinner: false,
         logs: action.logs,
       };
     }
@@ -659,18 +662,6 @@ const reducer = (state: State, action: Action): State => {
         advancedFilterState: action.advancedFilterState,
       };
     }
-    case ActionType.IncrementPageNumber: {
-      return {
-        ...state,
-        pageNumber: state.pageNumber + 1,
-      };
-    }
-    case ActionType.DecrementPageNumber: {
-      return {
-        ...state,
-        pageNumber: state.pageNumber - 1,
-      };
-    }
     case ActionType.SetHasAnotherPage: {
       return {
         ...state,
@@ -681,6 +672,12 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         numPages: action.numPages,
+      };
+    }
+    case ActionType.SetPageNumber: {
+      return {
+        ...state,
+        pageNumber: action.pageNumber,
       };
     }
     default: {
@@ -818,6 +815,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Initial state
   const initialState: State = {
     loading: true,
+    showSpinner: true,
     logs: [],
     expandedFilterDrawer: undefined,
     dateFilterState: initDateFilterState,
@@ -836,6 +834,7 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Destructure common state
   const {
     loading,
+    showSpinner,
     logs,
     expandedFilterDrawer,
     dateFilterState,
@@ -859,16 +858,19 @@ const LogReviewer: React.FC<Props> = (props) => {
     opts: {
       filters: LogReviewerFilterState,
       pageNum: number,
-      countDocuments: boolean,
+      filtersChanged: boolean,
     },
   ) => {
     const {
       filters,
       pageNum,
-      countDocuments,
+      filtersChanged,
     } = opts;
 
-    dispatch({ type: ActionType.StartLoading });
+    dispatch({
+      type: ActionType.StartLoading,
+      filtersChanged,
+    });
 
     try {
       // Send filters to the server
@@ -881,7 +883,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         params: {
           pageNumber: pageNum,
           filters,
-          countDocuments,
+          countDocuments: filtersChanged,
         },
       });
 
@@ -891,7 +893,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         hasAnotherPage: response.hasAnotherPage,
       });
 
-      if (countDocuments && response.numPages) {
+      if (filtersChanged && response.numPages) {
         dispatch({
           type: ActionType.SetNumPages,
           numPages: response.numPages,
@@ -903,10 +905,35 @@ const LogReviewer: React.FC<Props> = (props) => {
         type: ActionType.FinishLoading,
         logs: fetchedLogs,
       });
+
+      // Update page number
+      dispatch({
+        type: ActionType.SetPageNumber,
+        pageNumber: pageNum,
+      });
     } catch (err) {
       return showFatalError(err);
     }
   };
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------- Lifecycle Functions ------------------------ */
+  /*------------------------------------------------------------------------*/
+
+  // Fetch logs on mount
+  useEffect(() => {
+    fetchLogs({
+      filters: {
+        dateFilterState,
+        contextFilterState,
+        tagFilterState,
+        actionErrorFilterState,
+        advancedFilterState,
+      },
+      pageNum: 1,
+      filtersChanged: true,
+    });
+  }, []);
 
   /*------------------------------------------------------------------------*/
   /* ------------------------------- Render ------------------------------- */
@@ -920,7 +947,7 @@ const LogReviewer: React.FC<Props> = (props) => {
 
   /* ------------- Loading ------------ */
 
-  if (loading) {
+  if (showSpinner) {
     body = (
       <div className="text-center p-5">
         <LoadingSpinner />
@@ -939,7 +966,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       <button
         type="button"
         className="btn btn-secondary me-2"
-        disabled={pageNumber <= 1}
+        disabled={pageNumber <= 1 || loading}
         onClick={() => {
           fetchLogs(
             {
@@ -951,12 +978,9 @@ const LogReviewer: React.FC<Props> = (props) => {
                 advancedFilterState,
               },
               pageNum: pageNumber - 1,
-              countDocuments: false,
+              filtersChanged: false,
             },
           );
-          dispatch({
-            type: ActionType.DecrementPageNumber,
-          });
         }}
       >
         <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
@@ -974,7 +998,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       <button
         type="button"
         className="btn btn-secondary ms-2"
-        disabled={!hasAnotherPage}
+        disabled={!hasAnotherPage || loading}
         onClick={() => {
           fetchLogs(
             {
@@ -986,12 +1010,9 @@ const LogReviewer: React.FC<Props> = (props) => {
                 advancedFilterState,
               },
               pageNum: pageNumber + 1,
-              countDocuments: false,
+              filtersChanged: false,
             },
           );
-          dispatch({
-            type: ActionType.IncrementPageNumber,
-          });
         }}
       >
         Next Page
@@ -1126,7 +1147,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   advancedFilterState: initAdvancedFilterState,
                 },
                 pageNum: 1,
-                countDocuments: true,
+                filtersChanged: true,
               },
             );
             dispatch({
@@ -1159,6 +1180,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             dispatch({
               type: ActionType.HideFilterDrawer,
             });
+
             fetchLogs(
               {
                 filters: {
@@ -1169,7 +1191,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   advancedFilterState,
                 },
                 pageNum: 1,
-                countDocuments: true,
+                filtersChanged: true,
               },
             );
           }}
@@ -1904,18 +1926,19 @@ const LogReviewer: React.FC<Props> = (props) => {
   );
 
   // Main body
-  body = (
-    <>
-      {filters}
-      <div className="mt-2">
-        <IntelliTable
-          title="Matching Logs:"
-          csvName={`Logs from ${getHumanReadableDate()}`}
-          id="logs"
-          data={logs}
-          columns={columns}
-        />
-        {logs.length === 0 && (
+  if (!showSpinner) {
+    body = (
+      <>
+        {filters}
+        <div className="mt-2">
+          <IntelliTable
+            title="Matching Logs:"
+            csvName={`Logs from ${getHumanReadableDate()}`}
+            id="logs"
+            data={logs}
+            columns={columns}
+          />
+          {logs.length === 0 && (
           <div className="alert alert-warning text-center mt-2">
             <h4 className="m-1">No Logs to Show</h4>
             <div>
@@ -1923,11 +1946,12 @@ const LogReviewer: React.FC<Props> = (props) => {
               created yet.
             </div>
           </div>
-        )}
-        {paginationControls}
-      </div>
-    </>
-  );
+          )}
+          {paginationControls}
+        </div>
+      </>
+    );
+  }
 
   /* ---------- Wrap in Modal --------- */
 
