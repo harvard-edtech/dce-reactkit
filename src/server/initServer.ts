@@ -15,6 +15,7 @@ import ParamType from '../types/ParamType';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 import LogReviewerFilterState from '../types/LogReviewerFilterState';
 import LogType from '../types/LogType';
+import LOG_REVIEW_PAGE_SIZE from '../constants/LOG_REVIEW_PAGE_SIZE';
 
 // Types
 type GetLaunchInfoFunction = (req: any) => {
@@ -466,13 +467,13 @@ const initServer = (
         // Query for logs
         const response = await _logCollection.findPaged({
           query,
-          perPage: 50,
+          perPage: LOG_REVIEW_PAGE_SIZE,
           pageNumber,
         });
 
         // Count documents if requested
         if (countDocuments) {
-          response.numPages = Math.ceil(await _logCollection.count(query) / 50);
+          response.numPages = Math.ceil(await _logCollection.count(query) / LOG_REVIEW_PAGE_SIZE);
         }
 
         // Return response
