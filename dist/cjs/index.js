@@ -3715,14 +3715,12 @@ var ActionType$6;
     ActionType["UpdateActionErrorFilterState"] = "update-action-error-filter-state";
     // Update the advanced filter state
     ActionType["UpdateAdvancedFilterState"] = "update-advanced-filter-state";
-    // Increment the page number
-    ActionType["IncrementPageNumber"] = "increment-page-number";
-    // Decrement the page number
-    ActionType["DecrementPageNumber"] = "decrement-page-number";
     // Set has another page
     ActionType["SetHasAnotherPage"] = "set-has-another-page";
     // Set the number of pages
     ActionType["SetNumPages"] = "set-num-pages";
+    // Set page number
+    ActionType["SetPageNumber"] = "set-page-number";
 })(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
@@ -3733,10 +3731,10 @@ var ActionType$6;
 const reducer$7 = (state, action) => {
     switch (action.type) {
         case ActionType$6.StartLoading: {
-            return Object.assign(Object.assign({}, state), { loading: true });
+            return Object.assign(Object.assign({}, state), { loading: true, showSpinner: action.filtersChanged });
         }
         case ActionType$6.FinishLoading: {
-            return Object.assign(Object.assign({}, state), { loading: false, logs: action.logs });
+            return Object.assign(Object.assign({}, state), { loading: false, showSpinner: false, logs: action.logs });
         }
         case ActionType$6.ToggleFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
@@ -3764,17 +3762,14 @@ const reducer$7 = (state, action) => {
         case ActionType$6.UpdateAdvancedFilterState: {
             return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
         }
-        case ActionType$6.IncrementPageNumber: {
-            return Object.assign(Object.assign({}, state), { pageNumber: state.pageNumber + 1 });
-        }
-        case ActionType$6.DecrementPageNumber: {
-            return Object.assign(Object.assign({}, state), { pageNumber: state.pageNumber - 1 });
-        }
         case ActionType$6.SetHasAnotherPage: {
             return Object.assign(Object.assign({}, state), { hasAnotherPage: action.hasAnotherPage });
         }
         case ActionType$6.SetNumPages: {
             return Object.assign(Object.assign({}, state), { numPages: action.numPages });
+        }
+        case ActionType$6.SetPageNumber: {
+            return Object.assign(Object.assign({}, state), { pageNumber: action.pageNumber });
         }
         default: {
             return state;
@@ -3893,6 +3888,7 @@ const LogReviewer = (props) => {
     // Initial state
     const initialState = {
         loading: true,
+        showSpinner: true,
         logs: [],
         expandedFilterDrawer: undefined,
         dateFilterState: initDateFilterState,
@@ -3907,7 +3903,7 @@ const LogReviewer = (props) => {
     // Initialize state
     const [state, dispatch] = React.useReducer(reducer$7, initialState);
     // Destructure common state
-    const { loading, logs, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, pageNumber, hasAnotherPage, numPages, } = state;
+    const { loading, showSpinner, logs, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, pageNumber, hasAnotherPage, numPages, } = state;
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
@@ -3915,8 +3911,11 @@ const LogReviewer = (props) => {
      * Fetch logs from the server based on current filters
      */
     const fetchLogs = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-        const { filters, pageNum, countDocuments, } = opts;
-        dispatch({ type: ActionType$6.StartLoading });
+        const { filters, pageNum, filtersChanged, } = opts;
+        dispatch({
+            type: ActionType$6.StartLoading,
+            filtersChanged,
+        });
         try {
             // Send filters to the server
             let fetchedLogs = [];
@@ -3927,7 +3926,7 @@ const LogReviewer = (props) => {
                 params: {
                     pageNumber: pageNum,
                     filters,
-                    countDocuments,
+                    countDocuments: filtersChanged,
                 },
             });
             fetchedLogs = fetchedLogs.concat(response.items);
@@ -3935,7 +3934,7 @@ const LogReviewer = (props) => {
                 type: ActionType$6.SetHasAnotherPage,
                 hasAnotherPage: response.hasAnotherPage,
             });
-            if (countDocuments && response.numPages) {
+            if (filtersChanged && response.numPages) {
                 dispatch({
                     type: ActionType$6.SetNumPages,
                     numPages: response.numPages,
@@ -3946,11 +3945,33 @@ const LogReviewer = (props) => {
                 type: ActionType$6.FinishLoading,
                 logs: fetchedLogs,
             });
+            // Update page number
+            dispatch({
+                type: ActionType$6.SetPageNumber,
+                pageNumber: pageNum,
+            });
         }
         catch (err) {
             return showFatalError(err);
         }
     });
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Lifecycle Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    // Fetch logs on mount
+    React.useEffect(() => {
+        fetchLogs({
+            filters: {
+                dateFilterState,
+                contextFilterState,
+                tagFilterState,
+                actionErrorFilterState,
+                advancedFilterState,
+            },
+            pageNum: 1,
+            filtersChanged: true,
+        });
+    }, []);
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -3960,7 +3981,7 @@ const LogReviewer = (props) => {
     // Body that will be filled with the contents of the panel
     let body;
     /* ------------- Loading ------------ */
-    if (loading) {
+    if (showSpinner) {
         body = (React__default["default"].createElement("div", { className: "text-center p-5" },
             React__default["default"].createElement(LoadingSpinner, null)));
     }
@@ -3969,7 +3990,7 @@ const LogReviewer = (props) => {
     /* ------------ Pagination -------------- */
     /*----------------------------------------*/
     const paginationControls = logs.length > 0 && (React__default["default"].createElement("div", { className: "text-center mt-3" },
-        React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary me-2", disabled: pageNumber <= 1, onClick: () => {
+        React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary me-2", disabled: pageNumber <= 1 || loading, onClick: () => {
                 fetchLogs({
                     filters: {
                         dateFilterState,
@@ -3979,10 +4000,7 @@ const LogReviewer = (props) => {
                         advancedFilterState,
                     },
                     pageNum: pageNumber - 1,
-                    countDocuments: false,
-                });
-                dispatch({
-                    type: ActionType$6.DecrementPageNumber,
+                    filtersChanged: false,
                 });
             } },
             React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faArrowLeft, className: "me-2" }),
@@ -3995,7 +4013,7 @@ const LogReviewer = (props) => {
             "of",
             ' ',
             numPages),
-        React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary ms-2", disabled: !hasAnotherPage, onClick: () => {
+        React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary ms-2", disabled: !hasAnotherPage || loading, onClick: () => {
                 fetchLogs({
                     filters: {
                         dateFilterState,
@@ -4005,10 +4023,7 @@ const LogReviewer = (props) => {
                         advancedFilterState,
                     },
                     pageNum: pageNumber + 1,
-                    countDocuments: false,
-                });
-                dispatch({
-                    type: ActionType$6.IncrementPageNumber,
+                    filtersChanged: false,
                 });
             } },
             "Next Page",
@@ -4070,7 +4085,7 @@ const LogReviewer = (props) => {
                             advancedFilterState: initAdvancedFilterState,
                         },
                         pageNum: 1,
-                        countDocuments: true,
+                        filtersChanged: true,
                     });
                     dispatch({
                         type: ActionType$6.ResetFilters,
@@ -4100,7 +4115,7 @@ const LogReviewer = (props) => {
                             advancedFilterState,
                         },
                         pageNum: 1,
-                        countDocuments: true,
+                        filtersChanged: true,
                     });
                 } },
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faSearch }),
@@ -4482,14 +4497,16 @@ const LogReviewer = (props) => {
         filterToggles,
         filterDrawer && (React__default["default"].createElement(Drawer, { customBackgroundColor: "#eee" }, filterDrawer))));
     // Main body
-    body = (React__default["default"].createElement(React__default["default"].Fragment, null,
-        filters,
-        React__default["default"].createElement("div", { className: "mt-2" },
-            React__default["default"].createElement(IntelliTable, { title: "Matching Logs:", csvName: `Logs from ${getHumanReadableDate()}`, id: "logs", data: logs, columns: columns }),
-            logs.length === 0 && (React__default["default"].createElement("div", { className: "alert alert-warning text-center mt-2" },
-                React__default["default"].createElement("h4", { className: "m-1" }, "No Logs to Show"),
-                React__default["default"].createElement("div", null, "Either your filters are too strict or no matching logs have been created yet."))),
-            paginationControls)));
+    if (!showSpinner) {
+        body = (React__default["default"].createElement(React__default["default"].Fragment, null,
+            filters,
+            React__default["default"].createElement("div", { className: "mt-2" },
+                React__default["default"].createElement(IntelliTable, { title: "Matching Logs:", csvName: `Logs from ${getHumanReadableDate()}`, id: "logs", data: logs, columns: columns }),
+                logs.length === 0 && (React__default["default"].createElement("div", { className: "alert alert-warning text-center mt-2" },
+                    React__default["default"].createElement("h4", { className: "m-1" }, "No Logs to Show"),
+                    React__default["default"].createElement("div", null, "Either your filters are too strict or no matching logs have been created yet."))),
+                paginationControls)));
+    }
     /* ---------- Wrap in Modal --------- */
     return (React__default["default"].createElement("div", { className: "LogReviewer-outer-container" },
         React__default["default"].createElement("style", null, style$2),
@@ -13831,6 +13848,12 @@ const padZerosLeft = (num, numDigits) => {
  */
 const LOG_REVIEW_STATUS_ROUTE = `${ROUTE_PATH_PREFIX}/logs/access_allowed`;
 
+/**
+ * Log reviewer page size
+ * @author Yuen Ler Chow
+ */
+const LOG_REVIEW_PAGE_SIZE = 100;
+
 // Stored copy of caccl functions
 let _cacclGetLaunchInfo;
 // Stored copy of dce-mango log collection
@@ -14179,12 +14202,12 @@ const initServer = (opts) => {
             // Query for logs
             const response = yield _logCollection.findPaged({
                 query,
-                perPage: 50,
+                perPage: LOG_REVIEW_PAGE_SIZE,
                 pageNumber,
             });
             // Count documents if requested
             if (countDocuments) {
-                response.numPages = Math.ceil((yield _logCollection.count(query)) / 50);
+                response.numPages = Math.ceil((yield _logCollection.count(query)) / LOG_REVIEW_PAGE_SIZE);
             }
             // Return response
             return response;
