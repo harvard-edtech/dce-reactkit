@@ -5,13 +5,11 @@
  */
 
 // Import React
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 
 // Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faArrowLeft,
-  faArrowRight,
   faCalendar,
   faCircle,
   faHammer,
@@ -59,7 +57,8 @@ import TabBox from './TabBox';
 import RadioButton from './RadioButton';
 import ButtonInputGroup from './ButtonInputGroup';
 import IntelliTable from './IntelliTable';
-
+import Variant from '../types/Variant';
+import Pagination from './Pagination';
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -447,7 +446,8 @@ type State = {
   /* -------------- Logs -------------- */
   // True if currently loading new logs
   loading: boolean,
-  // True if loading spinner showing. We only show the spinner when filters change (not page number)
+  // True if loading spinner showing. We only show the
+  // spinner when filters change (not page number)
   showSpinner: boolean,
   // Loaded logs
   logs: Log[],
@@ -470,6 +470,8 @@ type State = {
   hasAnotherPage: boolean,
   // Total number of pages
   numPages: number,
+  // If true, filters have changed
+  userMadeFilterChange: boolean,
 };
 
 /* ------------- Actions ------------ */
@@ -502,6 +504,8 @@ enum ActionType {
   SetNumPages = 'set-num-pages',
   // Set page number
   SetPageNumber = 'set-page-number',
+  // Reset user made filter change indicator
+  ResetUserMadeFilterChange = 'reset-user-made-filter-change',
 }
 
 // Action definitions
@@ -578,6 +582,7 @@ type Action = (
     // Action type
     type: (
       | ActionType.HideFilterDrawer
+      | ActionType.ResetUserMadeFilterChange
     ),
   }
 );
@@ -636,30 +641,35 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         dateFilterState: action.dateFilterState,
+        userMadeFilterChange: true,
       };
     }
     case ActionType.UpdateContextFilterState: {
       return {
         ...state,
         contextFilterState: action.contextFilterState,
+        userMadeFilterChange: true,
       };
     }
     case ActionType.UpdateTagFilterState: {
       return {
         ...state,
         tagFilterState: action.tagFilterState,
+        userMadeFilterChange: true,
       };
     }
     case ActionType.UpdateActionErrorFilterState: {
       return {
         ...state,
         actionErrorFilterState: action.actionErrorFilterState,
+        userMadeFilterChange: true,
       };
     }
     case ActionType.UpdateAdvancedFilterState: {
       return {
         ...state,
         advancedFilterState: action.advancedFilterState,
+        userMadeFilterChange: true,
       };
     }
     case ActionType.SetHasAnotherPage: {
@@ -678,6 +688,12 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         pageNumber: action.pageNumber,
+      };
+    }
+    case ActionType.ResetUserMadeFilterChange: {
+      return {
+        ...state,
+        userMadeFilterChange: false,
       };
     }
     default: {
@@ -715,7 +731,9 @@ const LogReviewer: React.FC<Props> = (props) => {
 
       // If context has children, add an "uncategorized" subcontext
       if (typeof contextMap[context] !== 'string') {
-        (contextMap[context] as any)[LogBuiltInMetadata.Context.Uncategorized] = (
+        (contextMap[context] as any)[
+          LogBuiltInMetadata.Context.Uncategorized
+        ] = (
           LogBuiltInMetadata.Context.Uncategorized
         );
       }
@@ -826,6 +844,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     pageNumber: 1,
     hasAnotherPage: false,
     numPages: 1,
+    userMadeFilterChange: false,
   };
 
   // Initialize state
@@ -843,9 +862,20 @@ const LogReviewer: React.FC<Props> = (props) => {
     actionErrorFilterState,
     advancedFilterState,
     pageNumber,
-    hasAnotherPage,
     numPages,
+    userMadeFilterChange,
   } = state;
+
+  /* -------------- Refs -------------- */
+
+  // Initialize refs
+  const originalFiltersRef = useRef({
+    dateFilterState: JSON.parse(JSON.stringify(dateFilterState)),
+    contextFilterState: JSON.parse(JSON.stringify(contextFilterState)),
+    tagFilterState: JSON.parse(JSON.stringify(tagFilterState)),
+    actionErrorFilterState: JSON.parse(JSON.stringify(actionErrorFilterState)),
+    advancedFilterState: JSON.parse(JSON.stringify(advancedFilterState)),
+  });
 
   /*------------------------------------------------------------------------*/
   /* ------------------------- Component Functions ------------------------ */
@@ -962,63 +992,25 @@ const LogReviewer: React.FC<Props> = (props) => {
   /*----------------------------------------*/
 
   const paginationControls = logs.length > 0 && (
-    <div className="text-center mt-3">
-      <button
-        type="button"
-        className="btn btn-secondary me-2"
-        disabled={pageNumber <= 1 || loading}
-        onClick={() => {
-          fetchLogs(
-            {
-              filters: {
-                dateFilterState,
-                contextFilterState,
-                tagFilterState,
-                actionErrorFilterState,
-                advancedFilterState,
-              },
-              pageNum: pageNumber - 1,
-              filtersChanged: false,
-            },
-          );
-        }}
-      >
-        <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
-        Previous Page
-      </button>
-      <span className="mx-3">
-        Page
-        {' '}
-        {pageNumber}
-        {' '}
-        of
-        {' '}
-        {numPages}
-      </span>
-      <button
-        type="button"
-        className="btn btn-secondary ms-2"
-        disabled={!hasAnotherPage || loading}
-        onClick={() => {
-          fetchLogs(
-            {
-              filters: {
-                dateFilterState,
-                contextFilterState,
-                tagFilterState,
-                actionErrorFilterState,
-                advancedFilterState,
-              },
-              pageNum: pageNumber + 1,
-              filtersChanged: false,
-            },
-          );
-        }}
-      >
-        Next Page
-        <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
-      </button>
-    </div>
+    <Pagination
+      currentPage={pageNumber}
+      numPages={numPages}
+      loading={loading}
+      onPageChanged={(targetPage) => {
+        const { current: originalFilters } = originalFiltersRef;
+        fetchLogs({
+          filters: {
+            dateFilterState: originalFilters.dateFilterState,
+            contextFilterState: originalFilters.contextFilterState,
+            tagFilterState: originalFilters.tagFilterState,
+            actionErrorFilterState: originalFilters.actionErrorFilterState,
+            advancedFilterState: originalFilters.advancedFilterState,
+          },
+          pageNum: targetPage,
+          filtersChanged: false,
+        });
+      }}
+    />
   );
 
   /*----------------------------------------*/
@@ -1028,9 +1020,6 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Filter toggle
   const filterToggles = (
     <div className="LogReviewer-filter-toggles">
-      <h3 className="m-0">
-        Filters:
-      </h3>
       <div className="LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0">
         {/* Date */}
         <button
@@ -1171,6 +1160,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         </button>
 
         {/* Submit filter changes */}
+        { userMadeFilterChange && (
         <button
           type="button"
           id="LogReviewer-submit-filters-button"
@@ -1180,6 +1170,30 @@ const LogReviewer: React.FC<Props> = (props) => {
             dispatch({
               type: ActionType.HideFilterDrawer,
             });
+
+            // Reset user made filter change indicator
+            dispatch({
+              type: ActionType.ResetUserMadeFilterChange,
+            });
+
+            // Save original filters
+            originalFiltersRef.current = {
+              dateFilterState: JSON.parse(
+                JSON.stringify(dateFilterState),
+              ),
+              contextFilterState: JSON.parse(
+                JSON.stringify(contextFilterState),
+              ),
+              tagFilterState: JSON.parse(
+                JSON.stringify(tagFilterState),
+              ),
+              actionErrorFilterState: JSON.parse(
+                JSON.stringify(actionErrorFilterState),
+              ),
+              advancedFilterState: JSON.parse(
+                JSON.stringify(advancedFilterState),
+              ),
+            };
 
             fetchLogs(
               {
@@ -1200,8 +1214,9 @@ const LogReviewer: React.FC<Props> = (props) => {
             icon={faSearch}
           />
           {' '}
-          Filter
+          Apply Filters
         </button>
+        )}
       </div>
     </div>
   );
@@ -1353,7 +1368,9 @@ const LogReviewer: React.FC<Props> = (props) => {
                   pickableItem.children.forEach((subcontextItem) => {
                     if (!subcontextItem.isGroup) {
                       (
-                        contextFilterState[pickableItem.id] as { [k: string]: boolean }
+                        contextFilterState[pickableItem.id] as {
+                          [k: string]: boolean
+                        }
                       )[subcontextItem.id] = (
                         subcontextItem.checked
                       );
@@ -1402,6 +1419,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                             tagFilterState,
                           });
                         }}
+                        checkedVariant={Variant.Light}
+                        uncheckedVariant={Variant.Light}
                       />
                     );
                   })
@@ -1427,6 +1446,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               }}
               ariaLabel="show logs of all types"
               selected={actionErrorFilterState.type === undefined}
+              unselectedVariant={Variant.Light}
             />
             <RadioButton
               id="LogReviewer-type-action-only"
@@ -1440,6 +1460,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               }}
               ariaLabel="only show action logs"
               selected={actionErrorFilterState.type === LogType.Action}
+              unselectedVariant={Variant.Light}
             />
             <RadioButton
               id="LogReviewer-type-error-only"
@@ -1454,6 +1475,8 @@ const LogReviewer: React.FC<Props> = (props) => {
               ariaLabel="only show error logs"
               selected={actionErrorFilterState.type === LogType.Error}
               noMarginOnRight
+              selectedVariant={Variant.Light}
+              unselectedVariant={Variant.Light}
             />
           </TabBox>
           {/* Actions */}
@@ -1488,6 +1511,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                                   actionErrorFilterState,
                                 });
                               }}
+                              checkedVariant={Variant.Light}
+                              uncheckedVariant={Variant.Light}
                             />
                           );
                         })
@@ -1518,6 +1543,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                                   actionErrorFilterState,
                                 });
                               }}
+                              checkedVariant={Variant.Light}
+                              uncheckedVariant={Variant.Light}
                             />
                           );
                         })
@@ -1691,6 +1718,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                 }}
                 checked={advancedFilterState.includeLearners}
                 ariaLabel="show logs from students"
+                checkedVariant={Variant.Light}
+                uncheckedVariant={Variant.Light}
               />
               <CheckboxButton
                 text="Teaching Team Members"
@@ -1703,6 +1732,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                 }}
                 checked={advancedFilterState.includeTTMs}
                 ariaLabel="show logs from teaching team members"
+                checkedVariant={Variant.Light}
+                uncheckedVariant={Variant.Light}
               />
               <CheckboxButton
                 text="Admins"
@@ -1715,6 +1746,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                 }}
                 checked={advancedFilterState.includeAdmins}
                 ariaLabel="show logs from admins"
+                checkedVariant={Variant.Light}
+                uncheckedVariant={Variant.Light}
               />
             </ButtonInputGroup>
           </TabBox>
@@ -1784,6 +1817,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                     advancedFilterState,
                   });
                 }}
+                selectedVariant={Variant.Light}
+                unselectedVariant={Variant.Light}
               />
               <RadioButton
                 text="Mobile Only"
@@ -1796,6 +1831,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                     advancedFilterState,
                   });
                 }}
+                selectedVariant={Variant.Light}
+                unselectedVariant={Variant.Light}
               />
               <RadioButton
                 text="Desktop Only"
@@ -1809,6 +1846,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                   });
                 }}
                 noMarginOnRight
+                selectedVariant={Variant.Light}
+                unselectedVariant={Variant.Light}
               />
             </ButtonInputGroup>
           </TabBox>
@@ -1827,6 +1866,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                     advancedFilterState,
                   });
                 }}
+                selectedVariant={Variant.Light}
+                unselectedVariant={Variant.Light}
               />
               <RadioButton
                 text="Client Only"
@@ -1839,6 +1880,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                     advancedFilterState,
                   });
                 }}
+                selectedVariant={Variant.Light}
+                unselectedVariant={Variant.Light}
               />
               <RadioButton
                 text="Server Only"
@@ -1852,6 +1895,8 @@ const LogReviewer: React.FC<Props> = (props) => {
                   });
                 }}
                 noMarginOnRight
+                selectedVariant={Variant.Light}
+                unselectedVariant={Variant.Light}
               />
             </ButtonInputGroup>
 
@@ -1931,22 +1976,27 @@ const LogReviewer: React.FC<Props> = (props) => {
       <>
         {filters}
         <div className="mt-2">
-          <IntelliTable
-            title="Matching Logs:"
-            csvName={`Logs from ${getHumanReadableDate()}`}
-            id="logs"
-            data={logs}
-            columns={columns}
-          />
-          {logs.length === 0 && (
-          <div className="alert alert-warning text-center mt-2">
-            <h4 className="m-1">No Logs to Show</h4>
-            <div>
-              Either your filters are too strict or no matching logs have been
-              created yet.
+
+          {
+          logs.length === 0 ? (
+            <div className="alert alert-warning text-center mt-2">
+              <h4 className="m-1">No Logs to Show</h4>
+              <div>
+                Either your filters are too strict or no matching logs have been
+                created yet.
+              </div>
             </div>
-          </div>
-          )}
+          )
+            : (
+              <IntelliTable
+                title="Matching Logs"
+                csvName={`Logs from ${getHumanReadableDate()}`}
+                id="logs"
+                data={logs}
+                columns={columns}
+              />
+            )
+          }
           {paginationControls}
         </div>
       </>
@@ -1963,7 +2013,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       <div className="LogReviewer-inner-container">
         <div className="LogReviewer-header">
           <div className="LogReviewer-header-title">
-            <h3 className="text-center m-0">Log Review Dashboard</h3>
+            <h3 className="text-center">Log Review Dashboard</h3>
           </div>
           <div style={{ width: 0 }}>
             <button
