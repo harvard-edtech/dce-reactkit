@@ -1,6 +1,6 @@
 {
   "name": "dce-reactkit",
-  "version": "3.9.4-beta-logreviewer.6",
+  "version": "3.9.4-beta-logreviewer.7",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
