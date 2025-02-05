@@ -272,6 +272,7 @@ const NestableItemList: React.FC<Props> = (props) => {
                 }}
                 ariaLabel={`Select ${item.name}`}
                 checkedVariant={Variant.Light}
+                uncheckedVariant={Variant.Light}
               />
 
               {/* Children */}
