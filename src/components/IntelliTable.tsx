@@ -315,7 +315,7 @@ const IntelliTable: React.FC<Props> = (props) => {
                 checked={columnVisibilityMap[column.param]}
                 ariaLabel={`show "${column.title}" column in the ${title} table`}
                 checkedVariant={Variant.Light}
-                uncheckedVariant={Variant.Secondary}
+                uncheckedVariant={Variant.Light}
               />
             );
           })
