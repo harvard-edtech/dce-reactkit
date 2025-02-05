@@ -2672,7 +2672,7 @@ const NestableItemList = (props) => {
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: childExpanded[item.id] ? freeSolidSvgIcons.faChevronDown : freeSolidSvgIcons.faChevronRight })))),
             React__default["default"].createElement(CheckboxButton, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
                     onChanged(changeChecked(item.id, checked, items));
-                }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$1.Light }),
+                }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }),
             (item.isGroup && childExpanded[item.id]) && (React__default["default"].createElement("div", { className: "NestableItemList-children-container", style: {
                     paddingLeft: '2.2rem',
                 } },
@@ -3077,7 +3077,7 @@ const IntelliTable = (props) => {
                             param: column.param,
                             visible: checked,
                         });
-                    }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column in the ${title} table`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Secondary }));
+                    }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column in the ${title} table`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }));
             }),
             React__default["default"].createElement("div", { className: "mt-3" }, "Or you can:"),
             React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-select-all-columns`, className: "btn btn-secondary me-2", "aria-label": `show all columns in the ${title} table`, onClick: () => {
