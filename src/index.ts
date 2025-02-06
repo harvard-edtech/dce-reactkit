@@ -113,6 +113,7 @@ import LogMetadataType from './types/LogMetadataType';
 import LogFunction from './types/LogFunction';
 import IntelliTableColumn from './types/IntelliTableColumn';
 import DropdownItemType from './types/DropdownItemType';
+import CrossServerCredential from './types/CrossServerCredential';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -234,6 +235,7 @@ export {
   LogFunction,
   IntelliTableColumn,
   DropdownItemType,
+  CrossServerCredential,
   // Component-specific-types
   PickableItem,
   DBEntry,
