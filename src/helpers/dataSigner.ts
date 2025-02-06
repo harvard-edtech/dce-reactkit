@@ -1,6 +1,9 @@
 // Import crypto
 import { createHash } from 'crypto';
 
+// Import jwt
+import jwt from 'jwt-simple';
+
 // Import shared helpers
 import { internalGetCrossServerCredentialCollection } from '../server/initServer';
 
@@ -11,6 +14,34 @@ import CrossServerCredential from '../types/CrossServerCredential';
 
 // Import shared constants
 import MINUTE_IN_MS from '../constants/MINUTE_IN_MS';
+
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Encoding ------------------------------ */
+/*------------------------------------------------------------------------*/
+
+/**
+ * Validate a JWT token
+ * @author Gabe Abrams
+ * @param encodedSecret the encoded secret
+ * @return the secret
+ */
+const decodeCredentialSecret = (encodedSecret: string): string => {
+  // Get the credential encoding salt
+  const credentialEncodingSalt = process.env.REACTKIT_CRED_ENCODING_SALT;
+  if (!credentialEncodingSalt) {
+    throw new ErrorWithCode(
+      'Cannot decode a cross-server credential secret because the credential encoding salt was not found in env.',
+      ReactKitErrorCode.CrossServerNoCredentialEncodingSalt,
+    );
+  }
+
+  // Decode the secret
+  return jwt.decode(encodedSecret, credentialEncodingSalt);
+};
+
+/*------------------------------------------------------------------------*/
+/* ------------------------------- Signing ------------------------------ */
+/*------------------------------------------------------------------------*/
 
 /**
  * Sign using sha 256
@@ -179,10 +210,13 @@ export const parseSignedPack = async (
     );
   }
 
+  // Decode the secret
+  const secret = decodeCredentialSecret(crossServerCredential.encodedeSecret);
+
   // Generate signature
   const expectedSignature = genSignature({
     pack,
-    secret: crossServerCredential.secret,
+    secret,
   });
 
   // Make sure the signature matches

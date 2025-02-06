@@ -7,8 +7,8 @@ type CrossServerCredential = {
   description: string,
   // The key of the credential
   key: string,
-  // The secret of the credential
-  secret: string,
+  // The encoded secret of the credential
+  encodedeSecret: string,
   // The list of scopes for the credential
   scopes: string[],
 };

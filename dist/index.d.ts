@@ -1718,7 +1718,8 @@ declare enum ReactKitErrorCode {
     PackInvalidSignature = "DRK25",
     PackInvalidBody = "DRK26",
     CrossServerNoCredentialsToSignWith = "DRK27",
-    CrossServerNoPack = "DRK29"
+    CrossServerNoPack = "DRK29",
+    CrossServerNoCredentialEncodingSalt = "DRK30"
 }
 
 /**

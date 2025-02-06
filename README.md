@@ -14,3 +14,7 @@ npm install dce-reactkit --save
 ```js
 import { LoadingSpinner } from 'dce-reactkit';
 ```
+
+## Environment
+
+To use cross-server credentials, include a `REACTKIT_CRED_ENCODING_SALT` environment variable with secure, secret text.

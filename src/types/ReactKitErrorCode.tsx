@@ -1,4 +1,4 @@
-// Highest error code = DRK29
+// Highest error code = DRK30
 
 /**
  * List of error codes built into the react kit
@@ -36,6 +36,7 @@ enum ReactKitErrorCode {
   PackInvalidBody = 'DRK26',
   CrossServerNoCredentialsToSignWith = 'DRK27',
   CrossServerNoPack = 'DRK29',
+  CrossServerNoCredentialEncodingSalt = 'DRK30',
 }
 
 export default ReactKitErrorCode;

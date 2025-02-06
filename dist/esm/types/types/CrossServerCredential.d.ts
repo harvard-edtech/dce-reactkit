@@ -5,7 +5,7 @@
 type CrossServerCredential = {
     description: string;
     key: string;
-    secret: string;
+    encodedeSecret: string;
     scopes: string[];
 };
 export default CrossServerCredential;

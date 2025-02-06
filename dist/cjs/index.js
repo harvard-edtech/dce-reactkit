@@ -8,6 +8,7 @@ var reactFontawesome = require('@fortawesome/react-fontawesome');
 var ReactDOM = require('react-dom');
 var freeRegularSvgIcons = require('@fortawesome/free-regular-svg-icons');
 var crypto = require('crypto');
+var jwt = require('jwt-simple');
 var qs = require('qs');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -33,6 +34,7 @@ function _interopNamespace(e) {
 var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 var React__namespace = /*#__PURE__*/_interopNamespace(React);
 var ReactDOM__default = /*#__PURE__*/_interopDefaultLegacy(ReactDOM);
+var jwt__default = /*#__PURE__*/_interopDefaultLegacy(jwt);
 var qs__default = /*#__PURE__*/_interopDefaultLegacy(qs);
 
 /******************************************************************************
@@ -60,7 +62,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK29
+// Highest error code = DRK30
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -97,6 +99,7 @@ var ReactKitErrorCode;
     ReactKitErrorCode["PackInvalidBody"] = "DRK26";
     ReactKitErrorCode["CrossServerNoCredentialsToSignWith"] = "DRK27";
     ReactKitErrorCode["CrossServerNoPack"] = "DRK29";
+    ReactKitErrorCode["CrossServerNoCredentialEncodingSalt"] = "DRK30";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -14665,6 +14668,27 @@ const parseUserAgent = (userAgent) => {
     };
 };
 
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Encoding ------------------------------ */
+/*------------------------------------------------------------------------*/
+/**
+ * Validate a JWT token
+ * @author Gabe Abrams
+ * @param encodedSecret the encoded secret
+ * @return the secret
+ */
+const decodeCredentialSecret = (encodedSecret) => {
+    // Get the credential encoding salt
+    const credentialEncodingSalt = process.env.REACTKIT_CRED_ENCODING_SALT;
+    if (!credentialEncodingSalt) {
+        throw new ErrorWithCode('Cannot decode a cross-server credential secret because the credential encoding salt was not found in env.', ReactKitErrorCode$1.CrossServerNoCredentialEncodingSalt);
+    }
+    // Decode the secret
+    return jwt__default["default"].decode(encodedSecret, credentialEncodingSalt);
+};
+/*------------------------------------------------------------------------*/
+/* ------------------------------- Signing ------------------------------ */
+/*------------------------------------------------------------------------*/
 /**
  * Sign using sha 256
  * @author Gabe Abrams
@@ -14777,10 +14801,12 @@ const parseSignedPack = (opts) => __awaiter(void 0, void 0, void 0, function* ()
     if (!allowedScopes.includes(opts.scope)) {
         throw new ErrorWithCode('Could not validate a cross-server request because the scope was not included.', ReactKitErrorCode$1.PackInvalidScope);
     }
+    // Decode the secret
+    const secret = decodeCredentialSecret(crossServerCredential.encodedeSecret);
     // Generate signature
     const expectedSignature = genSignature({
         pack,
-        secret: crossServerCredential.secret,
+        secret,
     });
     // Make sure the signature matches
     if (signature !== expectedSignature) {
