@@ -69,7 +69,9 @@ const Pagination: React.FC<Props> = ({
         </li>
 
         {/* First page (if needed) */}
-        {currentPage > 3 && (
+        {currentPage > 3
+        && pages[0] !== 1
+        && (
           <li className="page-item">
             <button
               type="button"
@@ -113,7 +115,9 @@ const Pagination: React.FC<Props> = ({
         )}
 
         {/* Last page (if needed) */}
-        {currentPage < numPages - 2 && (
+        {currentPage < numPages - 2
+        && pages[pages.length - 1] !== numPages
+        && (
           <li className="page-item">
             <button
               type="button"

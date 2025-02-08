@@ -59,6 +59,7 @@ import ButtonInputGroup from './ButtonInputGroup';
 import IntelliTable from './IntelliTable';
 import Variant from '../types/Variant';
 import Pagination from './Pagination';
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -1126,6 +1127,24 @@ const LogReviewer: React.FC<Props> = (props) => {
           className="btn btn-light"
           aria-label="reset filters"
           onClick={() => {
+            // Save active filters
+            activeFiltersRef.current = {
+              dateFilterState: JSON.parse(
+                JSON.stringify(initDateFilterState),
+              ),
+              contextFilterState: JSON.parse(
+                JSON.stringify(initContextFilterState),
+              ),
+              tagFilterState: JSON.parse(
+                JSON.stringify(initTagFilterState),
+              ),
+              actionErrorFilterState: JSON.parse(
+                JSON.stringify(initActionErrorFilterState),
+              ),
+              advancedFilterState: JSON.parse(
+                JSON.stringify(initAdvancedFilterState),
+              ),
+            };
             fetchLogs(
               {
                 filters: {
