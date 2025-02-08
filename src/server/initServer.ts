@@ -294,45 +294,28 @@ const initServer = (
         };
 
         /* ------------ Context Filter ------------ */
-
         // Process context filters to include selected contexts and subcontexts
-        const selectedContexts: string[] = [];
-        const selectedSubcontexts: string[] = [];
-
-        // Process each context filter
+        const contextConditions: { [k: string]: any }[] = [];
         Object.keys(contextFilterState).forEach((context) => {
           const value = contextFilterState[context];
           if (typeof value === 'boolean') {
             if (value) {
-              selectedContexts.push(context);
+              // The entire context is selected
+              contextConditions.push({ context });
             }
           } else {
-            // At least one subcontext is selected
-            const atLeastOneSubcontextSelected = (
-              Object.values(value)
-                .some((subcontextValue) => {
-                  return subcontextValue;
-                })
-            );
-            if (atLeastOneSubcontextSelected) {
-              selectedContexts.push(context);
+            // The context has subcontexts
+            const subcontexts = Object.keys(value).filter((subcontext) => { return value[subcontext]; });
+            if (subcontexts.length > 0) {
+              contextConditions.push({
+                context,
+                subcontext: { $in: subcontexts },
+              });
             }
-            // Add all selected subcontexts
-            Object.keys(value).forEach((subcontext) => {
-              if (value[subcontext]) {
-                selectedSubcontexts.push(subcontext);
-              }
-            });
           }
         });
-
-        // Add context and subcontext conditions to the query if any are selected
-        if (selectedContexts.length > 0) {
-          query.context = { $in: selectedContexts };
-        }
-
-        if (selectedSubcontexts.length > 0) {
-          query.subcontext = { $in: selectedSubcontexts };
+        if (contextConditions.length > 0) {
+          query.$or = contextConditions;
         }
 
         /* -------------- Tag Filter -------------- */
