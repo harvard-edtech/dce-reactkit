@@ -781,7 +781,7 @@ const LogReviewer: React.FC<Props> = (props) => {
     } else {
       // Case: subcontexts exist
       initContextFilterState[context] = {};
-      Object.values(contextMap[context]).forEach((subcontext) => {
+      Object.keys(contextMap[context]).forEach((subcontext) => {
         // Skip self ("_")
         if (subcontext === '_') {
           return;
