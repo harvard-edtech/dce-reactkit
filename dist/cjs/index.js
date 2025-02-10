@@ -3424,6 +3424,59 @@ const IntelliTable = (props) => {
             } }, table)));
 };
 
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const Pagination = ({ currentPage, numPages, loading = false, onPageChanged, }) => {
+    // computes an array of page numbers to display.
+    const getPageNumbers = () => {
+        const pages = [];
+        const delta = 2; // how many pages to show on either side of current
+        let start = Math.max(1, currentPage - delta);
+        let end = Math.min(numPages, currentPage + delta);
+        // If we are too close to the beginning or end, shift the window.
+        if (currentPage - delta < 1) {
+            end = Math.min(numPages, end + (1 - (currentPage - delta)));
+        }
+        if (currentPage + delta > numPages) {
+            start = Math.max(1, start - ((currentPage + delta) - numPages));
+        }
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+        return pages;
+    };
+    const pages = getPageNumbers();
+    return (React__default["default"].createElement("nav", { "aria-label": "Page navigation", className: "mt-3" },
+        React__default["default"].createElement("ul", { className: "pagination justify-content-center" },
+            React__default["default"].createElement("li", { className: `page-item ${(currentPage <= 1 || loading) ? 'disabled' : ''}` },
+                React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(currentPage - 1); }, disabled: currentPage <= 1 || loading },
+                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faArrowLeft }),
+                    ' ',
+                    "Prev")),
+            currentPage > 3
+                && pages[0] !== 1
+                && (React__default["default"].createElement("li", { className: "page-item" },
+                    React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(1); }, disabled: loading }, "1"))),
+            currentPage > 4 && (React__default["default"].createElement("li", { className: "page-item disabled" },
+                React__default["default"].createElement("span", { className: "page-link" }, "..."))),
+            pages.map((pageNum) => {
+                return (React__default["default"].createElement("li", { key: pageNum, className: `page-item ${pageNum === currentPage ? 'active' : ''}` },
+                    React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(pageNum); }, disabled: loading }, pageNum)));
+            }),
+            currentPage < numPages - 3 && (React__default["default"].createElement("li", { className: "page-item disabled" },
+                React__default["default"].createElement("span", { className: "page-link" }, "..."))),
+            currentPage < numPages - 2
+                && pages[pages.length - 1] !== numPages
+                && (React__default["default"].createElement("li", { className: "page-item" },
+                    React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(numPages); }, disabled: loading }, numPages))),
+            React__default["default"].createElement("li", { className: `page-item ${(currentPage >= numPages || loading) ? 'disabled' : ''}` },
+                React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(currentPage + 1); }, disabled: currentPage >= numPages || loading },
+                    "Next",
+                    ' ',
+                    React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faArrowRight }))))));
+};
+
 /**
  * Log reviewer panel that allows users (must be approved admins) to
  *   review logs written by dce-reactkit
@@ -3803,6 +3856,8 @@ var ActionType$6;
     ActionType["SetNumPages"] = "set-num-pages";
     // Set page number
     ActionType["SetPageNumber"] = "set-page-number";
+    // Reset user made filter change indicator
+    ActionType["ResetUserMadeFilterChange"] = "reset-user-made-filter-change";
 })(ActionType$6 || (ActionType$6 = {}));
 /**
  * Reducer that executes actions
@@ -3827,22 +3882,22 @@ const reducer$7 = (state, action) => {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: undefined });
         }
         case ActionType$6.ResetFilters: {
-            return Object.assign(Object.assign({}, state), { dateFilterState: action.initDateFilterState, contextFilterState: action.initContextFilterState, tagFilterState: action.initTagFilterState, actionErrorFilterState: action.initActionErrorFilterState, advancedFilterState: action.initAdvancedFilterState, pageNumber: 1 });
+            return Object.assign(Object.assign({}, state), { pendingDateFilterState: action.initDateFilterState, pendingContextFilterState: action.initContextFilterState, pendingTagFilterState: action.initTagFilterState, pendingActionErrorFilterState: action.initActionErrorFilterState, pendingAdvancedFilterState: action.initAdvancedFilterState, pageNumber: 1 });
         }
         case ActionType$6.UpdateDateFilterState: {
-            return Object.assign(Object.assign({}, state), { dateFilterState: action.dateFilterState });
+            return Object.assign(Object.assign({}, state), { pendingDateFilterState: action.dateFilterState, userMadeFilterChange: true });
         }
         case ActionType$6.UpdateContextFilterState: {
-            return Object.assign(Object.assign({}, state), { contextFilterState: action.contextFilterState });
+            return Object.assign(Object.assign({}, state), { pendingContextFilterState: action.contextFilterState, userMadeFilterChange: true });
         }
         case ActionType$6.UpdateTagFilterState: {
-            return Object.assign(Object.assign({}, state), { tagFilterState: action.tagFilterState });
+            return Object.assign(Object.assign({}, state), { pendingTagFilterState: action.tagFilterState, userMadeFilterChange: true });
         }
         case ActionType$6.UpdateActionErrorFilterState: {
-            return Object.assign(Object.assign({}, state), { actionErrorFilterState: action.actionErrorFilterState });
+            return Object.assign(Object.assign({}, state), { pendingActionErrorFilterState: action.actionErrorFilterState, userMadeFilterChange: true });
         }
         case ActionType$6.UpdateAdvancedFilterState: {
-            return Object.assign(Object.assign({}, state), { advancedFilterState: action.advancedFilterState });
+            return Object.assign(Object.assign({}, state), { pendingAdvancedFilterState: action.advancedFilterState, userMadeFilterChange: true });
         }
         case ActionType$6.SetHasAnotherPage: {
             return Object.assign(Object.assign({}, state), { hasAnotherPage: action.hasAnotherPage });
@@ -3852,6 +3907,9 @@ const reducer$7 = (state, action) => {
         }
         case ActionType$6.SetPageNumber: {
             return Object.assign(Object.assign({}, state), { pageNumber: action.pageNumber });
+        }
+        case ActionType$6.ResetUserMadeFilterChange: {
+            return Object.assign(Object.assign({}, state), { userMadeFilterChange: false });
         }
         default: {
             return state;
@@ -3922,7 +3980,7 @@ const LogReviewer = (props) => {
         else {
             // Case: subcontexts exist
             initContextFilterState[context] = {};
-            Object.values(contextMap[context]).forEach((subcontext) => {
+            Object.keys(contextMap[context]).forEach((subcontext) => {
                 // Skip self ("_")
                 if (subcontext === '_') {
                     return;
@@ -3973,19 +4031,29 @@ const LogReviewer = (props) => {
         showSpinner: true,
         logs: [],
         expandedFilterDrawer: undefined,
-        dateFilterState: initDateFilterState,
-        contextFilterState: initContextFilterState,
-        tagFilterState: initTagFilterState,
-        actionErrorFilterState: initActionErrorFilterState,
-        advancedFilterState: initAdvancedFilterState,
+        pendingDateFilterState: initDateFilterState,
+        pendingContextFilterState: initContextFilterState,
+        pendingTagFilterState: initTagFilterState,
+        pendingActionErrorFilterState: initActionErrorFilterState,
+        pendingAdvancedFilterState: initAdvancedFilterState,
         pageNumber: 1,
         hasAnotherPage: false,
         numPages: 1,
+        userMadeFilterChange: false,
     };
     // Initialize state
     const [state, dispatch] = React.useReducer(reducer$7, initialState);
     // Destructure common state
-    const { loading, showSpinner, logs, expandedFilterDrawer, dateFilterState, contextFilterState, tagFilterState, actionErrorFilterState, advancedFilterState, pageNumber, hasAnotherPage, numPages, } = state;
+    const { loading, showSpinner, logs, expandedFilterDrawer, pendingDateFilterState, pendingContextFilterState, pendingTagFilterState, pendingActionErrorFilterState, pendingAdvancedFilterState, pageNumber, numPages, userMadeFilterChange, } = state;
+    /* -------------- Refs -------------- */
+    // Initialize refs
+    const activeFiltersRef = React.useRef({
+        dateFilterState: JSON.parse(JSON.stringify(pendingDateFilterState)),
+        contextFilterState: JSON.parse(JSON.stringify(pendingContextFilterState)),
+        tagFilterState: JSON.parse(JSON.stringify(pendingTagFilterState)),
+        actionErrorFilterState: JSON.parse(JSON.stringify(pendingActionErrorFilterState)),
+        advancedFilterState: JSON.parse(JSON.stringify(pendingAdvancedFilterState)),
+    });
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
@@ -4043,11 +4111,11 @@ const LogReviewer = (props) => {
     React.useEffect(() => {
         fetchLogs({
             filters: {
-                dateFilterState,
-                contextFilterState,
-                tagFilterState,
-                actionErrorFilterState,
-                advancedFilterState,
+                dateFilterState: pendingDateFilterState,
+                contextFilterState: pendingContextFilterState,
+                tagFilterState: pendingTagFilterState,
+                actionErrorFilterState: pendingActionErrorFilterState,
+                advancedFilterState: pendingAdvancedFilterState,
             },
             pageNum: 1,
             filtersChanged: true,
@@ -4070,51 +4138,25 @@ const LogReviewer = (props) => {
     /*----------------------------------------*/
     /* ------------ Pagination -------------- */
     /*----------------------------------------*/
-    const paginationControls = logs.length > 0 && (React__default["default"].createElement("div", { className: "text-center mt-3" },
-        React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary me-2", disabled: pageNumber <= 1 || loading, onClick: () => {
-                fetchLogs({
-                    filters: {
-                        dateFilterState,
-                        contextFilterState,
-                        tagFilterState,
-                        actionErrorFilterState,
-                        advancedFilterState,
-                    },
-                    pageNum: pageNumber - 1,
-                    filtersChanged: false,
-                });
-            } },
-            React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faArrowLeft, className: "me-2" }),
-            "Previous Page"),
-        React__default["default"].createElement("span", { className: "mx-3" },
-            "Page",
-            ' ',
-            pageNumber,
-            ' ',
-            "of",
-            ' ',
-            numPages),
-        React__default["default"].createElement("button", { type: "button", className: "btn btn-secondary ms-2", disabled: !hasAnotherPage || loading, onClick: () => {
-                fetchLogs({
-                    filters: {
-                        dateFilterState,
-                        contextFilterState,
-                        tagFilterState,
-                        actionErrorFilterState,
-                        advancedFilterState,
-                    },
-                    pageNum: pageNumber + 1,
-                    filtersChanged: false,
-                });
-            } },
-            "Next Page",
-            React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faArrowRight, className: "ms-2" }))));
+    const paginationControls = logs.length > 0 && (React__default["default"].createElement(Pagination, { currentPage: pageNumber, numPages: numPages, loading: loading, onPageChanged: (targetPage) => {
+            const { current: activeFilters } = activeFiltersRef;
+            fetchLogs({
+                filters: {
+                    dateFilterState: activeFilters.dateFilterState,
+                    contextFilterState: activeFilters.contextFilterState,
+                    tagFilterState: activeFilters.tagFilterState,
+                    actionErrorFilterState: activeFilters.actionErrorFilterState,
+                    advancedFilterState: activeFilters.advancedFilterState,
+                },
+                pageNum: targetPage,
+                filtersChanged: false,
+            });
+        } }));
     /*----------------------------------------*/
     /* --------------- Filters -------------- */
     /*----------------------------------------*/
     // Filter toggle
     const filterToggles = (React__default["default"].createElement("div", { className: "LogReviewer-filter-toggles" },
-        React__default["default"].createElement("h3", { className: "m-0" }, "Filters:"),
         React__default["default"].createElement("div", { className: "LogReviewer-filter-toggle-buttons alert alert-secondary p-2 m-0" },
             React__default["default"].createElement("button", { type: "button", id: "LogReviewer-toggle-date-filter-drawer", className: `btn btn-${FilterDrawer.Date === expandedFilterDrawer ? 'warning' : 'light'} me-2`, "aria-label": "toggle date filter drawer", onClick: () => {
                     dispatch({
@@ -4157,6 +4199,14 @@ const LogReviewer = (props) => {
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faList, className: "me-2" }),
                 "Advanced"),
             React__default["default"].createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
+                    // Save active filters
+                    activeFiltersRef.current = {
+                        dateFilterState: JSON.parse(JSON.stringify(initDateFilterState)),
+                        contextFilterState: JSON.parse(JSON.stringify(initContextFilterState)),
+                        tagFilterState: JSON.parse(JSON.stringify(initTagFilterState)),
+                        actionErrorFilterState: JSON.parse(JSON.stringify(initActionErrorFilterState)),
+                        advancedFilterState: JSON.parse(JSON.stringify(initAdvancedFilterState)),
+                    };
                     fetchLogs({
                         filters: {
                             dateFilterState: initDateFilterState,
@@ -4183,17 +4233,29 @@ const LogReviewer = (props) => {
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTimes }),
                 ' ',
                 "Reset"),
-            React__default["default"].createElement("button", { type: "button", id: "LogReviewer-submit-filters-button", className: "btn btn-primary ms-2", "aria-label": "submit filters", onClick: () => {
+            userMadeFilterChange && (React__default["default"].createElement("button", { type: "button", id: "LogReviewer-submit-filters-button", className: "btn btn-primary ms-2", "aria-label": "submit filters", onClick: () => {
                     dispatch({
                         type: ActionType$6.HideFilterDrawer,
                     });
+                    // Reset user made filter change indicator
+                    dispatch({
+                        type: ActionType$6.ResetUserMadeFilterChange,
+                    });
+                    // Save active filters
+                    activeFiltersRef.current = {
+                        dateFilterState: JSON.parse(JSON.stringify(pendingDateFilterState)),
+                        contextFilterState: JSON.parse(JSON.stringify(pendingContextFilterState)),
+                        tagFilterState: JSON.parse(JSON.stringify(pendingTagFilterState)),
+                        actionErrorFilterState: JSON.parse(JSON.stringify(pendingActionErrorFilterState)),
+                        advancedFilterState: JSON.parse(JSON.stringify(pendingAdvancedFilterState)),
+                    };
                     fetchLogs({
                         filters: {
-                            dateFilterState,
-                            contextFilterState,
-                            tagFilterState,
-                            actionErrorFilterState,
-                            advancedFilterState,
+                            dateFilterState: pendingDateFilterState,
+                            contextFilterState: pendingContextFilterState,
+                            tagFilterState: pendingTagFilterState,
+                            actionErrorFilterState: pendingActionErrorFilterState,
+                            advancedFilterState: pendingAdvancedFilterState,
                         },
                         pageNum: 1,
                         filtersChanged: true,
@@ -4201,35 +4263,35 @@ const LogReviewer = (props) => {
                 } },
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faSearch }),
                 ' ',
-                "Filter"))));
+                "Apply Filters")))));
     // Filter drawer
     let filterDrawer;
     if (expandedFilterDrawer) {
         if (expandedFilterDrawer === FilterDrawer.Date) {
             filterDrawer = (React__default["default"].createElement(TabBox, { title: "Date" },
-                React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, numMonthsToShow: 36, onChange: (month, day, year) => {
-                        dateFilterState.startDate = { month, day, year };
+                React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: pendingDateFilterState.startDate.year, month: pendingDateFilterState.startDate.month, day: pendingDateFilterState.startDate.day, chooseFromPast: true, numMonthsToShow: 36, onChange: (month, day, year) => {
+                        pendingDateFilterState.startDate = { month, day, year };
                         dispatch({
                             type: ActionType$6.UpdateDateFilterState,
-                            dateFilterState,
+                            dateFilterState: pendingDateFilterState,
                         });
                     } }),
                 ' ',
                 "to",
                 ' ',
-                React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, numMonthsToShow: 12, onChange: (month, day, year) => {
-                        if (year < dateFilterState.startDate.year
-                            || (year === dateFilterState.startDate.year
-                                && month < dateFilterState.startDate.month)
-                            || (year === dateFilterState.startDate.year
-                                && month === dateFilterState.startDate.month
-                                && day < dateFilterState.startDate.day)) {
+                React__default["default"].createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: pendingDateFilterState.endDate.year, month: pendingDateFilterState.endDate.month, day: pendingDateFilterState.endDate.day, chooseFromPast: true, numMonthsToShow: 12, onChange: (month, day, year) => {
+                        if (year < pendingDateFilterState.startDate.year
+                            || (year === pendingDateFilterState.startDate.year
+                                && month < pendingDateFilterState.startDate.month)
+                            || (year === pendingDateFilterState.startDate.year
+                                && month === pendingDateFilterState.startDate.month
+                                && day < pendingDateFilterState.startDate.day)) {
                             return alert('Invalid Start Date', 'The start date cannot be before the end date.');
                         }
-                        dateFilterState.endDate = { month, day, year };
+                        pendingDateFilterState.endDate = { month, day, year };
                         dispatch({
                             type: ActionType$6.UpdateDateFilterState,
-                            dateFilterState,
+                            dateFilterState: pendingDateFilterState,
                         });
                     } })));
         }
@@ -4251,7 +4313,7 @@ const LogReviewer = (props) => {
                         id: context,
                         name: genHumanReadableName(context),
                         isGroup: false,
-                        checked: !!contextFilterState[context],
+                        checked: !!pendingContextFilterState[context],
                     };
                     // Add built-in items to its own folder
                     const isBuiltIn = context in LogBuiltInMetadata.Context;
@@ -4277,7 +4339,7 @@ const LogReviewer = (props) => {
                         id: subcontext,
                         name: genHumanReadableName(subcontext),
                         isGroup: false,
-                        checked: contextFilterState[context][subcontext],
+                        checked: pendingContextFilterState[context][subcontext],
                     };
                 }));
                 const item = {
@@ -4300,7 +4362,7 @@ const LogReviewer = (props) => {
                                 // Built-in
                                 // Treat as if these were top-level contexts
                                 pickableItem.children.forEach((subcontextItem) => {
-                                    contextFilterState[subcontextItem.id] = ('checked' in subcontextItem
+                                    pendingContextFilterState[subcontextItem.id] = ('checked' in subcontextItem
                                         && subcontextItem.checked);
                                 });
                             }
@@ -4308,19 +4370,19 @@ const LogReviewer = (props) => {
                                 // Not built-in
                                 pickableItem.children.forEach((subcontextItem) => {
                                     if (!subcontextItem.isGroup) {
-                                        contextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
+                                        pendingContextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
                                     }
                                 });
                             }
                         }
                         else {
                             // No subcontexts
-                            contextFilterState[pickableItem.id] = (pickableItem.checked);
+                            pendingContextFilterState[pickableItem.id] = (pickableItem.checked);
                         }
                     });
                     dispatch({
                         type: ActionType$6.UpdateContextFilterState,
-                        contextFilterState,
+                        contextFilterState: pendingContextFilterState,
                     });
                 } }));
         }
@@ -4331,13 +4393,13 @@ const LogReviewer = (props) => {
                 React__default["default"].createElement("div", { className: "d-flex gap-1 flex-wrap" }, Object.keys((_d = LogMetadata.Tag) !== null && _d !== void 0 ? _d : {})
                     .map((tag) => {
                     const description = genHumanReadableName(tag);
-                    return (React__default["default"].createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: tagFilterState[tag], onChanged: (checked) => {
-                            tagFilterState[tag] = checked;
+                    return (React__default["default"].createElement(CheckboxButton, { key: tag, id: `LogReviewer-tag-${tag}-checkbox`, text: description, ariaLabel: `require that logs be tagged with "${description}" or any other selected tag`, checked: pendingTagFilterState[tag], onChanged: (checked) => {
+                            pendingTagFilterState[tag] = checked;
                             dispatch({
                                 type: ActionType$6.UpdateTagFilterState,
-                                tagFilterState,
+                                tagFilterState: pendingTagFilterState,
                             });
-                        } }));
+                        }, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }));
                 }))));
         }
         else if (expandedFilterDrawer === FilterDrawer.Action) {
@@ -4345,70 +4407,70 @@ const LogReviewer = (props) => {
             filterDrawer = (React__default["default"].createElement(React__default["default"].Fragment, null,
                 React__default["default"].createElement(TabBox, { title: "Log Type" },
                     React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-all", text: "All Logs", onSelected: () => {
-                            actionErrorFilterState.type = undefined;
+                            pendingActionErrorFilterState.type = undefined;
                             dispatch({
                                 type: ActionType$6.UpdateActionErrorFilterState,
-                                actionErrorFilterState,
+                                actionErrorFilterState: pendingActionErrorFilterState,
                             });
-                        }, ariaLabel: "show logs of all types", selected: actionErrorFilterState.type === undefined }),
+                        }, ariaLabel: "show logs of all types", selected: pendingActionErrorFilterState.type === undefined, unselectedVariant: Variant$1.Light }),
                     React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
-                            actionErrorFilterState.type = LogType$1.Action;
+                            pendingActionErrorFilterState.type = LogType$1.Action;
                             dispatch({
                                 type: ActionType$6.UpdateActionErrorFilterState,
-                                actionErrorFilterState,
+                                actionErrorFilterState: pendingActionErrorFilterState,
                             });
-                        }, ariaLabel: "only show action logs", selected: actionErrorFilterState.type === LogType$1.Action }),
+                        }, ariaLabel: "only show action logs", selected: pendingActionErrorFilterState.type === LogType$1.Action, unselectedVariant: Variant$1.Light }),
                     React__default["default"].createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
-                            actionErrorFilterState.type = LogType$1.Error;
+                            pendingActionErrorFilterState.type = LogType$1.Error;
                             dispatch({
                                 type: ActionType$6.UpdateActionErrorFilterState,
-                                actionErrorFilterState,
+                                actionErrorFilterState: pendingActionErrorFilterState,
                             });
-                        }, ariaLabel: "only show error logs", selected: actionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true })),
-                (actionErrorFilterState.type === undefined
-                    || actionErrorFilterState.type === LogType$1.Action) && (React__default["default"].createElement(TabBox, { title: "Action Log Details" },
+                        }, ariaLabel: "only show error logs", selected: pendingActionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light })),
+                (pendingActionErrorFilterState.type === undefined
+                    || pendingActionErrorFilterState.type === LogType$1.Action) && (React__default["default"].createElement(TabBox, { title: "Action Log Details" },
                     React__default["default"].createElement(ButtonInputGroup, { label: "Action", className: "mb-2", wrapButtonsAndAddGaps: true }, Object.keys(LogAction$1)
                         .map((action) => {
                         const description = genHumanReadableName(action);
-                        return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: actionErrorFilterState.action[action], onChanged: (checked) => {
-                                actionErrorFilterState.action[action] = checked;
+                        return (React__default["default"].createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: pendingActionErrorFilterState.action[action], onChanged: (checked) => {
+                                pendingActionErrorFilterState.action[action] = checked;
                                 dispatch({
                                     type: ActionType$6.UpdateActionErrorFilterState,
-                                    actionErrorFilterState,
+                                    actionErrorFilterState: pendingActionErrorFilterState,
                                 });
-                            } }));
+                            }, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }));
                     })),
                     React__default["default"].createElement(ButtonInputGroup, { label: "Target", wrapButtonsAndAddGaps: true }, Object.keys(targetMap)
                         .map((target) => {
                         const description = genHumanReadableName(target);
-                        return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: actionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
-                                actionErrorFilterState.target[target] = checked;
+                        return (React__default["default"].createElement(CheckboxButton, { key: target, id: `LogReviewer-target-${target}-checkbox`, text: description, ariaLabel: `include logs with target "${description}" in results`, checked: pendingActionErrorFilterState.target[target], noMarginOnRight: true, onChanged: (checked) => {
+                                pendingActionErrorFilterState.target[target] = checked;
                                 dispatch({
                                     type: ActionType$6.UpdateActionErrorFilterState,
-                                    actionErrorFilterState,
+                                    actionErrorFilterState: pendingActionErrorFilterState,
                                 });
-                            } }));
+                            }, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }));
                     })))),
-                (actionErrorFilterState.type === undefined
-                    || actionErrorFilterState.type === LogType$1.Error) && (React__default["default"].createElement(TabBox, { title: "Error Log Details" },
+                (pendingActionErrorFilterState.type === undefined
+                    || pendingActionErrorFilterState.type === LogType$1.Error) && (React__default["default"].createElement(TabBox, { title: "Error Log Details" },
                     React__default["default"].createElement("div", { className: "input-group mb-2" },
                         React__default["default"].createElement("span", { className: "input-group-text" }, "Error Message"),
-                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: actionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
-                                actionErrorFilterState.errorMessage = e.target.value;
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: pendingActionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
+                                pendingActionErrorFilterState.errorMessage = e.target.value;
                                 dispatch({
                                     type: ActionType$6.UpdateActionErrorFilterState,
-                                    actionErrorFilterState,
+                                    actionErrorFilterState: pendingActionErrorFilterState,
                                 });
                             } })),
                     React__default["default"].createElement("div", { className: "input-group mb-2" },
                         React__default["default"].createElement("span", { className: "input-group-text" }, "Error Code"),
-                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error code", value: actionErrorFilterState.errorCode, placeholder: "e.g. GC22", onChange: (e) => {
-                                actionErrorFilterState.errorCode = ((e.target.value)
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for error code", value: pendingActionErrorFilterState.errorCode, placeholder: "e.g. GC22", onChange: (e) => {
+                                pendingActionErrorFilterState.errorCode = ((e.target.value)
                                     .trim()
                                     .toUpperCase());
                                 dispatch({
                                     type: ActionType$6.UpdateActionErrorFilterState,
-                                    actionErrorFilterState,
+                                    actionErrorFilterState: pendingActionErrorFilterState,
                                 });
                             } }))))));
         }
@@ -4418,157 +4480,157 @@ const LogReviewer = (props) => {
                 React__default["default"].createElement(TabBox, { title: "User" },
                     React__default["default"].createElement("div", { className: "input-group mb-2" },
                         React__default["default"].createElement("span", { className: "input-group-text" }, "User First Name"),
-                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: advancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
-                                advancedFilterState.userFirstName = e.target.value;
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user first name", value: pendingAdvancedFilterState.userFirstName, placeholder: "e.g. Divardo", onChange: (e) => {
+                                pendingAdvancedFilterState.userFirstName = e.target.value;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
                             } })),
                     React__default["default"].createElement("div", { className: "input-group mb-2" },
                         React__default["default"].createElement("span", { className: "input-group-text" }, "User Last Name"),
-                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: advancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
-                                advancedFilterState.userLastName = e.target.value;
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user last name", value: pendingAdvancedFilterState.userLastName, placeholder: "e.g. Calicci", onChange: (e) => {
+                                pendingAdvancedFilterState.userLastName = e.target.value;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
                             } })),
                     React__default["default"].createElement("div", { className: "input-group mb-2" },
                         React__default["default"].createElement("span", { className: "input-group-text" }, "User Email"),
-                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user email", value: advancedFilterState.userEmail, placeholder: "e.g. calicci@fas.harvard.edu", onChange: (e) => {
-                                advancedFilterState.userEmail = ((e.target.value)
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user email", value: pendingAdvancedFilterState.userEmail, placeholder: "e.g. calicci@fas.harvard.edu", onChange: (e) => {
+                                pendingAdvancedFilterState.userEmail = ((e.target.value)
                                     .trim());
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
                             } })),
                     React__default["default"].createElement("div", { className: "input-group mb-2" },
                         React__default["default"].createElement("span", { className: "input-group-text" }, "User Canvas Id"),
-                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user canvas id", value: advancedFilterState.userId, placeholder: "e.g. 104985", onChange: (e) => {
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for user canvas id", value: pendingAdvancedFilterState.userId, placeholder: "e.g. 104985", onChange: (e) => {
                                 const { value } = e.target;
                                 // Only update if value contains only numbers
                                 if (/^\d+$/.test(value) || value === '') {
-                                    advancedFilterState.userId = ((e.target.value)
+                                    pendingAdvancedFilterState.userId = ((e.target.value)
                                         .trim());
                                 }
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
                             } })),
                     React__default["default"].createElement(ButtonInputGroup, { label: "Role" },
                         React__default["default"].createElement(CheckboxButton, { text: "Students", onChanged: (checked) => {
-                                advancedFilterState.includeLearners = checked;
+                                pendingAdvancedFilterState.includeLearners = checked;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            }, checked: advancedFilterState.includeLearners, ariaLabel: "show logs from students" }),
+                            }, checked: pendingAdvancedFilterState.includeLearners, ariaLabel: "show logs from students", checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }),
                         React__default["default"].createElement(CheckboxButton, { text: "Teaching Team Members", onChanged: (checked) => {
-                                advancedFilterState.includeTTMs = checked;
+                                pendingAdvancedFilterState.includeTTMs = checked;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            }, checked: advancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members" }),
+                            }, checked: pendingAdvancedFilterState.includeTTMs, ariaLabel: "show logs from teaching team members", checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }),
                         React__default["default"].createElement(CheckboxButton, { text: "Admins", onChanged: (checked) => {
-                                advancedFilterState.includeAdmins = checked;
+                                pendingAdvancedFilterState.includeAdmins = checked;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            }, checked: advancedFilterState.includeAdmins, ariaLabel: "show logs from admins" }))),
+                            }, checked: pendingAdvancedFilterState.includeAdmins, ariaLabel: "show logs from admins", checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }))),
                 React__default["default"].createElement(TabBox, { title: "Course" },
                     React__default["default"].createElement("div", { className: "input-group mb-2" },
                         React__default["default"].createElement("span", { className: "input-group-text" }, "Course Name"),
-                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: advancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
-                                advancedFilterState.courseName = e.target.value;
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course name", value: pendingAdvancedFilterState.courseName, placeholder: "e.g. GLC 200", onChange: (e) => {
+                                pendingAdvancedFilterState.courseName = e.target.value;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
                             } })),
                     React__default["default"].createElement("div", { className: "input-group mb-2" },
                         React__default["default"].createElement("span", { className: "input-group-text" }, "Course Canvas Id"),
-                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course canvas id", value: advancedFilterState.courseId, placeholder: "e.g. 15948", onChange: (e) => {
+                        React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for course canvas id", value: pendingAdvancedFilterState.courseId, placeholder: "e.g. 15948", onChange: (e) => {
                                 const { value } = e.target;
                                 // Only update if value contains only numbers
                                 if (/^\d+$/.test(value)) {
-                                    advancedFilterState.courseId = ((e.target.value)
+                                    pendingAdvancedFilterState.courseId = ((e.target.value)
                                         .trim());
                                 }
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
                             } }))),
                 React__default["default"].createElement(TabBox, { title: "Device" },
                     React__default["default"].createElement(ButtonInputGroup, { label: "Device Type" },
-                        React__default["default"].createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: advancedFilterState.isMobile === undefined, onSelected: () => {
-                                advancedFilterState.isMobile = undefined;
+                        React__default["default"].createElement(RadioButton, { text: "All Devices", ariaLabel: "show logs from all devices", selected: pendingAdvancedFilterState.isMobile === undefined, onSelected: () => {
+                                pendingAdvancedFilterState.isMobile = undefined;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            } }),
-                        React__default["default"].createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: advancedFilterState.isMobile === true, onSelected: () => {
-                                advancedFilterState.isMobile = true;
+                            }, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light }),
+                        React__default["default"].createElement(RadioButton, { text: "Mobile Only", ariaLabel: "show logs from mobile devices", selected: pendingAdvancedFilterState.isMobile === true, onSelected: () => {
+                                pendingAdvancedFilterState.isMobile = true;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            } }),
-                        React__default["default"].createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: advancedFilterState.isMobile === false, onSelected: () => {
-                                advancedFilterState.isMobile = false;
+                            }, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light }),
+                        React__default["default"].createElement(RadioButton, { text: "Desktop Only", ariaLabel: "show logs from desktop devices", selected: pendingAdvancedFilterState.isMobile === false, onSelected: () => {
+                                pendingAdvancedFilterState.isMobile = false;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            }, noMarginOnRight: true }))),
+                            }, noMarginOnRight: true, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light }))),
                 React__default["default"].createElement(TabBox, { title: "Source" },
                     React__default["default"].createElement(ButtonInputGroup, { label: "Source Type" },
-                        React__default["default"].createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: advancedFilterState.source === undefined, onSelected: () => {
-                                advancedFilterState.source = undefined;
+                        React__default["default"].createElement(RadioButton, { text: "Both", ariaLabel: "show logs from all sources", selected: pendingAdvancedFilterState.source === undefined, onSelected: () => {
+                                pendingAdvancedFilterState.source = undefined;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            } }),
-                        React__default["default"].createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: advancedFilterState.source === LogSource$1.Client, onSelected: () => {
-                                advancedFilterState.source = LogSource$1.Client;
+                            }, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light }),
+                        React__default["default"].createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: pendingAdvancedFilterState.source === LogSource$1.Client, onSelected: () => {
+                                pendingAdvancedFilterState.source = LogSource$1.Client;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            } }),
-                        React__default["default"].createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: advancedFilterState.source === LogSource$1.Server, onSelected: () => {
-                                advancedFilterState.source = LogSource$1.Server;
+                            }, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light }),
+                        React__default["default"].createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: pendingAdvancedFilterState.source === LogSource$1.Server, onSelected: () => {
+                                pendingAdvancedFilterState.source = LogSource$1.Server;
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
-                                    advancedFilterState,
+                                    advancedFilterState: pendingAdvancedFilterState,
                                 });
-                            }, noMarginOnRight: true })),
-                    advancedFilterState.source !== LogSource$1.Client && (React__default["default"].createElement("div", { className: "mt-2" },
+                            }, noMarginOnRight: true, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light })),
+                    pendingAdvancedFilterState.source !== LogSource$1.Client && (React__default["default"].createElement("div", { className: "mt-2" },
                         React__default["default"].createElement("div", { className: "input-group mb-2" },
                             React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Path"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route path", value: advancedFilterState.routePath, placeholder: "e.g. /api/ttm/courses/12345", onChange: (e) => {
-                                    advancedFilterState.courseName = ((e.target.value)
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route path", value: pendingAdvancedFilterState.routePath, placeholder: "e.g. /api/ttm/courses/12345", onChange: (e) => {
+                                    pendingAdvancedFilterState.courseName = ((e.target.value)
                                         .trim());
                                     dispatch({
                                         type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
+                                        advancedFilterState: pendingAdvancedFilterState,
                                     });
                                 } })),
                         React__default["default"].createElement("div", { className: "input-group mb-2" },
                             React__default["default"].createElement("span", { className: "input-group-text" }, "Server Route Template"),
-                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route template", value: advancedFilterState.routeTemplate, placeholder: "e.g. /api/ttm/courses/:courseId", onChange: (e) => {
-                                    advancedFilterState.courseName = ((e.target.value)
+                            React__default["default"].createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route template", value: pendingAdvancedFilterState.routeTemplate, placeholder: "e.g. /api/ttm/courses/:courseId", onChange: (e) => {
+                                    pendingAdvancedFilterState.courseName = ((e.target.value)
                                         .trim());
                                     dispatch({
                                         type: ActionType$6.UpdateAdvancedFilterState,
-                                        advancedFilterState,
+                                        advancedFilterState: pendingAdvancedFilterState,
                                     });
                                 } })))))));
         }
@@ -4582,10 +4644,10 @@ const LogReviewer = (props) => {
         body = (React__default["default"].createElement(React__default["default"].Fragment, null,
             filters,
             React__default["default"].createElement("div", { className: "mt-2" },
-                React__default["default"].createElement(IntelliTable, { title: "Matching Logs:", csvName: `Logs from ${getHumanReadableDate()}`, id: "logs", data: logs, columns: columns }),
-                logs.length === 0 && (React__default["default"].createElement("div", { className: "alert alert-warning text-center mt-2" },
+                logs.length === 0 ? (React__default["default"].createElement("div", { className: "alert alert-warning text-center mt-2" },
                     React__default["default"].createElement("h4", { className: "m-1" }, "No Logs to Show"),
-                    React__default["default"].createElement("div", null, "Either your filters are too strict or no matching logs have been created yet."))),
+                    React__default["default"].createElement("div", null, "Either your filters are too strict or no matching logs have been created yet.")))
+                    : (React__default["default"].createElement(IntelliTable, { title: "Matching Logs", csvName: `Logs from ${getHumanReadableDate()}`, id: "logs", data: logs, columns: columns })),
                 paginationControls)));
     }
     /* ---------- Wrap in Modal --------- */
@@ -4594,7 +4656,7 @@ const LogReviewer = (props) => {
         React__default["default"].createElement("div", { className: "LogReviewer-inner-container" },
             React__default["default"].createElement("div", { className: "LogReviewer-header" },
                 React__default["default"].createElement("div", { className: "LogReviewer-header-title" },
-                    React__default["default"].createElement("h3", { className: "text-center m-0" }, "Log Review Dashboard")),
+                    React__default["default"].createElement("h3", { className: "text-center" }, "Log Review Dashboard")),
                 React__default["default"].createElement("div", { style: { width: 0 } },
                     React__default["default"].createElement("button", { type: "button", className: "LogReviewer-header-close-button btn btn-dark btn-lg pe-0", "aria-label": "close log reviewer panel", onClick: onClose },
                         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faTimes })))),
@@ -14140,39 +14202,28 @@ const initServer = (opts) => {
             };
             /* ------------ Context Filter ------------ */
             // Process context filters to include selected contexts and subcontexts
-            const selectedContexts = [];
-            const selectedSubcontexts = [];
-            // Process each context filter
+            const contextConditions = [];
             Object.keys(contextFilterState).forEach((context) => {
                 const value = contextFilterState[context];
                 if (typeof value === 'boolean') {
                     if (value) {
-                        selectedContexts.push(context);
+                        // The entire context is selected
+                        contextConditions.push({ context });
                     }
                 }
                 else {
-                    // At least one subcontext is selected
-                    const atLeastOneSubcontextSelected = (Object.values(value)
-                        .some((subcontextValue) => {
-                        return subcontextValue;
-                    }));
-                    if (atLeastOneSubcontextSelected) {
-                        selectedContexts.push(context);
+                    // The context has subcontexts
+                    const subcontexts = Object.keys(value).filter((subcontext) => { return value[subcontext]; });
+                    if (subcontexts.length > 0) {
+                        contextConditions.push({
+                            context,
+                            subcontext: { $in: subcontexts },
+                        });
                     }
-                    // Add all selected subcontexts
-                    Object.keys(value).forEach((subcontext) => {
-                        if (value[subcontext]) {
-                            selectedSubcontexts.push(subcontext);
-                        }
-                    });
                 }
             });
-            // Add context and subcontext conditions to the query if any are selected
-            if (selectedContexts.length > 0) {
-                query.context = { $in: selectedContexts };
-            }
-            if (selectedSubcontexts.length > 0) {
-                query.subcontext = { $in: selectedSubcontexts };
+            if (contextConditions.length > 0) {
+                query.$or = contextConditions;
             }
             /* -------------- Tag Filter -------------- */
             const selectedTags = Object.keys(tagFilterState).filter((tag) => { return tagFilterState[tag]; });
