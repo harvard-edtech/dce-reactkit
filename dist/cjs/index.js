@@ -16402,6 +16402,27 @@ const visitEndpointOnAnotherServer = (opts) => __awaiter(void 0, void 0, void 0,
     return body;
 });
 
+const punctuationRegex = /[!@#$%^&*(),.?\/;:'"\-\[\]]/g;
+/**
+ * Get number of words in string
+ * @author Gardenia Liu
+ * @author Allison Zhang
+ * @author Gabe Abrams
+ * @param text the string to check
+ * @returns number of words in the string
+ */
+const getWordCount = (text) => {
+    const trimmedTextWithoutPunctuation = (text
+        // Remove leading and trailing whitespace
+        .trim()
+        // Remove punctuation
+        .replace(punctuationRegex, ''));
+    if (trimmedTextWithoutPunctuation.length === 0) {
+        return 0;
+    }
+    return trimmedTextWithoutPunctuation.split(/\s+/g).length;
+};
+
 /**
  * Days of the week
  * @author Gabe Abrams
@@ -16486,6 +16507,7 @@ exports.getMonthName = getMonthName;
 exports.getOrdinal = getOrdinal;
 exports.getPartOfDay = getPartOfDay;
 exports.getTimeInfoInET = getTimeInfoInET;
+exports.getWordCount = getWordCount;
 exports.handleError = handleError;
 exports.handleSuccess = handleSuccess;
 exports.idify = idify;
