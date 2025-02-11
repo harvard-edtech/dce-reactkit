@@ -126,7 +126,7 @@ const genRouteHandler = (
     const originURL = String(
       req.get('origin')
       || req.headers.origin
-      || req.headers.referer
+      || req.headers.referer,
     );
     const originHostname = (
       originURL
