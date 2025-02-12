@@ -15,7 +15,7 @@ import sendServerToServerRequest from './sendServerToServerRequest';
  * @param opts.host the host of the other server
  * @param [opts.key=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_KEY] reactkit cross-server
  *   credential key
- * @param [opts.secret=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_SECRET reactkit cross-server
+ * @param [opts.secret=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_SECRET] reactkit cross-server
  *   credential secret
  * @param [opts.params={}] query/body parameters to include
  * @param [opts.responseType=JSON] the response type from the other server
