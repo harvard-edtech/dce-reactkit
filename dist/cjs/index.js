@@ -15629,6 +15629,18 @@ const initLogCollection = (Collection) => {
     });
 };
 
+/**
+ * Initialize a cross-server credential collection given the dce-mango Collection class
+ * @author Gabe Abrams
+ * @param Collection the Collection class from dce-mango
+ * @returns initialized logCollection
+ */
+const initCrossServerCredentialCollection = (Collection) => {
+    return new Collection('CrossServerCredential', {
+        uniqueIndexKey: 'key',
+    });
+};
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Cache ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -16631,6 +16643,7 @@ exports.handleError = handleError;
 exports.handleSuccess = handleSuccess;
 exports.idify = idify;
 exports.initClient = initClient;
+exports.initCrossServerCredentialCollection = initCrossServerCredentialCollection;
 exports.initLogCollection = initLogCollection;
 exports.initServer = initServer;
 exports.isMobileOrTablet = isMobileOrTablet;

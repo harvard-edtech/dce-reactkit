@@ -70,6 +70,7 @@ import onlyKeepLetters from './helpers/onlyKeepLetters';
 import parallelLimit from './helpers/parallelLimit';
 import logClientEvent, { setClientEventMetadataPopulator } from './helpers/logClientEvent';
 import initLogCollection from './server/initLogCollection';
+import initCrossServerCredentialCollection from './server/initCrossServerCredentialCollection';
 import getMonthName from './helpers/getMonthName';
 import genCSV from './helpers/genCSV';
 import canReviewLogs from './helpers/canReviewLogs';
@@ -217,6 +218,7 @@ export {
   handleError,
   handleSuccess,
   initLogCollection,
+  initCrossServerCredentialCollection,
   addDBEditorEndpoints,
   visitEndpointOnAnotherServer,
   // Types
