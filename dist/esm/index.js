@@ -5228,7 +5228,7 @@ const LogReviewer = (props) => {
                         React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for course canvas id", value: pendingAdvancedFilterState.courseId, placeholder: "e.g. 15948", onChange: (e) => {
                                 const { value } = e.target;
                                 // Only update if value contains only numbers
-                                if (/^\d+$/.test(value)) {
+                                if (/^\d+$/.test(value) || value === '') {
                                     pendingAdvancedFilterState.courseId = ((e.target.value)
                                         .trim());
                                 }
