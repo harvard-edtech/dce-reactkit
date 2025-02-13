@@ -452,6 +452,7 @@ const initServer = (
           query,
           perPage: LOG_REVIEW_PAGE_SIZE,
           pageNumber,
+          sortDescending: true,
         });
 
         // Count documents if requested
