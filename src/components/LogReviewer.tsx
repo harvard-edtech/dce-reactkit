@@ -1807,7 +1807,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                 onChange={(e) => {
                   const { value } = e.target;
                   // Only update if value contains only numbers
-                  if (/^\d+$/.test(value)) {
+                  if (/^\d+$/.test(value) || value === '') {
                     pendingAdvancedFilterState.courseId = (
                       (e.target.value)
                         .trim()
