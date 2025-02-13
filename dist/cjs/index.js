@@ -217,17 +217,6 @@ const LogBuiltInMetadata = {
 };
 
 /**
- * Wait for a certain number of ms
- * @author Gabe Abrams
- * @param ms number of ms to wait
- */
-const waitMs = (ms = 0) => __awaiter(void 0, void 0, void 0, function* () {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-});
-
-/**
  * Loading spinner/indicator
  * @author Gabe Abrams
  */
@@ -318,6 +307,17 @@ const LoadingSpinner = () => {
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-3 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-4" })));
 };
+
+/**
+ * Wait for a certain number of ms
+ * @author Gabe Abrams
+ * @param ms number of ms to wait
+ */
+const waitMs = (ms = 0) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+});
 
 /**
  * Modal sizes
@@ -440,6 +440,7 @@ const BASE_Z_INDEX = 1000000000;
 const BASE_Z_INDEX_ON_TOP = 2000000000;
 // Constants
 const MS_TO_ANIMATE = 200; // Animation duration
+const MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR = 1000;
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes = {
     [ModalType$1.Okay]: [
@@ -658,14 +659,14 @@ const Modal = (props) => {
             // Update to state after animated in
             if (mounted.current) {
                 setAnimatingIn(false);
-                if (isLoading) {
-                    // wait 1 second before showing modal
-                    yield waitMs(1000);
-                    setShowModal(true);
-                }
-                else {
-                    setShowModal(true);
-                }
+            }
+            if (isLoading) {
+                // wait before showing modal
+                yield waitMs(MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR);
+                setShowModal(true);
+            }
+            else {
+                setShowModal(true);
             }
         }))();
         return () => {
@@ -733,6 +734,9 @@ const Modal = (props) => {
     else if (animatingPop) {
         animationClass = 'Modal-animating-pop';
     }
+    // default to show close button when not loading and not show close button when loading
+    // unless downShowXButton or isLoadingCancelable
+    const showCloseButton = onClose && !dontShowXButton && !(isLoading && !isLoadingCancelable);
     // Render the modal
     const contentToRender = (React__default["default"].createElement("div", { className: "modal show", tabIndex: -1, style: {
             zIndex: baseZIndex,
@@ -791,7 +795,7 @@ const Modal = (props) => {
                                 ? '1.6rem'
                                 : undefined),
                         } }, title),
-                    (onClose && !dontShowXButton && !(isLoading && !isLoadingCancelable)) && (React__default["default"].createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
+                    showCloseButton && (React__default["default"].createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
                             backgroundColor: (isDarkModeOn()
                                 ? 'white'
                                 : undefined),
@@ -799,24 +803,16 @@ const Modal = (props) => {
                             // Handle close
                             handleClose(ModalButtonType$1.Cancel);
                         } })))),
-                isLoading && (React__default["default"].createElement("div", { className: "modal-body", style: {
+                React__default["default"].createElement("div", { className: "modal-body", style: {
                         color: (isDarkModeOn()
                             ? 'white'
                             : undefined),
                         backgroundColor: (isDarkModeOn()
                             ? '#444'
                             : undefined),
-                    } },
+                    } }, isLoading && !children ? (React__default["default"].createElement(React__default["default"].Fragment, null,
                     React__default["default"].createElement(LoadingSpinner, null),
-                    React__default["default"].createElement("span", { className: "sr-only" }, "Content loading"))),
-                children && !isLoading && (React__default["default"].createElement("div", { className: "modal-body", style: {
-                        color: (isDarkModeOn()
-                            ? 'white'
-                            : undefined),
-                        backgroundColor: (isDarkModeOn()
-                            ? '#444'
-                            : undefined),
-                    } }, children)),
+                    React__default["default"].createElement("span", { className: "sr-only" }, "Content loading"))) : (children)),
                 footer && (React__default["default"].createElement("div", { className: "modal-footer pt-1 pb-1", style: {
                         color: (isDarkModeOn()
                             ? 'white'
