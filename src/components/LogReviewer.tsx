@@ -1934,7 +1934,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   value={pendingAdvancedFilterState.routePath}
                   placeholder="e.g. /api/ttm/courses/12345"
                   onChange={(e) => {
-                    pendingAdvancedFilterState.courseName = (
+                    pendingAdvancedFilterState.routePath = (
                       (e.target.value)
                         .trim()
                     );
@@ -1958,7 +1958,7 @@ const LogReviewer: React.FC<Props> = (props) => {
                   value={pendingAdvancedFilterState.routeTemplate}
                   placeholder="e.g. /api/ttm/courses/:courseId"
                   onChange={(e) => {
-                    pendingAdvancedFilterState.courseName = (
+                    pendingAdvancedFilterState.routeTemplate = (
                       (e.target.value)
                         .trim()
                     );
