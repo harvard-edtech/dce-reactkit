@@ -551,7 +551,7 @@ const Modal: React.FC<ModalProps> = (props) => {
               ),
             }}
           >
-            {isLoading && !children ? (
+            {isLoading ? (
               <>
                 <LoadingSpinner />
                 <span className="sr-only">Content loading</span>
