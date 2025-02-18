@@ -1061,7 +1061,6 @@ const LogReviewer: React.FC<Props> = (props) => {
           Context
         </button>
         {/* Tag */}
-        {/* Skip if no tags are used */}
         {(LogMetadata.Tag && Object.keys(LogMetadata.Tag).length > 0) && (
         <button
           type="button"
@@ -1255,10 +1254,13 @@ const LogReviewer: React.FC<Props> = (props) => {
             chooseFromPast
             numMonthsToShow={36}
             onChange={(month, day, year) => {
-              pendingDateFilterState.startDate = { month, day, year };
+              const newDateFilterState = {
+                ...pendingDateFilterState,
+                startDate: { month, day, year },
+              };
               dispatch({
                 type: ActionType.UpdateDateFilterState,
-                dateFilterState: pendingDateFilterState,
+                dateFilterState: newDateFilterState,
               });
             }}
           />
@@ -1287,14 +1289,17 @@ const LogReviewer: React.FC<Props> = (props) => {
                   )
               ) {
                 return alert(
-                  'Invalid Start Date',
-                  'The start date cannot be before the end date.',
+                  'Invalid End Date',
+                  'The end date cannot be before the start date.',
                 );
               }
-              pendingDateFilterState.endDate = { month, day, year };
+              const newDateFilterState = {
+                ...pendingDateFilterState,
+                endDate: { month, day, year },
+              };
               dispatch({
                 type: ActionType.UpdateDateFilterState,
-                dateFilterState: pendingDateFilterState,
+                dateFilterState: newDateFilterState,
               });
             }}
           />
@@ -1338,7 +1343,7 @@ const LogReviewer: React.FC<Props> = (props) => {
             Object.keys(value)
             // Remove parent name
               .filter((subcontext) => {
-                return subcontext !== '_';
+                return (subcontext !== '_');
               })
             // Create child pickable items
               .map((subcontext) => {
@@ -1358,7 +1363,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           };
           pickableItems.push(item);
         });
-      // Add built-in contexts to end ofl ist
+      // Add built-in contexts to end of list
       pickableItems.push(builtInPickableItem);
 
       // Create filter UI
@@ -1377,35 +1382,47 @@ const LogReviewer: React.FC<Props> = (props) => {
 
                   // Treat as if these were top-level contexts
                   pickableItem.children.forEach((subcontextItem) => {
-                    pendingContextFilterState[subcontextItem.id] = (
-                      'checked' in subcontextItem
-                        && subcontextItem.checked
-                    );
+                    const newContextFilterState = {
+                      ...pendingContextFilterState,
+                      [subcontextItem.id]: 'checked' in subcontextItem
+                        && subcontextItem.checked,
+                    };
+                    dispatch({
+                      type: ActionType.UpdateContextFilterState,
+                      contextFilterState: newContextFilterState,
+                    });
                   });
                 } else {
                   // Not built-in
                   pickableItem.children.forEach((subcontextItem) => {
                     if (!subcontextItem.isGroup) {
-                      (
-                        pendingContextFilterState[pickableItem.id] as {
-                          [k: string]: boolean
-                        }
-                      )[subcontextItem.id] = (
-                        subcontextItem.checked
-                      );
+                      const newContextFilterState = {
+                        ...pendingContextFilterState,
+                        [pickableItem.id]: {
+                          ...(pendingContextFilterState[pickableItem.id] as {
+                            [k: string]: boolean
+                          }),
+                          [subcontextItem.id]: subcontextItem.checked,
+                        },
+                      };
+                      dispatch({
+                        type: ActionType.UpdateContextFilterState,
+                        contextFilterState: newContextFilterState,
+                      });
                     }
                   });
                 }
               } else {
                 // No subcontexts
-                (pendingContextFilterState as any)[pickableItem.id] = (
-                  pickableItem.checked
-                );
+                const newContextFilterState = {
+                  ...pendingContextFilterState,
+                  [pickableItem.id]: pickableItem.checked,
+                };
+                dispatch({
+                  type: ActionType.UpdateContextFilterState,
+                  contextFilterState: newContextFilterState,
+                });
               }
-            });
-            dispatch({
-              type: ActionType.UpdateContextFilterState,
-              contextFilterState: pendingContextFilterState,
             });
           }}
         />
@@ -1432,10 +1449,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                         ariaLabel={`require that logs be tagged with "${description}" or any other selected tag`}
                         checked={pendingTagFilterState[tag]}
                         onChanged={(checked) => {
-                          pendingTagFilterState[tag] = checked;
+                          const newTagFilterState = {
+                            ...pendingTagFilterState,
+                            [tag]: checked,
+                          };
                           dispatch({
                             type: ActionType.UpdateTagFilterState,
-                            tagFilterState: pendingTagFilterState,
+                            tagFilterState: newTagFilterState,
                           });
                         }}
                         checkedVariant={Variant.Light}
@@ -1457,10 +1477,13 @@ const LogReviewer: React.FC<Props> = (props) => {
               id="LogReviewer-type-all"
               text="All Logs"
               onSelected={() => {
-                pendingActionErrorFilterState.type = undefined;
+                const newActionErrorFilterState = {
+                  ...pendingActionErrorFilterState,
+                  type: undefined,
+                };
                 dispatch({
                   type: ActionType.UpdateActionErrorFilterState,
-                  actionErrorFilterState: pendingActionErrorFilterState,
+                  actionErrorFilterState: newActionErrorFilterState,
                 });
               }}
               ariaLabel="show logs of all types"
@@ -1471,10 +1494,13 @@ const LogReviewer: React.FC<Props> = (props) => {
               id="LogReviewer-type-action-only"
               text="Action Logs Only"
               onSelected={() => {
-                pendingActionErrorFilterState.type = LogType.Action;
+                const newActionErrorFilterState = {
+                  ...pendingActionErrorFilterState,
+                  type: LogType.Action,
+                };
                 dispatch({
                   type: ActionType.UpdateActionErrorFilterState,
-                  actionErrorFilterState: pendingActionErrorFilterState,
+                  actionErrorFilterState: newActionErrorFilterState,
                 });
               }}
               ariaLabel="only show action logs"
@@ -1485,10 +1511,13 @@ const LogReviewer: React.FC<Props> = (props) => {
               id="LogReviewer-type-error-only"
               text="Action Error Only"
               onSelected={() => {
-                pendingActionErrorFilterState.type = LogType.Error;
+                const newActionErrorFilterState = {
+                  ...pendingActionErrorFilterState,
+                  type: LogType.Error,
+                };
                 dispatch({
                   type: ActionType.UpdateActionErrorFilterState,
-                  actionErrorFilterState: pendingActionErrorFilterState,
+                  actionErrorFilterState: newActionErrorFilterState,
                 });
               }}
               ariaLabel="only show error logs"
@@ -1524,10 +1553,16 @@ const LogReviewer: React.FC<Props> = (props) => {
                               noMarginOnRight
                               checked={pendingActionErrorFilterState.action[action]}
                               onChanged={(checked) => {
-                                pendingActionErrorFilterState.action[action] = checked;
+                                const newActionErrorFilterState = {
+                                  ...pendingActionErrorFilterState,
+                                  action: {
+                                    ...pendingActionErrorFilterState.action,
+                                    [action]: checked,
+                                  },
+                                };
                                 dispatch({
                                   type: ActionType.UpdateActionErrorFilterState,
-                                  actionErrorFilterState: pendingActionErrorFilterState,
+                                  actionErrorFilterState: newActionErrorFilterState,
                                 });
                               }}
                               checkedVariant={Variant.Light}
@@ -1556,10 +1591,16 @@ const LogReviewer: React.FC<Props> = (props) => {
                               checked={pendingActionErrorFilterState.target[target]}
                               noMarginOnRight
                               onChanged={(checked) => {
-                                pendingActionErrorFilterState.target[target] = checked;
+                                const newActionErrorFilterState = {
+                                  ...pendingActionErrorFilterState,
+                                  target: {
+                                    ...pendingActionErrorFilterState.target,
+                                    [target]: checked,
+                                  },
+                                };
                                 dispatch({
                                   type: ActionType.UpdateActionErrorFilterState,
-                                  actionErrorFilterState: pendingActionErrorFilterState,
+                                  actionErrorFilterState: newActionErrorFilterState,
                                 });
                               }}
                               checkedVariant={Variant.Light}
@@ -1591,10 +1632,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                       value={pendingActionErrorFilterState.errorMessage}
                       placeholder="e.g. undefined is not a function"
                       onChange={(e) => {
-                        pendingActionErrorFilterState.errorMessage = e.target.value;
+                        const newActionErrorFilterState = {
+                          ...pendingActionErrorFilterState,
+                          errorMessage: e.target.value,
+                        };
                         dispatch({
                           type: ActionType.UpdateActionErrorFilterState,
-                          actionErrorFilterState: pendingActionErrorFilterState,
+                          actionErrorFilterState: newActionErrorFilterState,
                         });
                       }}
                     />
@@ -1611,14 +1655,17 @@ const LogReviewer: React.FC<Props> = (props) => {
                       value={pendingActionErrorFilterState.errorCode}
                       placeholder="e.g. GC22"
                       onChange={(e) => {
-                        pendingActionErrorFilterState.errorCode = (
-                          (e.target.value)
-                            .trim()
-                            .toUpperCase()
-                        );
+                        const newActionErrorFilterState = {
+                          ...pendingActionErrorFilterState,
+                          errorCode: (
+                            (e.target.value)
+                              .trim()
+                              .toUpperCase()
+                          ),
+                        };
                         dispatch({
                           type: ActionType.UpdateActionErrorFilterState,
-                          actionErrorFilterState: pendingActionErrorFilterState,
+                          actionErrorFilterState: newActionErrorFilterState,
                         });
                       }}
                     />
@@ -1646,10 +1693,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 value={pendingAdvancedFilterState.userFirstName}
                 placeholder="e.g. Divardo"
                 onChange={(e) => {
-                  pendingAdvancedFilterState.userFirstName = e.target.value;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    userFirstName: e.target.value,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
               />
@@ -1666,10 +1716,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 value={pendingAdvancedFilterState.userLastName}
                 placeholder="e.g. Calicci"
                 onChange={(e) => {
-                  pendingAdvancedFilterState.userLastName = e.target.value;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    userLastName: e.target.value,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
               />
@@ -1686,13 +1739,16 @@ const LogReviewer: React.FC<Props> = (props) => {
                 value={pendingAdvancedFilterState.userEmail}
                 placeholder="e.g. calicci@fas.harvard.edu"
                 onChange={(e) => {
-                  pendingAdvancedFilterState.userEmail = (
-                    (e.target.value)
-                      .trim()
-                  );
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    userEmail: (
+                      (e.target.value)
+                        .trim()
+                    ),
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
               />
@@ -1712,15 +1768,18 @@ const LogReviewer: React.FC<Props> = (props) => {
                   const { value } = e.target;
                   // Only update if value contains only numbers
                   if (/^\d+$/.test(value) || value === '') {
-                    pendingAdvancedFilterState.userId = (
-                      (e.target.value)
-                        .trim()
-                    );
+                    const newAdvancedFilterState = {
+                      ...pendingAdvancedFilterState,
+                      userId: (
+                        (e.target.value)
+                          .trim()
+                      ),
+                    };
+                    dispatch({
+                      type: ActionType.UpdateAdvancedFilterState,
+                      advancedFilterState: newAdvancedFilterState,
+                    });
                   }
-                  dispatch({
-                    type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
-                  });
                 }}
               />
             </div>
@@ -1729,10 +1788,13 @@ const LogReviewer: React.FC<Props> = (props) => {
               <CheckboxButton
                 text="Students"
                 onChanged={(checked) => {
-                  pendingAdvancedFilterState.includeLearners = checked;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    includeLearners: checked,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 checked={pendingAdvancedFilterState.includeLearners}
@@ -1743,10 +1805,13 @@ const LogReviewer: React.FC<Props> = (props) => {
               <CheckboxButton
                 text="Teaching Team Members"
                 onChanged={(checked) => {
-                  pendingAdvancedFilterState.includeTTMs = checked;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    includeTTMs: checked,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 checked={pendingAdvancedFilterState.includeTTMs}
@@ -1757,10 +1822,13 @@ const LogReviewer: React.FC<Props> = (props) => {
               <CheckboxButton
                 text="Admins"
                 onChanged={(checked) => {
-                  pendingAdvancedFilterState.includeAdmins = checked;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    includeAdmins: checked,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 checked={pendingAdvancedFilterState.includeAdmins}
@@ -1785,10 +1853,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 value={pendingAdvancedFilterState.courseName}
                 placeholder="e.g. GLC 200"
                 onChange={(e) => {
-                  pendingAdvancedFilterState.courseName = e.target.value;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    courseName: e.target.value,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
               />
@@ -1808,15 +1879,18 @@ const LogReviewer: React.FC<Props> = (props) => {
                   const { value } = e.target;
                   // Only update if value contains only numbers
                   if (/^\d+$/.test(value) || value === '') {
-                    pendingAdvancedFilterState.courseId = (
-                      (e.target.value)
-                        .trim()
-                    );
+                    const newAdvancedFilterState = {
+                      ...pendingAdvancedFilterState,
+                      courseId: (
+                        (e.target.value)
+                          .trim()
+                      ),
+                    };
+                    dispatch({
+                      type: ActionType.UpdateAdvancedFilterState,
+                      advancedFilterState: newAdvancedFilterState,
+                    });
                   }
-                  dispatch({
-                    type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
-                  });
                 }}
               />
             </div>
@@ -1830,10 +1904,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 ariaLabel="show logs from all devices"
                 selected={pendingAdvancedFilterState.isMobile === undefined}
                 onSelected={() => {
-                  pendingAdvancedFilterState.isMobile = undefined;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    isMobile: undefined,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 selectedVariant={Variant.Light}
@@ -1844,10 +1921,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 ariaLabel="show logs from mobile devices"
                 selected={pendingAdvancedFilterState.isMobile === true}
                 onSelected={() => {
-                  pendingAdvancedFilterState.isMobile = true;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    isMobile: true,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 selectedVariant={Variant.Light}
@@ -1858,10 +1938,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 ariaLabel="show logs from desktop devices"
                 selected={pendingAdvancedFilterState.isMobile === false}
                 onSelected={() => {
-                  pendingAdvancedFilterState.isMobile = false;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    isMobile: false,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 noMarginOnRight
@@ -1879,10 +1962,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 ariaLabel="show logs from all sources"
                 selected={pendingAdvancedFilterState.source === undefined}
                 onSelected={() => {
-                  pendingAdvancedFilterState.source = undefined;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    source: undefined,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 selectedVariant={Variant.Light}
@@ -1893,10 +1979,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 ariaLabel="show logs from client source"
                 selected={pendingAdvancedFilterState.source === LogSource.Client}
                 onSelected={() => {
-                  pendingAdvancedFilterState.source = LogSource.Client;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    source: LogSource.Client,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 selectedVariant={Variant.Light}
@@ -1907,10 +1996,13 @@ const LogReviewer: React.FC<Props> = (props) => {
                 ariaLabel="show logs from server source"
                 selected={pendingAdvancedFilterState.source === LogSource.Server}
                 onSelected={() => {
-                  pendingAdvancedFilterState.source = LogSource.Server;
+                  const newAdvancedFilterState = {
+                    ...pendingAdvancedFilterState,
+                    source: LogSource.Server,
+                  };
                   dispatch({
                     type: ActionType.UpdateAdvancedFilterState,
-                    advancedFilterState: pendingAdvancedFilterState,
+                    advancedFilterState: newAdvancedFilterState,
                   });
                 }}
                 noMarginOnRight
@@ -1934,13 +2026,16 @@ const LogReviewer: React.FC<Props> = (props) => {
                   value={pendingAdvancedFilterState.routePath}
                   placeholder="e.g. /api/ttm/courses/12345"
                   onChange={(e) => {
-                    pendingAdvancedFilterState.routePath = (
-                      (e.target.value)
-                        .trim()
-                    );
+                    const newAdvancedFilterState = {
+                      ...pendingAdvancedFilterState,
+                      routePath: (
+                        (e.target.value)
+                          .trim()
+                      ),
+                    };
                     dispatch({
                       type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState: pendingAdvancedFilterState,
+                      advancedFilterState: newAdvancedFilterState,
                     });
                   }}
                 />
@@ -1958,13 +2053,16 @@ const LogReviewer: React.FC<Props> = (props) => {
                   value={pendingAdvancedFilterState.routeTemplate}
                   placeholder="e.g. /api/ttm/courses/:courseId"
                   onChange={(e) => {
-                    pendingAdvancedFilterState.routeTemplate = (
-                      (e.target.value)
-                        .trim()
-                    );
+                    const newAdvancedFilterState = {
+                      ...pendingAdvancedFilterState,
+                      routeTemplate: (
+                        (e.target.value)
+                          .trim()
+                      ),
+                    };
                     dispatch({
                       type: ActionType.UpdateAdvancedFilterState,
-                      advancedFilterState: pendingAdvancedFilterState,
+                      advancedFilterState: newAdvancedFilterState,
                     });
                   }}
                 />
