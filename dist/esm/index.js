@@ -759,7 +759,7 @@ const Modal = (props) => {
                         backgroundColor: (isDarkModeOn()
                             ? '#444'
                             : undefined),
-                    } }, isLoading && !children ? (React__default.createElement(React__default.Fragment, null,
+                    } }, isLoading ? (React__default.createElement(React__default.Fragment, null,
                     React__default.createElement(LoadingSpinner, null),
                     React__default.createElement("span", { className: "sr-only" }, "Content loading"))) : (children)),
                 footer && (React__default.createElement("div", { className: "modal-footer pt-1 pb-1", style: {
