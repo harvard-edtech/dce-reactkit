@@ -2099,9 +2099,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       )
     }
       <div
-        style={{
-          display: showSpinner || logs.length === 0 ? 'none' : undefined,
-        }}
+        className={showSpinner || logs.length === 0 ? 'd-none' : undefined}
       >
         <IntelliTable
           title="Matching Logs"
