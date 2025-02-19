@@ -973,21 +973,6 @@ const LogReviewer: React.FC<Props> = (props) => {
   /* --------------- Main UI -------------- */
   /*----------------------------------------*/
 
-  // Body that will be filled with the contents of the panel
-  let body: React.ReactNode;
-
-  /* ------------- Loading ------------ */
-
-  if (showSpinner) {
-    body = (
-      <div className="text-center p-5">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  /* ------------ Review UI ----------- */
-
   /*----------------------------------------*/
   /* ------------ Pagination -------------- */
   /*----------------------------------------*/
@@ -2087,38 +2072,48 @@ const LogReviewer: React.FC<Props> = (props) => {
     </>
   );
 
-  // Main body
-  if (!showSpinner) {
-    body = (
-      <>
-        {filters}
-        <div className="mt-2">
-
-          {
-          logs.length === 0 ? (
-            <div className="alert alert-warning text-center mt-2">
-              <h4 className="m-1">No Logs to Show</h4>
-              <div>
-                Either your filters are too strict or no matching logs have been
-                created yet.
-              </div>
-            </div>
-          )
-            : (
-              <IntelliTable
-                title="Matching Logs"
-                csvName={`Logs from ${getHumanReadableDate()}`}
-                id="logs"
-                data={logs}
-                columns={columns}
-              />
-            )
-          }
-          {paginationControls}
+  // Body that will be filled with the contents of the panel
+  const body: React.ReactNode = (
+    <>
+      {
+      showSpinner && (
+        <div className="text-center p-5">
+          <LoadingSpinner />
         </div>
-      </>
-    );
-  }
+      )
+    }
+      {!showSpinner && (
+        <div>
+          {filters}
+        </div>
+      )}
+      {
+      !showSpinner && logs.length === 0 && (
+        <div className="alert alert-warning text-center mt-2">
+          <h4 className="m-1">No Logs to Show</h4>
+          <div>
+            Either your filters are too strict or no matching logs have been
+            created yet.
+          </div>
+        </div>
+      )
+    }
+      <div
+        style={{
+          display: showSpinner || logs.length === 0 ? 'none' : undefined,
+        }}
+      >
+        <IntelliTable
+          title="Matching Logs"
+          csvName={`Logs from ${getHumanReadableDate()}`}
+          id="logs"
+          data={logs}
+          columns={columns}
+        />
+      </div>
+      {!showSpinner && logs.length > 0 && paginationControls}
+    </>
+  );
 
   /* ---------- Wrap in Modal --------- */
 
