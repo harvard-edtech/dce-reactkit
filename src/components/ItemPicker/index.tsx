@@ -33,6 +33,8 @@ type Props = {
   onChanged: (updatedItems: PickableItem[]) => void,
   // If true, don't add margin to bottom of item picker
   noBottomMargin?: boolean,
+  // If true, hide select all or none buttons
+  hideSelectAllOrNoneButtons?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -52,6 +54,7 @@ const ItemPicker: React.FC<Props> = (props) => {
     items,
     onChanged,
     noBottomMargin,
+    hideSelectAllOrNoneButtons,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -118,7 +121,7 @@ const ItemPicker: React.FC<Props> = (props) => {
     <TabBox
       title={title}
       noBottomMargin={noBottomMargin}
-      topRightChildren={(
+      topRightChildren={hideSelectAllOrNoneButtons ? undefined : (
         <div style={{ marginTop: '-1rem' }} className="d-flex justify-content-end">
           <button
             type="button"
