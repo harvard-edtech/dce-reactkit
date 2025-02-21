@@ -58,6 +58,54 @@ const ItemPicker: React.FC<Props> = (props) => {
   /* ------------------------- Component Functions ------------------------ */
   /*------------------------------------------------------------------------*/
 
+  /**
+   * Updates the checked state of an item (including all children)
+   * @author Yuen Ler Chow
+   * @param item the item to update
+   * @param checked the new checked state
+   * @returns the updated item
+   */
+  const updateItemChecked = (
+    item: PickableItem,
+    checked: boolean,
+  ): PickableItem => {
+    if (item.isGroup) {
+      return {
+        ...item,
+        children: item.children.map((child) => {
+          return updateItemChecked(child, checked);
+        }),
+      };
+    }
+    return { ...item, checked };
+  };
+
+  /**
+   * Selects all items in the list
+   * @author Yuen Ler Chow
+   */
+  const handleSelectAll = () => {
+    const updatedItems = items.map(
+      (item) => {
+        return updateItemChecked(item, true);
+      },
+    );
+    onChanged(updatedItems);
+  };
+
+  /**
+   * Deselects all items in the list
+   * @author Yuen Ler Chow
+   */
+  const handleDeselectAll = () => {
+    const updatedItems = items.map(
+      (item) => {
+        return updateItemChecked(item, false);
+      },
+    );
+    onChanged(updatedItems);
+  };
+
   /*------------------------------------------------------------------------*/
   /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
@@ -70,6 +118,24 @@ const ItemPicker: React.FC<Props> = (props) => {
     <TabBox
       title={title}
       noBottomMargin={noBottomMargin}
+      topRightChildren={(
+        <div style={{ marginTop: '-1rem' }} className="d-flex justify-content-end">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleSelectAll}
+          >
+            Select All
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary ms-2"
+            onClick={handleDeselectAll}
+          >
+            Deselect All
+          </button>
+        </div>
+      )}
     >
       <div style={{ overflowX: 'auto' }}>
         <NestableItemList
