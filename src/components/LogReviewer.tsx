@@ -1358,6 +1358,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           items={pickableItems}
           onChanged={(updatedItems) => {
             // Update our state
+            const newContextFilterState = { ...pendingContextFilterState };
             updatedItems.forEach((pickableItem) => {
               if (pickableItem.isGroup) {
                 // Has subcontexts
@@ -1367,47 +1368,37 @@ const LogReviewer: React.FC<Props> = (props) => {
 
                   // Treat as if these were top-level contexts
                   pickableItem.children.forEach((subcontextItem) => {
-                    const newContextFilterState = {
-                      ...pendingContextFilterState,
-                      [subcontextItem.id]: 'checked' in subcontextItem
-                        && subcontextItem.checked,
-                    };
-                    dispatch({
-                      type: ActionType.UpdateContextFilterState,
-                      contextFilterState: newContextFilterState,
-                    });
+                    newContextFilterState[subcontextItem.id] = (
+                      'checked' in subcontextItem
+                        && subcontextItem.checked
+                    );
                   });
                 } else {
                   // Not built-in
                   pickableItem.children.forEach((subcontextItem) => {
                     if (!subcontextItem.isGroup) {
-                      const newContextFilterState = {
-                        ...pendingContextFilterState,
-                        [pickableItem.id]: {
-                          ...(pendingContextFilterState[pickableItem.id] as {
-                            [k: string]: boolean
-                          }),
-                          [subcontextItem.id]: subcontextItem.checked,
-                        },
-                      };
-                      dispatch({
-                        type: ActionType.UpdateContextFilterState,
-                        contextFilterState: newContextFilterState,
-                      });
+                      (
+                        newContextFilterState[pickableItem.id] as {
+                          [k: string]: boolean
+                        }
+                      )[subcontextItem.id] = (
+                        subcontextItem.checked
+                      );
                     }
                   });
                 }
               } else {
                 // No subcontexts
-                const newContextFilterState = {
-                  ...pendingContextFilterState,
-                  [pickableItem.id]: pickableItem.checked,
-                };
-                dispatch({
-                  type: ActionType.UpdateContextFilterState,
-                  contextFilterState: newContextFilterState,
-                });
+                (newContextFilterState as any)[pickableItem.id] = (
+                  pickableItem.checked
+                );
               }
+            });
+
+            // Update state
+            dispatch({
+              type: ActionType.UpdateContextFilterState,
+              contextFilterState: newContextFilterState,
             });
           }}
         />
@@ -1418,8 +1409,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         <TabBox title="Tags">
           <div>
             If any tags are selected, logs must contain at least one
-            (but not necessarily all) of the
-            selected tags.
+            (but not necessarily all) of the selected tags.
           </div>
           <div className="d-flex gap-1 flex-wrap">
             {
