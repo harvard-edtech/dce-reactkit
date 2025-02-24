@@ -1,10 +1,85 @@
 // Import data signer
-import { createSignedPack } from '../dataSigner';
+import { signRequest } from '../dataSigner';
 
 // Import shared types
 import ErrorWithCode from '../../errors/ErrorWithCode';
 import ReactKitErrorCode from '../../types/ReactKitErrorCode';
 import sendServerToServerRequest from './sendServerToServerRequest';
+
+/*------------------------------------------------------------------------*/
+/* ----------------------------- Credentials ---------------------------- */
+/*------------------------------------------------------------------------*/
+
+/*
+REACTKIT_CROSS_SERVER_CREDENTIALS format:
+|host:key:secret||host:key:secret|...
+*/
+
+const credentials: {
+  host: string,
+  key: string,
+  secret: string,
+}[] = (
+  (process.env.REACTKIT_CROSS_SERVER_CREDENTIALS ?? '')
+    // Replace multiple | with a single one
+    .replace(/\|+/g, '|')
+    // Split by |
+    .split('|')
+    // Remove empty strings
+    .filter((str) => {
+      return str.trim().length > 0;
+    })
+    // Process each credential
+    .map((str) => {
+      // Split by :
+      const parts = str.split(':');
+
+      // Check for errors
+      if (parts.length !== 3) {
+        throw new ErrorWithCode(
+          'Invalid REACTKIT_CROSS_SERVER_CREDENTIALS format. Each credential must be in the format |host:key:secret|',
+          ReactKitErrorCode.InvalidCrossServerCredentialsFormat,
+        );
+      }
+
+      // Return the credential
+      return {
+        host: parts[0].trim(),
+        key: parts[1].trim(),
+        secret: parts[2].trim(),
+      };
+    })
+);
+
+/*------------------------------------------------------------------------*/
+/* ------------------------------- Helpers ------------------------------ */
+/*------------------------------------------------------------------------*/
+
+/**
+ * Get the credential to use for the request to another server
+ * @author Gabe Abrams
+ * @param host the host of the other server
+ * @return the credential to use
+ */
+const getCrossServerCredential = (host: string) => {
+  // Find the credential
+  const credential = credentials.find((cred) => {
+    return cred.host.toLowerCase() === host.toLowerCase();
+  });
+  if (!credential) {
+    throw new ErrorWithCode(
+      'Cannot send cross-server signed request there was no credential that matched the host that the request is being sent to.',
+      ReactKitErrorCode.CrossServerNoCredentialsToSignWith,
+    );
+  }
+
+  // Return credential
+  return credential;
+};
+
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Main -------------------------------- */
+/*------------------------------------------------------------------------*/
 
 /**
  * Visit an endpoint on another server
@@ -13,10 +88,6 @@ import sendServerToServerRequest from './sendServerToServerRequest';
  * @param opts.method the method of the endpoint
  * @param opts.path the path of the other server's endpoint
  * @param opts.host the host of the other server
- * @param [opts.key=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_KEY] reactkit cross-server
- *   credential key
- * @param [opts.secret=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_SECRET] reactkit cross-server
- *   credential secret
  * @param [opts.params={}] query/body parameters to include
  * @param [opts.responseType=JSON] the response type from the other server
  */
@@ -25,31 +96,20 @@ const visitEndpointOnAnotherServer = async (
     method: 'GET' | 'POST' | 'DELETE' | 'PUT',
     path: string,
     host: string,
-    key?: string,
-    secret?: string,
     params?: { [key in string]: any },
     responseType?: 'JSON' | 'Text',
   },
 ): Promise<any> => {
-  // Get cross-server credentials
-  const key = opts.key ?? process.env.REACTKIT_CROSS_SERVER_KEY;
-  const secret = opts.secret ?? process.env.REACTKIT_CROSS_SERVER_SECRET;
+  // Get cross-server credential
+  const credential = getCrossServerCredential(opts.host);
 
-  // Throw error if no credentials
-  if (!key || !secret) {
-    throw new ErrorWithCode(
-      'Cannot send cross-server signed request because either or both the key and secret were not included or found in env.',
-      ReactKitErrorCode.CrossServerNoCredentialsToSignWith,
-    );
-  }
-
-  // Create signed pack
-  const signedPack = createSignedPack({
+  // Sign the request, get new params
+  const augmentedParams = await signRequest({
     method: opts.method,
     path: opts.path,
     params: opts.params ?? {},
-    key,
-    secret,
+    key: credential.key,
+    secret: credential.secret,
   });
 
   // Send the request
@@ -57,16 +117,14 @@ const visitEndpointOnAnotherServer = async (
     path: opts.path,
     host: opts.host,
     method: opts.method,
-    params: {
-      signedPack,
-    },
+    params: augmentedParams,
     responseType: opts.responseType,
   });
 
   // Check for failure
   if (!response || !response.body) {
     throw new ErrorWithCode(
-      'We didn\'t get a response from the other server. Please check your internet connection.',
+      'We didn\'t get a response from the other server. Please check the network between the two connection.',
       ReactKitErrorCode.NoResponse,
     );
   }

@@ -1,4 +1,4 @@
-// Highest error code = DRK30
+// Highest error code = DRK34
 
 /**
  * List of error codes built into the react kit
@@ -25,18 +25,20 @@ enum ReactKitErrorCode {
   NotConnected = 'DRK14',
   SelfSigned = 'DRK15',
   ResponseParseError = 'DRK16',
-  PackUnparseable = 'DRK28',
-  PackInvalidMethod = 'DRK19',
-  PackInvalidPath = 'DRK20',
-  PackInvalidCollection = 'DRK21',
-  PackInvalidCredential = 'DRK23',
-  PackInvalidScope = 'DRK22',
-  PackInvalidTimestamp = 'DRK24',
-  PackInvalidSignature = 'DRK25',
-  PackInvalidBody = 'DRK26',
+  SignedRequestUnparseable = 'DRK28',
+  SignedRequestInvalidCollection = 'DRK21',
+  SignedRequestInvalidCredential = 'DRK23',
+  SignedRequestInvalidScope = 'DRK22',
+  SignedRequestInvalidTimestamp = 'DRK24',
+  SignedRequestInvalidSignature = 'DRK25',
+  SignedRequestInvalidBody = 'DRK26',
   CrossServerNoCredentialsToSignWith = 'DRK27',
-  CrossServerNoPack = 'DRK29',
+  CrossServerMissingSignedRequestInfo = 'DRK29',
   CrossServerNoCredentialEncodingSalt = 'DRK30',
+  NoOauthLib = 'DRK31',
+  NoCryptoLib = 'DRK32',
+  InvalidCrossServerCredentialsFormat = 'DRK33',
+  UnknownCrossServerError = 'DRK34',
 }
 
 export default ReactKitErrorCode;

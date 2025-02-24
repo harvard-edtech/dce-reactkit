@@ -17,7 +17,7 @@ import genErrorPage from '../html/genErrorPage';
 import genInfoPage from '../html/genInfoPage';
 import parseUserAgent from './parseUserAgent';
 import getTimeInfoInET from './getTimeInfoInET';
-import { parseSignedPack } from './dataSigner';
+import { validateSignedRequest } from './dataSigner';
 
 // Import shared types
 import LogFunction from '../types/LogFunction';
@@ -30,7 +30,6 @@ import LogSourceSpecificInfo from '../types/Log/LogSourceSpecificInfo';
 import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 import LogAction from '../types/LogAction';
 import LogLevel from '../types/LogLevel';
-import ErrorWithCode from '../errors/ErrorWithCode';
 
 /**
  * Generate an express API route handler
@@ -137,7 +136,7 @@ const genRouteHandler = (
     );
 
     // Get body from everywhere it can come from
-    let requestBody: {
+    const requestBody: {
       [k: string]: any,
     } = {
       ...req.body,
@@ -150,27 +149,31 @@ const genRouteHandler = (
     /*----------------------------------------*/
 
     if (crossServerScope) {
-      // Get the signed pack
-      const { signedPack } = requestBody;
+      try {
+        // Validate the request body
+        await validateSignedRequest({
+          method: req.method ?? 'GET',
+          path: req.path,
+          scope: crossServerScope,
+          params: requestBody,
+        });
 
-      // If no pack, throw error
-      if (!signedPack || typeof signedPack !== 'string') {
-        throw new ErrorWithCode(
-          'Could not process a cross server request because there was no valid signed pack.',
-          ReactKitErrorCode.CrossServerNoPack,
+        // Valid! Remove oauth values
+        Object.keys(requestBody).forEach((key) => {
+          if (key.startsWith('oauth_')) {
+            delete requestBody[key];
+          }
+        });
+      } catch (err) {
+        return handleError(
+          res,
+          {
+            message: `The authenticity of a cross-server request could not be validated because an error occurred: ${(err as any).message ?? 'unknown error'}`,
+            code: ((err as any).code ?? ReactKitErrorCode.UnknownCrossServerError),
+            status: 401,
+          },
         );
       }
-
-      // Validate the request
-      const crossServerParams = await parseSignedPack({
-        method: req.method ?? 'GET',
-        path: req.path,
-        scope: crossServerScope,
-        signedPack,
-      });
-
-      // Replace body with params from the pack
-      requestBody = crossServerParams ?? {};
     }
 
     /*----------------------------------------*/
@@ -586,14 +589,14 @@ const genRouteHandler = (
         // Main log info
         const mainLogInfo: LogMainInfo = {
           id: `${launchInfo ? launchInfo.userId : 'unknown'}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
-          userFirstName: (launchInfo ? launchInfo.userFirstName: 'unknown'),
+          userFirstName: (launchInfo ? launchInfo.userFirstName : 'unknown'),
           userLastName: (launchInfo ? launchInfo.userLastName : 'unknown'),
           userEmail: (launchInfo ? launchInfo.userEmail : 'unknown'),
           userId: (launchInfo ? launchInfo.userId : 'unknown'),
           isLearner: (launchInfo && !!launchInfo.isLearner),
           isAdmin: (launchInfo && !!launchInfo.isAdmin),
           isTTM: (launchInfo && !!launchInfo.isTTM),
-          courseId: (launchInfo ? launchInfo.courseId : 'unknown' ),
+          courseId: (launchInfo ? launchInfo.courseId : 'unknown'),
           courseName: (launchInfo ? launchInfo.contextLabel : 'unknown'),
           browser,
           device,
