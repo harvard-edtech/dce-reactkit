@@ -122,21 +122,36 @@ const ItemPicker: React.FC<Props> = (props) => {
       title={title}
       noBottomMargin={noBottomMargin}
       topRightChildren={hideSelectAllOrNoneButtons ? undefined : (
-        <div style={{ marginTop: '-1rem' }} className="d-flex justify-content-end">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleSelectAll}
-          >
-            Select All
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary ms-2"
-            onClick={handleDeselectAll}
-          >
-            Deselect All
-          </button>
+        <div
+          className="d-flex h-100 align-items-end flex-row"
+        >
+          <div className="d-flex justify-content-end">
+            <div
+              className="me-2"
+              style={{ fontSize: '1.2rem' }}
+            >
+              Select
+            </div>
+            <div className="btn-group" role="group">
+              <button
+                type="button"
+                style={{ borderRight: '0.1rem solid white' }}
+                aria-label="Select all contexts"
+                className="btn btn-secondary py-0"
+                onClick={handleSelectAll}
+              >
+                All
+              </button>
+              <button
+                type="button"
+                aria-label="Deselect all contexts"
+                className="btn btn-secondary py-0"
+                onClick={handleDeselectAll}
+              >
+                None
+              </button>
+            </div>
+          </div>
         </div>
       )}
     >

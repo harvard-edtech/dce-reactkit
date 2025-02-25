@@ -86,9 +86,17 @@ const style = `
     background: #fdfdfd;
   }
 
-  /* Container for the top-right children */
-  .TabBox-title-right {
+  .TabBox-title-right-container {
+    display: flex;
+    flex-direction: row;
+    align-items: bottom;
+    height: 2.4rem;
+    overflow: visible;
+  }
+
+  .TabBox-title-right-contents {
     margin-right: 0.5rem;
+    margin-bottom: 0.2rem;
   }
 
   /* Make the TabBox's Children Appear Above Title if Overlap Occurs */
@@ -130,8 +138,10 @@ const TabBox: React.FC<Props> = (props) => {
           {title}
         </div>
         {topRightChildren && (
-          <div className="TabBox-title-right">
-            {topRightChildren}
+          <div className="TabBox-title-right-container">
+            <div className="TabBox-title-right-contents">
+              {topRightChildren}
+            </div>
           </div>
         )}
       </div>
