@@ -14,6 +14,7 @@ type Props = {
      */
     onChanged: (updatedItems: PickableItem[]) => void;
     noBottomMargin?: boolean;
+    hideSelectAllOrNoneButtons?: boolean;
 };
 declare const ItemPicker: React.FC<Props>;
 export default ItemPicker;

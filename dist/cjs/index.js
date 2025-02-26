@@ -1627,7 +1627,9 @@ const style$7 = `
 
   /* Container for Title */
   .TabBox-title-container {
-    /* Place on Left */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: relative;
     left: 0;
     text-align: left;
@@ -1660,6 +1662,19 @@ const style$7 = `
     background: #fdfdfd;
   }
 
+  .TabBox-title-right-container {
+    display: flex;
+    flex-direction: row;
+    align-items: bottom;
+    height: 2.4rem;
+    overflow: visible;
+  }
+
+  .TabBox-title-right-contents {
+    margin-right: 0.5rem;
+    margin-bottom: 0.2rem;
+  }
+
   /* Make the TabBox's Children Appear Above Title if Overlap Occurs */
   .TabBox-children {
     position: relative;
@@ -1673,19 +1688,16 @@ const TabBox = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
-    /* -------------- Props ------------- */
-    const { title, children, noBottomPadding, noBottomMargin, } = props;
+    const { title, children, topRightChildren, noBottomPadding, noBottomMargin, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /* --------------- Main UI -------------- */
-    /*----------------------------------------*/
-    // Full UI
     return (React__default["default"].createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
         React__default["default"].createElement("style", null, style$7),
         React__default["default"].createElement("div", { className: "TabBox-title-container" },
-            React__default["default"].createElement("div", { className: "TabBox-title" }, title)),
+            React__default["default"].createElement("div", { className: "TabBox-title" }, title),
+            topRightChildren && (React__default["default"].createElement("div", { className: "TabBox-title-right-container" },
+                React__default["default"].createElement("div", { className: "TabBox-title-right-contents" }, topRightChildren)))),
         React__default["default"].createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },
             React__default["default"].createElement("div", { className: "TabBox-children" }, children))));
 };
@@ -2695,17 +2707,62 @@ const ItemPicker = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { title, items, onChanged, noBottomMargin, } = props;
+    const { title, items, onChanged, noBottomMargin, hideSelectAllOrNoneButtons, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
+    /**
+     * Updates the checked state of an item (including all children)
+     * @author Yuen Ler Chow
+     * @param item the item to update
+     * @param checked the new checked state
+     * @returns the updated item
+     */
+    const updateItemChecked = (item, checked) => {
+        if (item.isGroup) {
+            return Object.assign(Object.assign({}, item), { children: item.children.map((child) => {
+                    return updateItemChecked(child, checked);
+                }) });
+        }
+        return Object.assign(Object.assign({}, item), { checked });
+    };
+    /**
+     * Selects all items in the list
+     * @author Yuen Ler Chow
+     */
+    const handleSelectAll = () => {
+        const updatedItems = items.map((item) => {
+            return updateItemChecked(item, true);
+        });
+        onChanged(updatedItems);
+    };
+    /**
+     * Deselects all items in the list
+     * @author Yuen Ler Chow
+     */
+    const handleDeselectAll = () => {
+        const updatedItems = items.map((item) => {
+            return updateItemChecked(item, false);
+        });
+        onChanged(updatedItems);
+    };
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
-    return (React__default["default"].createElement(TabBox, { title: title, noBottomMargin: noBottomMargin },
+    // Select all/none
+    const selectAllOrNone = (!hideSelectAllOrNoneButtons
+        ? (React__default["default"].createElement("div", { className: "d-flex h-100 align-items-end flex-row" },
+            React__default["default"].createElement("div", { className: "d-flex justify-content-end" },
+                React__default["default"].createElement("div", { className: "me-2", style: { fontSize: '1.2rem' } }, "Select"),
+                React__default["default"].createElement("div", { className: "btn-group", role: "group" },
+                    React__default["default"].createElement("button", { type: "button", style: { borderRight: '0.1rem solid white' }, "aria-label": "Select all contexts", className: "btn btn-secondary py-0", onClick: handleSelectAll }, "All"),
+                    React__default["default"].createElement("button", { type: "button", "aria-label": "Deselect all contexts", className: "btn btn-secondary py-0", onClick: handleDeselectAll }, "None")))))
+        : undefined);
+    // Main UI
+    return (React__default["default"].createElement(TabBox, { title: title, noBottomMargin: noBottomMargin, topRightChildren: selectAllOrNone },
         React__default["default"].createElement("div", { style: { overflowX: 'auto' } },
             React__default["default"].createElement(NestableItemList, { items: items, onChanged: onChanged }))));
 };
