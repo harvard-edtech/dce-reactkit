@@ -95,6 +95,7 @@ import someAsync from './helpers/asyncArrayFunctions/someAsync';
 import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
 import visitEndpointOnAnotherServer from './helpers/visitEndpointOnAnotherServer';
+import getWordCount from './helpers/getWordCount';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
@@ -201,6 +202,7 @@ export {
   someAsync,
   capitalize,
   shuffleArray,
+  getWordCount,
   // Client helpers
   initClient,
   visitServerEndpoint,

@@ -15,6 +15,8 @@ type Props = {
   title: React.ReactNode,
   // Children/contents inside the box
   children: React.ReactNode,
+  // Children to display on the top right of the tab box
+  topRightChildren?: React.ReactNode,
   // If true, don't add margin below the tab box
   noBottomMargin?: boolean,
   // If true, don't add padding to bottom of tab box
@@ -49,7 +51,9 @@ const style = `
 
   /* Container for Title */
   .TabBox-title-container {
-    /* Place on Left */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: relative;
     left: 0;
     text-align: left;
@@ -82,6 +86,19 @@ const style = `
     background: #fdfdfd;
   }
 
+  .TabBox-title-right-container {
+    display: flex;
+    flex-direction: row;
+    align-items: bottom;
+    height: 2.4rem;
+    overflow: visible;
+  }
+
+  .TabBox-title-right-contents {
+    margin-right: 0.5rem;
+    margin-bottom: 0.2rem;
+  }
+
   /* Make the TabBox's Children Appear Above Title if Overlap Occurs */
   .TabBox-children {
     position: relative;
@@ -98,11 +115,10 @@ const TabBox: React.FC<Props> = (props) => {
   /* -------------------------------- Setup ------------------------------- */
   /*------------------------------------------------------------------------*/
 
-  /* -------------- Props ------------- */
-
   const {
     title,
     children,
+    topRightChildren,
     noBottomPadding,
     noBottomMargin,
   } = props;
@@ -111,21 +127,23 @@ const TabBox: React.FC<Props> = (props) => {
   /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
 
-  /*----------------------------------------*/
-  /* --------------- Main UI -------------- */
-  /*----------------------------------------*/
-
-  // Full UI
   return (
     <div className={`TabBox-container ${noBottomMargin ? '' : 'mb-2'}`}>
       {/* Style */}
       <style>{style}</style>
 
-      {/* Title */}
+      {/* Title Row with Left and Right sections */}
       <div className="TabBox-title-container">
         <div className="TabBox-title">
           {title}
         </div>
+        {topRightChildren && (
+          <div className="TabBox-title-right-container">
+            <div className="TabBox-title-right-contents">
+              {topRightChildren}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Contents */}
