@@ -14,6 +14,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 // Import other components
+import LoadingSpinner from '../LoadingSpinner';
+
+// Import helpers
 import waitMs from '../../helpers/waitMs';
 
 // Import types
@@ -41,6 +44,7 @@ const BASE_Z_INDEX_ON_TOP = 2000000000;
 
 // Constants
 const MS_TO_ANIMATE = 200; // Animation duration
+const MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR = 1000;
 
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes: {
@@ -256,6 +260,8 @@ const Modal: React.FC<ModalProps> = (props) => {
     dontAllowBackdropExit,
     dontShowXButton,
     onTopOfOtherModals,
+    isLoading,
+    isLoadingCancelable,
   } = props;
 
   // Determine if no header either
@@ -266,6 +272,7 @@ const Modal: React.FC<ModalProps> = (props) => {
   // True if animation is in use
   const [animatingIn, setAnimatingIn] = useState(true);
   const [animatingPop, setAnimatingPop] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   /* -------------- Refs -------------- */
 
@@ -297,6 +304,15 @@ const Modal: React.FC<ModalProps> = (props) => {
         // Update to state after animated in
         if (mounted.current) {
           setAnimatingIn(false);
+        }
+        if (isLoading) {
+          // wait before showing modal
+          await waitMs(MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR);
+          if (mounted.current) {
+            setShowModal(true);
+          }
+        } else {
+          setShowModal(true);
         }
       })();
 
@@ -400,6 +416,17 @@ const Modal: React.FC<ModalProps> = (props) => {
     animationClass = 'Modal-animating-pop';
   }
 
+  // default to show close button when not loading and not show close button when loading
+  // unless downShowXButton or isLoadingCancelable
+  const showCloseButton = (
+    // The modal must have an onClose function
+    onClose
+    // ...and the close button is allowed to be visible
+    && !dontShowXButton
+    // ...and should not be shown if the modal is loading and not cancelable
+    && !(isLoading && !isLoadingCancelable)
+  );
+
   // Render the modal
   const contentToRender = (
     <div
@@ -436,6 +463,8 @@ const Modal: React.FC<ModalProps> = (props) => {
           handleClose(ModalButtonType.Cancel);
         }}
       />
+
+      {showModal && (
       <div
         className={`modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`}
         style={{
@@ -498,7 +527,7 @@ const Modal: React.FC<ModalProps> = (props) => {
                 {title}
               </h5>
 
-              {(onClose && !dontShowXButton) && (
+              {showCloseButton && (
                 <button
                   type="button"
                   className="Modal-x-button btn-close"
@@ -518,25 +547,34 @@ const Modal: React.FC<ModalProps> = (props) => {
               )}
             </div>
           )}
-          {children && (
-            <div
-              className="modal-body"
-              style={{
-                color: (
-                  isDarkModeOn()
-                    ? 'white'
-                    : undefined
-                ),
-                backgroundColor: (
-                  isDarkModeOn()
-                    ? '#444'
-                    : undefined
-                ),
-              }}
-            >
-              {children}
-            </div>
-          )}
+
+          <div
+            className="modal-body"
+            style={{
+              color: (
+                isDarkModeOn()
+                  ? 'white'
+                  : undefined
+              ),
+              backgroundColor: (
+                isDarkModeOn()
+                  ? '#444'
+                  : undefined
+              ),
+            }}
+          >
+            {
+              isLoading
+                ? (
+                  <>
+                    <LoadingSpinner />
+                    <span className="sr-only">Content loading</span>
+                  </>
+                )
+                : children
+            }
+          </div>
+
           {footer && (
             <div
               className="modal-footer pt-1 pb-1"
@@ -563,6 +601,7 @@ const Modal: React.FC<ModalProps> = (props) => {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 
