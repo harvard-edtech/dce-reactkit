@@ -464,7 +464,7 @@ const Modal: React.FC<ModalProps> = (props) => {
         }}
       />
 
-      { showModal && (
+      {showModal && (
       <div
         className={`modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`}
         style={{
