@@ -4754,7 +4754,7 @@ const LogReviewer = (props) => {
                 type: ActionType$6.SetHasAnotherPage,
                 hasAnotherPage: response.hasAnotherPage,
             });
-            if (filtersChanged && response.numPages) {
+            if (filtersChanged && response.numPages !== undefined) {
                 dispatch({
                     type: ActionType$6.SetNumPages,
                     numPages: response.numPages,
@@ -5018,6 +5018,7 @@ const LogReviewer = (props) => {
             // Create filter UI
             filterDrawer = (React__default.createElement(ItemPicker, { title: "Context", items: pickableItems, onChanged: (updatedItems) => {
                     // Update our state
+                    const newContextFilterState = Object.assign({}, pendingContextFilterState);
                     updatedItems.forEach((pickableItem) => {
                         if (pickableItem.isGroup) {
                             // Has subcontexts
@@ -5025,35 +5026,28 @@ const LogReviewer = (props) => {
                                 // Built-in
                                 // Treat as if these were top-level contexts
                                 pickableItem.children.forEach((subcontextItem) => {
-                                    const newContextFilterState = Object.assign(Object.assign({}, pendingContextFilterState), { [subcontextItem.id]: 'checked' in subcontextItem
-                                            && subcontextItem.checked });
-                                    dispatch({
-                                        type: ActionType$6.UpdateContextFilterState,
-                                        contextFilterState: newContextFilterState,
-                                    });
+                                    newContextFilterState[subcontextItem.id] = ('checked' in subcontextItem
+                                        && subcontextItem.checked);
                                 });
                             }
                             else {
                                 // Not built-in
                                 pickableItem.children.forEach((subcontextItem) => {
                                     if (!subcontextItem.isGroup) {
-                                        const newContextFilterState = Object.assign(Object.assign({}, pendingContextFilterState), { [pickableItem.id]: Object.assign(Object.assign({}, pendingContextFilterState[pickableItem.id]), { [subcontextItem.id]: subcontextItem.checked }) });
-                                        dispatch({
-                                            type: ActionType$6.UpdateContextFilterState,
-                                            contextFilterState: newContextFilterState,
-                                        });
+                                        newContextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
                                     }
                                 });
                             }
                         }
                         else {
                             // No subcontexts
-                            const newContextFilterState = Object.assign(Object.assign({}, pendingContextFilterState), { [pickableItem.id]: pickableItem.checked });
-                            dispatch({
-                                type: ActionType$6.UpdateContextFilterState,
-                                contextFilterState: newContextFilterState,
-                            });
+                            newContextFilterState[pickableItem.id] = (pickableItem.checked);
                         }
+                    });
+                    // Update state
+                    dispatch({
+                        type: ActionType$6.UpdateContextFilterState,
+                        contextFilterState: newContextFilterState,
                     });
                 } }));
         }
