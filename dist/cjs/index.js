@@ -4067,6 +4067,7 @@ const LogReviewer = (props) => {
             filtersChanged,
         });
         try {
+            // Send filters to the server
             let fetchedLogs = [];
             // Get logs from server
             const response = yield visitServerEndpoint({
@@ -4347,6 +4348,7 @@ const LogReviewer = (props) => {
             // Create filter UI
             filterDrawer = (React__default["default"].createElement(ItemPicker, { title: "Context", items: pickableItems, onChanged: (updatedItems) => {
                     // Update our state
+                    const newContextFilterState = Object.assign({}, pendingContextFilterState);
                     updatedItems.forEach((pickableItem) => {
                         if (pickableItem.isGroup) {
                             // Has subcontexts
@@ -4354,35 +4356,28 @@ const LogReviewer = (props) => {
                                 // Built-in
                                 // Treat as if these were top-level contexts
                                 pickableItem.children.forEach((subcontextItem) => {
-                                    const newContextFilterState = Object.assign(Object.assign({}, pendingContextFilterState), { [subcontextItem.id]: 'checked' in subcontextItem
-                                            && subcontextItem.checked });
-                                    dispatch({
-                                        type: ActionType$6.UpdateContextFilterState,
-                                        contextFilterState: newContextFilterState,
-                                    });
+                                    newContextFilterState[subcontextItem.id] = ('checked' in subcontextItem
+                                        && subcontextItem.checked);
                                 });
                             }
                             else {
                                 // Not built-in
                                 pickableItem.children.forEach((subcontextItem) => {
                                     if (!subcontextItem.isGroup) {
-                                        const newContextFilterState = Object.assign(Object.assign({}, pendingContextFilterState), { [pickableItem.id]: Object.assign(Object.assign({}, pendingContextFilterState[pickableItem.id]), { [subcontextItem.id]: subcontextItem.checked }) });
-                                        dispatch({
-                                            type: ActionType$6.UpdateContextFilterState,
-                                            contextFilterState: newContextFilterState,
-                                        });
+                                        newContextFilterState[pickableItem.id][subcontextItem.id] = (subcontextItem.checked);
                                     }
                                 });
                             }
                         }
                         else {
                             // No subcontexts
-                            const newContextFilterState = Object.assign(Object.assign({}, pendingContextFilterState), { [pickableItem.id]: pickableItem.checked });
-                            dispatch({
-                                type: ActionType$6.UpdateContextFilterState,
-                                contextFilterState: newContextFilterState,
-                            });
+                            newContextFilterState[pickableItem.id] = (pickableItem.checked);
                         }
+                    });
+                    // Update state
+                    dispatch({
+                        type: ActionType$6.UpdateContextFilterState,
+                        contextFilterState: newContextFilterState,
                     });
                 } }));
         }
@@ -14336,6 +14331,7 @@ const initServer = (opts) => {
                 query,
                 perPage: LOG_REVIEW_PAGE_SIZE,
                 pageNumber,
+                sortDescending: true,
             });
             // Count documents if requested
             if (countDocuments) {
