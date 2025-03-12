@@ -1,6 +1,6 @@
 {
   "name": "dce-reactkit",
-  "version": "3.12.1-beta-cross-server.6",
+  "version": "3.12.1-beta-cross-server.7",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -29,7 +29,8 @@
     "crypto-browserify": "^3.12.1",
     "cryptr": "^6.3.0",
     "qs": "^6.x.x",
-    "react-select": "^5.7.3"
+    "react-select": "^5.7.3",
+    "stream-browserify": "^3.0.0"
   },
   "peerDependencies": {
     "@fortawesome/fontawesome-svg-core": "^x.x.x",
