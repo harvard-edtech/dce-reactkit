@@ -1,5 +1,5 @@
 /**
- * Sign data with a private reactkit key, package it into a signed data pack
+ * Sign a request and get the new request params
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.method the method to sign
@@ -7,9 +7,9 @@
  * @param opts.params the data in the body to sign
  * @param opts.key the reactkit key to sign with
  * @param opts.secret the reactkit secret to sign with
- * @return the signed data
+ * @return augmented params for the request, including a signature, timestamp, and key
  */
-export declare const createSignedPack: (opts: {
+export declare const signRequest: (opts: {
     method: string;
     path: string;
     params: {
@@ -17,22 +17,24 @@ export declare const createSignedPack: (opts: {
     };
     key: string;
     secret: string;
-}) => string;
+}) => Promise<{
+    [key: string]: any;
+}>;
 /**
- * Parse signed pack. Throws an error if invalid
+ * Validate a signed request. Throws an error if invalid
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.method the method of the data validate
  * @param opts.path the http request path to validate
  * @param opts.scope the name of the scope to validate
- * @param opts.signedPack the signed data pack to validate
+ * @param opts.params the request data to validate
  * @returns parsed and validated params
  */
-export declare const parseSignedPack: (opts: {
+export declare const validateSignedRequest: (opts: {
     method: string;
     path: string;
     scope: string;
-    signedPack: string;
-}) => Promise<{
-    [key: string]: any;
-}>;
+    params: {
+        [key: string]: any;
+    };
+}) => Promise<void>;

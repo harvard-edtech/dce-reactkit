@@ -1674,10 +1674,6 @@ declare const shuffleArray: <T>(arr: T[]) => T[];
  * @param opts.method the method of the endpoint
  * @param opts.path the path of the other server's endpoint
  * @param opts.host the host of the other server
- * @param [opts.key=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_KEY] reactkit cross-server
- *   credential key
- * @param [opts.secret=process.env.REACTKIT_CROSS_SERVER_CREDENTIAL_SECRET reactkit cross-server
- *   credential secret
  * @param [opts.params={}] query/body parameters to include
  * @param [opts.responseType=JSON] the response type from the other server
  */
@@ -1685,8 +1681,6 @@ declare const visitEndpointOnAnotherServer: (opts: {
     method: 'GET' | 'POST' | 'DELETE' | 'PUT';
     path: string;
     host: string;
-    key?: string | undefined;
-    secret?: string | undefined;
     params?: {
         [x: string]: any;
     } | undefined;
@@ -1716,18 +1710,20 @@ declare enum ReactKitErrorCode {
     NotConnected = "DRK14",
     SelfSigned = "DRK15",
     ResponseParseError = "DRK16",
-    PackUnparseable = "DRK28",
-    PackInvalidMethod = "DRK19",
-    PackInvalidPath = "DRK20",
-    PackInvalidCollection = "DRK21",
-    PackInvalidCredential = "DRK23",
-    PackInvalidScope = "DRK22",
-    PackInvalidTimestamp = "DRK24",
-    PackInvalidSignature = "DRK25",
-    PackInvalidBody = "DRK26",
+    SignedRequestUnparseable = "DRK28",
+    SignedRequestInvalidCollection = "DRK21",
+    SignedRequestInvalidCredential = "DRK23",
+    SignedRequestInvalidScope = "DRK22",
+    SignedRequestInvalidTimestamp = "DRK24",
+    SignedRequestInvalidSignature = "DRK25",
+    SignedRequestInvalidBody = "DRK26",
     CrossServerNoCredentialsToSignWith = "DRK27",
-    CrossServerNoPack = "DRK29",
-    CrossServerNoCredentialEncodingSalt = "DRK30"
+    CrossServerMissingSignedRequestInfo = "DRK29",
+    CrossServerNoCredentialEncodingSalt = "DRK30",
+    NoOauthLib = "DRK31",
+    NoCryptoLib = "DRK32",
+    InvalidCrossServerCredentialsFormat = "DRK33",
+    UnknownCrossServerError = "DRK34"
 }
 
 /**
