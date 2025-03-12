@@ -1,3 +1,6 @@
+// Import cryptography lib
+import Cryptr from 'cryptr';
+
 // Import shared helpers
 // eslint-disable-next-line import/no-cycle
 import { internalGetCrossServerCredentialCollection } from '../server/initServer';
@@ -31,26 +34,6 @@ const getOauthLib = async () => {
     throw new ErrorWithCode(
       'Could not sign a cross-server request because we could not load the oauth library. Please make sure this app has caccl as one of its dependencies.',
       ReactKitErrorCode.NoOauthLib,
-    );
-  }
-};
-
-/**
- * Get a copy of the crypto lib
- * @author Gabe Abrams
- * @return the crypto lib
- */
-const getCryptoLib = async () => {
-  // Get the crypto library (included on the server)
-  // Ignore because this is assumed to be included with typescript
-  // @ts-ignore
-  try {
-    const crypto = await import('crypto');
-    return crypto;
-  } catch (err) {
-    throw new ErrorWithCode(
-      'Could not sign a cross-server request because we could not load the crypto library. Please make sure this operation is running on the server.',
-      ReactKitErrorCode.NoCryptoLib,
     );
   }
 };
@@ -122,9 +105,6 @@ const genSignature = async (
 const decrypt = async (
   encryptedPack: string,
 ): Promise<string> => {
-  // Decryption process based on:
-  // https://medium.com/@tony.infisical/guide-to-nodes-crypto-module-for-encryption-decryption-65c077176980
-
   // Get the encryption secret
   const { REACTKIT_CRED_ENCODING_SALT } = process.env;
   if (!REACTKIT_CRED_ENCODING_SALT) {
@@ -134,29 +114,9 @@ const decrypt = async (
     );
   }
 
-  // Get the crypto library
-  const crypto = await getCryptoLib();
-
-  // Separate encrypted pack
-  const {
-    ciphertext,
-    iv,
-    tag,
-  } = JSON.parse(decodeURIComponent(encryptedPack));
-
-  // Parse the encrypted data
-  const decipher = crypto.createDecipheriv(
-    'aes-256-gcm',
-    Buffer.from(REACTKIT_CRED_ENCODING_SALT, 'base64'),
-    Buffer.from(iv, 'base64'),
-  );
-
-  // Set the authentication tag
-  decipher.setAuthTag(Buffer.from(tag, 'base64'));
-
   // Decrypt the string
-  let str = decipher.update(ciphertext, 'base64', 'utf8');
-  str += decipher.final('utf8');
+  const cryptr = new Cryptr(REACTKIT_CRED_ENCODING_SALT);
+  const str = cryptr.decrypt(encryptedPack);
 
   // Return the decrypted string
   return str;

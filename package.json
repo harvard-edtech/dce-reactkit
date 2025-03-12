@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/harvard-edtech/dce-reactkit#readme",
   "dependencies": {
+    "cryptr": "^6.3.0",
     "qs": "^6.x.x",
     "react-select": "^5.7.3"
   },

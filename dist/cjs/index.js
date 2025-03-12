@@ -7,6 +7,7 @@ var freeSolidSvgIcons = require('@fortawesome/free-solid-svg-icons');
 var reactFontawesome = require('@fortawesome/react-fontawesome');
 var ReactDOM = require('react-dom');
 var freeRegularSvgIcons = require('@fortawesome/free-regular-svg-icons');
+var Cryptr = require('cryptr');
 var qs = require('qs');
 var punycode = require('punycode');
 
@@ -48,6 +49,7 @@ function _mergeNamespaces(n, m) {
 var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 var React__namespace = /*#__PURE__*/_interopNamespace(React);
 var ReactDOM__default = /*#__PURE__*/_interopDefaultLegacy(ReactDOM);
+var Cryptr__default = /*#__PURE__*/_interopDefaultLegacy(Cryptr);
 var qs__default = /*#__PURE__*/_interopDefaultLegacy(qs);
 var punycode__default = /*#__PURE__*/_interopDefaultLegacy(punycode);
 
@@ -14728,23 +14730,6 @@ const getOauthLib = () => __awaiter(void 0, void 0, void 0, function* () {
         throw new ErrorWithCode('Could not sign a cross-server request because we could not load the oauth library. Please make sure this app has caccl as one of its dependencies.', ReactKitErrorCode$1.NoOauthLib);
     }
 });
-/**
- * Get a copy of the crypto lib
- * @author Gabe Abrams
- * @return the crypto lib
- */
-const getCryptoLib = () => __awaiter(void 0, void 0, void 0, function* () {
-    // Get the crypto library (included on the server)
-    // Ignore because this is assumed to be included with typescript
-    // @ts-ignore
-    try {
-        const crypto = yield Promise.resolve().then(function () { return /*#__PURE__*/_interopNamespace(require('crypto')); });
-        return crypto;
-    }
-    catch (err) {
-        throw new ErrorWithCode('Could not sign a cross-server request because we could not load the crypto library. Please make sure this operation is running on the server.', ReactKitErrorCode$1.NoCryptoLib);
-    }
-});
 /*------------------------------------------------------------------------*/
 /* ------------------------------- Helpers ------------------------------ */
 /*------------------------------------------------------------------------*/
@@ -14785,24 +14770,14 @@ const genSignature = (opts) => __awaiter(void 0, void 0, void 0, function* () {
  * @return the decrypted string
  */
 const decrypt = (encryptedPack) => __awaiter(void 0, void 0, void 0, function* () {
-    // Decryption process based on:
-    // https://medium.com/@tony.infisical/guide-to-nodes-crypto-module-for-encryption-decryption-65c077176980
     // Get the encryption secret
     const { REACTKIT_CRED_ENCODING_SALT } = process.env;
     if (!REACTKIT_CRED_ENCODING_SALT) {
         throw new ErrorWithCode('Could not decrypt a string because the encryption salt was not set.', ReactKitErrorCode$1.CrossServerNoCredentialEncodingSalt);
     }
-    // Get the crypto library
-    const crypto = yield getCryptoLib();
-    // Separate encrypted pack
-    const { ciphertext, iv, tag, } = JSON.parse(decodeURIComponent(encryptedPack));
-    // Parse the encrypted data
-    const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(REACTKIT_CRED_ENCODING_SALT, 'base64'), Buffer.from(iv, 'base64'));
-    // Set the authentication tag
-    decipher.setAuthTag(Buffer.from(tag, 'base64'));
     // Decrypt the string
-    let str = decipher.update(ciphertext, 'base64', 'utf8');
-    str += decipher.final('utf8');
+    const cryptr = new Cryptr__default["default"](REACTKIT_CRED_ENCODING_SALT);
+    const str = cryptr.decrypt(encryptedPack);
     // Return the decrypted string
     return str;
 });
