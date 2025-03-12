@@ -14710,7 +14710,8 @@ const getCryptoLib = () => __awaiter(void 0, void 0, void 0, function* () {
     // @ts-ignore
     try {
         // @ts-ignore
-        const crypto = yield import('crypto-browserify');
+        // eslint-disable-next-line global-require
+        const crypto = yield require('crypto');
         return crypto;
     }
     catch (err) {

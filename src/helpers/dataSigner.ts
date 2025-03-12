@@ -46,7 +46,8 @@ const getCryptoLib = async () => {
   // @ts-ignore
   try {
     // @ts-ignore
-    const crypto = (await import('crypto-browserify') as any);
+    // eslint-disable-next-line global-require
+    const crypto = await require('crypto');
     return crypto;
   } catch (err) {
     throw new ErrorWithCode(
