@@ -1,6 +1,6 @@
 {
   "name": "dce-reactkit",
-  "version": "3.12.3",
+  "version": "3.13.1-date-time-beta.1",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
