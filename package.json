@@ -1,6 +1,6 @@
 {
   "name": "dce-reactkit",
-  "version": "3.12.1-beta-cross-server.5",
+  "version": "3.12.1-beta-cross-server.6",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/harvard-edtech/dce-reactkit#readme",
   "dependencies": {
+    "cipher-base": "^1.0.6",
     "crypto-browserify": "^3.12.1",
     "cryptr": "^6.3.0",
     "qs": "^6.x.x",
