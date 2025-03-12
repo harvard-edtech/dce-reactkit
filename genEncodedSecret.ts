@@ -1,5 +1,5 @@
 // Import crypto lib
-import Cryptr from 'cryptr';
+import crypto from 'crypto';
 
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -42,9 +42,34 @@ if (!host) {
   process.exit(1);
 }
 
-// Encrypt the secret
-const cryptr = new Cryptr(REACTKIT_CRED_ENCODING_SALT);
-const encodedSecret = cryptr.encrypt(secret);
+// Encryption process based on:
+// https://medium.com/@tony.infisical/guide-to-nodes-crypto-module-for-encryption-decryption-65c077176980
+
+// Create a random initialization vector
+const iv = crypto.randomBytes(12).toString('base64');
+
+// Create a cipher
+const cipher = crypto.createCipheriv(
+  'aes-256-gcm',
+  Buffer.from(secret, 'base64'),
+  Buffer.from(iv, 'base64'),
+);
+
+// Encrypt the string
+let ciphertext = cipher.update(secret, 'utf8', 'base64');
+
+// Finalize the encryption
+ciphertext += cipher.final('base64');
+
+// Get the authentication tag
+const tag = cipher.getAuthTag();
+
+// JSONify the encrypted data
+const encryptionPack = encodeURIComponent(JSON.stringify({
+  ciphertext,
+  iv,
+  tag,
+}));
 
 // Show the encrypted data
 console.log('\n\n');
@@ -54,6 +79,6 @@ console.log('On the server *sending* the requests, append the following to the R
 console.log(`|${host}:${key}:${secret}|`);
 console.log('');
 console.log('On the server *receiving* the requests, add an entry to the "CrossServerCredential" collection:');
-console.log(`{ "description": "${description}", "key": "${key}", "encodedeSecret": "${encodedSecret}", "scopes": [] }`);
+console.log(`{ "description": "${description}", "key": "${key}", "encodedeSecret": "${encryptionPack}", "scopes": [] }`);
 console.log('');
 console.log('For all scopes that the server should have access to, add them to the "scopes" array.');
