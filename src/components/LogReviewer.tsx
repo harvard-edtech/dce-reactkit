@@ -924,7 +924,7 @@ const LogReviewer: React.FC<Props> = (props) => {
         hasAnotherPage: response.hasAnotherPage,
       });
 
-      if (filtersChanged && response.numPages) {
+      if (filtersChanged && response.numPages !== undefined) {
         dispatch({
           type: ActionType.SetNumPages,
           numPages: response.numPages,
