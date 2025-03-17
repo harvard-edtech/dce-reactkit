@@ -15,7 +15,7 @@ import { faSquare, faSquareMinus } from '@fortawesome/free-regular-svg-icons';
 import Variant from '../types/Variant';
 
 // Import shared helpers
-import { isDarkModeOn } from '../client/initClient';
+import { isDarkModeOn } from '../helpers/initClient';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */

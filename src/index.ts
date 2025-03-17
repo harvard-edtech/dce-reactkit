@@ -43,7 +43,7 @@ import DAY_IN_MS from './constants/DAY_IN_MS';
 import DynamicWord from './dynamicConstants/DynamicWord';
 
 // Import helpers
-import initClient from './client/initClient';
+import initClient from './helpers/initClient';
 import abbreviate from './helpers/abbreviate';
 import avg from './helpers/avg';
 import ceilToNumDecimals from './helpers/ceilToNumDecimals';
@@ -55,10 +55,6 @@ import roundToNumDecimals from './helpers/roundToNumDecimals';
 import sum from './helpers/sum';
 import waitMs from './helpers/waitMs';
 import visitServerEndpoint from './helpers/visitServerEndpoint';
-import genRouteHandler from './helpers/genRouteHandler';
-import handleError from './helpers/handleError';
-import handleSuccess from './helpers/handleSuccess';
-import initServer from './server/initServer';
 import getOrdinal from './helpers/getOrdinal';
 import getTimeInfoInET from './helpers/getTimeInfoInET';
 import stubServerEndpoint from './helpers/stubServerEndpoint';
@@ -69,8 +65,6 @@ import stringsToHumanReadableList from './helpers/stringsToHumanReadableList';
 import onlyKeepLetters from './helpers/onlyKeepLetters';
 import parallelLimit from './helpers/parallelLimit';
 import logClientEvent, { setClientEventMetadataPopulator } from './helpers/logClientEvent';
-import initLogCollection from './server/initLogCollection';
-import initCrossServerCredentialCollection from './server/initCrossServerCredentialCollection';
 import getMonthName from './helpers/getMonthName';
 import genCSV from './helpers/genCSV';
 import canReviewLogs from './helpers/canReviewLogs';
@@ -78,7 +72,6 @@ import isMobileOrTablet from './helpers/isMobileOrTablet';
 import extractProp from './helpers/extractProp';
 import compareArraysByProp from './helpers/compareArraysByProp';
 import getLocalTimeInfo from './helpers/getLocalTimeInfo';
-import addDBEditorEndpoints from './helpers/addDBEditorEndpoints';
 import genCommaList from './helpers/genCommaList';
 import validateEmail from './helpers/validators/validateEmail';
 import validatePhoneNumber from './helpers/validators/validatePhoneNumber';
@@ -95,15 +88,13 @@ import mapAsync from './helpers/asyncArrayFunctions/mapAsync';
 import someAsync from './helpers/asyncArrayFunctions/someAsync';
 import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
-import visitEndpointOnAnotherServer from './helpers/visitEndpointOnAnotherServer';
 
 // Import types
+import ParamType from './types/ParamType';
 import ModalButtonType from './types/ModalButtonType';
 import ModalSize from './types/ModalSize';
 import ModalType from './types/ModalType';
-import ReactKitErrorCode from './types/ReactKitErrorCode';
 import Variant from './types/Variant';
-import ParamType from './types/ParamType';
 import DayOfWeek from './types/DayOfWeek';
 import Log from './types/Log';
 import LogType from './types/LogType';
@@ -112,9 +103,13 @@ import LogAction from './types/LogAction';
 import LogBuiltInMetadata from './types/LogBuiltInMetadata';
 import LogMetadataType from './types/LogMetadataType';
 import LogFunction from './types/LogFunction';
+import LogTypeSpecificInfo from './types/Log/LogTypeSpecificInfo';
+import LogMainInfo from './types/Log/LogMainInfo';
+import LogSourceSpecificInfo from './types/Log/LogSourceSpecificInfo';
+import LogLevel from './types/LogLevel';
 import IntelliTableColumn from './types/IntelliTableColumn';
 import DropdownItemType from './types/DropdownItemType';
-import CrossServerCredential from './types/CrossServerCredential';
+import ReactKitErrorCode from './types/ReactKitErrorCode';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -212,16 +207,8 @@ export {
   combineClassNames,
   useForceRender,
   setClientEventMetadataPopulator,
-  // Server helpers
-  initServer,
-  genRouteHandler,
-  handleError,
-  handleSuccess,
-  initLogCollection,
-  initCrossServerCredentialCollection,
-  addDBEditorEndpoints,
-  visitEndpointOnAnotherServer,
   // Types
+  ParamType,
   ModalButtonType,
   ModalSize,
   ModalType,
@@ -235,14 +222,15 @@ export {
   LogBuiltInMetadata,
   LogMetadataType,
   LogFunction,
+  LogTypeSpecificInfo,
+  LogMainInfo,
+  LogSourceSpecificInfo,
+  LogLevel,
   IntelliTableColumn,
   DropdownItemType,
-  CrossServerCredential,
   // Component-specific-types
   PickableItem,
   DBEntry,
   DBEntryField,
   DBEntryFieldType,
-  // Server types
-  ParamType,
 };

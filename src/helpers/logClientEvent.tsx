@@ -5,10 +5,12 @@ import LogFunction from '../types/LogFunction';
 import LogLevel from '../types/LogLevel';
 
 // Import shared functions
+// TODO: fix dependency cycle
+// eslint-disable-next-line import/no-cycle
 import visitServerEndpoint from './visitServerEndpoint';
 
 // Import status
-import { appHasNoServer } from '../client/initClient';
+import { appHasNoServer } from './initClient';
 
 /* ------- Metadata Populator ------- */
 

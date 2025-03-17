@@ -29,7 +29,7 @@ import NUM_MODAL_PORTALS from '../../constants/NUM_MODAL_PORTALS';
 // Import shared helpers
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
-import { isDarkModeOn } from '../../client/initClient';
+import { isDarkModeOn } from '../../helpers/initClient';
 
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Constants ----------------------------- */

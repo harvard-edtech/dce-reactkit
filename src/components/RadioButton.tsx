@@ -13,7 +13,9 @@ import { faCircle } from '@fortawesome/free-regular-svg-icons';
 
 // Import shared types
 import Variant from '../types/Variant';
-import { isDarkModeOn } from '../client/initClient';
+
+// Import shared helpers
+import { isDarkModeOn } from '../helpers/initClient';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */

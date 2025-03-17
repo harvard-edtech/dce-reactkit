@@ -1,7 +1,6 @@
 /// <reference types="react" />
 import React$1 from 'react';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import express from 'express';
 
 /**
  * Bootstrap variants
@@ -469,16 +468,16 @@ declare const LogReviewer: React$1.FC<Props$8>;
  * @author Gabe Abrams
  */
 declare enum ParamType {
-    Boolean = "boolean",
-    BooleanOptional = "boolean-optional",
-    Float = "float",
-    FloatOptional = "float-optional",
-    Int = "int",
-    IntOptional = "int-optional",
-    JSON = "json",
-    JSONOptional = "json-optional",
-    String = "string",
-    StringOptional = "string-optional"
+    Boolean = "Boolean",
+    BooleanOptional = "BooleanOptional",
+    Float = "Float",
+    FloatOptional = "FloatOptional",
+    Int = "Int",
+    IntOptional = "IntOptional",
+    JSON = "JSON",
+    JSONOptional = "JSONOptional",
+    String = "String",
+    StringOptional = "StringOptional"
 }
 
 /**
@@ -932,6 +931,106 @@ declare const visitServerEndpoint: (opts: {
 }) => Promise<any>;
 
 /**
+ * Get a number's ordinal
+ * @author Gabe Abrams
+ * @param num the number being analyzed
+ * @returns ordinal
+ */
+declare const getOrdinal: (num: number) => string;
+
+/**
+ * Get current time info in US Boston Eastern Time, independent of machine
+ *   timezone
+ * @author Gabe Abrams
+ * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
+ * @returns object with timestamp (ms since epoch) and numbers
+ *   corresponding to ET time values for year, month, day, hour, hour12, minute, isPM
+ *   where hour is in 24hr time and hour12 is in 12hr time.
+ */
+declare const getTimeInfoInET: (dateOrTimestamp?: Date | number) => {
+    timestamp: number;
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    hour12: number;
+    minute: number;
+    isPM: boolean;
+};
+
+/**
+ * Stub a server endpoint response
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param [opts.method=GET] http method to stub
+ * @param opts.path full pathname to stub
+ * @param opts.body body of response if stubbing a successful response
+ * @param opts.errorMessage message of error if stubbing a failed response
+ * @param [opts.errorCode] error code if stubbing a failed response
+ */
+declare const stubServerEndpoint: (opts: {
+    method?: string | undefined;
+    path: string;
+    body?: any;
+    errorMessage?: string | undefined;
+    errorCode?: string | undefined;
+}) => void;
+
+/**
+ * Start a dynamic wait, call the function once the operation has completed and
+ *   the dynamic wait will continue waiting for the rest of the minimum time
+ * @author Gabe Abrams
+ * @param minWaitMs the minimum number of ms to wait
+ * @returns async function to call to finish the wait
+ */
+declare const startMinWait: (minWaitMs: number) => () => Promise<void>;
+
+/**
+ * Get a human-readable description of a date (all in ET)
+ * @author Gabe Abrams
+ * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
+ * @returns human-readable description of the date
+ */
+declare const getHumanReadableDate: (dateOrTimestamp?: Date | number) => string;
+
+/**
+ * Get the current part of day (morning, evening, etc.)
+ * @author Gabe Abrams
+ * @returns the part of day (morning, evening, etc.)
+ */
+declare const getPartOfDay: () => string;
+
+/**
+ * Create a human readable list from an array of strings.
+ *   For example, ['apple', 'orange'] becomes "apple and orange"
+ *   and ['apple', 'orange', 'mango'] becomes "apple, orange, and mango"
+ * @author Gabe Abrams
+ * @param items list of items in the list
+ * @returns human-readable list
+ */
+declare const stringsToHumanReadableList: (items: string[]) => string;
+
+/**
+ * Given a string, only keep the letters inside it
+ * @author Gabe Abrams
+ * @param str the string to parse
+ * @returns only the letters inside of the string
+ */
+declare const onlyKeepLetters: (str: string) => string;
+
+/**
+ * Run tasks in parallel with a limit on how many tasks can execute at once.
+ *   No guarantees are made about the order of task execution
+ * @author Gabe Abrams
+ * @param taskFunctions functions that start asynchronous tasks and optionally
+ *   resolve with values
+ * @param [limit=no limit] maximum number of asynchronous tasks to permit to run at
+ *   once
+ * @returns array of resolved values in the same order as the task functions
+ */
+declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number) => Promise<any[]>;
+
+/**
  * Allowed log levels
  * @author Gabe Abrams
  */
@@ -1079,238 +1178,6 @@ type LogFunction = (opts: ({
     target?: string;
 }))) => Promise<Log>;
 
-/**
- * Generate an express API route handler
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.paramTypes map containing the types for each parameter that is
- *   included in the request (map: param name => type)
- * @param opts.handler function that processes the request
- * @param [opts.crossServerScope] the scope associated with this endpoint.
- *   If defined, this is a cross-server endpoint, which will never
- *   have any launch data, will never check Canvas roles or launch status, and will
- *   instead use scopes and reactkit credentials to sign and validate requests.
- *   Never start the path with /api/ttm or /api/admin if the endpoint is a cross-server
- *   endpoint because those roles will not be validated
- * @param [opts.skipSessionCheck=true if crossServerScope defined] if true, skip
- *   the session check (allow users to not be logged in and launched via LTI).
- *   If crossServerScope is defined, this is always true
- * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
- *   is not of type ErrorWithCode is thrown, the client will receive an error
- *   where the error message is prefixed with this string. For example,
- *   if unhandledErrorMessagePrefix is
- *   'While saving progress, we encountered an error:'
- *   and the error is 'progressInfo is not an object',
- *   the client will receive an error with the message
- *   'While saving progress, we encountered an error: progressInfo is not an object'
- * @returns express route handler that takes the following arguments:
- *   params (map: param name => value),
- *   req (express request object),
- *   next (express next function),
- *   send (a function that sends a string to the client),
- *   redirect (takes a url and redirects the user to that url),
- *   renderErrorPage (shows a static error page to the user),
- *   renderInfoPage (shows a static info page to the user),
- *   renderCustomHTML (renders custom html and sends it to the user),
- *   and returns the value to send to the client as a JSON API response, or
- *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
- *   Note: params also has userId, userFirstName,
- *   userLastName, userEmail, userAvatarURL, isLearner, isTTM, isAdmin,
- *   and any other variables that
- *   are directly added to the session, if the user does have a session.
- */
-declare const genRouteHandler: (opts: {
-    paramTypes?: {
-        [k: string]: ParamType;
-    } | undefined;
-    handler: (opts: {
-        params: {
-            [k: string]: any;
-        };
-        req: any;
-        next: () => void;
-        redirect: (pathOrURL: string) => void;
-        send: (text: string, status?: number) => void;
-        renderErrorPage: (opts?: {
-            title?: string;
-            description?: string;
-            code?: string;
-            pageTitle?: string;
-            status?: number;
-        }) => void;
-        renderInfoPage: (opts: {
-            title: string;
-            body: string;
-        }) => void;
-        renderCustomHTML: (opts: {
-            html: string;
-            status?: number;
-        }) => void;
-        logServerEvent: LogFunction;
-    }) => any;
-    crossServerScope?: string | undefined;
-    skipSessionCheck?: boolean | undefined;
-    unhandledErrorMessagePrefix?: string | undefined;
-}) => (req: any, res: any, next: () => void) => Promise<undefined>;
-
-/**
- * Handle an error and respond to the client
- * @author Gabe Abrams
- * @param res express response
- * @param error error info
- * @param opts.err the error to send to the client
- *   or the error message
- * @param [opts.code] an error code (only used if err.code is not
- *   included)
- * @param [opts.status=500] the https status code to use
- *   defined)
- */
-declare const handleError: (res: any, error: ({
-    message: any;
-    code?: string;
-    status?: number;
-} | Error | string | any)) => undefined;
-
-/**
- * Send successful API response
- * @author Gabe Abrams
- * @param res express response
- * @param body the body of the response to send to the client
- */
-declare const handleSuccess: (res: any, body: any) => undefined;
-
-type GetLaunchInfoFunction = (req: any) => {
-    launched: boolean;
-    launchInfo?: any;
-};
-/**
- * Prepare dce-reactkit to run on the server
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.app express app from inside of the postprocessor function that
- *   we will add routes to
- * @param opts.getLaunchInfo CACCL LTI's get launch info function
- * @param [opts.logCollection] mongo collection from dce-mango to use for
- *   storing logs. If none is included, logs are written to the console
- * @param [opts.logReviewAdmins=all] info on which admins can review
- *   logs from the client. If not included, all Canvas admins are allowed to
- *   review logs. If null, no Canvas admins are allowed to review logs.
- *   If an array of Canvas userIds (numbers), only Canvas admins with those
- *   userIds are allowed to review logs. If a dce-mango collection, only
- *   Canvas admins with entries in that collection ({ userId, ...}) are allowed
- *   to review logs
- * @param [opts.crossServerCredentialCollection] mongo collection from dce-mango to use for
- *   storing cross-server credentials. If none is included, cross-server credentials
- *   are not supported
- */
-declare const initServer: (opts: {
-    app: any;
-    getLaunchInfo: GetLaunchInfoFunction;
-    logCollection?: any;
-    logReviewAdmins?: (number[] | any);
-    crossServerCredentialCollection?: any;
-}) => void;
-
-/**
- * Get a number's ordinal
- * @author Gabe Abrams
- * @param num the number being analyzed
- * @returns ordinal
- */
-declare const getOrdinal: (num: number) => string;
-
-/**
- * Get current time info in US Boston Eastern Time, independent of machine
- *   timezone
- * @author Gabe Abrams
- * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
- * @returns object with timestamp (ms since epoch) and numbers
- *   corresponding to ET time values for year, month, day, hour, hour12, minute, isPM
- *   where hour is in 24hr time and hour12 is in 12hr time.
- */
-declare const getTimeInfoInET: (dateOrTimestamp?: Date | number) => {
-    timestamp: number;
-    year: number;
-    month: number;
-    day: number;
-    hour: number;
-    hour12: number;
-    minute: number;
-    isPM: boolean;
-};
-
-/**
- * Stub a server endpoint response
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param [opts.method=GET] http method to stub
- * @param opts.path full pathname to stub
- * @param opts.body body of response if stubbing a successful response
- * @param opts.errorMessage message of error if stubbing a failed response
- * @param [opts.errorCode] error code if stubbing a failed response
- */
-declare const stubServerEndpoint: (opts: {
-    method?: string | undefined;
-    path: string;
-    body?: any;
-    errorMessage?: string | undefined;
-    errorCode?: string | undefined;
-}) => void;
-
-/**
- * Start a dynamic wait, call the function once the operation has completed and
- *   the dynamic wait will continue waiting for the rest of the minimum time
- * @author Gabe Abrams
- * @param minWaitMs the minimum number of ms to wait
- * @returns async function to call to finish the wait
- */
-declare const startMinWait: (minWaitMs: number) => () => Promise<void>;
-
-/**
- * Get a human-readable description of a date (all in ET)
- * @author Gabe Abrams
- * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
- * @returns human-readable description of the date
- */
-declare const getHumanReadableDate: (dateOrTimestamp?: Date | number) => string;
-
-/**
- * Get the current part of day (morning, evening, etc.)
- * @author Gabe Abrams
- * @returns the part of day (morning, evening, etc.)
- */
-declare const getPartOfDay: () => string;
-
-/**
- * Create a human readable list from an array of strings.
- *   For example, ['apple', 'orange'] becomes "apple and orange"
- *   and ['apple', 'orange', 'mango'] becomes "apple, orange, and mango"
- * @author Gabe Abrams
- * @param items list of items in the list
- * @returns human-readable list
- */
-declare const stringsToHumanReadableList: (items: string[]) => string;
-
-/**
- * Given a string, only keep the letters inside it
- * @author Gabe Abrams
- * @param str the string to parse
- * @returns only the letters inside of the string
- */
-declare const onlyKeepLetters: (str: string) => string;
-
-/**
- * Run tasks in parallel with a limit on how many tasks can execute at once.
- *   No guarantees are made about the order of task execution
- * @author Gabe Abrams
- * @param taskFunctions functions that start asynchronous tasks and optionally
- *   resolve with values
- * @param [limit=no limit] maximum number of asynchronous tasks to permit to run at
- *   once
- * @returns array of resolved values in the same order as the task functions
- */
-declare const parallelLimit: (taskFunctions: (() => Promise<any>)[], limit?: number) => Promise<any[]>;
-
 type MetadataPopulator = () => {
     [k: string]: any;
 } | Promise<{
@@ -1330,22 +1197,6 @@ declare const setClientEventMetadataPopulator: (newMetadataPopulator: MetadataPo
  * @author Gabe Abrams
  */
 declare const logClientEvent: LogFunction;
-
-/**
- * Initialize a log collection given the dce-mango Collection class
- * @author Gabe Abrams
- * @param Collection the Collection class from dce-mango
- * @returns initialized logCollection
- */
-declare const initLogCollection: (Collection: any) => any;
-
-/**
- * Initialize a cross-server credential collection given the dce-mango Collection class
- * @author Gabe Abrams
- * @param Collection the Collection class from dce-mango
- * @returns initialized logCollection
- */
-declare const initCrossServerCredentialCollection: (Collection: any) => any;
 
 /**
  * Get the name of a month given the month number (1 = January, etc.)
@@ -1432,46 +1283,6 @@ declare const getLocalTimeInfo: (dateOrTimestamp?: Date | number) => {
     minute: number;
     isPM: boolean;
 };
-
-/**
- * Interface for a collection in the database
- * @author Yuen Ler Chow
- */
-type DCEMangoCollection = {
-    /**
-     * Find all items in the collection that match the filter query
-     * @param filterQuery query for the filter
-     * @returns list of items that match the filter query
-     */
-    find: (filterQuery: any) => Promise<any[]>;
-    /**
-     * Insert an item into the collection
-     * @param item the item to insert
-     */
-    insert: (item: any) => Promise<void>;
-    /**
-     * Delete an item in the collection
-     * @param id the id of the item to delete
-     */
-    delete: (filterQuery: {
-        id: string;
-    }) => Promise<void>;
-};
-/**
- * Add all routes for the DBEditor
- * @author Yuen Ler Chow
- * @param opts object containing all arguments
- * @param opts.app express app to add routes too
- * @param opts.collectionName the name of the collection
- * @param opts.adminsOnly true if the endpoint is for admins only
- * @param opts.collection dce-mango db collection
- */
-declare const addDBEditorEndpoints: (opts: {
-    app: express.Application;
-    collectionName: string;
-    adminsOnly: boolean;
-    collection: DCEMangoCollection;
-}) => void;
 
 /**
  * Given an array of strings, create a single comma-separated string that includes
@@ -1668,65 +1479,6 @@ declare const capitalize: (str: string) => string;
 declare const shuffleArray: <T>(arr: T[]) => T[];
 
 /**
- * Visit an endpoint on another server
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.method the method of the endpoint
- * @param opts.path the path of the other server's endpoint
- * @param opts.host the host of the other server
- * @param [opts.params={}] query/body parameters to include
- * @param [opts.responseType=JSON] the response type from the other server
- */
-declare const visitEndpointOnAnotherServer: (opts: {
-    method: 'GET' | 'POST' | 'DELETE' | 'PUT';
-    path: string;
-    host: string;
-    params?: {
-        [x: string]: any;
-    } | undefined;
-    responseType?: "Text" | "JSON" | undefined;
-}) => Promise<any>;
-
-/**
- * List of error codes built into the react kit
- * @author Gabe Abrams
- */
-declare enum ReactKitErrorCode {
-    NoResponse = "DRK1",
-    NoCode = "DRK2",
-    SessionExpired = "DRK3",
-    MissingParameter = "DRK4",
-    InvalidParameter = "DRK5",
-    HostNotAllowed = "DRK17",
-    HostBanned = "DRK18",
-    WrongCourse = "DRK6",
-    NoCACCLSendRequestFunction = "DRK7",
-    NoCACCLGetLaunchInfoFunction = "DRK8",
-    NotTTM = "DRK9",
-    NotAdmin = "DRK10",
-    NotAllowedToReviewLogs = "DRK11",
-    ThemeCheckedBeforeReactKitReady = "DRK12",
-    SessionExpiredMessageGottenBeforeReactKitReady = "DRK13",
-    NotConnected = "DRK14",
-    SelfSigned = "DRK15",
-    ResponseParseError = "DRK16",
-    SignedRequestUnparseable = "DRK28",
-    SignedRequestInvalidCollection = "DRK21",
-    SignedRequestInvalidCredential = "DRK23",
-    SignedRequestInvalidScope = "DRK22",
-    SignedRequestInvalidTimestamp = "DRK24",
-    SignedRequestInvalidSignature = "DRK25",
-    SignedRequestInvalidBody = "DRK26",
-    CrossServerNoCredentialsToSignWith = "DRK27",
-    CrossServerMissingSignedRequestInfo = "DRK29",
-    CrossServerNoCredentialEncodingSalt = "DRK30",
-    NoOauthLib = "DRK31",
-    NoCryptoLib = "DRK32",
-    InvalidCrossServerCredentialsFormat = "DRK33",
-    UnknownCrossServerError = "DRK34"
-}
-
-/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -1757,14 +1509,14 @@ declare const LogBuiltInMetadata: {
 };
 
 /**
- * Single cross-server credential
+ * List of error codes built into the react kit
  * @author Gabe Abrams
  */
-type CrossServerCredential = {
-    description: string;
-    key: string;
-    encodedeSecret: string;
-    scopes: string[];
-};
+declare enum ReactKitErrorCode {
+    NoResponse = "DRK1",
+    NoCode = "DRK2",
+    SessionExpired = "DRK3",
+    NoCACCLSendRequestFunction = "DRK7"
+}
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, CrossServerCredential, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogMetadataType, LogReviewer, LogSource, LogType, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addDBEditorEndpoints, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, genRouteHandler, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, handleError, handleSuccess, idify, initClient, initCrossServerCredentialCollection, initLogCollection, initServer, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitEndpointOnAnotherServer, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogReviewer, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
