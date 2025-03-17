@@ -15,7 +15,7 @@ type Props = {
   // Text of the tooltip
   text: string,
   // Children to wrap in the tooltip
-  children: JSX.Element,
+  children: any,
 };
 
 /*------------------------------------------------------------------------*/
