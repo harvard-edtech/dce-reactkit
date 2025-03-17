@@ -1,6 +1,6 @@
 {
   "name": "dce-reactkit",
-  "version": "4.0.0-beta.2",
+  "version": "4.0.0-beta.3",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -33,7 +33,7 @@
     "@fortawesome/free-solid-svg-icons": "^x.x.x",
     "@fortawesome/react-fontawesome": "^x.x.x",
     "bootstrap": "^5.x.x",
-    "react": "^19.0.0"
+    "react": "^x.x.x"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.0",
