@@ -34,11 +34,14 @@ type Props = {
    * @param year new full year number
    */
   onChange: (month: number, day: number, year: number) => void,
-  // Number of months to allow the user to choose from
-  // (max is 12, default is 6)
-  // TODO: update description
+  // Number of months in either the past or future to allow the user to choose from
+  // If we aren't allowing the past or the future, we will only show the present date
+  // (max is 12, default is 6 in the past and 6 in the future)
   numMonthsToShow?: number,
-  // TODO: dontAllowPast, dontAllowFuture
+  // Determine if past dates are allowed to be chosen
+  dontAllowPast?: false,
+  // Determine if future dates are allowed to be chosen
+  dontAllowFuture?: false
 };
 
 /*------------------------------------------------------------------------*/
@@ -57,6 +60,8 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     name,
     onChange,
     numMonthsToShow = 6,
+    dontAllowFuture,
+    dontAllowPast,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -78,14 +83,33 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   // TODO: update logic to be able to generate either/or/and past + future
   let startYear = today.year;
   let startMonth = today.month;
-  if (chooseFromPast) {
+  let endYear = today.year;
+  let endMonth = today.month;
+  // Allow past dates
+  if (!dontAllowPast) {
     startMonth -= Math.max(0, numMonthsToShow - 1);
     while (startMonth <= 0) {
       startMonth += 12;
       startYear -= 1;
     }
   }
-  for (let i = 0; i < numMonthsToShow; i++) {
+  // Allow future dates
+  if (!dontAllowFuture) {
+    endMonth += Math.max(0, numMonthsToShow - 1);
+    while (endMonth > 12) {
+      endMonth -= 12;
+      endYear += 1;
+    }
+  }
+  // Calculate total number of months to show
+  let totalMonthsToShow = numMonthsToShow;
+  if (!dontAllowPast && !dontAllowFuture) {
+    totalMonthsToShow = totalMonthsToShow * 2;
+  } else if (dontAllowPast && dontAllowFuture) {
+    totalMonthsToShow = 1; // Only show current month
+  }
+
+  for (let i = 0; i < totalMonthsToShow; i++) {
     // Get month and year info
     const unmoddedMonth = (startMonth + i);
     let month = unmoddedMonth;
@@ -105,24 +129,25 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     // Figure out which days are allowed
     const days = [];
     const numDaysInMonth = (new Date(year, month, 0)).getDate();
-    if (chooseFromPast) {
-      // Past selection
-      const numDaysToAdd = (
-        (month === today.month)
-          ? today.day // Current month, only add up to today
-          : numDaysInMonth // Past month, add all days
-      );
-      for (let day = 1; day <= numDaysToAdd; day++) {
-        days.push(day);
-      }
-    } else {
+
+    // Current month
+    if (month === today.month) {
+      // Past selection: add all previous days of the month
+      if (!dontAllowPast) {
+        for (let day = 1; day < today.day; day++) {
+          days.push(day);
+        }
+      } 
+      days.push(today.day); // Add current day
       // Future selection: add all remaining days of the month
-      const firstDay = (
-        month === today.month
-          ? today.day // Current month: start at current date
-          : 1 // Future month: start at beginning of month
-      );
-      for (let day = firstDay; day <= numDaysInMonth; day++) {
+      if (!dontAllowFuture) {
+        for (let day = today.day + 1; day <= numDaysInMonth; day++) {
+          days.push(day);
+        }
+      }
+    } else { // Past or future month
+      // Include all days in the month
+      for (let day = 1; day <= numDaysInMonth; day++) {
         days.push(day);
       }
     }
