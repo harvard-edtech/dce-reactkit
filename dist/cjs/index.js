@@ -4084,7 +4084,7 @@ const LogReviewer = (props) => {
                 type: ActionType$6.SetHasAnotherPage,
                 hasAnotherPage: response.hasAnotherPage,
             });
-            if (filtersChanged && response.numPages) {
+            if (filtersChanged && response.numPages !== undefined) {
                 dispatch({
                     type: ActionType$6.SetNumPages,
                     numPages: response.numPages,
