@@ -38,6 +38,9 @@ import ErrorWithCode from './errors/ErrorWithCode';
 import MINUTE_IN_MS from './constants/MINUTE_IN_MS';
 import HOUR_IN_MS from './constants/HOUR_IN_MS';
 import DAY_IN_MS from './constants/DAY_IN_MS';
+import LOG_REVIEW_ROUTE_PATH_PREFIX from './constants/LOG_REVIEW_ROUTE_PATH_PREFIX';
+import LOG_ROUTE_PATH from './constants/LOG_ROUTE_PATH';
+import LOG_REVIEW_STATUS_ROUTE from './constants/LOG_REVIEW_STATUS_ROUTE';
 
 // Import dynamic constants
 import DynamicWord from './dynamicConstants/DynamicWord';
@@ -155,6 +158,9 @@ export {
   MINUTE_IN_MS,
   HOUR_IN_MS,
   DAY_IN_MS,
+  LOG_REVIEW_ROUTE_PATH_PREFIX,
+  LOG_ROUTE_PATH,
+  LOG_REVIEW_STATUS_ROUTE,
   // Dynamic Constants
   DynamicWord,
   // Helpers
