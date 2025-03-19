@@ -1,6 +1,6 @@
 import * as React from 'react';
 import React__default, { useState, useRef, useEffect, useReducer, forwardRef, useContext, useLayoutEffect, createContext, useMemo, useCallback, Component, Fragment } from 'react';
-import { faExclamationTriangle, faHourglassEnd, faCircle, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faCalendar, faTag, faHammer, faList, faTimes, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle, faCircle, faHourglassEnd, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faCalendar, faTag, faHammer, faList, faTimes, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
 
@@ -872,6 +872,98 @@ function requireReactDom_development () {
 var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDom.exports);
 
 /**
+ * Loading spinner/indicator
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Style ------------------------------- */
+/*------------------------------------------------------------------------*/
+const style$a = `
+/* Container fades in */
+.LoadingSpinner-container {
+  animation-name: LoadingSpinner-container-fade-in;
+  animation-duration: 0.3s;
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
+  animation-timing-function: ease-out;
+}
+@keyframes LoadingSpinner-container-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Blips */
+.LoadingSpinner-blip-1,
+.LoadingSpinner-blip-2,
+.LoadingSpinner-blip-3,
+.LoadingSpinner-blip-4 {
+  font-size: 1.8rem;
+  opacity: 0.6;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* First Blip */
+.LoadingSpinner-blip-1 {
+  animation: LoadingSpinner-pop-animation 2s infinite;
+}
+
+/* Second Blip */
+.LoadingSpinner-blip-2 {
+  animation: LoadingSpinner-pop-animation 2s infinite;
+  -webkit-animation-delay: 0.1s;
+  animation-delay: 0.1s;
+}
+
+/* Third Blip */
+.LoadingSpinner-blip-3 {
+  animation: LoadingSpinner-pop-animation 2s infinite;
+  animation-delay: 0.2s;
+}
+
+/* Fourth Blip */
+.LoadingSpinner-blip-4 {
+  animation: LoadingSpinner-pop-animation 2s infinite;
+  animation-delay: 0.3s;
+}
+
+/* Pop Animation for Each Blip */
+@keyframes LoadingSpinner-pop-animation {
+  0%  {
+    transform: scale(1.0);
+  }
+  10% {
+    transform: scale(1.5);
+  }
+  30% {
+    transform: scale(1.0);
+  }
+  100% {
+    transform: scale(1.0);
+  }
+}
+`;
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const LoadingSpinner = () => {
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    // Add all four blips to a container
+    return (React__default.createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
+        React__default.createElement("style", null, style$a),
+        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-1 me-1" }),
+        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-2 me-1" }),
+        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-3 me-1" }),
+        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-4" })));
+};
+
+/**
  * Wait for a certain number of ms
  * @author Gabe Abrams
  * @param ms number of ms to wait
@@ -1014,6 +1106,7 @@ const BASE_Z_INDEX = 1000000000;
 const BASE_Z_INDEX_ON_TOP = 2000000000;
 // Constants
 const MS_TO_ANIMATE = 200; // Animation duration
+const MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR = 1000;
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes = {
     [ModalType$1.Okay]: [
@@ -1127,7 +1220,7 @@ const getNextUniqueId = () => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$a = `
+const style$9 = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -1199,13 +1292,14 @@ const Modal = (props) => {
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
-    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, largeTitle, children, onClose, dontAllowBackdropExit, dontShowXButton, onTopOfOtherModals, } = props;
+    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, largeTitle, children, onClose, dontAllowBackdropExit, dontShowXButton, onTopOfOtherModals, isLoading, isLoadingCancelable, } = props;
     // Determine if no header either
     const noHeader = (!title && type === ModalType$1.NoButtons);
     /* -------------- State ------------- */
     // True if animation is in use
     const [animatingIn, setAnimatingIn] = useState(true);
     const [animatingPop, setAnimatingPop] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     /* -------------- Refs -------------- */
     // Keep track of whether modal is still mounted
     const mounted = useRef(false);
@@ -1231,6 +1325,14 @@ const Modal = (props) => {
             // Update to state after animated in
             if (mounted.current) {
                 setAnimatingIn(false);
+            }
+            if (isLoading) {
+                // wait before showing modal
+                yield waitMs(MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR);
+                setShowModal(true);
+            }
+            else {
+                setShowModal(true);
             }
         }))();
         return () => {
@@ -1298,6 +1400,9 @@ const Modal = (props) => {
     else if (animatingPop) {
         animationClass = 'Modal-animating-pop';
     }
+    // default to show close button when not loading and not show close button when loading
+    // unless downShowXButton or isLoadingCancelable
+    const showCloseButton = onClose && !dontShowXButton && !(isLoading && !isLoadingCancelable);
     // Render the modal
     const contentToRender = (React__default.createElement("div", { className: "modal show", tabIndex: -1, style: {
             zIndex: baseZIndex,
@@ -1306,7 +1411,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default.createElement("style", null, style$a),
+        React__default.createElement("style", null, style$9),
         React__default.createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: baseZIndex + 1,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -1324,7 +1429,7 @@ const Modal = (props) => {
                 // Handle close
                 handleClose(ModalButtonType$1.Cancel);
             }) }),
-        React__default.createElement("div", { className: `modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`, style: {
+        showModal && (React__default.createElement("div", { className: `modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`, style: {
                 zIndex: baseZIndex + 2,
                 // Override sizes for even larger for XL
                 width: (size === ModalSize$1.ExtraLarge
@@ -1356,7 +1461,7 @@ const Modal = (props) => {
                                 ? '1.6rem'
                                 : undefined),
                         } }, title),
-                    (onClose && !dontShowXButton) && (React__default.createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
+                    showCloseButton && (React__default.createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
                             backgroundColor: (isDarkModeOn()
                                 ? 'white'
                                 : undefined),
@@ -1364,14 +1469,16 @@ const Modal = (props) => {
                             // Handle close
                             handleClose(ModalButtonType$1.Cancel);
                         } })))),
-                children && (React__default.createElement("div", { className: "modal-body", style: {
+                React__default.createElement("div", { className: "modal-body", style: {
                         color: (isDarkModeOn()
                             ? 'white'
                             : undefined),
                         backgroundColor: (isDarkModeOn()
                             ? '#444'
                             : undefined),
-                    } }, children)),
+                    } }, isLoading ? (React__default.createElement(React__default.Fragment, null,
+                    React__default.createElement(LoadingSpinner, null),
+                    React__default.createElement("span", { className: "sr-only" }, "Content loading"))) : (children)),
                 footer && (React__default.createElement("div", { className: "modal-footer pt-1 pb-1", style: {
                         color: (isDarkModeOn()
                             ? 'white'
@@ -1382,7 +1489,7 @@ const Modal = (props) => {
                         borderTop: (isDarkModeOn()
                             ? '0.1rem solid gray'
                             : undefined),
-                    } }, footer))))));
+                    } }, footer)))))));
     // Determine which portal to use
     const portalNumber = id.current % NUM_MODAL_PORTALS;
     // Render in a portal
@@ -1953,7 +2060,7 @@ const showSessionExpiredMessage = () => __awaiter(void 0, void 0, void 0, functi
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$9 = `
+const style$8 = `
   .AppWrapper-leave-to-url-notice {
     opacity: 0;
 
@@ -2167,103 +2274,11 @@ const AppWrapper = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement(React__default.Fragment, null,
-        React__default.createElement("style", null, style$9),
+        React__default.createElement("style", null, style$8),
         React__default.createElement("style", null, tooltipStyle),
         modal,
         customModalPortals,
         body));
-};
-
-/**
- * Loading spinner/indicator
- * @author Gabe Abrams
- */
-/*------------------------------------------------------------------------*/
-/* -------------------------------- Style ------------------------------- */
-/*------------------------------------------------------------------------*/
-const style$8 = `
-/* Container fades in */
-.LoadingSpinner-container {
-  animation-name: LoadingSpinner-container-fade-in;
-  animation-duration: 0.3s;
-  animation-delay: 0.4s;
-  animation-fill-mode: both;
-  animation-timing-function: ease-out;
-}
-@keyframes LoadingSpinner-container-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Blips */
-.LoadingSpinner-blip-1,
-.LoadingSpinner-blip-2,
-.LoadingSpinner-blip-3,
-.LoadingSpinner-blip-4 {
-  font-size: 1.8rem;
-  opacity: 0.6;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-/* First Blip */
-.LoadingSpinner-blip-1 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-}
-
-/* Second Blip */
-.LoadingSpinner-blip-2 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  -webkit-animation-delay: 0.1s;
-  animation-delay: 0.1s;
-}
-
-/* Third Blip */
-.LoadingSpinner-blip-3 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  animation-delay: 0.2s;
-}
-
-/* Fourth Blip */
-.LoadingSpinner-blip-4 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  animation-delay: 0.3s;
-}
-
-/* Pop Animation for Each Blip */
-@keyframes LoadingSpinner-pop-animation {
-  0%  {
-    transform: scale(1.0);
-  }
-  10% {
-    transform: scale(1.5);
-  }
-  30% {
-    transform: scale(1.0);
-  }
-  100% {
-    transform: scale(1.0);
-  }
-}
-`;
-/*------------------------------------------------------------------------*/
-/* ------------------------------ Component ----------------------------- */
-/*------------------------------------------------------------------------*/
-const LoadingSpinner = () => {
-    /*------------------------------------------------------------------------*/
-    /* ------------------------------- Render ------------------------------- */
-    /*------------------------------------------------------------------------*/
-    // Add all four blips to a container
-    return (React__default.createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default.createElement("style", null, style$8),
-        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-1 me-1" }),
-        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-2 me-1" }),
-        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-3 me-1" }),
-        React__default.createElement(FontAwesomeIcon, { icon: faCircle, className: "LoadingSpinner-blip-4" })));
 };
 
 /**
