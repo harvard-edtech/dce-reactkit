@@ -83,8 +83,6 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
 
   let startYear = today.year;
   let startMonth = today.month;
-  // let endYear = today.year;
-  // let endMonth = today.month;
 
   // Don't allow past or future dates
   if (dontAllowPast && dontAllowFuture) {
@@ -178,8 +176,8 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
       </option>,
     );
 
+    // This is the currently selected month
     if (month === choice.month) {
-      // This is the currently selected month
       // Create day options
       choice.days.forEach((dayChoice) => {
         const ordinal = getOrdinal(dayChoice);
