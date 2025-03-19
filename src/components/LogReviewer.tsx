@@ -1182,7 +1182,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               year={dateFilterState.startDate.year}
               month={dateFilterState.startDate.month}
               day={dateFilterState.startDate.day}
-              chooseFromPast
+              dontAllowFuture
               numMonthsToShow={36}
               onChange={(month, day, year) => {
                 dateFilterState.startDate = { month, day, year };
@@ -1198,7 +1198,7 @@ const LogReviewer: React.FC<Props> = (props) => {
               year={dateFilterState.endDate.year}
               month={dateFilterState.endDate.month}
               day={dateFilterState.endDate.day}
-              chooseFromPast
+              dontAllowFuture
               numMonthsToShow={12}
               onChange={(month, day, year) => {
                 if (

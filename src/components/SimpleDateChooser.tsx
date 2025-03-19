@@ -45,9 +45,9 @@ type Props = {
   // (max is 12, default is 6 in the past and 6 in the future)
   numMonthsToShow?: number,
   // If true, the user isn't allowed to select dates in the past
-  dontAllowPast?: false,
+  dontAllowPast?: boolean,
   // If true, the user isn't allowed to select dates in the future
-  dontAllowFuture?: false
+  dontAllowFuture?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
