@@ -227,6 +227,7 @@ declare const Modal: React$1.FC<ModalProps>;
 type Props$j = {
     title: React$1.ReactNode;
     children: React$1.ReactNode;
+    topRightChildren?: React$1.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
@@ -412,6 +413,7 @@ type Props$9 = {
      */
     onChanged: (updatedItems: PickableItem[]) => void;
     noBottomMargin?: boolean;
+    hideSelectAllOrNoneButtons?: boolean;
 };
 declare const ItemPicker: React$1.FC<Props$9>;
 
