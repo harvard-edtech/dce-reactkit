@@ -55,7 +55,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK34
+// Highest error code = DRK36
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -66,6 +66,8 @@ var ReactKitErrorCode;
     ReactKitErrorCode["NoCode"] = "DRK2";
     ReactKitErrorCode["SessionExpired"] = "DRK3";
     ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
+    ReactKitErrorCode["SimpleDateChooserInvalidDateRange"] = "DRK35";
+    ReactKitErrorCode["SimpleDateChooserInvalidNumMonths"] = "DRK36";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -2547,6 +2549,19 @@ const ButtonInputGroup = (props) => {
                 : children))));
 };
 
+// Constants
+const ORDINALS = ['th', 'st', 'nd', 'rd'];
+/**
+ * Get a number's ordinal
+ * @author Gabe Abrams
+ * @param num the number being analyzed
+ * @returns ordinal
+ */
+const getOrdinal = (num) => {
+    var _a, _b;
+    return ((_b = (_a = ORDINALS[(num - 20) % 10]) !== null && _a !== void 0 ? _a : ORDINALS[num]) !== null && _b !== void 0 ? _b : ORDINALS[0]);
+};
+
 const monthNames = [
     { short: 'Jan', full: 'January' },
     { short: 'Feb', full: 'February' },
@@ -2573,19 +2588,6 @@ const monthNames = [
 const getMonthName = (month) => {
     var _a;
     return ((_a = monthNames[month - 1]) !== null && _a !== void 0 ? _a : monthNames[0]);
-};
-
-// Constants
-const ORDINALS = ['th', 'st', 'nd', 'rd'];
-/**
- * Get a number's ordinal
- * @author Gabe Abrams
- * @param num the number being analyzed
- * @returns ordinal
- */
-const getOrdinal = (num) => {
-    var _a, _b;
-    return ((_b = (_a = ORDINALS[(num - 20) % 10]) !== null && _a !== void 0 ? _a : ORDINALS[num]) !== null && _b !== void 0 ? _b : ORDINALS[0]);
 };
 
 /**
@@ -2651,6 +2653,7 @@ const getTimeInfoInET = (dateOrTimestamp) => {
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
+ * @author Gardeniu Liu
  */
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
@@ -2660,7 +2663,7 @@ const SimpleDateChooser = (props) => {
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { ariaLabel, name, onChange, chooseFromPast, numMonthsToShow = 6, } = props;
+    const { ariaLabel, name, onChange, numMonthsToShow = 6, dontAllowFuture, dontAllowPast, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -2672,14 +2675,28 @@ const SimpleDateChooser = (props) => {
     const choices = [];
     let startYear = today.year;
     let startMonth = today.month;
-    if (chooseFromPast) {
+    // Don't allow past or future dates
+    if (dontAllowPast && dontAllowFuture) {
+        throw new ErrorWithCode('No past or future dates allowed', ReactKitErrorCode$1.SimpleDateChooserInvalidDateRange);
+    }
+    // Require numMonthsToShow to be positive
+    if (numMonthsToShow <= 0) {
+        throw new ErrorWithCode('numMonthsToShow must be positive', ReactKitErrorCode$1.SimpleDateChooserInvalidNumMonths);
+    }
+    // Recalculate startMonth and startYear when allowing past dates
+    if (!dontAllowPast) {
         startMonth -= Math.max(0, numMonthsToShow - 1);
         while (startMonth <= 0) {
             startMonth += 12;
             startYear -= 1;
         }
     }
-    for (let i = 0; i < numMonthsToShow; i++) {
+    // Calculate total number of months to show
+    let totalMonthsToShow = numMonthsToShow;
+    if (!dontAllowPast && !dontAllowFuture) {
+        totalMonthsToShow = totalMonthsToShow * 2 - 1;
+    }
+    for (let i = 0; i < totalMonthsToShow; i++) {
         // Get month and year info
         const unmoddedMonth = (startMonth + i);
         let month = unmoddedMonth;
@@ -2698,23 +2715,25 @@ const SimpleDateChooser = (props) => {
         // Figure out which days are allowed
         const days = [];
         const numDaysInMonth = (new Date(year, month, 0)).getDate();
-        if (chooseFromPast) {
-            // Past selection
-            const numDaysToAdd = ((month === today.month)
-                ? today.day // Current month, only add up to today
-                : numDaysInMonth // Past month, add all days
-            );
-            for (let day = 1; day <= numDaysToAdd; day++) {
-                days.push(day);
+        // Current month
+        if (month === today.month && year === today.year) {
+            // Past selection: add all previous days of the month
+            if (!dontAllowPast) {
+                for (let day = 1; day < today.day; day++) {
+                    days.push(day);
+                }
+            }
+            days.push(today.day); // Add current day
+            // Future selection: add all remaining days of the month
+            if (!dontAllowFuture) {
+                for (let day = today.day + 1; day <= numDaysInMonth; day++) {
+                    days.push(day);
+                }
             }
         }
-        else {
-            // Future selection: add all remaining days of the month
-            const firstDay = (month === today.month
-                ? today.day // Current month: start at current date
-                : 1 // Future month: start at beginning of month
-            );
-            for (let day = firstDay; day <= numDaysInMonth; day++) {
+        else { // Past or future month
+            // Include all days in the month
+            for (let day = 1; day <= numDaysInMonth; day++) {
                 days.push(day);
             }
         }
@@ -2734,8 +2753,8 @@ const SimpleDateChooser = (props) => {
         monthOptions.push(React__default["default"].createElement("option", { key: `${choice.year}-${choice.month}`, value: `${choice.month}-${choice.year}`, "aria-label": `choose ${choice.choiceName}`, onSelect: () => {
                 onChange(choice.month, choice.days[0], choice.year);
             } }, choice.choiceName));
+        // This is the currently selected month
         if (month === choice.month) {
-            // This is the currently selected month
             // Create day options
             choice.days.forEach((dayChoice) => {
                 const ordinal = getOrdinal(dayChoice);
@@ -2755,6 +2774,125 @@ const SimpleDateChooser = (props) => {
                 // Only change the day
                 onChange(month, Number.parseInt(e.target.value, 10), year);
             } }, dayOptions)));
+};
+
+/**
+ * Pad a number with zeros on the left (e.g. 5 becomes 05 with 2 digit padding)
+ * @author Gabe Abrams
+ * @param num the number to pad
+ * @param numDigits the minimum number of digits before the decimal
+ * @returns padded number
+ */
+const padZerosLeft = (num, numDigits) => {
+    // Convert to string
+    let out = String(num);
+    // Add zeros
+    while (out.split('.')[0].length < numDigits) {
+        out = `0${out}`;
+    }
+    // Return
+    return out;
+};
+
+/**
+ * A very simple, lightweight time chooser
+ * @author Gardenia Liu
+ */
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Constants ----------------------------- */
+/*------------------------------------------------------------------------*/
+// Allowed intervals between options
+const ALLOWED_INTERVALS = [15, 30, 60]; // min
+// Default interval to use if an unsupported interval is passed in
+const DEFAULT_INTERVAL = ALLOWED_INTERVALS[0]; // min
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const SimpleTimeChooser = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    const { ariaLabel, name, hour, minute, onChange, } = props;
+    let { intervalMin = DEFAULT_INTERVAL, } = props;
+    // Use default interval if not supported
+    if (ALLOWED_INTERVALS.includes(intervalMin)) {
+        intervalMin = DEFAULT_INTERVAL;
+    }
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Component Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Convert number of minutes since midnight into 24hour and minute format
+     * @author Gabe Abrams
+     * @param minSinceMidnight total minutes since midnight
+     * @returns hours (24) and minutes
+     */
+    const convertMinSinceMidnightToHoursAndMin = (minSinceMidnight) => {
+        return {
+            hours: Math.floor(minSinceMidnight / 60),
+            minutes: minSinceMidnight % 60,
+        };
+    };
+    /**
+     * Convert time in minutes into HH:MM format
+     * @author Gardenia Liu
+     * @param totalMinutes total minutes since midnight
+     * @returns formatted time string
+     */
+    const formatTime = (totalMinutes) => {
+        // Handle special cases
+        if (totalMinutes === 0) {
+            return '12:00 Midnight';
+        }
+        if (totalMinutes === 12 * 60) {
+            return '12:00 Noon';
+        }
+        // All normal cases:
+        const timeInfo = convertMinSinceMidnightToHoursAndMin(totalMinutes);
+        let { hours } = timeInfo;
+        const { minutes } = timeInfo;
+        // Process 24hr -> 12hr
+        const isAM = (hours < 12);
+        if (hours === 0) {
+            hours = 12;
+        }
+        else if (hours > 12) {
+            hours %= 12;
+        }
+        // Pad with zeros
+        const paddedMinutes = padZerosLeft(minutes, 2);
+        // Assemble time string
+        return `${hours}:${paddedMinutes} ${isAM ? 'AM' : 'PM'}`;
+    };
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    // Generate list of time options
+    const times = [];
+    for (let time = 0; time < 24 * 60; time += intervalMin) {
+        times.push(formatTime(time));
+    }
+    // Create choice options
+    const selectedTimeMin = hour * 60 + minute; // minutes since midnight
+    const timeOptions = times.map((timeString, timeIndex) => {
+        // Create time option
+        const numMinutesForChoice = timeIndex * intervalMin;
+        // Render the option
+        return (React__default["default"].createElement("option", { key: numMinutesForChoice, value: numMinutesForChoice, "aria-label": `choose ${timeString}` }, timeString));
+    });
+    return (React__default["default"].createElement("div", { className: "SimpleTimeChooser-container", "aria-label": `time chooser with selected time: ${formatTime(selectedTimeMin)}` },
+        React__default["default"].createElement("select", { "aria-label": `time for ${ariaLabel}`, className: "custom-select d-inline-block", style: { width: 'auto' }, id: `SimpleTimeChooser-${name}-time`, value: selectedTimeMin, onChange: (e) => {
+                // Parse selector value (string)
+                const newTime = Number.parseInt(e.target.value, 10);
+                // Convert minutes since midnight to hour and minute
+                const timeInfo = convertMinSinceMidnightToHoursAndMin(newTime);
+                // Notify parent of change
+                onChange(timeInfo.hours, timeInfo.minutes);
+            } }, timeOptions)));
 };
 
 /**
@@ -15339,24 +15477,6 @@ const padDecimalZeros = (num, numDigits) => {
 };
 
 /**
- * Pad a number with zeros on the left (e.g. 5 becomes 05 with 2 digit padding)
- * @author Gabe Abrams
- * @param num the number to pad
- * @param numDigits the minimum number of digits before the decimal
- * @returns padded number
- */
-const padZerosLeft = (num, numDigits) => {
-    // Convert to string
-    let out = String(num);
-    // Add zeros
-    while (out.split('.')[0].length < numDigits) {
-        out = `0${out}`;
-    }
-    // Return
-    return out;
-};
-
-/**
  * Stub a server endpoint response
  * @author Gabe Abrams
  * @param opts object containing all arguments
@@ -16268,6 +16388,7 @@ exports.PopSuccessMark = PopSuccessMark;
 exports.RadioButton = RadioButton;
 exports.ReactKitErrorCode = ReactKitErrorCode$1;
 exports.SimpleDateChooser = SimpleDateChooser;
+exports.SimpleTimeChooser = SimpleTimeChooser;
 exports.TabBox = TabBox;
 exports.ToggleSwitch = ToggleSwitch;
 exports.Tooltip = Tooltip;
