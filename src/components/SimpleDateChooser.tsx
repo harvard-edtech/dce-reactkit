@@ -1,6 +1,7 @@
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
+ * @author Gardeniu Liu
  */
 
 // Import React
@@ -35,10 +36,9 @@ type Props = {
   onChange: (month: number, day: number, year: number) => void,
   // Number of months to allow the user to choose from
   // (max is 12, default is 6)
+  // TODO: update description
   numMonthsToShow?: number,
-  // If true, instead of showing numMonthsToShow months into the future,
-  // show numMonthsToShow months into the past
-  chooseFromPast?: boolean,
+  // TODO: dontAllowPast, dontAllowFuture
 };
 
 /*------------------------------------------------------------------------*/
@@ -56,7 +56,6 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     ariaLabel,
     name,
     onChange,
-    chooseFromPast,
     numMonthsToShow = 6,
   } = props;
 
@@ -76,6 +75,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     days: number[],
     year: number,
   }[] = [];
+  // TODO: update logic to be able to generate either/or/and past + future
   let startYear = today.year;
   let startMonth = today.month;
   if (chooseFromPast) {
