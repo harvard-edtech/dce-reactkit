@@ -314,8 +314,8 @@ type Props$g = {
      */
     onChange: (month: number, day: number, year: number) => void;
     numMonthsToShow?: number;
-    dontAllowPast?: false;
-    dontAllowFuture?: false;
+    dontAllowPast?: boolean;
+    dontAllowFuture?: boolean;
 };
 declare const SimpleDateChooser: React$1.FC<Props$g>;
 

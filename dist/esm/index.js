@@ -4963,14 +4963,14 @@ const LogReviewer = (props) => {
         if (expandedFilterDrawer) {
             if (expandedFilterDrawer === FilterDrawer.Date) {
                 filterDrawer = (React__default.createElement(TabBox, { title: "Date" },
-                    React__default.createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, chooseFromPast: true, numMonthsToShow: 36, onChange: (month, day, year) => {
+                    React__default.createElement(SimpleDateChooser, { ariaLabel: "filter start date", name: "filter-start-date", year: dateFilterState.startDate.year, month: dateFilterState.startDate.month, day: dateFilterState.startDate.day, dontAllowFuture: true, numMonthsToShow: 36, onChange: (month, day, year) => {
                             dateFilterState.startDate = { month, day, year };
                             handleDateRangeUpdated(dateFilterState);
                         } }),
                     ' ',
                     "to",
                     ' ',
-                    React__default.createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, chooseFromPast: true, numMonthsToShow: 12, onChange: (month, day, year) => {
+                    React__default.createElement(SimpleDateChooser, { ariaLabel: "filter end date", name: "filter-end-date", year: dateFilterState.endDate.year, month: dateFilterState.endDate.month, day: dateFilterState.endDate.day, dontAllowFuture: true, numMonthsToShow: 12, onChange: (month, day, year) => {
                             if (year < dateFilterState.startDate.year
                                 || (year === dateFilterState.startDate.year
                                     && month < dateFilterState.startDate.month)
