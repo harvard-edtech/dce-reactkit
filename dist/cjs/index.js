@@ -1355,7 +1355,9 @@ const Modal = (props) => {
             if (isLoading) {
                 // wait before showing modal
                 yield waitMs(MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR);
-                setShowModal(true);
+                if (mounted.current) {
+                    setShowModal(true);
+                }
             }
             else {
                 setShowModal(true);
@@ -1428,7 +1430,13 @@ const Modal = (props) => {
     }
     // default to show close button when not loading and not show close button when loading
     // unless downShowXButton or isLoadingCancelable
-    const showCloseButton = onClose && !dontShowXButton && !(isLoading && !isLoadingCancelable);
+    const showCloseButton = (
+    // The modal must have an onClose function
+    onClose
+        // ...and the close button is allowed to be visible
+        && !dontShowXButton
+        // ...and should not be shown if the modal is loading and not cancelable
+        && !(isLoading && !isLoadingCancelable));
     // Render the modal
     const contentToRender = (React__default["default"].createElement("div", { className: "modal show", tabIndex: -1, style: {
             zIndex: baseZIndex,
@@ -1502,9 +1510,11 @@ const Modal = (props) => {
                         backgroundColor: (isDarkModeOn()
                             ? '#444'
                             : undefined),
-                    } }, isLoading ? (React__default["default"].createElement(React__default["default"].Fragment, null,
-                    React__default["default"].createElement(LoadingSpinner, null),
-                    React__default["default"].createElement("span", { className: "sr-only" }, "Content loading"))) : (children)),
+                    } }, isLoading
+                    ? (React__default["default"].createElement(React__default["default"].Fragment, null,
+                        React__default["default"].createElement(LoadingSpinner, null),
+                        React__default["default"].createElement("span", { className: "sr-only" }, "Content loading")))
+                    : children),
                 footer && (React__default["default"].createElement("div", { className: "modal-footer pt-1 pb-1", style: {
                         color: (isDarkModeOn()
                             ? 'white'
