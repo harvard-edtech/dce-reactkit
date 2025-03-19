@@ -18,6 +18,8 @@ declare enum ReactKitErrorCode {
     NotAllowedToReviewLogs = "DRK11",
     ThemeCheckedBeforeReactKitReady = "DRK12",
     SessionExpiredMessageGottenBeforeReactKitReady = "DRK13",
+    SimpleDateChooserInvalidDateRange = "DRK19",
+    SimpleDateChooserInvalidNumMonths = "DRK20",
     NotConnected = "DRK14",
     SelfSigned = "DRK15",
     ResponseParseError = "DRK16"

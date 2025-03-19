@@ -2,6 +2,6 @@
  * Loading spinner/indicator
  * @author Gabe Abrams
  */
-/// <reference types="react" />
-declare const LoadingSpinner: () => JSX.Element;
+import React from 'react';
+declare const LoadingSpinner: () => React.JSX.Element;
 export default LoadingSpinner;
