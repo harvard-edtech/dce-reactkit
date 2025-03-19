@@ -1,4 +1,4 @@
-// Highest error code = DRK18
+// Highest error code = DRK20
 
 /**
  * List of error codes built into the react kit
@@ -20,6 +20,8 @@ enum ReactKitErrorCode {
   NotAllowedToReviewLogs = 'DRK11',
   ThemeCheckedBeforeReactKitReady = 'DRK12',
   SessionExpiredMessageGottenBeforeReactKitReady = 'DRK13',
+  SimpleDateChooserInvalidDateRange = 'DRK19',
+  SimpleDateChooserInvalidNumMonths = 'DRK20',
 
   // Server-to-server requests
   NotConnected = 'DRK14',
