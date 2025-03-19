@@ -34,7 +34,8 @@ type Props = {
 /* ------------------------------ Constants ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-// TODO: add supported intervals and default interval?
+const allowedIntervals = [15, 30, 60];
+let safeIntervalMin = 15;
 
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
@@ -53,9 +54,13 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
     hour,
     minute,
     onChange,
+    intervalMin = 15,
   } = props;
 
   // Detect interval, set to 15min if not supported
+  if (allowedIntervals.includes(intervalMin)) {
+    safeIntervalMin = intervalMin;
+  }
 
   /*------------------------------------------------------------------------*/
   /* ------------------------------- Render ------------------------------- */
@@ -65,11 +70,74 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
   /* --------------- Main UI -------------- */
   /*----------------------------------------*/
 
-  // TODO: generate choices
+  // Helper function: Convert time in minutes into HH:MM format
+  const formatTime = (totalMinutes: number): string => {
+    if (totalMinutes === 0) {
+      return '12:00 Midnight'
+    } else if (totalMinutes === 12*60) {
+      return '12:00 Noon'
+    }
+
+    let hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    let period = 'AM';
+    if (hours >= 12) {
+      period = 'PM';
+    }
+    if (hours === 0) {
+      hours = 12;
+    } else if (hours > 12) {
+      hours = hours % 12;
+    }
+
+    const paddedHours = hours.toString().padStart(2, '0');
+    const paddedMinutes = minutes.toString().padStart(2, '0');
+    return `${paddedHours}:${paddedMinutes} ${period}`;
+  }
+
+  const times = [];
+  for (let time = 0; time < 24*60; time+= safeIntervalMin) {
+    times.push(formatTime(time));
+  }
+
+  // Create choice options
+  const selectedTime = hour * 60 + minute;
+  const timeOptions: React.ReactNode[] = [];
+  times.forEach((timeString, timeIndex) => {
+    // Create time option
+    const optionValue = timeIndex * safeIntervalMin;
+    timeOptions.push(
+      <option
+        key={`time-${timeIndex}`}
+        value={optionValue}
+        aria-label={`choose ${timeString}`}
+      >
+        {timeString}
+      </option>,
+    );
+  });
 
   return (
-    <div className="SimpleTimeChooser-container">
-      Nothing here yet
+    <div
+      className="SimpleTimeChooser-container"
+      aria-label={`time chooser with selected time: ${selectedTime}`}
+    >
+      {/* Time Chooser */}
+      <select
+        aria-label={`time for ${ariaLabel}`}
+        className="custom-select d-inline-block"
+        style={{ width: 'auto' }}
+        id={`SimpleTimeChooser-${name}-time`}
+        value={selectedTime}
+        onChange={(e) => {
+          const newTime = Number(e.target.value);
+          const newHour = Math.floor(newTime / 60);
+          const newMinute = newTime % 60;
+          onChange(newHour, newMinute);
+        }}
+      >
+        {timeOptions}
+      </select>
     </div>
   );
 };
