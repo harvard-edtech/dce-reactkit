@@ -6,11 +6,17 @@
 
 // Import React
 import React from 'react';
-import getMonthName from '../helpers/getMonthName';
 
 // Import helpers
 import getOrdinal from '../helpers/getOrdinal';
+import getMonthName from '../helpers/getMonthName';
 import getTimeInfoInET from '../helpers/getTimeInfoInET';
+
+// Import classes
+import ErrorWithCode from '../errors/ErrorWithCode';
+
+// Import types
+import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
@@ -86,8 +92,20 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
 
   // Don't allow past or future dates
   if (dontAllowPast && dontAllowFuture) {
-    throw new Error("No past or future dates allowed");
+    throw new ErrorWithCode(
+      'No past or future dates allowed',
+      ReactKitErrorCode.SimpleDateChooserInvalidDateRange,
+    );
   }
+
+  // Require numMonthsToShow to be positive
+  if (numMonthsToShow <= 0) {
+    throw new ErrorWithCode(
+      'numMonthsToShow must be positive',
+      ReactKitErrorCode.SimpleDateChooserInvalidNumMonths,
+    );
+  }
+
   // Recalculate startMonth and startYear when allowing past dates
   if (!dontAllowPast) {
     startMonth -= Math.max(0, numMonthsToShow - 1);
