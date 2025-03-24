@@ -27,7 +27,6 @@ export default [
       typescript({ tsconfig: "./tsconfig.json" }),
       sourcemaps(),
     ],
-    inlineDynamicImports: true,
     external: [
       ...Object.keys(packageJson.dependencies || {}),
       ...Object.keys(packageJson.peerDependencies || {}),
@@ -37,7 +36,6 @@ export default [
     input: "dist/esm/types/index.d.ts",
     output: [{ file: "dist/index.d.ts", format: "esm" }],
     plugins: [dts()],
-    inlineDynamicImports: true,
     external: [
       ...Object.keys(packageJson.dependencies || {}),
       ...Object.keys(packageJson.peerDependencies || {}),
