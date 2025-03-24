@@ -91,6 +91,7 @@ import mapAsync from './helpers/asyncArrayFunctions/mapAsync';
 import someAsync from './helpers/asyncArrayFunctions/someAsync';
 import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
+import getWordCount from './helpers/getWordCount';
 
 // Import types
 import ParamType from './types/ParamType';
@@ -204,6 +205,7 @@ export {
   someAsync,
   capitalize,
   shuffleArray,
+  getWordCount,
   // Client helpers
   initClient,
   visitServerEndpoint,

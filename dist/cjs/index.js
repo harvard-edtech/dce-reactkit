@@ -898,6 +898,98 @@ function requireReactDom_development () {
 var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDom.exports);
 
 /**
+ * Loading spinner/indicator
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Style ------------------------------- */
+/*------------------------------------------------------------------------*/
+const style$a = `
+/* Container fades in */
+.LoadingSpinner-container {
+  animation-name: LoadingSpinner-container-fade-in;
+  animation-duration: 0.3s;
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
+  animation-timing-function: ease-out;
+}
+@keyframes LoadingSpinner-container-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Blips */
+.LoadingSpinner-blip-1,
+.LoadingSpinner-blip-2,
+.LoadingSpinner-blip-3,
+.LoadingSpinner-blip-4 {
+  font-size: 1.8rem;
+  opacity: 0.6;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* First Blip */
+.LoadingSpinner-blip-1 {
+  animation: LoadingSpinner-pop-animation 2s infinite;
+}
+
+/* Second Blip */
+.LoadingSpinner-blip-2 {
+  animation: LoadingSpinner-pop-animation 2s infinite;
+  -webkit-animation-delay: 0.1s;
+  animation-delay: 0.1s;
+}
+
+/* Third Blip */
+.LoadingSpinner-blip-3 {
+  animation: LoadingSpinner-pop-animation 2s infinite;
+  animation-delay: 0.2s;
+}
+
+/* Fourth Blip */
+.LoadingSpinner-blip-4 {
+  animation: LoadingSpinner-pop-animation 2s infinite;
+  animation-delay: 0.3s;
+}
+
+/* Pop Animation for Each Blip */
+@keyframes LoadingSpinner-pop-animation {
+  0%  {
+    transform: scale(1.0);
+  }
+  10% {
+    transform: scale(1.5);
+  }
+  30% {
+    transform: scale(1.0);
+  }
+  100% {
+    transform: scale(1.0);
+  }
+}
+`;
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const LoadingSpinner = () => {
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    // Add all four blips to a container
+    return (React__default["default"].createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
+        React__default["default"].createElement("style", null, style$a),
+        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-1 me-1" }),
+        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-2 me-1" }),
+        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-3 me-1" }),
+        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-4" })));
+};
+
+/**
  * Wait for a certain number of ms
  * @author Gabe Abrams
  * @param ms number of ms to wait
@@ -1040,6 +1132,7 @@ const BASE_Z_INDEX = 1000000000;
 const BASE_Z_INDEX_ON_TOP = 2000000000;
 // Constants
 const MS_TO_ANIMATE = 200; // Animation duration
+const MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR = 1000;
 // Modal type to list of buttons
 const modalTypeToModalButtonTypes = {
     [ModalType$1.Okay]: [
@@ -1153,7 +1246,7 @@ const getNextUniqueId = () => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$a = `
+const style$9 = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -1225,13 +1318,14 @@ const Modal = (props) => {
     /*------------------------------------------------------------------------*/
     var _a;
     /* -------------- Props ------------- */
-    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, largeTitle, children, onClose, dontAllowBackdropExit, dontShowXButton, onTopOfOtherModals, } = props;
+    const { type = ModalType$1.NoButtons, size = ModalSize$1.Large, title, largeTitle, children, onClose, dontAllowBackdropExit, dontShowXButton, onTopOfOtherModals, isLoading, isLoadingCancelable, } = props;
     // Determine if no header either
     const noHeader = (!title && type === ModalType$1.NoButtons);
     /* -------------- State ------------- */
     // True if animation is in use
     const [animatingIn, setAnimatingIn] = React.useState(true);
     const [animatingPop, setAnimatingPop] = React.useState(false);
+    const [showModal, setShowModal] = React.useState(false);
     /* -------------- Refs -------------- */
     // Keep track of whether modal is still mounted
     const mounted = React.useRef(false);
@@ -1257,6 +1351,16 @@ const Modal = (props) => {
             // Update to state after animated in
             if (mounted.current) {
                 setAnimatingIn(false);
+            }
+            if (isLoading) {
+                // wait before showing modal
+                yield waitMs(MS_TO_WAIT_BEFORE_SHOWING_LOADING_INDICATOR);
+                if (mounted.current) {
+                    setShowModal(true);
+                }
+            }
+            else {
+                setShowModal(true);
             }
         }))();
         return () => {
@@ -1324,6 +1428,15 @@ const Modal = (props) => {
     else if (animatingPop) {
         animationClass = 'Modal-animating-pop';
     }
+    // default to show close button when not loading and not show close button when loading
+    // unless downShowXButton or isLoadingCancelable
+    const showCloseButton = (
+    // The modal must have an onClose function
+    onClose
+        // ...and the close button is allowed to be visible
+        && !dontShowXButton
+        // ...and should not be shown if the modal is loading and not cancelable
+        && !(isLoading && !isLoadingCancelable));
     // Render the modal
     const contentToRender = (React__default["default"].createElement("div", { className: "modal show", tabIndex: -1, style: {
             zIndex: baseZIndex,
@@ -1332,7 +1445,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default["default"].createElement("style", null, style$a),
+        React__default["default"].createElement("style", null, style$9),
         React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: baseZIndex + 1,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -1350,7 +1463,7 @@ const Modal = (props) => {
                 // Handle close
                 handleClose(ModalButtonType$1.Cancel);
             }) }),
-        React__default["default"].createElement("div", { className: `modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`, style: {
+        showModal && (React__default["default"].createElement("div", { className: `modal-dialog modal-${size} ${animationClass} modal-dialog-scrollable modal-dialog-centered`, style: {
                 zIndex: baseZIndex + 2,
                 // Override sizes for even larger for XL
                 width: (size === ModalSize$1.ExtraLarge
@@ -1382,7 +1495,7 @@ const Modal = (props) => {
                                 ? '1.6rem'
                                 : undefined),
                         } }, title),
-                    (onClose && !dontShowXButton) && (React__default["default"].createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
+                    showCloseButton && (React__default["default"].createElement("button", { type: "button", className: "Modal-x-button btn-close", "aria-label": "Close", style: {
                             backgroundColor: (isDarkModeOn()
                                 ? 'white'
                                 : undefined),
@@ -1390,14 +1503,18 @@ const Modal = (props) => {
                             // Handle close
                             handleClose(ModalButtonType$1.Cancel);
                         } })))),
-                children && (React__default["default"].createElement("div", { className: "modal-body", style: {
+                React__default["default"].createElement("div", { className: "modal-body", style: {
                         color: (isDarkModeOn()
                             ? 'white'
                             : undefined),
                         backgroundColor: (isDarkModeOn()
                             ? '#444'
                             : undefined),
-                    } }, children)),
+                    } }, isLoading
+                    ? (React__default["default"].createElement(React__default["default"].Fragment, null,
+                        React__default["default"].createElement(LoadingSpinner, null),
+                        React__default["default"].createElement("span", { className: "sr-only" }, "Content loading")))
+                    : children),
                 footer && (React__default["default"].createElement("div", { className: "modal-footer pt-1 pb-1", style: {
                         color: (isDarkModeOn()
                             ? 'white'
@@ -1408,7 +1525,7 @@ const Modal = (props) => {
                         borderTop: (isDarkModeOn()
                             ? '0.1rem solid gray'
                             : undefined),
-                    } }, footer))))));
+                    } }, footer)))))));
     // Determine which portal to use
     const portalNumber = id.current % NUM_MODAL_PORTALS;
     // Render in a portal
@@ -1979,7 +2096,7 @@ const showSessionExpiredMessage = () => __awaiter(void 0, void 0, void 0, functi
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$9 = `
+const style$8 = `
   .AppWrapper-leave-to-url-notice {
     opacity: 0;
 
@@ -2193,103 +2310,11 @@ const AppWrapper = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement("style", null, style$9),
+        React__default["default"].createElement("style", null, style$8),
         React__default["default"].createElement("style", null, tooltipStyle),
         modal,
         customModalPortals,
         body));
-};
-
-/**
- * Loading spinner/indicator
- * @author Gabe Abrams
- */
-/*------------------------------------------------------------------------*/
-/* -------------------------------- Style ------------------------------- */
-/*------------------------------------------------------------------------*/
-const style$8 = `
-/* Container fades in */
-.LoadingSpinner-container {
-  animation-name: LoadingSpinner-container-fade-in;
-  animation-duration: 0.3s;
-  animation-delay: 0.4s;
-  animation-fill-mode: both;
-  animation-timing-function: ease-out;
-}
-@keyframes LoadingSpinner-container-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Blips */
-.LoadingSpinner-blip-1,
-.LoadingSpinner-blip-2,
-.LoadingSpinner-blip-3,
-.LoadingSpinner-blip-4 {
-  font-size: 1.8rem;
-  opacity: 0.6;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-/* First Blip */
-.LoadingSpinner-blip-1 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-}
-
-/* Second Blip */
-.LoadingSpinner-blip-2 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  -webkit-animation-delay: 0.1s;
-  animation-delay: 0.1s;
-}
-
-/* Third Blip */
-.LoadingSpinner-blip-3 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  animation-delay: 0.2s;
-}
-
-/* Fourth Blip */
-.LoadingSpinner-blip-4 {
-  animation: LoadingSpinner-pop-animation 2s infinite;
-  animation-delay: 0.3s;
-}
-
-/* Pop Animation for Each Blip */
-@keyframes LoadingSpinner-pop-animation {
-  0%  {
-    transform: scale(1.0);
-  }
-  10% {
-    transform: scale(1.5);
-  }
-  30% {
-    transform: scale(1.0);
-  }
-  100% {
-    transform: scale(1.0);
-  }
-}
-`;
-/*------------------------------------------------------------------------*/
-/* ------------------------------ Component ----------------------------- */
-/*------------------------------------------------------------------------*/
-const LoadingSpinner = () => {
-    /*------------------------------------------------------------------------*/
-    /* ------------------------------- Render ------------------------------- */
-    /*------------------------------------------------------------------------*/
-    // Add all four blips to a container
-    return (React__default["default"].createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default["default"].createElement("style", null, style$8),
-        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-1 me-1" }),
-        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-2 me-1" }),
-        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-3 me-1" }),
-        React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-4" })));
 };
 
 /**
@@ -2323,7 +2348,9 @@ const style$7 = `
 
   /* Container for Title */
   .TabBox-title-container {
-    /* Place on Left */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: relative;
     left: 0;
     text-align: left;
@@ -2356,6 +2383,19 @@ const style$7 = `
     background: #fdfdfd;
   }
 
+  .TabBox-title-right-container {
+    display: flex;
+    flex-direction: row;
+    align-items: bottom;
+    height: 2.4rem;
+    overflow: visible;
+  }
+
+  .TabBox-title-right-contents {
+    margin-right: 0.5rem;
+    margin-bottom: 0.2rem;
+  }
+
   /* Make the TabBox's Children Appear Above Title if Overlap Occurs */
   .TabBox-children {
     position: relative;
@@ -2369,19 +2409,16 @@ const TabBox = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
-    /* -------------- Props ------------- */
-    const { title, children, noBottomPadding, noBottomMargin, } = props;
+    const { title, children, topRightChildren, noBottomPadding, noBottomMargin, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /* --------------- Main UI -------------- */
-    /*----------------------------------------*/
-    // Full UI
     return (React__default["default"].createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
         React__default["default"].createElement("style", null, style$7),
         React__default["default"].createElement("div", { className: "TabBox-title-container" },
-            React__default["default"].createElement("div", { className: "TabBox-title" }, title)),
+            React__default["default"].createElement("div", { className: "TabBox-title" }, title),
+            topRightChildren && (React__default["default"].createElement("div", { className: "TabBox-title-right-container" },
+                React__default["default"].createElement("div", { className: "TabBox-title-right-contents" }, topRightChildren)))),
         React__default["default"].createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },
             React__default["default"].createElement("div", { className: "TabBox-children" }, children))));
 };
@@ -3368,7 +3405,7 @@ const NestableItemList = (props) => {
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: childExpanded[item.id] ? freeSolidSvgIcons.faChevronDown : freeSolidSvgIcons.faChevronRight })))),
             React__default["default"].createElement(CheckboxButton, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
                     onChanged(changeChecked(item.id, checked, items));
-                }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$1.Light }),
+                }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }),
             (item.isGroup && childExpanded[item.id]) && (React__default["default"].createElement("div", { className: "NestableItemList-children-container", style: {
                     paddingLeft: '2.2rem',
                 } },
@@ -3391,17 +3428,62 @@ const ItemPicker = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { title, items, onChanged, noBottomMargin, } = props;
+    const { title, items, onChanged, noBottomMargin, hideSelectAllOrNoneButtons, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
+    /**
+     * Updates the checked state of an item (including all children)
+     * @author Yuen Ler Chow
+     * @param item the item to update
+     * @param checked the new checked state
+     * @returns the updated item
+     */
+    const updateItemChecked = (item, checked) => {
+        if (item.isGroup) {
+            return Object.assign(Object.assign({}, item), { children: item.children.map((child) => {
+                    return updateItemChecked(child, checked);
+                }) });
+        }
+        return Object.assign(Object.assign({}, item), { checked });
+    };
+    /**
+     * Selects all items in the list
+     * @author Yuen Ler Chow
+     */
+    const handleSelectAll = () => {
+        const updatedItems = items.map((item) => {
+            return updateItemChecked(item, true);
+        });
+        onChanged(updatedItems);
+    };
+    /**
+     * Deselects all items in the list
+     * @author Yuen Ler Chow
+     */
+    const handleDeselectAll = () => {
+        const updatedItems = items.map((item) => {
+            return updateItemChecked(item, false);
+        });
+        onChanged(updatedItems);
+    };
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
-    return (React__default["default"].createElement(TabBox, { title: title, noBottomMargin: noBottomMargin },
+    // Select all/none
+    const selectAllOrNone = (!hideSelectAllOrNoneButtons
+        ? (React__default["default"].createElement("div", { className: "d-flex h-100 align-items-end flex-row" },
+            React__default["default"].createElement("div", { className: "d-flex justify-content-end" },
+                React__default["default"].createElement("div", { className: "me-2", style: { fontSize: '1.2rem' } }, "Select"),
+                React__default["default"].createElement("div", { className: "btn-group", role: "group" },
+                    React__default["default"].createElement("button", { type: "button", style: { borderRight: '0.1rem solid white' }, "aria-label": "Select all contexts", className: "btn btn-secondary py-0", onClick: handleSelectAll }, "All"),
+                    React__default["default"].createElement("button", { type: "button", "aria-label": "Deselect all contexts", className: "btn btn-secondary py-0", onClick: handleDeselectAll }, "None")))))
+        : undefined);
+    // Main UI
+    return (React__default["default"].createElement(TabBox, { title: title, noBottomMargin: noBottomMargin, topRightChildren: selectAllOrNone },
         React__default["default"].createElement("div", { style: { overflowX: 'auto' } },
             React__default["default"].createElement(NestableItemList, { items: items, onChanged: onChanged }))));
 };
@@ -3773,7 +3855,7 @@ const IntelliTable = (props) => {
                             param: column.param,
                             visible: checked,
                         });
-                    }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column in the ${title} table`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Secondary }));
+                    }, checked: columnVisibilityMap[column.param], ariaLabel: `show "${column.title}" column in the ${title} table`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }));
             }),
             React__default["default"].createElement("div", { className: "mt-3" }, "Or you can:"),
             React__default["default"].createElement("button", { type: "button", id: `IntelliTable-${id}-select-all-columns`, className: "btn btn-secondary me-2", "aria-label": `show all columns in the ${title} table`, onClick: () => {
@@ -16105,6 +16187,203 @@ const shuffleArray = (arr) => {
         [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
     }
     return newArr;
+};
+
+/**
+ * Sends and retries an http request
+ * @author Gabriel Abrams
+ * @param opts object containing all arguments
+ * @param opts.path path to send request to
+ * @param [opts.host] host to send request to
+ * @param [opts.method=GET] http method to use
+ * @param [opts.params] body/data to include in the request
+ * @param [opts.headers] headers to include in the request
+ * @param [opts.sendCrossDomainCredentials=true if in development mode] if true,
+ *   send cross-domain credentials even if not in dev mode
+ * @param [opts.responseType=JSON] expected response type
+ * @returns { body, status, headers } on success
+ */
+const sendServerToServerRequest = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Process method
+    const method = (opts.method || 'GET');
+    // Encode objects within params
+    let params;
+    if (opts.params) {
+        params = {};
+        Object.entries(opts.params).forEach(([key, val]) => {
+            if (typeof val === 'object' && !Array.isArray(val)) {
+                params[key] = JSON.stringify(val);
+            }
+            else {
+                params[key] = val;
+            }
+        });
+    }
+    // Stringify parameters
+    const stringifiedParams = qs__default["default"].stringify(params || {}, {
+        encodeValuesOnly: true,
+        arrayFormat: 'brackets',
+    });
+    // Create url (include query if GET)
+    const query = (method === 'GET' ? `?${stringifiedParams}` : '');
+    let url;
+    if (!opts.host) {
+        // No host included at all. Just send to a path
+        url = `${opts.path}${query}`;
+    }
+    else {
+        url = `https://${opts.host}${opts.path}${query}`;
+    }
+    // Update headers
+    const headers = opts.headers || {};
+    let data = null;
+    if (!headers['Content-Type']) {
+        // Form encoded
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        // Add data if applicable
+        data = (method !== 'GET' ? stringifiedParams : null);
+    }
+    else {
+        // JSON encode
+        data = params;
+    }
+    // Encode data
+    let encodedData;
+    if (data) {
+        if (headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+            encodedData = new URLSearchParams(params);
+        }
+        else {
+            encodedData = JSON.stringify(data);
+        }
+    }
+    // Send request
+    try {
+        const response = yield fetch(url, {
+            method,
+            mode: 'cors',
+            headers: headers !== null && headers !== void 0 ? headers : {},
+            body: ((method !== 'GET' && encodedData)
+                ? encodedData
+                : undefined),
+            redirect: 'follow',
+        });
+        // Get headers map
+        const responseHeaders = {};
+        response.headers.forEach((value, key) => {
+            responseHeaders[key] = value;
+        });
+        // Process response based on responseType
+        try {
+            // Parse response
+            let responseBody;
+            if (opts.responseType
+                && opts.responseType === 'Text') {
+                // Response type is text
+                responseBody = yield response.text();
+            }
+            else {
+                // Response type is JSON
+                responseBody = yield response.json();
+            }
+            // Return response
+            return {
+                body: responseBody,
+                status: response.status,
+                headers: responseHeaders,
+            };
+        }
+        catch (err) {
+            throw new ErrorWithCode(`Failed to parse response as ${opts.responseType}: ${err === null || err === void 0 ? void 0 : err.message}`, ReactKitErrorCode$1.ResponseParseError);
+        }
+    }
+    catch (err) {
+        // Self-signed certificate error:
+        if ((_a = err === null || err === void 0 ? void 0 : err.message) === null || _a === void 0 ? void 0 : _a.includes('self signed certificate')) {
+            throw new ErrorWithCode('We refused to send a request because the receiver has self-signed certificates.', ReactKitErrorCode$1.SelfSigned);
+        }
+        // No tries left
+        throw new ErrorWithCode(`We encountered an error when trying to send a network request. If this issue persists, contact an admin. Error: ${err === null || err === void 0 ? void 0 : err.message}`, ReactKitErrorCode$1.NotConnected);
+    }
+});
+
+/**
+ * Send a server-to-server request from this sever to another server that uses
+ *   dce-reactkit [for server only]
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.host - the host of the other server
+ * @param opts.path - the path of the other server's endpoint
+ * @param [opts.method=GET] - the method of the endpoint
+ * @param [opts.params] - query/body parameters to include
+ * @param [opts.headers] - headers to include
+ * @returns response from server
+ */
+const visitEndpointOnAnotherServer = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Remove properties with undefined values
+    let params;
+    if (opts.params) {
+        params = Object.fromEntries(Object
+            .entries(opts.params)
+            .filter(([, value]) => {
+            return value !== undefined;
+        }));
+    }
+    // Automatically JSONify arrays and objects
+    if (params) {
+        params = Object.fromEntries(Object
+            .entries(params)
+            .map(([key, value]) => {
+            if (Array.isArray(value) || typeof value === 'object') {
+                return [key, JSON.stringify(value)];
+            }
+            return [key, value];
+        }));
+    }
+    // Send the request
+    const response = yield sendServerToServerRequest({
+        host: opts.host,
+        path: opts.path,
+        method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
+        params,
+    });
+    // Check for failure
+    if (!response || !response.body) {
+        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+    }
+    if (!response.body.success) {
+        // Other errors
+        throw new ErrorWithCode((response.body.message
+            || 'An unknown error occurred. Please contact an admin.'), (response.body.code
+            || ReactKitErrorCode$1.NoCode));
+    }
+    // Success! Extract the body
+    const { body } = response.body;
+    // Return
+    return body;
+});
+
+const punctuationRegex = /[!@#$%^&*(),.?\/;:'"\-\[\]]/g;
+/**
+ * Get number of words in string
+ * @author Gardenia Liu
+ * @author Allison Zhang
+ * @author Gabe Abrams
+ * @param text the string to check
+ * @returns number of words in the string
+ */
+const getWordCount = (text) => {
+    const trimmedTextWithoutPunctuation = (text
+        // Remove leading and trailing whitespace
+        .trim()
+        // Remove punctuation
+        .replace(punctuationRegex, ''));
+    if (trimmedTextWithoutPunctuation.length === 0) {
+        return 0;
+    }
+    return trimmedTextWithoutPunctuation.split(/\s+/g).length;
 };
 
 /**
