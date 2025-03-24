@@ -7,8 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && rollup -c",
-    "test": "jest --runInBand",
-    "gen-reactkit-cross-server-secret": "npx tsx genEncodedSecret.ts"
+    "test": "jest --runInBand"
   },
   "jest": {
     "preset": "ts-jest",
