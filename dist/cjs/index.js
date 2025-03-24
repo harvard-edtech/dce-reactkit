@@ -5,9 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var React = require('react');
 var freeSolidSvgIcons = require('@fortawesome/free-solid-svg-icons');
 var reactFontawesome = require('@fortawesome/react-fontawesome');
-var ReactDOM = require('react-dom');
 var freeRegularSvgIcons = require('@fortawesome/free-regular-svg-icons');
-var qs = require('qs');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -31,10 +29,8 @@ function _interopNamespace(e) {
 
 var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 var React__namespace = /*#__PURE__*/_interopNamespace(React);
-var ReactDOM__default = /*#__PURE__*/_interopDefaultLegacy(ReactDOM);
-var qs__default = /*#__PURE__*/_interopDefaultLegacy(qs);
 
-/******************************************************************************
+/*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -59,7 +55,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK18
+// Highest error code = DRK34
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -69,22 +65,7 @@ var ReactKitErrorCode;
     ReactKitErrorCode["NoResponse"] = "DRK1";
     ReactKitErrorCode["NoCode"] = "DRK2";
     ReactKitErrorCode["SessionExpired"] = "DRK3";
-    ReactKitErrorCode["MissingParameter"] = "DRK4";
-    ReactKitErrorCode["InvalidParameter"] = "DRK5";
-    ReactKitErrorCode["HostNotAllowed"] = "DRK17";
-    ReactKitErrorCode["HostBanned"] = "DRK18";
-    ReactKitErrorCode["WrongCourse"] = "DRK6";
     ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
-    ReactKitErrorCode["NoCACCLGetLaunchInfoFunction"] = "DRK8";
-    ReactKitErrorCode["NotTTM"] = "DRK9";
-    ReactKitErrorCode["NotAdmin"] = "DRK10";
-    ReactKitErrorCode["NotAllowedToReviewLogs"] = "DRK11";
-    ReactKitErrorCode["ThemeCheckedBeforeReactKitReady"] = "DRK12";
-    ReactKitErrorCode["SessionExpiredMessageGottenBeforeReactKitReady"] = "DRK13";
-    // Server-to-server requests
-    ReactKitErrorCode["NotConnected"] = "DRK14";
-    ReactKitErrorCode["SelfSigned"] = "DRK15";
-    ReactKitErrorCode["ResponseParseError"] = "DRK16";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -215,6 +196,706 @@ const LogBuiltInMetadata = {
         NoTarget: 'NoTarget',
     },
 };
+
+function getDefaultExportFromCjs (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
+
+var reactDom = {exports: {}};
+
+var reactDom_production = {};
+
+/**
+ * @license React
+ * react-dom.production.js
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var hasRequiredReactDom_production;
+
+function requireReactDom_production () {
+	if (hasRequiredReactDom_production) return reactDom_production;
+	hasRequiredReactDom_production = 1;
+	var React = React__default["default"];
+	function formatProdErrorMessage(code) {
+	  var url = "https://react.dev/errors/" + code;
+	  if (1 < arguments.length) {
+	    url += "?args[]=" + encodeURIComponent(arguments[1]);
+	    for (var i = 2; i < arguments.length; i++)
+	      url += "&args[]=" + encodeURIComponent(arguments[i]);
+	  }
+	  return (
+	    "Minified React error #" +
+	    code +
+	    "; visit " +
+	    url +
+	    " for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+	  );
+	}
+	function noop() {}
+	var Internals = {
+	    d: {
+	      f: noop,
+	      r: function () {
+	        throw Error(formatProdErrorMessage(522));
+	      },
+	      D: noop,
+	      C: noop,
+	      L: noop,
+	      m: noop,
+	      X: noop,
+	      S: noop,
+	      M: noop
+	    },
+	    p: 0,
+	    findDOMNode: null
+	  },
+	  REACT_PORTAL_TYPE = Symbol.for("react.portal");
+	function createPortal$1(children, containerInfo, implementation) {
+	  var key =
+	    3 < arguments.length && void 0 !== arguments[3] ? arguments[3] : null;
+	  return {
+	    $$typeof: REACT_PORTAL_TYPE,
+	    key: null == key ? null : "" + key,
+	    children: children,
+	    containerInfo: containerInfo,
+	    implementation: implementation
+	  };
+	}
+	var ReactSharedInternals =
+	  React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+	function getCrossOriginStringAs(as, input) {
+	  if ("font" === as) return "";
+	  if ("string" === typeof input)
+	    return "use-credentials" === input ? input : "";
+	}
+	reactDom_production.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE =
+	  Internals;
+	reactDom_production.createPortal = function (children, container) {
+	  var key =
+	    2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : null;
+	  if (
+	    !container ||
+	    (1 !== container.nodeType &&
+	      9 !== container.nodeType &&
+	      11 !== container.nodeType)
+	  )
+	    throw Error(formatProdErrorMessage(299));
+	  return createPortal$1(children, container, null, key);
+	};
+	reactDom_production.flushSync = function (fn) {
+	  var previousTransition = ReactSharedInternals.T,
+	    previousUpdatePriority = Internals.p;
+	  try {
+	    if (((ReactSharedInternals.T = null), (Internals.p = 2), fn)) return fn();
+	  } finally {
+	    (ReactSharedInternals.T = previousTransition),
+	      (Internals.p = previousUpdatePriority),
+	      Internals.d.f();
+	  }
+	};
+	reactDom_production.preconnect = function (href, options) {
+	  "string" === typeof href &&
+	    (options
+	      ? ((options = options.crossOrigin),
+	        (options =
+	          "string" === typeof options
+	            ? "use-credentials" === options
+	              ? options
+	              : ""
+	            : void 0))
+	      : (options = null),
+	    Internals.d.C(href, options));
+	};
+	reactDom_production.prefetchDNS = function (href) {
+	  "string" === typeof href && Internals.d.D(href);
+	};
+	reactDom_production.preinit = function (href, options) {
+	  if ("string" === typeof href && options && "string" === typeof options.as) {
+	    var as = options.as,
+	      crossOrigin = getCrossOriginStringAs(as, options.crossOrigin),
+	      integrity =
+	        "string" === typeof options.integrity ? options.integrity : void 0,
+	      fetchPriority =
+	        "string" === typeof options.fetchPriority
+	          ? options.fetchPriority
+	          : void 0;
+	    "style" === as
+	      ? Internals.d.S(
+	          href,
+	          "string" === typeof options.precedence ? options.precedence : void 0,
+	          {
+	            crossOrigin: crossOrigin,
+	            integrity: integrity,
+	            fetchPriority: fetchPriority
+	          }
+	        )
+	      : "script" === as &&
+	        Internals.d.X(href, {
+	          crossOrigin: crossOrigin,
+	          integrity: integrity,
+	          fetchPriority: fetchPriority,
+	          nonce: "string" === typeof options.nonce ? options.nonce : void 0
+	        });
+	  }
+	};
+	reactDom_production.preinitModule = function (href, options) {
+	  if ("string" === typeof href)
+	    if ("object" === typeof options && null !== options) {
+	      if (null == options.as || "script" === options.as) {
+	        var crossOrigin = getCrossOriginStringAs(
+	          options.as,
+	          options.crossOrigin
+	        );
+	        Internals.d.M(href, {
+	          crossOrigin: crossOrigin,
+	          integrity:
+	            "string" === typeof options.integrity ? options.integrity : void 0,
+	          nonce: "string" === typeof options.nonce ? options.nonce : void 0
+	        });
+	      }
+	    } else null == options && Internals.d.M(href);
+	};
+	reactDom_production.preload = function (href, options) {
+	  if (
+	    "string" === typeof href &&
+	    "object" === typeof options &&
+	    null !== options &&
+	    "string" === typeof options.as
+	  ) {
+	    var as = options.as,
+	      crossOrigin = getCrossOriginStringAs(as, options.crossOrigin);
+	    Internals.d.L(href, as, {
+	      crossOrigin: crossOrigin,
+	      integrity:
+	        "string" === typeof options.integrity ? options.integrity : void 0,
+	      nonce: "string" === typeof options.nonce ? options.nonce : void 0,
+	      type: "string" === typeof options.type ? options.type : void 0,
+	      fetchPriority:
+	        "string" === typeof options.fetchPriority
+	          ? options.fetchPriority
+	          : void 0,
+	      referrerPolicy:
+	        "string" === typeof options.referrerPolicy
+	          ? options.referrerPolicy
+	          : void 0,
+	      imageSrcSet:
+	        "string" === typeof options.imageSrcSet ? options.imageSrcSet : void 0,
+	      imageSizes:
+	        "string" === typeof options.imageSizes ? options.imageSizes : void 0,
+	      media: "string" === typeof options.media ? options.media : void 0
+	    });
+	  }
+	};
+	reactDom_production.preloadModule = function (href, options) {
+	  if ("string" === typeof href)
+	    if (options) {
+	      var crossOrigin = getCrossOriginStringAs(options.as, options.crossOrigin);
+	      Internals.d.m(href, {
+	        as:
+	          "string" === typeof options.as && "script" !== options.as
+	            ? options.as
+	            : void 0,
+	        crossOrigin: crossOrigin,
+	        integrity:
+	          "string" === typeof options.integrity ? options.integrity : void 0
+	      });
+	    } else Internals.d.m(href);
+	};
+	reactDom_production.requestFormReset = function (form) {
+	  Internals.d.r(form);
+	};
+	reactDom_production.unstable_batchedUpdates = function (fn, a) {
+	  return fn(a);
+	};
+	reactDom_production.useFormState = function (action, initialState, permalink) {
+	  return ReactSharedInternals.H.useFormState(action, initialState, permalink);
+	};
+	reactDom_production.useFormStatus = function () {
+	  return ReactSharedInternals.H.useHostTransitionStatus();
+	};
+	reactDom_production.version = "19.0.0";
+	return reactDom_production;
+}
+
+var reactDom_development = {};
+
+/**
+ * @license React
+ * react-dom.development.js
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var hasRequiredReactDom_development;
+
+function requireReactDom_development () {
+	if (hasRequiredReactDom_development) return reactDom_development;
+	hasRequiredReactDom_development = 1;
+	"production" !== process.env.NODE_ENV &&
+	  (function () {
+	    function noop() {}
+	    function testStringCoercion(value) {
+	      return "" + value;
+	    }
+	    function createPortal$1(children, containerInfo, implementation) {
+	      var key =
+	        3 < arguments.length && void 0 !== arguments[3] ? arguments[3] : null;
+	      try {
+	        testStringCoercion(key);
+	        var JSCompiler_inline_result = !1;
+	      } catch (e) {
+	        JSCompiler_inline_result = !0;
+	      }
+	      JSCompiler_inline_result &&
+	        (console.error(
+	          "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
+	          ("function" === typeof Symbol &&
+	            Symbol.toStringTag &&
+	            key[Symbol.toStringTag]) ||
+	            key.constructor.name ||
+	            "Object"
+	        ),
+	        testStringCoercion(key));
+	      return {
+	        $$typeof: REACT_PORTAL_TYPE,
+	        key: null == key ? null : "" + key,
+	        children: children,
+	        containerInfo: containerInfo,
+	        implementation: implementation
+	      };
+	    }
+	    function getCrossOriginStringAs(as, input) {
+	      if ("font" === as) return "";
+	      if ("string" === typeof input)
+	        return "use-credentials" === input ? input : "";
+	    }
+	    function getValueDescriptorExpectingObjectForWarning(thing) {
+	      return null === thing
+	        ? "`null`"
+	        : void 0 === thing
+	          ? "`undefined`"
+	          : "" === thing
+	            ? "an empty string"
+	            : 'something with type "' + typeof thing + '"';
+	    }
+	    function getValueDescriptorExpectingEnumForWarning(thing) {
+	      return null === thing
+	        ? "`null`"
+	        : void 0 === thing
+	          ? "`undefined`"
+	          : "" === thing
+	            ? "an empty string"
+	            : "string" === typeof thing
+	              ? JSON.stringify(thing)
+	              : "number" === typeof thing
+	                ? "`" + thing + "`"
+	                : 'something with type "' + typeof thing + '"';
+	    }
+	    function resolveDispatcher() {
+	      var dispatcher = ReactSharedInternals.H;
+	      null === dispatcher &&
+	        console.error(
+	          "Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem."
+	        );
+	      return dispatcher;
+	    }
+	    "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ &&
+	      "function" ===
+	        typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart &&
+	      __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
+	    var React = React__default["default"],
+	      Internals = {
+	        d: {
+	          f: noop,
+	          r: function () {
+	            throw Error(
+	              "Invalid form element. requestFormReset must be passed a form that was rendered by React."
+	            );
+	          },
+	          D: noop,
+	          C: noop,
+	          L: noop,
+	          m: noop,
+	          X: noop,
+	          S: noop,
+	          M: noop
+	        },
+	        p: 0,
+	        findDOMNode: null
+	      },
+	      REACT_PORTAL_TYPE = Symbol.for("react.portal"),
+	      ReactSharedInternals =
+	        React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+	    ("function" === typeof Map &&
+	      null != Map.prototype &&
+	      "function" === typeof Map.prototype.forEach &&
+	      "function" === typeof Set &&
+	      null != Set.prototype &&
+	      "function" === typeof Set.prototype.clear &&
+	      "function" === typeof Set.prototype.forEach) ||
+	      console.error(
+	        "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
+	      );
+	    reactDom_development.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE =
+	      Internals;
+	    reactDom_development.createPortal = function (children, container) {
+	      var key =
+	        2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : null;
+	      if (
+	        !container ||
+	        (1 !== container.nodeType &&
+	          9 !== container.nodeType &&
+	          11 !== container.nodeType)
+	      )
+	        throw Error("Target container is not a DOM element.");
+	      return createPortal$1(children, container, null, key);
+	    };
+	    reactDom_development.flushSync = function (fn) {
+	      var previousTransition = ReactSharedInternals.T,
+	        previousUpdatePriority = Internals.p;
+	      try {
+	        if (((ReactSharedInternals.T = null), (Internals.p = 2), fn))
+	          return fn();
+	      } finally {
+	        (ReactSharedInternals.T = previousTransition),
+	          (Internals.p = previousUpdatePriority),
+	          Internals.d.f() &&
+	            console.error(
+	              "flushSync was called from inside a lifecycle method. React cannot flush when React is already rendering. Consider moving this call to a scheduler task or micro task."
+	            );
+	      }
+	    };
+	    reactDom_development.preconnect = function (href, options) {
+	      "string" === typeof href && href
+	        ? null != options && "object" !== typeof options
+	          ? console.error(
+	              "ReactDOM.preconnect(): Expected the `options` argument (second) to be an object but encountered %s instead. The only supported option at this time is `crossOrigin` which accepts a string.",
+	              getValueDescriptorExpectingEnumForWarning(options)
+	            )
+	          : null != options &&
+	            "string" !== typeof options.crossOrigin &&
+	            console.error(
+	              "ReactDOM.preconnect(): Expected the `crossOrigin` option (second argument) to be a string but encountered %s instead. Try removing this option or passing a string value instead.",
+	              getValueDescriptorExpectingObjectForWarning(options.crossOrigin)
+	            )
+	        : console.error(
+	            "ReactDOM.preconnect(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
+	            getValueDescriptorExpectingObjectForWarning(href)
+	          );
+	      "string" === typeof href &&
+	        (options
+	          ? ((options = options.crossOrigin),
+	            (options =
+	              "string" === typeof options
+	                ? "use-credentials" === options
+	                  ? options
+	                  : ""
+	                : void 0))
+	          : (options = null),
+	        Internals.d.C(href, options));
+	    };
+	    reactDom_development.prefetchDNS = function (href) {
+	      if ("string" !== typeof href || !href)
+	        console.error(
+	          "ReactDOM.prefetchDNS(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
+	          getValueDescriptorExpectingObjectForWarning(href)
+	        );
+	      else if (1 < arguments.length) {
+	        var options = arguments[1];
+	        "object" === typeof options && options.hasOwnProperty("crossOrigin")
+	          ? console.error(
+	              "ReactDOM.prefetchDNS(): Expected only one argument, `href`, but encountered %s as a second argument instead. This argument is reserved for future options and is currently disallowed. It looks like the you are attempting to set a crossOrigin property for this DNS lookup hint. Browsers do not perform DNS queries using CORS and setting this attribute on the resource hint has no effect. Try calling ReactDOM.prefetchDNS() with just a single string argument, `href`.",
+	              getValueDescriptorExpectingEnumForWarning(options)
+	            )
+	          : console.error(
+	              "ReactDOM.prefetchDNS(): Expected only one argument, `href`, but encountered %s as a second argument instead. This argument is reserved for future options and is currently disallowed. Try calling ReactDOM.prefetchDNS() with just a single string argument, `href`.",
+	              getValueDescriptorExpectingEnumForWarning(options)
+	            );
+	      }
+	      "string" === typeof href && Internals.d.D(href);
+	    };
+	    reactDom_development.preinit = function (href, options) {
+	      "string" === typeof href && href
+	        ? null == options || "object" !== typeof options
+	          ? console.error(
+	              "ReactDOM.preinit(): Expected the `options` argument (second) to be an object with an `as` property describing the type of resource to be preinitialized but encountered %s instead.",
+	              getValueDescriptorExpectingEnumForWarning(options)
+	            )
+	          : "style" !== options.as &&
+	            "script" !== options.as &&
+	            console.error(
+	              'ReactDOM.preinit(): Expected the `as` property in the `options` argument (second) to contain a valid value describing the type of resource to be preinitialized but encountered %s instead. Valid values for `as` are "style" and "script".',
+	              getValueDescriptorExpectingEnumForWarning(options.as)
+	            )
+	        : console.error(
+	            "ReactDOM.preinit(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
+	            getValueDescriptorExpectingObjectForWarning(href)
+	          );
+	      if (
+	        "string" === typeof href &&
+	        options &&
+	        "string" === typeof options.as
+	      ) {
+	        var as = options.as,
+	          crossOrigin = getCrossOriginStringAs(as, options.crossOrigin),
+	          integrity =
+	            "string" === typeof options.integrity ? options.integrity : void 0,
+	          fetchPriority =
+	            "string" === typeof options.fetchPriority
+	              ? options.fetchPriority
+	              : void 0;
+	        "style" === as
+	          ? Internals.d.S(
+	              href,
+	              "string" === typeof options.precedence
+	                ? options.precedence
+	                : void 0,
+	              {
+	                crossOrigin: crossOrigin,
+	                integrity: integrity,
+	                fetchPriority: fetchPriority
+	              }
+	            )
+	          : "script" === as &&
+	            Internals.d.X(href, {
+	              crossOrigin: crossOrigin,
+	              integrity: integrity,
+	              fetchPriority: fetchPriority,
+	              nonce: "string" === typeof options.nonce ? options.nonce : void 0
+	            });
+	      }
+	    };
+	    reactDom_development.preinitModule = function (href, options) {
+	      var encountered = "";
+	      ("string" === typeof href && href) ||
+	        (encountered +=
+	          " The `href` argument encountered was " +
+	          getValueDescriptorExpectingObjectForWarning(href) +
+	          ".");
+	      void 0 !== options && "object" !== typeof options
+	        ? (encountered +=
+	            " The `options` argument encountered was " +
+	            getValueDescriptorExpectingObjectForWarning(options) +
+	            ".")
+	        : options &&
+	          "as" in options &&
+	          "script" !== options.as &&
+	          (encountered +=
+	            " The `as` option encountered was " +
+	            getValueDescriptorExpectingEnumForWarning(options.as) +
+	            ".");
+	      if (encountered)
+	        console.error(
+	          "ReactDOM.preinitModule(): Expected up to two arguments, a non-empty `href` string and, optionally, an `options` object with a valid `as` property.%s",
+	          encountered
+	        );
+	      else
+	        switch (
+	          ((encountered =
+	            options && "string" === typeof options.as ? options.as : "script"),
+	          encountered)
+	        ) {
+	          case "script":
+	            break;
+	          default:
+	            (encountered =
+	              getValueDescriptorExpectingEnumForWarning(encountered)),
+	              console.error(
+	                'ReactDOM.preinitModule(): Currently the only supported "as" type for this function is "script" but received "%s" instead. This warning was generated for `href` "%s". In the future other module types will be supported, aligning with the import-attributes proposal. Learn more here: (https://github.com/tc39/proposal-import-attributes)',
+	                encountered,
+	                href
+	              );
+	        }
+	      if ("string" === typeof href)
+	        if ("object" === typeof options && null !== options) {
+	          if (null == options.as || "script" === options.as)
+	            (encountered = getCrossOriginStringAs(
+	              options.as,
+	              options.crossOrigin
+	            )),
+	              Internals.d.M(href, {
+	                crossOrigin: encountered,
+	                integrity:
+	                  "string" === typeof options.integrity
+	                    ? options.integrity
+	                    : void 0,
+	                nonce:
+	                  "string" === typeof options.nonce ? options.nonce : void 0
+	              });
+	        } else null == options && Internals.d.M(href);
+	    };
+	    reactDom_development.preload = function (href, options) {
+	      var encountered = "";
+	      ("string" === typeof href && href) ||
+	        (encountered +=
+	          " The `href` argument encountered was " +
+	          getValueDescriptorExpectingObjectForWarning(href) +
+	          ".");
+	      null == options || "object" !== typeof options
+	        ? (encountered +=
+	            " The `options` argument encountered was " +
+	            getValueDescriptorExpectingObjectForWarning(options) +
+	            ".")
+	        : ("string" === typeof options.as && options.as) ||
+	          (encountered +=
+	            " The `as` option encountered was " +
+	            getValueDescriptorExpectingObjectForWarning(options.as) +
+	            ".");
+	      encountered &&
+	        console.error(
+	          'ReactDOM.preload(): Expected two arguments, a non-empty `href` string and an `options` object with an `as` property valid for a `<link rel="preload" as="..." />` tag.%s',
+	          encountered
+	        );
+	      if (
+	        "string" === typeof href &&
+	        "object" === typeof options &&
+	        null !== options &&
+	        "string" === typeof options.as
+	      ) {
+	        encountered = options.as;
+	        var crossOrigin = getCrossOriginStringAs(
+	          encountered,
+	          options.crossOrigin
+	        );
+	        Internals.d.L(href, encountered, {
+	          crossOrigin: crossOrigin,
+	          integrity:
+	            "string" === typeof options.integrity ? options.integrity : void 0,
+	          nonce: "string" === typeof options.nonce ? options.nonce : void 0,
+	          type: "string" === typeof options.type ? options.type : void 0,
+	          fetchPriority:
+	            "string" === typeof options.fetchPriority
+	              ? options.fetchPriority
+	              : void 0,
+	          referrerPolicy:
+	            "string" === typeof options.referrerPolicy
+	              ? options.referrerPolicy
+	              : void 0,
+	          imageSrcSet:
+	            "string" === typeof options.imageSrcSet
+	              ? options.imageSrcSet
+	              : void 0,
+	          imageSizes:
+	            "string" === typeof options.imageSizes
+	              ? options.imageSizes
+	              : void 0,
+	          media: "string" === typeof options.media ? options.media : void 0
+	        });
+	      }
+	    };
+	    reactDom_development.preloadModule = function (href, options) {
+	      var encountered = "";
+	      ("string" === typeof href && href) ||
+	        (encountered +=
+	          " The `href` argument encountered was " +
+	          getValueDescriptorExpectingObjectForWarning(href) +
+	          ".");
+	      void 0 !== options && "object" !== typeof options
+	        ? (encountered +=
+	            " The `options` argument encountered was " +
+	            getValueDescriptorExpectingObjectForWarning(options) +
+	            ".")
+	        : options &&
+	          "as" in options &&
+	          "string" !== typeof options.as &&
+	          (encountered +=
+	            " The `as` option encountered was " +
+	            getValueDescriptorExpectingObjectForWarning(options.as) +
+	            ".");
+	      encountered &&
+	        console.error(
+	          'ReactDOM.preloadModule(): Expected two arguments, a non-empty `href` string and, optionally, an `options` object with an `as` property valid for a `<link rel="modulepreload" as="..." />` tag.%s',
+	          encountered
+	        );
+	      "string" === typeof href &&
+	        (options
+	          ? ((encountered = getCrossOriginStringAs(
+	              options.as,
+	              options.crossOrigin
+	            )),
+	            Internals.d.m(href, {
+	              as:
+	                "string" === typeof options.as && "script" !== options.as
+	                  ? options.as
+	                  : void 0,
+	              crossOrigin: encountered,
+	              integrity:
+	                "string" === typeof options.integrity
+	                  ? options.integrity
+	                  : void 0
+	            }))
+	          : Internals.d.m(href));
+	    };
+	    reactDom_development.requestFormReset = function (form) {
+	      Internals.d.r(form);
+	    };
+	    reactDom_development.unstable_batchedUpdates = function (fn, a) {
+	      return fn(a);
+	    };
+	    reactDom_development.useFormState = function (action, initialState, permalink) {
+	      return resolveDispatcher().useFormState(action, initialState, permalink);
+	    };
+	    reactDom_development.useFormStatus = function () {
+	      return resolveDispatcher().useHostTransitionStatus();
+	    };
+	    reactDom_development.version = "19.0.0";
+	    "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ &&
+	      "function" ===
+	        typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop &&
+	      __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
+	  })();
+	return reactDom_development;
+}
+
+(function (module) {
+
+	function checkDCE() {
+	  /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
+	  if (
+	    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined' ||
+	    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== 'function'
+	  ) {
+	    return;
+	  }
+	  if (process.env.NODE_ENV !== 'production') {
+	    // This branch is unreachable because this function is only called
+	    // in production, but the condition is true only in development.
+	    // Therefore if the branch is still here, dead code elimination wasn't
+	    // properly applied.
+	    // Don't change the message. React DevTools relies on it. Also make sure
+	    // this message doesn't occur elsewhere in this function, or it will cause
+	    // a false positive.
+	    throw new Error('^_^');
+	  }
+	  try {
+	    // Verify that the code above has been dead code eliminated (DCE'd).
+	    __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
+	  } catch (err) {
+	    // DevTools shouldn't crash React, no matter what.
+	    // We should still report in case we break this code.
+	    console.error(err);
+	  }
+	}
+
+	if (process.env.NODE_ENV === 'production') {
+	  // DCE check should happen before ReactDOM bundle executes so that
+	  // DevTools can report bad minification during injection.
+	  checkDCE();
+	  module.exports = requireReactDom_production();
+	} else {
+	  module.exports = requireReactDom_development();
+	}
+} (reactDom));
+
+var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDom.exports);
 
 /**
  * Loading spinner/indicator
@@ -358,6 +1039,15 @@ let onInitialized;
 const initialized = new Promise((resolve) => {
     onInitialized = resolve;
 });
+/* ------------ No Server ----------- */
+let noServer = false;
+/**
+ * Check if there is no server for this app
+ * @author Gabe Abrams
+ */
+const appHasNoServer = () => {
+    return noServer;
+};
 /* ---------- Send Request ---------- */
 let storedSendRequest;
 /**
@@ -419,11 +1109,13 @@ const initClient = (opts) => {
         storedSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
             throw new Error('Cannot send requests because there is no server');
         });
+        noServer = true;
     }
     else {
         // Store values
         storedSendRequest = opts.sendRequest;
         sessionExpiredMessage = opts.sessionExpiredMessage;
+        noServer = false;
     }
     // Handle universal parts
     darkModeOn = !!opts.darkModeOn;
@@ -837,7 +1529,7 @@ const Modal = (props) => {
     // Determine which portal to use
     const portalNumber = id.current % NUM_MODAL_PORTALS;
     // Render in a portal
-    return ReactDOM__default["default"].createPortal(contentToRender, document.getElementById(`modal-portal-${portalNumber}`));
+    return ReactDOM.createPortal(contentToRender, document.getElementById(`modal-portal-${portalNumber}`));
 };
 
 /**
@@ -1004,6 +1696,10 @@ const setClientEventMetadataPopulator = (newMetadataPopulator) => {
  */
 const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g;
+    // Don't write to the server if there is none
+    if (appHasNoServer()) {
+        return;
+    }
     // Populate metadata
     let metadata = ((_a = opts.metadata) !== null && _a !== void 0 ? _a : {});
     if (metadataPopulator) {
@@ -2902,16 +3598,16 @@ var LogAction$1 = LogAction;
  */
 var ParamType;
 (function (ParamType) {
-    ParamType["Boolean"] = "boolean";
-    ParamType["BooleanOptional"] = "boolean-optional";
-    ParamType["Float"] = "float";
-    ParamType["FloatOptional"] = "float-optional";
-    ParamType["Int"] = "int";
-    ParamType["IntOptional"] = "int-optional";
-    ParamType["JSON"] = "json";
-    ParamType["JSONOptional"] = "json-optional";
-    ParamType["String"] = "string";
-    ParamType["StringOptional"] = "string-optional";
+    ParamType["Boolean"] = "Boolean";
+    ParamType["BooleanOptional"] = "BooleanOptional";
+    ParamType["Float"] = "Float";
+    ParamType["FloatOptional"] = "FloatOptional";
+    ParamType["Int"] = "Int";
+    ParamType["IntOptional"] = "IntOptional";
+    ParamType["JSON"] = "JSON";
+    ParamType["JSONOptional"] = "JSONOptional";
+    ParamType["String"] = "String";
+    ParamType["StringOptional"] = "StringOptional";
 })(ParamType || (ParamType = {}));
 var ParamType$1 = ParamType;
 
@@ -4819,212 +5515,177 @@ var DBEntryFieldType;
 var DBEntryFieldType$1 = DBEntryFieldType;
 
 function _extends() {
-  _extends = Object.assign ? Object.assign.bind() : function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
+  return _extends = Object.assign ? Object.assign.bind() : function (n) {
+    for (var e = 1; e < arguments.length; e++) {
+      var t = arguments[e];
+      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
     }
-    return target;
-  };
-  return _extends.apply(this, arguments);
+    return n;
+  }, _extends.apply(null, arguments);
 }
 
-function _typeof(obj) {
+function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, _typeof(obj);
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, _typeof(o);
 }
 
-function _toPrimitive(input, hint) {
-  if (_typeof(input) !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if (_typeof(res) !== "object") return res;
+function toPrimitive(t, r) {
+  if ("object" != _typeof(t) || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != _typeof(i)) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return (hint === "string" ? String : Number)(input);
+  return ("string" === r ? String : Number)(t);
 }
 
-function _toPropertyKey(arg) {
-  var key = _toPrimitive(arg, "string");
-  return _typeof(key) === "symbol" ? key : String(key);
+function toPropertyKey(t) {
+  var i = toPrimitive(t, "string");
+  return "symbol" == _typeof(i) ? i : i + "";
 }
 
-function _defineProperty(obj, key, value) {
-  key = _toPropertyKey(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
+function _defineProperty(e, r, t) {
+  return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: !0,
+    configurable: !0,
+    writable: !0
+  }) : e[r] = t, e;
 }
 
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
+function ownKeys(e, r) {
+  var t = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    enumerableOnly && (symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    })), keys.push.apply(keys, symbols);
+    var o = Object.getOwnPropertySymbols(e);
+    r && (o = o.filter(function (r) {
+      return Object.getOwnPropertyDescriptor(e, r).enumerable;
+    })), t.push.apply(t, o);
   }
-  return keys;
+  return t;
 }
-function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = null != arguments[i] ? arguments[i] : {};
-    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
-      _defineProperty(target, key, source[key]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
-      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+function _objectSpread2(e) {
+  for (var r = 1; r < arguments.length; r++) {
+    var t = null != arguments[r] ? arguments[r] : {};
+    r % 2 ? ownKeys(Object(t), !0).forEach(function (r) {
+      _defineProperty(e, r, t[r]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) {
+      Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
     });
   }
-  return target;
+  return e;
 }
 
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
+function _classCallCheck(a, n) {
+  if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function");
+}
+
+function _defineProperties(e, r) {
+  for (var t = 0; t < r.length; t++) {
+    var o = r[t];
+    o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, toPropertyKey(o.key), o);
   }
 }
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
-  }
-}
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  Object.defineProperty(Constructor, "prototype", {
-    writable: false
-  });
-  return Constructor;
+function _createClass(e, r, t) {
+  return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", {
+    writable: !1
+  }), e;
 }
 
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-  return _setPrototypeOf(o, p);
+function _setPrototypeOf(t, e) {
+  return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) {
+    return t.__proto__ = e, t;
+  }, _setPrototypeOf(t, e);
 }
 
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
+function _inherits(t, e) {
+  if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function");
+  t.prototype = Object.create(e && e.prototype, {
     constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
+      value: t,
+      writable: !0,
+      configurable: !0
     }
-  });
-  Object.defineProperty(subClass, "prototype", {
-    writable: false
-  });
-  if (superClass) _setPrototypeOf(subClass, superClass);
+  }), Object.defineProperty(t, "prototype", {
+    writable: !1
+  }), e && _setPrototypeOf(t, e);
 }
 
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
+function _getPrototypeOf(t) {
+  return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) {
+    return t.__proto__ || Object.getPrototypeOf(t);
+  }, _getPrototypeOf(t);
 }
 
 function _isNativeReflectConstruct() {
-  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-  if (Reflect.construct.sham) return false;
-  if (typeof Proxy === "function") return true;
   try {
-    Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
-    return true;
-  } catch (e) {
-    return false;
-  }
+    var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+  } catch (t) {}
+  return (_isNativeReflectConstruct = function _isNativeReflectConstruct() {
+    return !!t;
+  })();
 }
 
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-  return self;
+function _assertThisInitialized(e) {
+  if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  return e;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  } else if (call !== void 0) {
-    throw new TypeError("Derived constructors may only return object or undefined");
-  }
-  return _assertThisInitialized(self);
+function _possibleConstructorReturn(t, e) {
+  if (e && ("object" == _typeof(e) || "function" == typeof e)) return e;
+  if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined");
+  return _assertThisInitialized(t);
 }
 
-function _createSuper(Derived) {
-  var hasNativeReflectConstruct = _isNativeReflectConstruct();
-  return function _createSuperInternal() {
-    var Super = _getPrototypeOf(Derived),
-      result;
-    if (hasNativeReflectConstruct) {
-      var NewTarget = _getPrototypeOf(this).constructor;
-      result = Reflect.construct(Super, arguments, NewTarget);
-    } else {
-      result = Super.apply(this, arguments);
-    }
-    return _possibleConstructorReturn(this, result);
+function _createSuper(t) {
+  var r = _isNativeReflectConstruct();
+  return function () {
+    var e,
+      o = _getPrototypeOf(t);
+    if (r) {
+      var s = _getPrototypeOf(this).constructor;
+      e = Reflect.construct(o, arguments, s);
+    } else e = o.apply(this, arguments);
+    return _possibleConstructorReturn(this, e);
   };
 }
 
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-  return arr2;
+function _arrayLikeToArray(r, a) {
+  (null == a || a > r.length) && (a = r.length);
+  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+  return n;
 }
 
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+function _arrayWithoutHoles(r) {
+  if (Array.isArray(r)) return _arrayLikeToArray(r);
 }
 
-function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+function _iterableToArray(r) {
+  if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
 }
 
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+function _unsupportedIterableToArray(r, a) {
+  if (r) {
+    if ("string" == typeof r) return _arrayLikeToArray(r, a);
+    var t = {}.toString.call(r).slice(8, -1);
+    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+  }
 }
 
 function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+function _toConsumableArray(r) {
+  return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();
 }
+
+var isDevelopment$2 = false;
 
 /*
 
@@ -5048,10 +5709,9 @@ styleSheet.flush()
 - empties the stylesheet of all its contents
 
 */
-// $FlowFixMe
+
 function sheetForTag(tag) {
   if (tag.sheet) {
-    // $FlowFixMe
     return tag.sheet;
   } // this weirdness brought to you by firefox
 
@@ -5060,10 +5720,13 @@ function sheetForTag(tag) {
 
   for (var i = 0; i < document.styleSheets.length; i++) {
     if (document.styleSheets[i].ownerNode === tag) {
-      // $FlowFixMe
       return document.styleSheets[i];
     }
-  }
+  } // this function should always return with a value
+  // TS can't understand it though so we make it stop complaining here
+
+
+  return undefined;
 }
 
 function createStyleElement(options) {
@@ -5104,7 +5767,7 @@ var StyleSheet = /*#__PURE__*/function () {
       _this.tags.push(tag);
     };
 
-    this.isSpeedy = options.speedy === undefined ? process.env.NODE_ENV === 'production' : options.speedy;
+    this.isSpeedy = options.speedy === undefined ? !isDevelopment$2 : options.speedy;
     this.tags = [];
     this.ctr = 0;
     this.nonce = options.nonce; // key is the value of the data-emotion attribute, it's used to identify different sheets
@@ -5132,18 +5795,6 @@ var StyleSheet = /*#__PURE__*/function () {
 
     var tag = this.tags[this.tags.length - 1];
 
-    if (process.env.NODE_ENV !== 'production') {
-      var isImportRule = rule.charCodeAt(0) === 64 && rule.charCodeAt(1) === 105;
-
-      if (isImportRule && this._alreadyInsertedOrderInsensitiveRule) {
-        // this would only cause problem in speedy mode
-        // but we don't want enabling speedy to affect the observable behavior
-        // so we report this error at all times
-        console.error("You're attempting to insert the following rule:\n" + rule + '\n\n`@import` rules must be before all other types of rules in a stylesheet but other rules have already been inserted. Please ensure that `@import` rules are before all other rules.');
-      }
-      this._alreadyInsertedOrderInsensitiveRule = this._alreadyInsertedOrderInsensitiveRule || !isImportRule;
-    }
-
     if (this.isSpeedy) {
       var sheet = sheetForTag(tag);
 
@@ -5152,9 +5803,6 @@ var StyleSheet = /*#__PURE__*/function () {
         // the big drawback is that the css won't be editable in devtools
         sheet.insertRule(rule, sheet.cssRules.length);
       } catch (e) {
-        if (process.env.NODE_ENV !== 'production' && !/:(-moz-placeholder|-moz-focus-inner|-moz-focusring|-ms-input-placeholder|-moz-read-write|-moz-read-only|-ms-clear|-ms-expand|-ms-reveal){/.test(rule)) {
-          console.error("There was a problem inserting the following rule: \"" + rule + "\"", e);
-        }
       }
     } else {
       tag.appendChild(document.createTextNode(rule));
@@ -5164,16 +5812,13 @@ var StyleSheet = /*#__PURE__*/function () {
   };
 
   _proto.flush = function flush() {
-    // $FlowFixMe
     this.tags.forEach(function (tag) {
-      return tag.parentNode && tag.parentNode.removeChild(tag);
+      var _tag$parentNode;
+
+      return (_tag$parentNode = tag.parentNode) == null ? void 0 : _tag$parentNode.removeChild(tag);
     });
     this.tags = [];
     this.ctr = 0;
-
-    if (process.env.NODE_ENV !== 'production') {
-      this._alreadyInsertedOrderInsensitiveRule = false;
-    }
   };
 
   return StyleSheet;
@@ -5778,11 +6423,11 @@ function rulesheet (callback) {
 }
 
 var weakMemoize = function weakMemoize(func) {
-  // $FlowFixMe flow doesn't include all non-primitive types as allowed for weakmaps
   var cache = new WeakMap();
   return function (arg) {
     if (cache.has(arg)) {
-      // $FlowFixMe
+      // Use non-null assertion because we just checked that the cache `has` it
+      // This allows us to remove `undefined` from the return value
       return cache.get(arg);
     }
 
@@ -5799,6 +6444,8 @@ function memoize(fn) {
     return cache[arg];
   };
 }
+
+var isBrowser$3 = typeof document !== 'undefined';
 
 var identifierWithPointTracking = function identifierWithPointTracking(begin, points, index) {
   var previous = 0;
@@ -5878,8 +6525,8 @@ var compat = function compat(element) {
     return;
   }
 
-  var value = element.value,
-      parent = element.parent;
+  var value = element.value;
+  var parent = element.parent;
   var isImplicitRule = element.column === parent.column && element.line === parent.line;
 
   while (parent.type !== 'rule') {
@@ -5922,114 +6569,6 @@ var removeLabel = function removeLabel(element) {
       element["return"] = '';
       element.value = '';
     }
-  }
-};
-var ignoreFlag = 'emotion-disable-server-rendering-unsafe-selector-warning-please-do-not-use-this-the-warning-exists-for-a-reason';
-
-var isIgnoringComment = function isIgnoringComment(element) {
-  return element.type === 'comm' && element.children.indexOf(ignoreFlag) > -1;
-};
-
-var createUnsafeSelectorsAlarm = function createUnsafeSelectorsAlarm(cache) {
-  return function (element, index, children) {
-    if (element.type !== 'rule' || cache.compat) return;
-    var unsafePseudoClasses = element.value.match(/(:first|:nth|:nth-last)-child/g);
-
-    if (unsafePseudoClasses) {
-      var isNested = !!element.parent; // in nested rules comments become children of the "auto-inserted" rule and that's always the `element.parent`
-      //
-      // considering this input:
-      // .a {
-      //   .b /* comm */ {}
-      //   color: hotpink;
-      // }
-      // we get output corresponding to this:
-      // .a {
-      //   & {
-      //     /* comm */
-      //     color: hotpink;
-      //   }
-      //   .b {}
-      // }
-
-      var commentContainer = isNested ? element.parent.children : // global rule at the root level
-      children;
-
-      for (var i = commentContainer.length - 1; i >= 0; i--) {
-        var node = commentContainer[i];
-
-        if (node.line < element.line) {
-          break;
-        } // it is quite weird but comments are *usually* put at `column: element.column - 1`
-        // so we seek *from the end* for the node that is earlier than the rule's `element` and check that
-        // this will also match inputs like this:
-        // .a {
-        //   /* comm */
-        //   .b {}
-        // }
-        //
-        // but that is fine
-        //
-        // it would be the easiest to change the placement of the comment to be the first child of the rule:
-        // .a {
-        //   .b { /* comm */ }
-        // }
-        // with such inputs we wouldn't have to search for the comment at all
-        // TODO: consider changing this comment placement in the next major version
-
-
-        if (node.column < element.column) {
-          if (isIgnoringComment(node)) {
-            return;
-          }
-
-          break;
-        }
-      }
-
-      unsafePseudoClasses.forEach(function (unsafePseudoClass) {
-        console.error("The pseudo class \"" + unsafePseudoClass + "\" is potentially unsafe when doing server-side rendering. Try changing it to \"" + unsafePseudoClass.split('-child')[0] + "-of-type\".");
-      });
-    }
-  };
-};
-
-var isImportRule = function isImportRule(element) {
-  return element.type.charCodeAt(1) === 105 && element.type.charCodeAt(0) === 64;
-};
-
-var isPrependedWithRegularRules = function isPrependedWithRegularRules(index, children) {
-  for (var i = index - 1; i >= 0; i--) {
-    if (!isImportRule(children[i])) {
-      return true;
-    }
-  }
-
-  return false;
-}; // use this to remove incorrect elements from further processing
-// so they don't get handed to the `sheet` (or anything else)
-// as that could potentially lead to additional logs which in turn could be overhelming to the user
-
-
-var nullifyElement = function nullifyElement(element) {
-  element.type = '';
-  element.value = '';
-  element["return"] = '';
-  element.children = '';
-  element.props = '';
-};
-
-var incorrectImportAlarm = function incorrectImportAlarm(element, index, children) {
-  if (!isImportRule(element)) {
-    return;
-  }
-
-  if (element.parent) {
-    console.error("`@import` rules can't be nested inside other rules. Please move it to the top level and put it before regular rules. Keep in mind that they can only be used within global styles.");
-    nullifyElement(element);
-  } else if (isPrependedWithRegularRules(index, children)) {
-    console.error("`@import` rules can't be after other rules. Please put your `@import` rules before your other rules.");
-    nullifyElement(element);
   }
 };
 
@@ -6245,13 +6784,9 @@ var prefixer = function prefixer(element, index, children, callback) {
   }
 };
 
-var isBrowser$4 = typeof document !== 'undefined';
-var getServerStylisCache = isBrowser$4 ? undefined : weakMemoize(function () {
+var getServerStylisCache = isBrowser$3 ? undefined : weakMemoize(function () {
   return memoize(function () {
-    var cache = {};
-    return function (name) {
-      return cache[name];
-    };
+    return {};
   });
 });
 var defaultStylisPlugins = [prefixer];
@@ -6259,11 +6794,7 @@ var defaultStylisPlugins = [prefixer];
 var createCache = function createCache(options) {
   var key = options.key;
 
-  if (process.env.NODE_ENV !== 'production' && !key) {
-    throw new Error("You have to configure `key` for your cache. Please make sure it's unique (and not equal to 'css') as it's used for linking styles to your cache.\n" + "If multiple caches share the same key they might \"fight\" for each other's style elements.");
-  }
-
-  if (isBrowser$4 && key === 'css') {
+  if (isBrowser$3 && key === 'css') {
     var ssrStyles = document.querySelectorAll("style[data-emotion]:not([data-s])"); // get SSRed styles out of the way of React's hydration
     // document.head is a safe place to move them to(though note document.head is not necessarily the last place they will be)
     // note this very very intentionally targets all style elements regardless of the key to ensure
@@ -6281,6 +6812,7 @@ var createCache = function createCache(options) {
       if (dataEmotionAttribute.indexOf(' ') === -1) {
         return;
       }
+
       document.head.appendChild(node);
       node.setAttribute('data-s', '');
     });
@@ -6288,23 +6820,16 @@ var createCache = function createCache(options) {
 
   var stylisPlugins = options.stylisPlugins || defaultStylisPlugins;
 
-  if (process.env.NODE_ENV !== 'production') {
-    // $FlowFixMe
-    if (/[^a-z-]/.test(key)) {
-      throw new Error("Emotion key must only contain lower case alphabetical characters and - but \"" + key + "\" was passed");
-    }
-  }
-
   var inserted = {};
   var container;
   var nodesToHydrate = [];
 
-  if (isBrowser$4) {
+  if (isBrowser$3) {
     container = options.container || document.head;
     Array.prototype.forEach.call( // this means we will ignore elements which don't have a space in them which
     // means that the style elements we're looking at are only Emotion 11 server-rendered style elements
     document.querySelectorAll("style[data-emotion^=\"" + key + " \"]"), function (node) {
-      var attrib = node.getAttribute("data-emotion").split(' '); // $FlowFixMe
+      var attrib = node.getAttribute("data-emotion").split(' ');
 
       for (var i = 1; i < attrib.length; i++) {
         inserted[attrib[i]] = true;
@@ -6318,28 +6843,9 @@ var createCache = function createCache(options) {
 
   var omnipresentPlugins = [compat, removeLabel];
 
-  if (process.env.NODE_ENV !== 'production') {
-    omnipresentPlugins.push(createUnsafeSelectorsAlarm({
-      get compat() {
-        return cache.compat;
-      }
-
-    }), incorrectImportAlarm);
-  }
-
-  if (isBrowser$4) {
+  if (!getServerStylisCache) {
     var currentSheet;
-    var finalizingPlugins = [stringify, process.env.NODE_ENV !== 'production' ? function (element) {
-      if (!element.root) {
-        if (element["return"]) {
-          currentSheet.insert(element["return"]);
-        } else if (element.value && element.type !== COMMENT) {
-          // insert empty rule in non-production environments
-          // so @emotion/jest can grab `key` from the (JS)DOM for caches without any rules inserted yet
-          currentSheet.insert(element.value + "{}");
-        }
-      }
-    } : rulesheet(function (rule) {
+    var finalizingPlugins = [stringify, rulesheet(function (rule) {
       currentSheet.insert(rule);
     })];
     var serializer = middleware(omnipresentPlugins.concat(stylisPlugins, finalizingPlugins));
@@ -6350,14 +6856,6 @@ var createCache = function createCache(options) {
 
     _insert = function insert(selector, serialized, sheet, shouldCache) {
       currentSheet = sheet;
-
-      if (process.env.NODE_ENV !== 'production' && serialized.map !== undefined) {
-        currentSheet = {
-          insert: function insert(rule) {
-            sheet.insert(rule + serialized.map);
-          }
-        };
-      }
 
       stylis(selector ? selector + "{" + serialized.styles + "}" : serialized.styles);
 
@@ -6372,8 +6870,7 @@ var createCache = function createCache(options) {
 
     var _stylis = function _stylis(styles) {
       return serialize(compile(styles), _serializer);
-    }; // $FlowFixMe
-
+    };
 
     var serverStylisCache = getServerStylisCache(stylisPlugins)(key);
 
@@ -6397,12 +6894,6 @@ var createCache = function createCache(options) {
         // we return them so that they are rendered in a style tag
         if (shouldCache) {
           cache.inserted[name] = true;
-        }
-
-        if ( // using === development instead of !== production
-        // because if people do ssr in tests, the source maps showing up would be annoying
-        process.env.NODE_ENV === 'development' && serialized.map !== undefined) {
-          return rules + serialized.map;
         }
 
         return rules;
@@ -6687,13 +7178,14 @@ var TYPE_STATICS = {};
 TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
 TYPE_STATICS[reactIs.Memo] = MEMO_STATICS;
 
-var isBrowser$3 = typeof document !== 'undefined';
+var isBrowser$2 = typeof document !== 'undefined';
+
 function getRegisteredStyles(registered, registeredStyles, classNames) {
   var rawClassName = '';
   classNames.split(' ').forEach(function (className) {
     if (registered[className] !== undefined) {
       registeredStyles.push(registered[className] + ";");
-    } else {
+    } else if (className) {
       rawClassName += className + " ";
     }
   });
@@ -6711,7 +7203,7 @@ var registerStyles = function registerStyles(cache, serialized, isStringTag) {
   // in node since emotion-server relies on whether a style is in
   // the registered cache to know whether a style is global or not
   // also, note that this check will be dead code eliminated in the browser
-  isBrowser$3 === false && cache.compat !== undefined) && cache.registered[className] === undefined) {
+  isBrowser$2 === false && cache.compat !== undefined) && cache.registered[className] === undefined) {
     cache.registered[className] = serialized.styles;
   }
 };
@@ -6726,14 +7218,14 @@ var insertStyles = function insertStyles(cache, serialized, isStringTag) {
     do {
       var maybeStyles = cache.insert(serialized === current ? "." + className : '', current, cache.sheet, true);
 
-      if (!isBrowser$3 && maybeStyles !== undefined) {
+      if (!isBrowser$2 && maybeStyles !== undefined) {
         stylesForSSR += maybeStyles;
       }
 
       current = current.next;
     } while (current !== undefined);
 
-    if (!isBrowser$3 && stylesForSSR.length !== 0) {
+    if (!isBrowser$2 && stylesForSSR.length !== 0) {
       return stylesForSSR;
     }
   }
@@ -6827,6 +7319,7 @@ var unitlessKeys = {
   opacity: 1,
   order: 1,
   orphans: 1,
+  scale: 1,
   tabSize: 1,
   widows: 1,
   zIndex: 1,
@@ -6843,8 +7336,8 @@ var unitlessKeys = {
   strokeWidth: 1
 };
 
-var ILLEGAL_ESCAPE_SEQUENCE_ERROR = "You have illegal escape sequence in your template literal, most likely inside content's property value.\nBecause you write your CSS inside a JavaScript string you actually have to do double escaping, so for example \"content: '\\00d7';\" should become \"content: '\\\\00d7';\".\nYou can read more about this here:\nhttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#ES2018_revision_of_illegal_escape_sequences";
-var UNDEFINED_AS_OBJECT_KEY_ERROR = "You have passed in falsy value as style object's key (can happen when in example you pass unexported component as computed key).";
+var isDevelopment$1 = false;
+
 var hyphenateRegex = /[A-Z]|^ms/g;
 var animationRegex = /_EMO_([^_]+?)_([^]*?)_EMO_/g;
 
@@ -6885,34 +7378,6 @@ var processStyleValue = function processStyleValue(key, value) {
   return value;
 };
 
-if (process.env.NODE_ENV !== 'production') {
-  var contentValuePattern = /(var|attr|counters?|url|element|(((repeating-)?(linear|radial))|conic)-gradient)\(|(no-)?(open|close)-quote/;
-  var contentValues = ['normal', 'none', 'initial', 'inherit', 'unset'];
-  var oldProcessStyleValue = processStyleValue;
-  var msPattern = /^-ms-/;
-  var hyphenPattern = /-(.)/g;
-  var hyphenatedCache = {};
-
-  processStyleValue = function processStyleValue(key, value) {
-    if (key === 'content') {
-      if (typeof value !== 'string' || contentValues.indexOf(value) === -1 && !contentValuePattern.test(value) && (value.charAt(0) !== value.charAt(value.length - 1) || value.charAt(0) !== '"' && value.charAt(0) !== "'")) {
-        throw new Error("You seem to be using a value for 'content' without quotes, try replacing it with `content: '\"" + value + "\"'`");
-      }
-    }
-
-    var processed = oldProcessStyleValue(key, value);
-
-    if (processed !== '' && !isCustomProperty(key) && key.indexOf('-') !== -1 && hyphenatedCache[key] === undefined) {
-      hyphenatedCache[key] = true;
-      console.error("Using kebab-case for css properties in objects is not supported. Did you mean " + key.replace(msPattern, 'ms-').replace(hyphenPattern, function (str, _char) {
-        return _char.toUpperCase();
-      }) + "?");
-    }
-
-    return processed;
-  };
-}
-
 var noComponentSelectorMessage = 'Component selectors can only be used in conjunction with ' + '@emotion/babel-plugin, the swc Emotion plugin, or another Emotion-aware ' + 'compiler transform.';
 
 function handleInterpolation(mergedProps, registered, interpolation) {
@@ -6920,12 +7385,11 @@ function handleInterpolation(mergedProps, registered, interpolation) {
     return '';
   }
 
-  if (interpolation.__emotion_styles !== undefined) {
-    if (process.env.NODE_ENV !== 'production' && interpolation.toString() === 'NO_COMPONENT_SELECTOR') {
-      throw new Error(noComponentSelectorMessage);
-    }
+  var componentSelector = interpolation;
 
-    return interpolation;
+  if (componentSelector.__emotion_styles !== undefined) {
+
+    return componentSelector;
   }
 
   switch (typeof interpolation) {
@@ -6936,17 +7400,21 @@ function handleInterpolation(mergedProps, registered, interpolation) {
 
     case 'object':
       {
-        if (interpolation.anim === 1) {
+        var keyframes = interpolation;
+
+        if (keyframes.anim === 1) {
           cursor = {
-            name: interpolation.name,
-            styles: interpolation.styles,
+            name: keyframes.name,
+            styles: keyframes.styles,
             next: cursor
           };
-          return interpolation.name;
+          return keyframes.name;
         }
 
-        if (interpolation.styles !== undefined) {
-          var next = interpolation.next;
+        var serializedStyles = interpolation;
+
+        if (serializedStyles.styles !== undefined) {
+          var next = serializedStyles.next;
 
           if (next !== undefined) {
             // not the most efficient thing ever but this is a pretty rare case
@@ -6961,12 +7429,7 @@ function handleInterpolation(mergedProps, registered, interpolation) {
             }
           }
 
-          var styles = interpolation.styles + ";";
-
-          if (process.env.NODE_ENV !== 'production' && interpolation.map !== undefined) {
-            styles += interpolation.map;
-          }
-
+          var styles = serializedStyles.styles + ";";
           return styles;
         }
 
@@ -6980,37 +7443,21 @@ function handleInterpolation(mergedProps, registered, interpolation) {
           var result = interpolation(mergedProps);
           cursor = previousCursor;
           return handleInterpolation(mergedProps, registered, result);
-        } else if (process.env.NODE_ENV !== 'production') {
-          console.error('Functions that are interpolated in css calls will be stringified.\n' + 'If you want to have a css call based on props, create a function that returns a css call like this\n' + 'let dynamicStyle = (props) => css`color: ${props.color}`\n' + 'It can be called directly with props or interpolated in a styled call like this\n' + "let SomeComponent = styled('div')`${dynamicStyle}`");
         }
 
         break;
       }
-
-    case 'string':
-      if (process.env.NODE_ENV !== 'production') {
-        var matched = [];
-        var replaced = interpolation.replace(animationRegex, function (match, p1, p2) {
-          var fakeVarName = "animation" + matched.length;
-          matched.push("const " + fakeVarName + " = keyframes`" + p2.replace(/^@keyframes animation-\w+/, '') + "`");
-          return "${" + fakeVarName + "}";
-        });
-
-        if (matched.length) {
-          console.error('`keyframes` output got interpolated into plain string, please wrap it with `css`.\n\n' + 'Instead of doing this:\n\n' + [].concat(matched, ["`" + replaced + "`"]).join('\n') + '\n\nYou should wrap it with `css` like this:\n\n' + ("css`" + replaced + "`"));
-        }
-      }
-
-      break;
   } // finalize string values (regular strings and functions interpolated into css calls)
 
 
+  var asString = interpolation;
+
   if (registered == null) {
-    return interpolation;
+    return asString;
   }
 
-  var cached = registered[interpolation];
-  return cached !== undefined ? cached : interpolation;
+  var cached = registered[asString];
+  return cached !== undefined ? cached : asString;
 }
 
 function createStringFromObject(mergedProps, registered, obj) {
@@ -7021,44 +7468,43 @@ function createStringFromObject(mergedProps, registered, obj) {
       string += handleInterpolation(mergedProps, registered, obj[i]) + ";";
     }
   } else {
-    for (var _key in obj) {
-      var value = obj[_key];
+    for (var key in obj) {
+      var value = obj[key];
 
       if (typeof value !== 'object') {
-        if (registered != null && registered[value] !== undefined) {
-          string += _key + "{" + registered[value] + "}";
-        } else if (isProcessableValue(value)) {
-          string += processStyleName(_key) + ":" + processStyleValue(_key, value) + ";";
+        var asString = value;
+
+        if (registered != null && registered[asString] !== undefined) {
+          string += key + "{" + registered[asString] + "}";
+        } else if (isProcessableValue(asString)) {
+          string += processStyleName(key) + ":" + processStyleValue(key, asString) + ";";
         }
       } else {
-        if (_key === 'NO_COMPONENT_SELECTOR' && process.env.NODE_ENV !== 'production') {
+        if (key === 'NO_COMPONENT_SELECTOR' && isDevelopment$1) {
           throw new Error(noComponentSelectorMessage);
         }
 
         if (Array.isArray(value) && typeof value[0] === 'string' && (registered == null || registered[value[0]] === undefined)) {
           for (var _i = 0; _i < value.length; _i++) {
             if (isProcessableValue(value[_i])) {
-              string += processStyleName(_key) + ":" + processStyleValue(_key, value[_i]) + ";";
+              string += processStyleName(key) + ":" + processStyleValue(key, value[_i]) + ";";
             }
           }
         } else {
           var interpolated = handleInterpolation(mergedProps, registered, value);
 
-          switch (_key) {
+          switch (key) {
             case 'animation':
             case 'animationName':
               {
-                string += processStyleName(_key) + ":" + interpolated + ";";
+                string += processStyleName(key) + ":" + interpolated + ";";
                 break;
               }
 
             default:
               {
-                if (process.env.NODE_ENV !== 'production' && _key === 'undefined') {
-                  console.error(UNDEFINED_AS_OBJECT_KEY_ERROR);
-                }
 
-                string += _key + "{" + interpolated + "}";
+                string += key + "{" + interpolated + "}";
               }
           }
         }
@@ -7069,17 +7515,11 @@ function createStringFromObject(mergedProps, registered, obj) {
   return string;
 }
 
-var labelPattern = /label:\s*([^\s;\n{]+)\s*(;|$)/g;
-var sourceMapPattern;
-
-if (process.env.NODE_ENV !== 'production') {
-  sourceMapPattern = /\/\*#\ssourceMappingURL=data:application\/json;\S+\s+\*\//g;
-} // this is the cursor for keyframes
+var labelPattern = /label:\s*([^\s;{]+)\s*(;|$)/g; // this is the cursor for keyframes
 // keyframes are stored on the SerializedStyles object as a linked list
 
-
 var cursor;
-var serializeStyles = function serializeStyles(args, registered, mergedProps) {
+function serializeStyles(args, registered, mergedProps) {
   if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null && args[0].styles !== undefined) {
     return args[0];
   }
@@ -7093,11 +7533,9 @@ var serializeStyles = function serializeStyles(args, registered, mergedProps) {
     stringMode = false;
     styles += handleInterpolation(mergedProps, registered, strings);
   } else {
-    if (process.env.NODE_ENV !== 'production' && strings[0] === undefined) {
-      console.error(ILLEGAL_ESCAPE_SEQUENCE_ERROR);
-    }
+    var asTemplateStringsArr = strings;
 
-    styles += strings[0];
+    styles += asTemplateStringsArr[0];
   } // we start at 1 since we've already handled the first arg
 
 
@@ -7105,21 +7543,10 @@ var serializeStyles = function serializeStyles(args, registered, mergedProps) {
     styles += handleInterpolation(mergedProps, registered, args[i]);
 
     if (stringMode) {
-      if (process.env.NODE_ENV !== 'production' && strings[i] === undefined) {
-        console.error(ILLEGAL_ESCAPE_SEQUENCE_ERROR);
-      }
+      var templateStringsArr = strings;
 
-      styles += strings[i];
+      styles += templateStringsArr[i];
     }
-  }
-
-  var sourceMap;
-
-  if (process.env.NODE_ENV !== 'production') {
-    styles = styles.replace(sourceMapPattern, function (match) {
-      sourceMap = match;
-      return '';
-    });
   } // using a global regex with .exec is stateful so lastIndex has to be reset each time
 
 
@@ -7128,44 +7555,30 @@ var serializeStyles = function serializeStyles(args, registered, mergedProps) {
   var match; // https://esbench.com/bench/5b809c2cf2949800a0f61fb5
 
   while ((match = labelPattern.exec(styles)) !== null) {
-    identifierName += '-' + // $FlowFixMe we know it's not null
-    match[1];
+    identifierName += '-' + match[1];
   }
 
   var name = murmur2(styles) + identifierName;
-
-  if (process.env.NODE_ENV !== 'production') {
-    // $FlowFixMe SerializedStyles type doesn't have toString property (and we don't want to add it)
-    return {
-      name: name,
-      styles: styles,
-      map: sourceMap,
-      next: cursor,
-      toString: function toString() {
-        return "You have tried to stringify object returned from `css` function. It isn't supposed to be used directly (e.g. as value of the `className` prop), but rather handed to emotion so it can handle it (e.g. as value of `css` prop).";
-      }
-    };
-  }
 
   return {
     name: name,
     styles: styles,
     next: cursor
   };
-};
+}
 
-var isBrowser$2 = typeof document !== 'undefined';
+var isBrowser$1 = typeof document !== 'undefined';
 
 var syncFallback = function syncFallback(create) {
   return create();
 };
 
 var useInsertionEffect = React__namespace['useInsertion' + 'Effect'] ? React__namespace['useInsertion' + 'Effect'] : false;
-var useInsertionEffectAlwaysWithSyncFallback = !isBrowser$2 ? syncFallback : useInsertionEffect || syncFallback;
-var useInsertionEffectWithLayoutFallback = useInsertionEffect || React__namespace.useLayoutEffect;
+var useInsertionEffectAlwaysWithSyncFallback = !isBrowser$1 ? syncFallback : useInsertionEffect || syncFallback;
 
-var isBrowser$1 = typeof document !== 'undefined';
-var hasOwnProperty = {}.hasOwnProperty;
+var isDevelopment = false;
+
+var isBrowser = typeof document !== 'undefined';
 
 var EmotionCacheContext = /* #__PURE__ */React__namespace.createContext( // we're doing this to avoid preconstruct's dead code elimination in this one case
 // because this module is primarily intended for the browser and node
@@ -7177,14 +7590,9 @@ typeof HTMLElement !== 'undefined' ? /* #__PURE__ */createCache({
   key: 'css'
 }) : null);
 
-if (process.env.NODE_ENV !== 'production') {
-  EmotionCacheContext.displayName = 'EmotionCacheContext';
-}
-
 EmotionCacheContext.Provider;
 
 var withEmotionCache = function withEmotionCache(func) {
-  // $FlowFixMe
   return /*#__PURE__*/React.forwardRef(function (props, ref) {
     // the cache will never be null in the browser
     var cache = React.useContext(EmotionCacheContext);
@@ -7192,7 +7600,7 @@ var withEmotionCache = function withEmotionCache(func) {
   });
 };
 
-if (!isBrowser$1) {
+if (!isBrowser) {
   withEmotionCache = function withEmotionCache(func) {
     return function (props) {
       var cache = React.useContext(EmotionCacheContext);
@@ -7218,81 +7626,25 @@ if (!isBrowser$1) {
 
 var ThemeContext = /* #__PURE__ */React__namespace.createContext({});
 
-if (process.env.NODE_ENV !== 'production') {
-  ThemeContext.displayName = 'EmotionThemeContext';
-}
-
-var getLastPart = function getLastPart(functionName) {
-  // The match may be something like 'Object.createEmotionProps' or
-  // 'Loader.prototype.render'
-  var parts = functionName.split('.');
-  return parts[parts.length - 1];
-};
-
-var getFunctionNameFromStackTraceLine = function getFunctionNameFromStackTraceLine(line) {
-  // V8
-  var match = /^\s+at\s+([A-Za-z0-9$.]+)\s/.exec(line);
-  if (match) return getLastPart(match[1]); // Safari / Firefox
-
-  match = /^([A-Za-z0-9$.]+)@/.exec(line);
-  if (match) return getLastPart(match[1]);
-  return undefined;
-};
-
-var internalReactFunctionNames = /* #__PURE__ */new Set(['renderWithHooks', 'processChild', 'finishClassComponent', 'renderToString']); // These identifiers come from error stacks, so they have to be valid JS
-// identifiers, thus we only need to replace what is a valid character for JS,
-// but not for CSS.
-
-var sanitizeIdentifier = function sanitizeIdentifier(identifier) {
-  return identifier.replace(/\$/g, '-');
-};
-
-var getLabelFromStackTrace = function getLabelFromStackTrace(stackTrace) {
-  if (!stackTrace) return undefined;
-  var lines = stackTrace.split('\n');
-
-  for (var i = 0; i < lines.length; i++) {
-    var functionName = getFunctionNameFromStackTraceLine(lines[i]); // The first line of V8 stack traces is just "Error"
-
-    if (!functionName) continue; // If we reach one of these, we have gone too far and should quit
-
-    if (internalReactFunctionNames.has(functionName)) break; // The component name is the first function in the stack that starts with an
-    // uppercase letter
-
-    if (/^[A-Z]/.test(functionName)) return sanitizeIdentifier(functionName);
-  }
-
-  return undefined;
-};
+var hasOwn = {}.hasOwnProperty;
 
 var typePropName = '__EMOTION_TYPE_PLEASE_DO_NOT_USE__';
-var labelPropName = '__EMOTION_LABEL_PLEASE_DO_NOT_USE__';
 var createEmotionProps = function createEmotionProps(type, props) {
-  if (process.env.NODE_ENV !== 'production' && typeof props.css === 'string' && // check if there is a css declaration
-  props.css.indexOf(':') !== -1) {
-    throw new Error("Strings are not allowed as css prop values, please wrap it in a css template literal from '@emotion/react' like this: css`" + props.css + "`");
-  }
 
   var newProps = {};
 
-  for (var key in props) {
-    if (hasOwnProperty.call(props, key)) {
-      newProps[key] = props[key];
+  for (var _key in props) {
+    if (hasOwn.call(props, _key)) {
+      newProps[_key] = props[_key];
     }
   }
 
-  newProps[typePropName] = type; // For performance, only call getLabelFromStackTrace in development and when
-  // the label hasn't already been computed
-
-  if (process.env.NODE_ENV !== 'production' && !!props.css && (typeof props.css !== 'object' || typeof props.css.name !== 'string' || props.css.name.indexOf('-') === -1)) {
-    var label = getLabelFromStackTrace(new Error().stack);
-    if (label) newProps[labelPropName] = label;
-  }
+  newProps[typePropName] = type; // Runtime labeling is an opt-in feature because:
 
   return newProps;
 };
 
-var Insertion$1 = function Insertion(_ref) {
+var Insertion = function Insertion(_ref) {
   var cache = _ref.cache,
       serialized = _ref.serialized,
       isStringTag = _ref.isStringTag;
@@ -7301,7 +7653,7 @@ var Insertion$1 = function Insertion(_ref) {
     return insertStyles(cache, serialized, isStringTag);
   });
 
-  if (!isBrowser$1 && rules !== undefined) {
+  if (!isBrowser && rules !== undefined) {
     var _ref2;
 
     var serializedNames = serialized.name;
@@ -7341,175 +7693,35 @@ var Emotion = /* #__PURE__ */withEmotionCache(function (props, cache, ref) {
 
   var serialized = serializeStyles(registeredStyles, undefined, React__namespace.useContext(ThemeContext));
 
-  if (process.env.NODE_ENV !== 'production' && serialized.name.indexOf('-') === -1) {
-    var labelFromStack = props[labelPropName];
-
-    if (labelFromStack) {
-      serialized = serializeStyles([serialized, 'label:' + labelFromStack + ';']);
-    }
-  }
-
   className += cache.key + "-" + serialized.name;
   var newProps = {};
 
-  for (var key in props) {
-    if (hasOwnProperty.call(props, key) && key !== 'css' && key !== typePropName && (process.env.NODE_ENV === 'production' || key !== labelPropName)) {
-      newProps[key] = props[key];
+  for (var _key2 in props) {
+    if (hasOwn.call(props, _key2) && _key2 !== 'css' && _key2 !== typePropName && (!isDevelopment )) {
+      newProps[_key2] = props[_key2];
     }
   }
 
-  newProps.ref = ref;
   newProps.className = className;
-  return /*#__PURE__*/React__namespace.createElement(React__namespace.Fragment, null, /*#__PURE__*/React__namespace.createElement(Insertion$1, {
+
+  if (ref) {
+    newProps.ref = ref;
+  }
+
+  return /*#__PURE__*/React__namespace.createElement(React__namespace.Fragment, null, /*#__PURE__*/React__namespace.createElement(Insertion, {
     cache: cache,
     serialized: serialized,
     isStringTag: typeof WrappedComponent === 'string'
   }), /*#__PURE__*/React__namespace.createElement(WrappedComponent, newProps));
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  Emotion.displayName = 'EmotionCssPropInternal';
-}
-
 var Emotion$1 = Emotion;
 
-var pkg = {
-	name: "@emotion/react",
-	version: "11.11.0",
-	main: "dist/emotion-react.cjs.js",
-	module: "dist/emotion-react.esm.js",
-	browser: {
-		"./dist/emotion-react.esm.js": "./dist/emotion-react.browser.esm.js"
-	},
-	exports: {
-		".": {
-			module: {
-				worker: "./dist/emotion-react.worker.esm.js",
-				browser: "./dist/emotion-react.browser.esm.js",
-				"default": "./dist/emotion-react.esm.js"
-			},
-			"import": "./dist/emotion-react.cjs.mjs",
-			"default": "./dist/emotion-react.cjs.js"
-		},
-		"./jsx-runtime": {
-			module: {
-				worker: "./jsx-runtime/dist/emotion-react-jsx-runtime.worker.esm.js",
-				browser: "./jsx-runtime/dist/emotion-react-jsx-runtime.browser.esm.js",
-				"default": "./jsx-runtime/dist/emotion-react-jsx-runtime.esm.js"
-			},
-			"import": "./jsx-runtime/dist/emotion-react-jsx-runtime.cjs.mjs",
-			"default": "./jsx-runtime/dist/emotion-react-jsx-runtime.cjs.js"
-		},
-		"./_isolated-hnrs": {
-			module: {
-				worker: "./_isolated-hnrs/dist/emotion-react-_isolated-hnrs.worker.esm.js",
-				browser: "./_isolated-hnrs/dist/emotion-react-_isolated-hnrs.browser.esm.js",
-				"default": "./_isolated-hnrs/dist/emotion-react-_isolated-hnrs.esm.js"
-			},
-			"import": "./_isolated-hnrs/dist/emotion-react-_isolated-hnrs.cjs.mjs",
-			"default": "./_isolated-hnrs/dist/emotion-react-_isolated-hnrs.cjs.js"
-		},
-		"./jsx-dev-runtime": {
-			module: {
-				worker: "./jsx-dev-runtime/dist/emotion-react-jsx-dev-runtime.worker.esm.js",
-				browser: "./jsx-dev-runtime/dist/emotion-react-jsx-dev-runtime.browser.esm.js",
-				"default": "./jsx-dev-runtime/dist/emotion-react-jsx-dev-runtime.esm.js"
-			},
-			"import": "./jsx-dev-runtime/dist/emotion-react-jsx-dev-runtime.cjs.mjs",
-			"default": "./jsx-dev-runtime/dist/emotion-react-jsx-dev-runtime.cjs.js"
-		},
-		"./package.json": "./package.json",
-		"./types/css-prop": "./types/css-prop.d.ts",
-		"./macro": {
-			types: {
-				"import": "./macro.d.mts",
-				"default": "./macro.d.ts"
-			},
-			"default": "./macro.js"
-		}
-	},
-	types: "types/index.d.ts",
-	files: [
-		"src",
-		"dist",
-		"jsx-runtime",
-		"jsx-dev-runtime",
-		"_isolated-hnrs",
-		"types/*.d.ts",
-		"macro.*"
-	],
-	sideEffects: false,
-	author: "Emotion Contributors",
-	license: "MIT",
-	scripts: {
-		"test:typescript": "dtslint types"
-	},
-	dependencies: {
-		"@babel/runtime": "^7.18.3",
-		"@emotion/babel-plugin": "^11.11.0",
-		"@emotion/cache": "^11.11.0",
-		"@emotion/serialize": "^1.1.2",
-		"@emotion/use-insertion-effect-with-fallbacks": "^1.0.1",
-		"@emotion/utils": "^1.2.1",
-		"@emotion/weak-memoize": "^0.3.1",
-		"hoist-non-react-statics": "^3.3.1"
-	},
-	peerDependencies: {
-		react: ">=16.8.0"
-	},
-	peerDependenciesMeta: {
-		"@types/react": {
-			optional: true
-		}
-	},
-	devDependencies: {
-		"@definitelytyped/dtslint": "0.0.112",
-		"@emotion/css": "11.11.0",
-		"@emotion/css-prettifier": "1.1.3",
-		"@emotion/server": "11.11.0",
-		"@emotion/styled": "11.11.0",
-		"html-tag-names": "^1.1.2",
-		react: "16.14.0",
-		"svg-tag-names": "^1.1.1",
-		typescript: "^4.5.5"
-	},
-	repository: "https://github.com/emotion-js/emotion/tree/main/packages/react",
-	publishConfig: {
-		access: "public"
-	},
-	"umd:main": "dist/emotion-react.umd.min.js",
-	preconstruct: {
-		entrypoints: [
-			"./index.js",
-			"./jsx-runtime.js",
-			"./jsx-dev-runtime.js",
-			"./_isolated-hnrs.js"
-		],
-		umdName: "emotionReact",
-		exports: {
-			envConditions: [
-				"browser",
-				"worker"
-			],
-			extra: {
-				"./types/css-prop": "./types/css-prop.d.ts",
-				"./macro": {
-					types: {
-						"import": "./macro.d.mts",
-						"default": "./macro.d.ts"
-					},
-					"default": "./macro.js"
-				}
-			}
-		}
-	}
-};
-
 var jsx = function jsx(type, props) {
+  // eslint-disable-next-line prefer-rest-params
   var args = arguments;
 
-  if (props == null || !hasOwnProperty.call(props, 'css')) {
-    // $FlowFixMe
+  if (props == null || !hasOwn.call(props, 'css')) {
     return React__namespace.createElement.apply(undefined, args);
   }
 
@@ -7520,121 +7732,16 @@ var jsx = function jsx(type, props) {
 
   for (var i = 2; i < argsLength; i++) {
     createElementArgArray[i] = args[i];
-  } // $FlowFixMe
-
+  }
 
   return React__namespace.createElement.apply(null, createElementArgArray);
 };
 
-var warnedAboutCssPropForGlobal = false; // maintain place over rerenders.
-// initial render from browser, insertBefore context.sheet.tags[0] or if a style hasn't been inserted there yet, appendChild
-// initial client-side render from SSR, use place of hydrating tag
+(function (_jsx) {
+  var JSX;
 
-var Global = /* #__PURE__ */withEmotionCache(function (props, cache) {
-  if (process.env.NODE_ENV !== 'production' && !warnedAboutCssPropForGlobal && ( // check for className as well since the user is
-  // probably using the custom createElement which
-  // means it will be turned into a className prop
-  // $FlowFixMe I don't really want to add it to the type since it shouldn't be used
-  props.className || props.css)) {
-    console.error("It looks like you're using the css prop on Global, did you mean to use the styles prop instead?");
-    warnedAboutCssPropForGlobal = true;
-  }
-
-  var styles = props.styles;
-  var serialized = serializeStyles([styles], undefined, React__namespace.useContext(ThemeContext));
-
-  if (!isBrowser$1) {
-    var _ref;
-
-    var serializedNames = serialized.name;
-    var serializedStyles = serialized.styles;
-    var next = serialized.next;
-
-    while (next !== undefined) {
-      serializedNames += ' ' + next.name;
-      serializedStyles += next.styles;
-      next = next.next;
-    }
-
-    var shouldCache = cache.compat === true;
-    var rules = cache.insert("", {
-      name: serializedNames,
-      styles: serializedStyles
-    }, cache.sheet, shouldCache);
-
-    if (shouldCache) {
-      return null;
-    }
-
-    return /*#__PURE__*/React__namespace.createElement("style", (_ref = {}, _ref["data-emotion"] = cache.key + "-global " + serializedNames, _ref.dangerouslySetInnerHTML = {
-      __html: rules
-    }, _ref.nonce = cache.sheet.nonce, _ref));
-  } // yes, i know these hooks are used conditionally
-  // but it is based on a constant that will never change at runtime
-  // it's effectively like having two implementations and switching them out
-  // so it's not actually breaking anything
-
-
-  var sheetRef = React__namespace.useRef();
-  useInsertionEffectWithLayoutFallback(function () {
-    var key = cache.key + "-global"; // use case of https://github.com/emotion-js/emotion/issues/2675
-
-    var sheet = new cache.sheet.constructor({
-      key: key,
-      nonce: cache.sheet.nonce,
-      container: cache.sheet.container,
-      speedy: cache.sheet.isSpeedy
-    });
-    var rehydrating = false; // $FlowFixMe
-
-    var node = document.querySelector("style[data-emotion=\"" + key + " " + serialized.name + "\"]");
-
-    if (cache.sheet.tags.length) {
-      sheet.before = cache.sheet.tags[0];
-    }
-
-    if (node !== null) {
-      rehydrating = true; // clear the hash so this node won't be recognizable as rehydratable by other <Global/>s
-
-      node.setAttribute('data-emotion', key);
-      sheet.hydrate([node]);
-    }
-
-    sheetRef.current = [sheet, rehydrating];
-    return function () {
-      sheet.flush();
-    };
-  }, [cache]);
-  useInsertionEffectWithLayoutFallback(function () {
-    var sheetRefCurrent = sheetRef.current;
-    var sheet = sheetRefCurrent[0],
-        rehydrating = sheetRefCurrent[1];
-
-    if (rehydrating) {
-      sheetRefCurrent[1] = false;
-      return;
-    }
-
-    if (serialized.next !== undefined) {
-      // insert keyframes
-      insertStyles(cache, serialized.next, true);
-    }
-
-    if (sheet.tags.length) {
-      // if this doesn't exist then it will be null so the style element will be appended
-      var element = sheet.tags[sheet.tags.length - 1].nextElementSibling;
-      sheet.before = element;
-      sheet.flush();
-    }
-
-    cache.insert("", serialized, sheet, false);
-  }, [cache, serialized.name]);
-  return null;
-});
-
-if (process.env.NODE_ENV !== 'production') {
-  Global.displayName = 'EmotionGlobal';
-}
+  (function (_JSX) {})(JSX || (JSX = _jsx.JSX || (_jsx.JSX = {})));
+})(jsx || (jsx = {}));
 
 function css$2() {
   for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -7644,10 +7751,9 @@ function css$2() {
   return serializeStyles(args);
 }
 
-var keyframes = function keyframes() {
+function keyframes() {
   var insertable = css$2.apply(void 0, arguments);
-  var name = "animation-" + insertable.name; // $FlowFixMe
-
+  var name = "animation-" + insertable.name;
   return {
     name: name,
     styles: "@keyframes " + name + "{" + insertable.styles + "}",
@@ -7656,200 +7762,37 @@ var keyframes = function keyframes() {
       return "_EMO_" + this.name + "_" + this.styles + "_EMO_";
     }
   };
-};
-
-var classnames = function classnames(args) {
-  var len = args.length;
-  var i = 0;
-  var cls = '';
-
-  for (; i < len; i++) {
-    var arg = args[i];
-    if (arg == null) continue;
-    var toAdd = void 0;
-
-    switch (typeof arg) {
-      case 'boolean':
-        break;
-
-      case 'object':
-        {
-          if (Array.isArray(arg)) {
-            toAdd = classnames(arg);
-          } else {
-            if (process.env.NODE_ENV !== 'production' && arg.styles !== undefined && arg.name !== undefined) {
-              console.error('You have passed styles created with `css` from `@emotion/react` package to the `cx`.\n' + '`cx` is meant to compose class names (strings) so you should convert those styles to a class name by passing them to the `css` received from <ClassNames/> component.');
-            }
-
-            toAdd = '';
-
-            for (var k in arg) {
-              if (arg[k] && k) {
-                toAdd && (toAdd += ' ');
-                toAdd += k;
-              }
-            }
-          }
-
-          break;
-        }
-
-      default:
-        {
-          toAdd = arg;
-        }
-    }
-
-    if (toAdd) {
-      cls && (cls += ' ');
-      cls += toAdd;
-    }
-  }
-
-  return cls;
-};
-
-function merge(registered, css, className) {
-  var registeredStyles = [];
-  var rawClassName = getRegisteredStyles(registered, registeredStyles, className);
-
-  if (registeredStyles.length < 2) {
-    return className;
-  }
-
-  return rawClassName + css(registeredStyles);
 }
 
-var Insertion = function Insertion(_ref) {
-  var cache = _ref.cache,
-      serializedArr = _ref.serializedArr;
-  var rules = useInsertionEffectAlwaysWithSyncFallback(function () {
-    var rules = '';
-
-    for (var i = 0; i < serializedArr.length; i++) {
-      var res = insertStyles(cache, serializedArr[i], false);
-
-      if (!isBrowser$1 && res !== undefined) {
-        rules += res;
-      }
-    }
-
-    if (!isBrowser$1) {
-      return rules;
-    }
-  });
-
-  if (!isBrowser$1 && rules.length !== 0) {
-    var _ref2;
-
-    return /*#__PURE__*/React__namespace.createElement("style", (_ref2 = {}, _ref2["data-emotion"] = cache.key + " " + serializedArr.map(function (serialized) {
-      return serialized.name;
-    }).join(' '), _ref2.dangerouslySetInnerHTML = {
-      __html: rules
-    }, _ref2.nonce = cache.sheet.nonce, _ref2));
-  }
-
-  return null;
-};
-
-var ClassNames = /* #__PURE__ */withEmotionCache(function (props, cache) {
-  var hasRendered = false;
-  var serializedArr = [];
-
-  var css = function css() {
-    if (hasRendered && process.env.NODE_ENV !== 'production') {
-      throw new Error('css can only be used during render');
-    }
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    var serialized = serializeStyles(args, cache.registered);
-    serializedArr.push(serialized); // registration has to happen here as the result of this might get consumed by `cx`
-
-    registerStyles(cache, serialized, false);
-    return cache.key + "-" + serialized.name;
-  };
-
-  var cx = function cx() {
-    if (hasRendered && process.env.NODE_ENV !== 'production') {
-      throw new Error('cx can only be used during render');
-    }
-
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-
-    return merge(cache.registered, css, classnames(args));
-  };
-
-  var content = {
-    css: css,
-    cx: cx,
-    theme: React__namespace.useContext(ThemeContext)
-  };
-  var ele = props.children(content);
-  hasRendered = true;
-  return /*#__PURE__*/React__namespace.createElement(React__namespace.Fragment, null, /*#__PURE__*/React__namespace.createElement(Insertion, {
-    cache: cache,
-    serializedArr: serializedArr
-  }), ele);
-});
-
-if (process.env.NODE_ENV !== 'production') {
-  ClassNames.displayName = 'EmotionClassNames';
+function _arrayWithHoles(r) {
+  if (Array.isArray(r)) return r;
 }
 
-if (process.env.NODE_ENV !== 'production') {
-  var isBrowser = typeof document !== 'undefined'; // #1727, #2905 for some reason Jest and Vitest evaluate modules twice if some consuming module gets mocked
-
-  var isTestEnv = typeof jest !== 'undefined' || typeof vi !== 'undefined';
-
-  if (isBrowser && !isTestEnv) {
-    // globalThis has wide browser support - https://caniuse.com/?search=globalThis, Node.js 12 and later
-    var globalContext = // $FlowIgnore
-    typeof globalThis !== 'undefined' ? globalThis // eslint-disable-line no-undef
-    : isBrowser ? window : global;
-    var globalKey = "__EMOTION_REACT_" + pkg.version.split('.')[0] + "__";
-
-    if (globalContext[globalKey]) {
-      console.warn('You are loading @emotion/react when it is already loaded. Running ' + 'multiple instances may cause problems. This can happen if multiple ' + 'versions are used, or if multiple builds of the same version are ' + 'used.');
-    }
-
-    globalContext[globalKey] = true;
-  }
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-function _iterableToArrayLimit(arr, i) {
-  var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"];
-  if (null != _i) {
-    var _s,
-      _e,
-      _x,
-      _r,
-      _arr = [],
-      _n = !0,
-      _d = !1;
+function _iterableToArrayLimit(r, l) {
+  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+  if (null != t) {
+    var e,
+      n,
+      i,
+      u,
+      a = [],
+      f = !0,
+      o = !1;
     try {
-      if (_x = (_i = _i.call(arr)).next, 0 === i) {
-        if (Object(_i) !== _i) return;
-        _n = !1;
-      } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0);
-    } catch (err) {
-      _d = !0, _e = err;
+      if (i = (t = t.call(r)).next, 0 === l) {
+        if (Object(t) !== t) return;
+        f = !1;
+      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+    } catch (r) {
+      o = !0, n = r;
     } finally {
       try {
-        if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return;
+        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
       } finally {
-        if (_d) throw _e;
+        if (o) throw n;
       }
     }
-    return _arr;
+    return a;
   }
 }
 
@@ -7857,102 +7800,1110 @@ function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+function _slicedToArray(r, e) {
+  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
 }
 
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
+function _objectWithoutPropertiesLoose(r, e) {
+  if (null == r) return {};
+  var t = {};
+  for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
+    if (-1 !== e.indexOf(n)) continue;
+    t[n] = r[n];
   }
-  return target;
+  return t;
 }
 
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
+function _objectWithoutProperties(e, t) {
+  if (null == e) return {};
+  var o,
+    r,
+    i = _objectWithoutPropertiesLoose(e, t);
   if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
+    var n = Object.getOwnPropertySymbols(e);
+    for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
   }
-  return target;
+  return i;
 }
 
-function _taggedTemplateLiteral(strings, raw) {
-  if (!raw) {
-    raw = strings.slice(0);
-  }
-  return Object.freeze(Object.defineProperties(strings, {
+function _taggedTemplateLiteral(e, t) {
+  return t || (t = e.slice(0)), Object.freeze(Object.defineProperties(e, {
     raw: {
-      value: Object.freeze(raw)
+      value: Object.freeze(t)
     }
   }));
 }
 
-function rectToClientRect(rect) {
+/**
+ * Custom positioning reference element.
+ * @see https://floating-ui.com/docs/virtual-elements
+ */
+
+const sides = ['top', 'right', 'bottom', 'left'];
+const alignments = ['start', 'end'];
+const placements = /*#__PURE__*/sides.reduce((acc, side) => acc.concat(side, side + "-" + alignments[0], side + "-" + alignments[1]), []);
+const min = Math.min;
+const max = Math.max;
+const round = Math.round;
+const floor = Math.floor;
+const createCoords = v => ({
+  x: v,
+  y: v
+});
+const oppositeSideMap = {
+  left: 'right',
+  right: 'left',
+  bottom: 'top',
+  top: 'bottom'
+};
+const oppositeAlignmentMap = {
+  start: 'end',
+  end: 'start'
+};
+function clamp(start, value, end) {
+  return max(start, min(value, end));
+}
+function evaluate(value, param) {
+  return typeof value === 'function' ? value(param) : value;
+}
+function getSide(placement) {
+  return placement.split('-')[0];
+}
+function getAlignment(placement) {
+  return placement.split('-')[1];
+}
+function getOppositeAxis(axis) {
+  return axis === 'x' ? 'y' : 'x';
+}
+function getAxisLength(axis) {
+  return axis === 'y' ? 'height' : 'width';
+}
+function getSideAxis(placement) {
+  return ['top', 'bottom'].includes(getSide(placement)) ? 'y' : 'x';
+}
+function getAlignmentAxis(placement) {
+  return getOppositeAxis(getSideAxis(placement));
+}
+function getAlignmentSides(placement, rects, rtl) {
+  if (rtl === void 0) {
+    rtl = false;
+  }
+  const alignment = getAlignment(placement);
+  const alignmentAxis = getAlignmentAxis(placement);
+  const length = getAxisLength(alignmentAxis);
+  let mainAlignmentSide = alignmentAxis === 'x' ? alignment === (rtl ? 'end' : 'start') ? 'right' : 'left' : alignment === 'start' ? 'bottom' : 'top';
+  if (rects.reference[length] > rects.floating[length]) {
+    mainAlignmentSide = getOppositePlacement(mainAlignmentSide);
+  }
+  return [mainAlignmentSide, getOppositePlacement(mainAlignmentSide)];
+}
+function getExpandedPlacements(placement) {
+  const oppositePlacement = getOppositePlacement(placement);
+  return [getOppositeAlignmentPlacement(placement), oppositePlacement, getOppositeAlignmentPlacement(oppositePlacement)];
+}
+function getOppositeAlignmentPlacement(placement) {
+  return placement.replace(/start|end/g, alignment => oppositeAlignmentMap[alignment]);
+}
+function getSideList(side, isStart, rtl) {
+  const lr = ['left', 'right'];
+  const rl = ['right', 'left'];
+  const tb = ['top', 'bottom'];
+  const bt = ['bottom', 'top'];
+  switch (side) {
+    case 'top':
+    case 'bottom':
+      if (rtl) return isStart ? rl : lr;
+      return isStart ? lr : rl;
+    case 'left':
+    case 'right':
+      return isStart ? tb : bt;
+    default:
+      return [];
+  }
+}
+function getOppositeAxisPlacements(placement, flipAlignment, direction, rtl) {
+  const alignment = getAlignment(placement);
+  let list = getSideList(getSide(placement), direction === 'start', rtl);
+  if (alignment) {
+    list = list.map(side => side + "-" + alignment);
+    if (flipAlignment) {
+      list = list.concat(list.map(getOppositeAlignmentPlacement));
+    }
+  }
+  return list;
+}
+function getOppositePlacement(placement) {
+  return placement.replace(/left|right|bottom|top/g, side => oppositeSideMap[side]);
+}
+function expandPaddingObject(padding) {
   return {
-    ...rect,
-    top: rect.y,
-    left: rect.x,
-    right: rect.x + rect.width,
-    bottom: rect.y + rect.height
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    ...padding
+  };
+}
+function getPaddingObject(padding) {
+  return typeof padding !== 'number' ? expandPaddingObject(padding) : {
+    top: padding,
+    right: padding,
+    bottom: padding,
+    left: padding
+  };
+}
+function rectToClientRect(rect) {
+  const {
+    x,
+    y,
+    width,
+    height
+  } = rect;
+  return {
+    width,
+    height,
+    top: y,
+    left: x,
+    right: x + width,
+    bottom: y + height,
+    x,
+    y
   };
 }
 
-function getWindow(node) {
-  var _node$ownerDocument;
-  return ((_node$ownerDocument = node.ownerDocument) == null ? void 0 : _node$ownerDocument.defaultView) || window;
+/**
+ * Resolves with an object of overflow side offsets that determine how much the
+ * element is overflowing a given clipping boundary on each side.
+ * - positive = overflowing the boundary by that number of pixels
+ * - negative = how many pixels left before it will overflow
+ * - 0 = lies flush with the boundary
+ * @see https://floating-ui.com/docs/detectOverflow
+ */
+async function detectOverflow(state, options) {
+  var _await$platform$isEle;
+  if (options === void 0) {
+    options = {};
+  }
+  const {
+    x,
+    y,
+    platform,
+    rects,
+    elements,
+    strategy
+  } = state;
+  const {
+    boundary = 'clippingAncestors',
+    rootBoundary = 'viewport',
+    elementContext = 'floating',
+    altBoundary = false,
+    padding = 0
+  } = evaluate(options, state);
+  const paddingObject = getPaddingObject(padding);
+  const altContext = elementContext === 'floating' ? 'reference' : 'floating';
+  const element = elements[altBoundary ? altContext : elementContext];
+  const clippingClientRect = rectToClientRect(await platform.getClippingRect({
+    element: ((_await$platform$isEle = await (platform.isElement == null ? void 0 : platform.isElement(element))) != null ? _await$platform$isEle : true) ? element : element.contextElement || (await (platform.getDocumentElement == null ? void 0 : platform.getDocumentElement(elements.floating))),
+    boundary,
+    rootBoundary,
+    strategy
+  }));
+  const rect = elementContext === 'floating' ? {
+    x,
+    y,
+    width: rects.floating.width,
+    height: rects.floating.height
+  } : rects.reference;
+  const offsetParent = await (platform.getOffsetParent == null ? void 0 : platform.getOffsetParent(elements.floating));
+  const offsetScale = (await (platform.isElement == null ? void 0 : platform.isElement(offsetParent))) ? (await (platform.getScale == null ? void 0 : platform.getScale(offsetParent))) || {
+    x: 1,
+    y: 1
+  } : {
+    x: 1,
+    y: 1
+  };
+  const elementClientRect = rectToClientRect(platform.convertOffsetParentRelativeRectToViewportRelativeRect ? await platform.convertOffsetParentRelativeRectToViewportRelativeRect({
+    elements,
+    rect,
+    offsetParent,
+    strategy
+  }) : rect);
+  return {
+    top: (clippingClientRect.top - elementClientRect.top + paddingObject.top) / offsetScale.y,
+    bottom: (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / offsetScale.y,
+    left: (clippingClientRect.left - elementClientRect.left + paddingObject.left) / offsetScale.x,
+    right: (elementClientRect.right - clippingClientRect.right + paddingObject.right) / offsetScale.x
+  };
 }
 
-function getComputedStyle$1(element) {
-  return getWindow(element).getComputedStyle(element);
+/**
+ * Provides data to position an inner element of the floating element so that it
+ * appears centered to the reference element.
+ * @see https://floating-ui.com/docs/arrow
+ */
+const arrow = options => ({
+  name: 'arrow',
+  options,
+  async fn(state) {
+    const {
+      x,
+      y,
+      placement,
+      rects,
+      platform,
+      elements,
+      middlewareData
+    } = state;
+    // Since `element` is required, we don't Partial<> the type.
+    const {
+      element,
+      padding = 0
+    } = evaluate(options, state) || {};
+    if (element == null) {
+      return {};
+    }
+    const paddingObject = getPaddingObject(padding);
+    const coords = {
+      x,
+      y
+    };
+    const axis = getAlignmentAxis(placement);
+    const length = getAxisLength(axis);
+    const arrowDimensions = await platform.getDimensions(element);
+    const isYAxis = axis === 'y';
+    const minProp = isYAxis ? 'top' : 'left';
+    const maxProp = isYAxis ? 'bottom' : 'right';
+    const clientProp = isYAxis ? 'clientHeight' : 'clientWidth';
+    const endDiff = rects.reference[length] + rects.reference[axis] - coords[axis] - rects.floating[length];
+    const startDiff = coords[axis] - rects.reference[axis];
+    const arrowOffsetParent = await (platform.getOffsetParent == null ? void 0 : platform.getOffsetParent(element));
+    let clientSize = arrowOffsetParent ? arrowOffsetParent[clientProp] : 0;
+
+    // DOM platform can return `window` as the `offsetParent`.
+    if (!clientSize || !(await (platform.isElement == null ? void 0 : platform.isElement(arrowOffsetParent)))) {
+      clientSize = elements.floating[clientProp] || rects.floating[length];
+    }
+    const centerToReference = endDiff / 2 - startDiff / 2;
+
+    // If the padding is large enough that it causes the arrow to no longer be
+    // centered, modify the padding so that it is centered.
+    const largestPossiblePadding = clientSize / 2 - arrowDimensions[length] / 2 - 1;
+    const minPadding = min(paddingObject[minProp], largestPossiblePadding);
+    const maxPadding = min(paddingObject[maxProp], largestPossiblePadding);
+
+    // Make sure the arrow doesn't overflow the floating element if the center
+    // point is outside the floating element's bounds.
+    const min$1 = minPadding;
+    const max = clientSize - arrowDimensions[length] - maxPadding;
+    const center = clientSize / 2 - arrowDimensions[length] / 2 + centerToReference;
+    const offset = clamp(min$1, center, max);
+
+    // If the reference is small enough that the arrow's padding causes it to
+    // to point to nothing for an aligned placement, adjust the offset of the
+    // floating element itself. To ensure `shift()` continues to take action,
+    // a single reset is performed when this is true.
+    const shouldAddOffset = !middlewareData.arrow && getAlignment(placement) != null && center !== offset && rects.reference[length] / 2 - (center < min$1 ? minPadding : maxPadding) - arrowDimensions[length] / 2 < 0;
+    const alignmentOffset = shouldAddOffset ? center < min$1 ? center - min$1 : center - max : 0;
+    return {
+      [axis]: coords[axis] + alignmentOffset,
+      data: {
+        [axis]: offset,
+        centerOffset: center - offset - alignmentOffset,
+        ...(shouldAddOffset && {
+          alignmentOffset
+        })
+      },
+      reset: shouldAddOffset
+    };
+  }
+});
+
+function getPlacementList(alignment, autoAlignment, allowedPlacements) {
+  const allowedPlacementsSortedByAlignment = alignment ? [...allowedPlacements.filter(placement => getAlignment(placement) === alignment), ...allowedPlacements.filter(placement => getAlignment(placement) !== alignment)] : allowedPlacements.filter(placement => getSide(placement) === placement);
+  return allowedPlacementsSortedByAlignment.filter(placement => {
+    if (alignment) {
+      return getAlignment(placement) === alignment || (autoAlignment ? getOppositeAlignmentPlacement(placement) !== placement : false);
+    }
+    return true;
+  });
+}
+/**
+ * Optimizes the visibility of the floating element by choosing the placement
+ * that has the most space available automatically, without needing to specify a
+ * preferred placement. Alternative to `flip`.
+ * @see https://floating-ui.com/docs/autoPlacement
+ */
+const autoPlacement = function (options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: 'autoPlacement',
+    options,
+    async fn(state) {
+      var _middlewareData$autoP, _middlewareData$autoP2, _placementsThatFitOnE;
+      const {
+        rects,
+        middlewareData,
+        placement,
+        platform,
+        elements
+      } = state;
+      const {
+        crossAxis = false,
+        alignment,
+        allowedPlacements = placements,
+        autoAlignment = true,
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+      const placements$1 = alignment !== undefined || allowedPlacements === placements ? getPlacementList(alignment || null, autoAlignment, allowedPlacements) : allowedPlacements;
+      const overflow = await detectOverflow(state, detectOverflowOptions);
+      const currentIndex = ((_middlewareData$autoP = middlewareData.autoPlacement) == null ? void 0 : _middlewareData$autoP.index) || 0;
+      const currentPlacement = placements$1[currentIndex];
+      if (currentPlacement == null) {
+        return {};
+      }
+      const alignmentSides = getAlignmentSides(currentPlacement, rects, await (platform.isRTL == null ? void 0 : platform.isRTL(elements.floating)));
+
+      // Make `computeCoords` start from the right place.
+      if (placement !== currentPlacement) {
+        return {
+          reset: {
+            placement: placements$1[0]
+          }
+        };
+      }
+      const currentOverflows = [overflow[getSide(currentPlacement)], overflow[alignmentSides[0]], overflow[alignmentSides[1]]];
+      const allOverflows = [...(((_middlewareData$autoP2 = middlewareData.autoPlacement) == null ? void 0 : _middlewareData$autoP2.overflows) || []), {
+        placement: currentPlacement,
+        overflows: currentOverflows
+      }];
+      const nextPlacement = placements$1[currentIndex + 1];
+
+      // There are more placements to check.
+      if (nextPlacement) {
+        return {
+          data: {
+            index: currentIndex + 1,
+            overflows: allOverflows
+          },
+          reset: {
+            placement: nextPlacement
+          }
+        };
+      }
+      const placementsSortedByMostSpace = allOverflows.map(d => {
+        const alignment = getAlignment(d.placement);
+        return [d.placement, alignment && crossAxis ?
+        // Check along the mainAxis and main crossAxis side.
+        d.overflows.slice(0, 2).reduce((acc, v) => acc + v, 0) :
+        // Check only the mainAxis.
+        d.overflows[0], d.overflows];
+      }).sort((a, b) => a[1] - b[1]);
+      const placementsThatFitOnEachSide = placementsSortedByMostSpace.filter(d => d[2].slice(0,
+      // Aligned placements should not check their opposite crossAxis
+      // side.
+      getAlignment(d[0]) ? 2 : 3).every(v => v <= 0));
+      const resetPlacement = ((_placementsThatFitOnE = placementsThatFitOnEachSide[0]) == null ? void 0 : _placementsThatFitOnE[0]) || placementsSortedByMostSpace[0][0];
+      if (resetPlacement !== placement) {
+        return {
+          data: {
+            index: currentIndex + 1,
+            overflows: allOverflows
+          },
+          reset: {
+            placement: resetPlacement
+          }
+        };
+      }
+      return {};
+    }
+  };
+};
+
+/**
+ * Optimizes the visibility of the floating element by flipping the `placement`
+ * in order to keep it in view when the preferred placement(s) will overflow the
+ * clipping boundary. Alternative to `autoPlacement`.
+ * @see https://floating-ui.com/docs/flip
+ */
+const flip = function (options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: 'flip',
+    options,
+    async fn(state) {
+      var _middlewareData$arrow, _middlewareData$flip;
+      const {
+        placement,
+        middlewareData,
+        rects,
+        initialPlacement,
+        platform,
+        elements
+      } = state;
+      const {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = true,
+        fallbackPlacements: specifiedFallbackPlacements,
+        fallbackStrategy = 'bestFit',
+        fallbackAxisSideDirection = 'none',
+        flipAlignment = true,
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+
+      // If a reset by the arrow was caused due to an alignment offset being
+      // added, we should skip any logic now since `flip()` has already done its
+      // work.
+      // https://github.com/floating-ui/floating-ui/issues/2549#issuecomment-1719601643
+      if ((_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+        return {};
+      }
+      const side = getSide(placement);
+      const initialSideAxis = getSideAxis(initialPlacement);
+      const isBasePlacement = getSide(initialPlacement) === initialPlacement;
+      const rtl = await (platform.isRTL == null ? void 0 : platform.isRTL(elements.floating));
+      const fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipAlignment ? [getOppositePlacement(initialPlacement)] : getExpandedPlacements(initialPlacement));
+      const hasFallbackAxisSideDirection = fallbackAxisSideDirection !== 'none';
+      if (!specifiedFallbackPlacements && hasFallbackAxisSideDirection) {
+        fallbackPlacements.push(...getOppositeAxisPlacements(initialPlacement, flipAlignment, fallbackAxisSideDirection, rtl));
+      }
+      const placements = [initialPlacement, ...fallbackPlacements];
+      const overflow = await detectOverflow(state, detectOverflowOptions);
+      const overflows = [];
+      let overflowsData = ((_middlewareData$flip = middlewareData.flip) == null ? void 0 : _middlewareData$flip.overflows) || [];
+      if (checkMainAxis) {
+        overflows.push(overflow[side]);
+      }
+      if (checkCrossAxis) {
+        const sides = getAlignmentSides(placement, rects, rtl);
+        overflows.push(overflow[sides[0]], overflow[sides[1]]);
+      }
+      overflowsData = [...overflowsData, {
+        placement,
+        overflows
+      }];
+
+      // One or more sides is overflowing.
+      if (!overflows.every(side => side <= 0)) {
+        var _middlewareData$flip2, _overflowsData$filter;
+        const nextIndex = (((_middlewareData$flip2 = middlewareData.flip) == null ? void 0 : _middlewareData$flip2.index) || 0) + 1;
+        const nextPlacement = placements[nextIndex];
+        if (nextPlacement) {
+          // Try next placement and re-run the lifecycle.
+          return {
+            data: {
+              index: nextIndex,
+              overflows: overflowsData
+            },
+            reset: {
+              placement: nextPlacement
+            }
+          };
+        }
+
+        // First, find the candidates that fit on the mainAxis side of overflow,
+        // then find the placement that fits the best on the main crossAxis side.
+        let resetPlacement = (_overflowsData$filter = overflowsData.filter(d => d.overflows[0] <= 0).sort((a, b) => a.overflows[1] - b.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
+
+        // Otherwise fallback.
+        if (!resetPlacement) {
+          switch (fallbackStrategy) {
+            case 'bestFit':
+              {
+                var _overflowsData$filter2;
+                const placement = (_overflowsData$filter2 = overflowsData.filter(d => {
+                  if (hasFallbackAxisSideDirection) {
+                    const currentSideAxis = getSideAxis(d.placement);
+                    return currentSideAxis === initialSideAxis ||
+                    // Create a bias to the `y` side axis due to horizontal
+                    // reading directions favoring greater width.
+                    currentSideAxis === 'y';
+                  }
+                  return true;
+                }).map(d => [d.placement, d.overflows.filter(overflow => overflow > 0).reduce((acc, overflow) => acc + overflow, 0)]).sort((a, b) => a[1] - b[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
+                if (placement) {
+                  resetPlacement = placement;
+                }
+                break;
+              }
+            case 'initialPlacement':
+              resetPlacement = initialPlacement;
+              break;
+          }
+        }
+        if (placement !== resetPlacement) {
+          return {
+            reset: {
+              placement: resetPlacement
+            }
+          };
+        }
+      }
+      return {};
+    }
+  };
+};
+
+function getSideOffsets(overflow, rect) {
+  return {
+    top: overflow.top - rect.height,
+    right: overflow.right - rect.width,
+    bottom: overflow.bottom - rect.height,
+    left: overflow.left - rect.width
+  };
+}
+function isAnySideFullyClipped(overflow) {
+  return sides.some(side => overflow[side] >= 0);
+}
+/**
+ * Provides data to hide the floating element in applicable situations, such as
+ * when it is not in the same clipping context as the reference element.
+ * @see https://floating-ui.com/docs/hide
+ */
+const hide = function (options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: 'hide',
+    options,
+    async fn(state) {
+      const {
+        rects
+      } = state;
+      const {
+        strategy = 'referenceHidden',
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+      switch (strategy) {
+        case 'referenceHidden':
+          {
+            const overflow = await detectOverflow(state, {
+              ...detectOverflowOptions,
+              elementContext: 'reference'
+            });
+            const offsets = getSideOffsets(overflow, rects.reference);
+            return {
+              data: {
+                referenceHiddenOffsets: offsets,
+                referenceHidden: isAnySideFullyClipped(offsets)
+              }
+            };
+          }
+        case 'escaped':
+          {
+            const overflow = await detectOverflow(state, {
+              ...detectOverflowOptions,
+              altBoundary: true
+            });
+            const offsets = getSideOffsets(overflow, rects.floating);
+            return {
+              data: {
+                escapedOffsets: offsets,
+                escaped: isAnySideFullyClipped(offsets)
+              }
+            };
+          }
+        default:
+          {
+            return {};
+          }
+      }
+    }
+  };
+};
+
+function getBoundingRect(rects) {
+  const minX = min(...rects.map(rect => rect.left));
+  const minY = min(...rects.map(rect => rect.top));
+  const maxX = max(...rects.map(rect => rect.right));
+  const maxY = max(...rects.map(rect => rect.bottom));
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY
+  };
+}
+function getRectsByLine(rects) {
+  const sortedRects = rects.slice().sort((a, b) => a.y - b.y);
+  const groups = [];
+  let prevRect = null;
+  for (let i = 0; i < sortedRects.length; i++) {
+    const rect = sortedRects[i];
+    if (!prevRect || rect.y - prevRect.y > prevRect.height / 2) {
+      groups.push([rect]);
+    } else {
+      groups[groups.length - 1].push(rect);
+    }
+    prevRect = rect;
+  }
+  return groups.map(rect => rectToClientRect(getBoundingRect(rect)));
+}
+/**
+ * Provides improved positioning for inline reference elements that can span
+ * over multiple lines, such as hyperlinks or range selections.
+ * @see https://floating-ui.com/docs/inline
+ */
+const inline = function (options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: 'inline',
+    options,
+    async fn(state) {
+      const {
+        placement,
+        elements,
+        rects,
+        platform,
+        strategy
+      } = state;
+      // A MouseEvent's client{X,Y} coords can be up to 2 pixels off a
+      // ClientRect's bounds, despite the event listener being triggered. A
+      // padding of 2 seems to handle this issue.
+      const {
+        padding = 2,
+        x,
+        y
+      } = evaluate(options, state);
+      const nativeClientRects = Array.from((await (platform.getClientRects == null ? void 0 : platform.getClientRects(elements.reference))) || []);
+      const clientRects = getRectsByLine(nativeClientRects);
+      const fallback = rectToClientRect(getBoundingRect(nativeClientRects));
+      const paddingObject = getPaddingObject(padding);
+      function getBoundingClientRect() {
+        // There are two rects and they are disjoined.
+        if (clientRects.length === 2 && clientRects[0].left > clientRects[1].right && x != null && y != null) {
+          // Find the first rect in which the point is fully inside.
+          return clientRects.find(rect => x > rect.left - paddingObject.left && x < rect.right + paddingObject.right && y > rect.top - paddingObject.top && y < rect.bottom + paddingObject.bottom) || fallback;
+        }
+
+        // There are 2 or more connected rects.
+        if (clientRects.length >= 2) {
+          if (getSideAxis(placement) === 'y') {
+            const firstRect = clientRects[0];
+            const lastRect = clientRects[clientRects.length - 1];
+            const isTop = getSide(placement) === 'top';
+            const top = firstRect.top;
+            const bottom = lastRect.bottom;
+            const left = isTop ? firstRect.left : lastRect.left;
+            const right = isTop ? firstRect.right : lastRect.right;
+            const width = right - left;
+            const height = bottom - top;
+            return {
+              top,
+              bottom,
+              left,
+              right,
+              width,
+              height,
+              x: left,
+              y: top
+            };
+          }
+          const isLeftSide = getSide(placement) === 'left';
+          const maxRight = max(...clientRects.map(rect => rect.right));
+          const minLeft = min(...clientRects.map(rect => rect.left));
+          const measureRects = clientRects.filter(rect => isLeftSide ? rect.left === minLeft : rect.right === maxRight);
+          const top = measureRects[0].top;
+          const bottom = measureRects[measureRects.length - 1].bottom;
+          const left = minLeft;
+          const right = maxRight;
+          const width = right - left;
+          const height = bottom - top;
+          return {
+            top,
+            bottom,
+            left,
+            right,
+            width,
+            height,
+            x: left,
+            y: top
+          };
+        }
+        return fallback;
+      }
+      const resetRects = await platform.getElementRects({
+        reference: {
+          getBoundingClientRect
+        },
+        floating: elements.floating,
+        strategy
+      });
+      if (rects.reference.x !== resetRects.reference.x || rects.reference.y !== resetRects.reference.y || rects.reference.width !== resetRects.reference.width || rects.reference.height !== resetRects.reference.height) {
+        return {
+          reset: {
+            rects: resetRects
+          }
+        };
+      }
+      return {};
+    }
+  };
+};
+
+// For type backwards-compatibility, the `OffsetOptions` type was also
+// Derivable.
+
+async function convertValueToCoords(state, options) {
+  const {
+    placement,
+    platform,
+    elements
+  } = state;
+  const rtl = await (platform.isRTL == null ? void 0 : platform.isRTL(elements.floating));
+  const side = getSide(placement);
+  const alignment = getAlignment(placement);
+  const isVertical = getSideAxis(placement) === 'y';
+  const mainAxisMulti = ['left', 'top'].includes(side) ? -1 : 1;
+  const crossAxisMulti = rtl && isVertical ? -1 : 1;
+  const rawValue = evaluate(options, state);
+
+  // eslint-disable-next-line prefer-const
+  let {
+    mainAxis,
+    crossAxis,
+    alignmentAxis
+  } = typeof rawValue === 'number' ? {
+    mainAxis: rawValue,
+    crossAxis: 0,
+    alignmentAxis: null
+  } : {
+    mainAxis: rawValue.mainAxis || 0,
+    crossAxis: rawValue.crossAxis || 0,
+    alignmentAxis: rawValue.alignmentAxis
+  };
+  if (alignment && typeof alignmentAxis === 'number') {
+    crossAxis = alignment === 'end' ? alignmentAxis * -1 : alignmentAxis;
+  }
+  return isVertical ? {
+    x: crossAxis * crossAxisMulti,
+    y: mainAxis * mainAxisMulti
+  } : {
+    x: mainAxis * mainAxisMulti,
+    y: crossAxis * crossAxisMulti
+  };
 }
 
-function isNode(value) {
-  return value instanceof getWindow(value).Node;
+/**
+ * Modifies the placement by translating the floating element along the
+ * specified axes.
+ * A number (shorthand for `mainAxis` or distance), or an axes configuration
+ * object may be passed.
+ * @see https://floating-ui.com/docs/offset
+ */
+const offset = function (options) {
+  if (options === void 0) {
+    options = 0;
+  }
+  return {
+    name: 'offset',
+    options,
+    async fn(state) {
+      var _middlewareData$offse, _middlewareData$arrow;
+      const {
+        x,
+        y,
+        placement,
+        middlewareData
+      } = state;
+      const diffCoords = await convertValueToCoords(state, options);
+
+      // If the placement is the same and the arrow caused an alignment offset
+      // then we don't need to change the positioning coordinates.
+      if (placement === ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse.placement) && (_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+        return {};
+      }
+      return {
+        x: x + diffCoords.x,
+        y: y + diffCoords.y,
+        data: {
+          ...diffCoords,
+          placement
+        }
+      };
+    }
+  };
+};
+
+/**
+ * Optimizes the visibility of the floating element by shifting it in order to
+ * keep it in view when it will overflow the clipping boundary.
+ * @see https://floating-ui.com/docs/shift
+ */
+const shift = function (options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: 'shift',
+    options,
+    async fn(state) {
+      const {
+        x,
+        y,
+        placement
+      } = state;
+      const {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = false,
+        limiter = {
+          fn: _ref => {
+            let {
+              x,
+              y
+            } = _ref;
+            return {
+              x,
+              y
+            };
+          }
+        },
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+      const coords = {
+        x,
+        y
+      };
+      const overflow = await detectOverflow(state, detectOverflowOptions);
+      const crossAxis = getSideAxis(getSide(placement));
+      const mainAxis = getOppositeAxis(crossAxis);
+      let mainAxisCoord = coords[mainAxis];
+      let crossAxisCoord = coords[crossAxis];
+      if (checkMainAxis) {
+        const minSide = mainAxis === 'y' ? 'top' : 'left';
+        const maxSide = mainAxis === 'y' ? 'bottom' : 'right';
+        const min = mainAxisCoord + overflow[minSide];
+        const max = mainAxisCoord - overflow[maxSide];
+        mainAxisCoord = clamp(min, mainAxisCoord, max);
+      }
+      if (checkCrossAxis) {
+        const minSide = crossAxis === 'y' ? 'top' : 'left';
+        const maxSide = crossAxis === 'y' ? 'bottom' : 'right';
+        const min = crossAxisCoord + overflow[minSide];
+        const max = crossAxisCoord - overflow[maxSide];
+        crossAxisCoord = clamp(min, crossAxisCoord, max);
+      }
+      const limitedCoords = limiter.fn({
+        ...state,
+        [mainAxis]: mainAxisCoord,
+        [crossAxis]: crossAxisCoord
+      });
+      return {
+        ...limitedCoords,
+        data: {
+          x: limitedCoords.x - x,
+          y: limitedCoords.y - y,
+          enabled: {
+            [mainAxis]: checkMainAxis,
+            [crossAxis]: checkCrossAxis
+          }
+        }
+      };
+    }
+  };
+};
+/**
+ * Built-in `limiter` that will stop `shift()` at a certain point.
+ */
+const limitShift = function (options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    options,
+    fn(state) {
+      const {
+        x,
+        y,
+        placement,
+        rects,
+        middlewareData
+      } = state;
+      const {
+        offset = 0,
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = true
+      } = evaluate(options, state);
+      const coords = {
+        x,
+        y
+      };
+      const crossAxis = getSideAxis(placement);
+      const mainAxis = getOppositeAxis(crossAxis);
+      let mainAxisCoord = coords[mainAxis];
+      let crossAxisCoord = coords[crossAxis];
+      const rawOffset = evaluate(offset, state);
+      const computedOffset = typeof rawOffset === 'number' ? {
+        mainAxis: rawOffset,
+        crossAxis: 0
+      } : {
+        mainAxis: 0,
+        crossAxis: 0,
+        ...rawOffset
+      };
+      if (checkMainAxis) {
+        const len = mainAxis === 'y' ? 'height' : 'width';
+        const limitMin = rects.reference[mainAxis] - rects.floating[len] + computedOffset.mainAxis;
+        const limitMax = rects.reference[mainAxis] + rects.reference[len] - computedOffset.mainAxis;
+        if (mainAxisCoord < limitMin) {
+          mainAxisCoord = limitMin;
+        } else if (mainAxisCoord > limitMax) {
+          mainAxisCoord = limitMax;
+        }
+      }
+      if (checkCrossAxis) {
+        var _middlewareData$offse, _middlewareData$offse2;
+        const len = mainAxis === 'y' ? 'width' : 'height';
+        const isOriginSide = ['top', 'left'].includes(getSide(placement));
+        const limitMin = rects.reference[crossAxis] - rects.floating[len] + (isOriginSide ? ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse[crossAxis]) || 0 : 0) + (isOriginSide ? 0 : computedOffset.crossAxis);
+        const limitMax = rects.reference[crossAxis] + rects.reference[len] + (isOriginSide ? 0 : ((_middlewareData$offse2 = middlewareData.offset) == null ? void 0 : _middlewareData$offse2[crossAxis]) || 0) - (isOriginSide ? computedOffset.crossAxis : 0);
+        if (crossAxisCoord < limitMin) {
+          crossAxisCoord = limitMin;
+        } else if (crossAxisCoord > limitMax) {
+          crossAxisCoord = limitMax;
+        }
+      }
+      return {
+        [mainAxis]: mainAxisCoord,
+        [crossAxis]: crossAxisCoord
+      };
+    }
+  };
+};
+
+/**
+ * Provides data that allows you to change the size of the floating element —
+ * for instance, prevent it from overflowing the clipping boundary or match the
+ * width of the reference element.
+ * @see https://floating-ui.com/docs/size
+ */
+const size = function (options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: 'size',
+    options,
+    async fn(state) {
+      var _state$middlewareData, _state$middlewareData2;
+      const {
+        placement,
+        rects,
+        platform,
+        elements
+      } = state;
+      const {
+        apply = () => {},
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+      const overflow = await detectOverflow(state, detectOverflowOptions);
+      const side = getSide(placement);
+      const alignment = getAlignment(placement);
+      const isYAxis = getSideAxis(placement) === 'y';
+      const {
+        width,
+        height
+      } = rects.floating;
+      let heightSide;
+      let widthSide;
+      if (side === 'top' || side === 'bottom') {
+        heightSide = side;
+        widthSide = alignment === ((await (platform.isRTL == null ? void 0 : platform.isRTL(elements.floating))) ? 'start' : 'end') ? 'left' : 'right';
+      } else {
+        widthSide = side;
+        heightSide = alignment === 'end' ? 'top' : 'bottom';
+      }
+      const maximumClippingHeight = height - overflow.top - overflow.bottom;
+      const maximumClippingWidth = width - overflow.left - overflow.right;
+      const overflowAvailableHeight = min(height - overflow[heightSide], maximumClippingHeight);
+      const overflowAvailableWidth = min(width - overflow[widthSide], maximumClippingWidth);
+      const noShift = !state.middlewareData.shift;
+      let availableHeight = overflowAvailableHeight;
+      let availableWidth = overflowAvailableWidth;
+      if ((_state$middlewareData = state.middlewareData.shift) != null && _state$middlewareData.enabled.x) {
+        availableWidth = maximumClippingWidth;
+      }
+      if ((_state$middlewareData2 = state.middlewareData.shift) != null && _state$middlewareData2.enabled.y) {
+        availableHeight = maximumClippingHeight;
+      }
+      if (noShift && !alignment) {
+        const xMin = max(overflow.left, 0);
+        const xMax = max(overflow.right, 0);
+        const yMin = max(overflow.top, 0);
+        const yMax = max(overflow.bottom, 0);
+        if (isYAxis) {
+          availableWidth = width - 2 * (xMin !== 0 || xMax !== 0 ? xMin + xMax : max(overflow.left, overflow.right));
+        } else {
+          availableHeight = height - 2 * (yMin !== 0 || yMax !== 0 ? yMin + yMax : max(overflow.top, overflow.bottom));
+        }
+      }
+      await apply({
+        ...state,
+        availableWidth,
+        availableHeight
+      });
+      const nextDimensions = await platform.getDimensions(elements.floating);
+      if (width !== nextDimensions.width || height !== nextDimensions.height) {
+        return {
+          reset: {
+            rects: true
+          }
+        };
+      }
+      return {};
+    }
+  };
+};
+
+function hasWindow() {
+  return typeof window !== 'undefined';
 }
 function getNodeName(node) {
-  return isNode(node) ? (node.nodeName || '').toLowerCase() : '';
-}
-
-let uaString;
-function getUAString() {
-  if (uaString) {
-    return uaString;
+  if (isNode(node)) {
+    return (node.nodeName || '').toLowerCase();
   }
-  const uaData = navigator.userAgentData;
-  if (uaData && Array.isArray(uaData.brands)) {
-    uaString = uaData.brands.map(item => item.brand + "/" + item.version).join(' ');
-    return uaString;
-  }
-  return navigator.userAgent;
+  // Mocked nodes in testing environments may not be instances of Node. By
+  // returning `#document` an infinite loop won't occur.
+  // https://github.com/floating-ui/floating-ui/issues/2317
+  return '#document';
 }
-
-function isHTMLElement(value) {
-  return value instanceof getWindow(value).HTMLElement;
+function getWindow(node) {
+  var _node$ownerDocument;
+  return (node == null || (_node$ownerDocument = node.ownerDocument) == null ? void 0 : _node$ownerDocument.defaultView) || window;
 }
-function isElement(value) {
-  return value instanceof getWindow(value).Element;
+function getDocumentElement(node) {
+  var _ref;
+  return (_ref = (isNode(node) ? node.ownerDocument : node.document) || window.document) == null ? void 0 : _ref.documentElement;
 }
-function isShadowRoot(node) {
-  // Browsers without `ShadowRoot` support.
-  if (typeof ShadowRoot === 'undefined') {
+function isNode(value) {
+  if (!hasWindow()) {
     return false;
   }
-  const OwnElement = getWindow(node).ShadowRoot;
-  return node instanceof OwnElement || node instanceof ShadowRoot;
+  return value instanceof Node || value instanceof getWindow(value).Node;
+}
+function isElement(value) {
+  if (!hasWindow()) {
+    return false;
+  }
+  return value instanceof Element || value instanceof getWindow(value).Element;
+}
+function isHTMLElement(value) {
+  if (!hasWindow()) {
+    return false;
+  }
+  return value instanceof HTMLElement || value instanceof getWindow(value).HTMLElement;
+}
+function isShadowRoot(value) {
+  if (!hasWindow() || typeof ShadowRoot === 'undefined') {
+    return false;
+  }
+  return value instanceof ShadowRoot || value instanceof getWindow(value).ShadowRoot;
 }
 function isOverflowElement(element) {
   const {
@@ -7963,27 +8914,61 @@ function isOverflowElement(element) {
   } = getComputedStyle$1(element);
   return /auto|scroll|overlay|hidden|clip/.test(overflow + overflowY + overflowX) && !['inline', 'contents'].includes(display);
 }
-
-/**
- * Determines whether or not `.getBoundingClientRect()` is affected by visual
- * viewport offsets. In Safari, the `x`/`y` offsets are values relative to the
- * visual viewport, while in other engines, they are values relative to the
- * layout viewport.
- */
-function isClientRectVisualViewportBased() {
-  // TODO: Try to use feature detection here instead. Feature detection for
-  // this can fail in various ways, making the userAgent check the most
-  // reliable:
-  // • Always-visible scrollbar or not
-  // • Width of <html>
-
-  // Is Safari.
-  return /^((?!chrome|android).)*safari/i.test(getUAString());
+function isWebKit() {
+  if (typeof CSS === 'undefined' || !CSS.supports) return false;
+  return CSS.supports('-webkit-backdrop-filter', 'none');
 }
 function isLastTraversableNode(node) {
   return ['html', 'body', '#document'].includes(getNodeName(node));
 }
-const round = Math.round;
+function getComputedStyle$1(element) {
+  return getWindow(element).getComputedStyle(element);
+}
+function getParentNode(node) {
+  if (getNodeName(node) === 'html') {
+    return node;
+  }
+  const result =
+  // Step into the shadow DOM of the parent of a slotted node.
+  node.assignedSlot ||
+  // DOM Element detected.
+  node.parentNode ||
+  // ShadowRoot detected.
+  isShadowRoot(node) && node.host ||
+  // Fallback.
+  getDocumentElement(node);
+  return isShadowRoot(result) ? result.host : result;
+}
+function getNearestOverflowAncestor(node) {
+  const parentNode = getParentNode(node);
+  if (isLastTraversableNode(parentNode)) {
+    return node.ownerDocument ? node.ownerDocument.body : node.body;
+  }
+  if (isHTMLElement(parentNode) && isOverflowElement(parentNode)) {
+    return parentNode;
+  }
+  return getNearestOverflowAncestor(parentNode);
+}
+function getOverflowAncestors(node, list, traverseIframes) {
+  var _node$ownerDocument2;
+  if (list === void 0) {
+    list = [];
+  }
+  if (traverseIframes === void 0) {
+    traverseIframes = true;
+  }
+  const scrollableAncestor = getNearestOverflowAncestor(node);
+  const isBody = scrollableAncestor === ((_node$ownerDocument2 = node.ownerDocument) == null ? void 0 : _node$ownerDocument2.body);
+  const win = getWindow(scrollableAncestor);
+  if (isBody) {
+    const frameElement = getFrameElement(win);
+    return list.concat(win, win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : [], frameElement && traverseIframes ? getOverflowAncestors(frameElement) : []);
+  }
+  return list.concat(scrollableAncestor, getOverflowAncestors(scrollableAncestor, [], traverseIframes));
+}
+function getFrameElement(win) {
+  return win.parent && Object.getPrototypeOf(win.parent) ? win.frameElement : null;
+}
 
 function getCssDimensions(element) {
   const css = getComputedStyle$1(element);
@@ -8002,7 +8987,7 @@ function getCssDimensions(element) {
   return {
     width,
     height,
-    fallback: shouldFallback
+    $: shouldFallback
   };
 }
 
@@ -8010,23 +8995,19 @@ function unwrapElement(element) {
   return !isElement(element) ? element.contextElement : element;
 }
 
-const FALLBACK_SCALE = {
-  x: 1,
-  y: 1
-};
 function getScale(element) {
   const domElement = unwrapElement(element);
   if (!isHTMLElement(domElement)) {
-    return FALLBACK_SCALE;
+    return createCoords(1);
   }
   const rect = domElement.getBoundingClientRect();
   const {
     width,
     height,
-    fallback
+    $
   } = getCssDimensions(domElement);
-  let x = (fallback ? round(rect.width) : rect.width) / width;
-  let y = (fallback ? round(rect.height) : rect.height) / height;
+  let x = ($ ? round(rect.width) : rect.width) / width;
+  let y = ($ ? round(rect.height) : rect.height) / height;
 
   // 0, NaN, or Infinity should always fallback to 1.
 
@@ -8042,8 +9023,28 @@ function getScale(element) {
   };
 }
 
+const noOffsets = /*#__PURE__*/createCoords(0);
+function getVisualOffsets(element) {
+  const win = getWindow(element);
+  if (!isWebKit() || !win.visualViewport) {
+    return noOffsets;
+  }
+  return {
+    x: win.visualViewport.offsetLeft,
+    y: win.visualViewport.offsetTop
+  };
+}
+function shouldAddVisualOffsets(element, isFixed, floatingOffsetParent) {
+  if (isFixed === void 0) {
+    isFixed = false;
+  }
+  if (!floatingOffsetParent || isFixed && floatingOffsetParent !== getWindow(element)) {
+    return false;
+  }
+  return isFixed;
+}
+
 function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetParent) {
-  var _win$visualViewport, _win$visualViewport2;
   if (includeScale === void 0) {
     includeScale = false;
   }
@@ -8052,7 +9053,7 @@ function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetPar
   }
   const clientRect = element.getBoundingClientRect();
   const domElement = unwrapElement(element);
-  let scale = FALLBACK_SCALE;
+  let scale = createCoords(1);
   if (includeScale) {
     if (offsetParent) {
       if (isElement(offsetParent)) {
@@ -8062,29 +9063,30 @@ function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetPar
       scale = getScale(element);
     }
   }
-  const win = domElement ? getWindow(domElement) : window;
-  const addVisualOffsets = isClientRectVisualViewportBased() && isFixedStrategy;
-  let x = (clientRect.left + (addVisualOffsets ? ((_win$visualViewport = win.visualViewport) == null ? void 0 : _win$visualViewport.offsetLeft) || 0 : 0)) / scale.x;
-  let y = (clientRect.top + (addVisualOffsets ? ((_win$visualViewport2 = win.visualViewport) == null ? void 0 : _win$visualViewport2.offsetTop) || 0 : 0)) / scale.y;
+  const visualOffsets = shouldAddVisualOffsets(domElement, isFixedStrategy, offsetParent) ? getVisualOffsets(domElement) : createCoords(0);
+  let x = (clientRect.left + visualOffsets.x) / scale.x;
+  let y = (clientRect.top + visualOffsets.y) / scale.y;
   let width = clientRect.width / scale.x;
   let height = clientRect.height / scale.y;
   if (domElement) {
     const win = getWindow(domElement);
     const offsetWin = offsetParent && isElement(offsetParent) ? getWindow(offsetParent) : offsetParent;
-    let currentIFrame = win.frameElement;
-    while (currentIFrame && offsetParent && offsetWin !== win) {
+    let currentWin = win;
+    let currentIFrame = getFrameElement(currentWin);
+    while (currentIFrame && offsetParent && offsetWin !== currentWin) {
       const iframeScale = getScale(currentIFrame);
       const iframeRect = currentIFrame.getBoundingClientRect();
-      const css = getComputedStyle(currentIFrame);
-      iframeRect.x += (currentIFrame.clientLeft + parseFloat(css.paddingLeft)) * iframeScale.x;
-      iframeRect.y += (currentIFrame.clientTop + parseFloat(css.paddingTop)) * iframeScale.y;
+      const css = getComputedStyle$1(currentIFrame);
+      const left = iframeRect.left + (currentIFrame.clientLeft + parseFloat(css.paddingLeft)) * iframeScale.x;
+      const top = iframeRect.top + (currentIFrame.clientTop + parseFloat(css.paddingTop)) * iframeScale.y;
       x *= iframeScale.x;
       y *= iframeScale.y;
       width *= iframeScale.x;
       height *= iframeScale.y;
-      x += iframeRect.x;
-      y += iframeRect.y;
-      currentIFrame = getWindow(currentIFrame).frameElement;
+      x += left;
+      y += top;
+      currentWin = getWindow(currentIFrame);
+      currentIFrame = getFrameElement(currentWin);
     }
   }
   return rectToClientRect({
@@ -8095,51 +9097,96 @@ function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetPar
   });
 }
 
-function getDocumentElement(node) {
-  return ((isNode(node) ? node.ownerDocument : node.document) || window.document).documentElement;
+function rectsAreEqual(a, b) {
+  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
 }
 
-function getParentNode(node) {
-  if (getNodeName(node) === 'html') {
-    return node;
+// https://samthor.au/2021/observing-dom/
+function observeMove(element, onMove) {
+  let io = null;
+  let timeoutId;
+  const root = getDocumentElement(element);
+  function cleanup() {
+    var _io;
+    clearTimeout(timeoutId);
+    (_io = io) == null || _io.disconnect();
+    io = null;
   }
-  const result =
-  // Step into the shadow DOM of the parent of a slotted node.
-  node.assignedSlot ||
-  // DOM Element detected.
-  node.parentNode ||
-  // ShadowRoot detected.
-  isShadowRoot(node) && node.host ||
-  // Fallback.
-  getDocumentElement(node);
-  return isShadowRoot(result) ? result.host : result;
-}
+  function refresh(skip, threshold) {
+    if (skip === void 0) {
+      skip = false;
+    }
+    if (threshold === void 0) {
+      threshold = 1;
+    }
+    cleanup();
+    const elementRectForRootMargin = element.getBoundingClientRect();
+    const {
+      left,
+      top,
+      width,
+      height
+    } = elementRectForRootMargin;
+    if (!skip) {
+      onMove();
+    }
+    if (!width || !height) {
+      return;
+    }
+    const insetTop = floor(top);
+    const insetRight = floor(root.clientWidth - (left + width));
+    const insetBottom = floor(root.clientHeight - (top + height));
+    const insetLeft = floor(left);
+    const rootMargin = -insetTop + "px " + -insetRight + "px " + -insetBottom + "px " + -insetLeft + "px";
+    const options = {
+      rootMargin,
+      threshold: max(0, min(1, threshold)) || 1
+    };
+    let isFirstUpdate = true;
+    function handleObserve(entries) {
+      const ratio = entries[0].intersectionRatio;
+      if (ratio !== threshold) {
+        if (!isFirstUpdate) {
+          return refresh();
+        }
+        if (!ratio) {
+          // If the reference is clipped, the ratio is 0. Throttle the refresh
+          // to prevent an infinite loop of updates.
+          timeoutId = setTimeout(() => {
+            refresh(false, 1e-7);
+          }, 1000);
+        } else {
+          refresh(false, ratio);
+        }
+      }
+      if (ratio === 1 && !rectsAreEqual(elementRectForRootMargin, element.getBoundingClientRect())) {
+        // It's possible that even though the ratio is reported as 1, the
+        // element is not actually fully within the IntersectionObserver's root
+        // area anymore. This can happen under performance constraints. This may
+        // be a bug in the browser's IntersectionObserver implementation. To
+        // work around this, we compare the element's bounding rect now with
+        // what it was at the time we created the IntersectionObserver. If they
+        // are not equal then the element moved, so we refresh.
+        refresh();
+      }
+      isFirstUpdate = false;
+    }
 
-function getNearestOverflowAncestor(node) {
-  const parentNode = getParentNode(node);
-  if (isLastTraversableNode(parentNode)) {
-    // `getParentNode` will never return a `Document` due to the fallback
-    // check, so it's either the <html> or <body> element.
-    return parentNode.ownerDocument.body;
+    // Older browsers don't support a `document` as the root and will throw an
+    // error.
+    try {
+      io = new IntersectionObserver(handleObserve, {
+        ...options,
+        // Handle <iframe>s
+        root: root.ownerDocument
+      });
+    } catch (e) {
+      io = new IntersectionObserver(handleObserve, options);
+    }
+    io.observe(element);
   }
-  if (isHTMLElement(parentNode) && isOverflowElement(parentNode)) {
-    return parentNode;
-  }
-  return getNearestOverflowAncestor(parentNode);
-}
-
-function getOverflowAncestors(node, list) {
-  var _node$ownerDocument;
-  if (list === void 0) {
-    list = [];
-  }
-  const scrollableAncestor = getNearestOverflowAncestor(node);
-  const isBody = scrollableAncestor === ((_node$ownerDocument = node.ownerDocument) == null ? void 0 : _node$ownerDocument.body);
-  const win = getWindow(scrollableAncestor);
-  if (isBody) {
-    return list.concat(win, win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : []);
-  }
-  return list.concat(scrollableAncestor, getOverflowAncestors(scrollableAncestor));
+  refresh(true);
+  return cleanup;
 }
 
 /**
@@ -8157,30 +9204,40 @@ function autoUpdate(reference, floating, update, options) {
   const {
     ancestorScroll = true,
     ancestorResize = true,
-    elementResize = true,
+    elementResize = typeof ResizeObserver === 'function',
+    layoutShift = typeof IntersectionObserver === 'function',
     animationFrame = false
   } = options;
-  const ancestors = ancestorScroll || ancestorResize ? [...(isElement(reference) ? getOverflowAncestors(reference) : reference.contextElement ? getOverflowAncestors(reference.contextElement) : []), ...getOverflowAncestors(floating)] : [];
+  const referenceEl = unwrapElement(reference);
+  const ancestors = ancestorScroll || ancestorResize ? [...(referenceEl ? getOverflowAncestors(referenceEl) : []), ...getOverflowAncestors(floating)] : [];
   ancestors.forEach(ancestor => {
-    // ignores Window, checks for [object VisualViewport]
-    const isVisualViewport = !isElement(ancestor) && ancestor.toString().includes('V');
-    if (ancestorScroll && (animationFrame ? isVisualViewport : true)) {
-      ancestor.addEventListener('scroll', update, {
-        passive: true
-      });
-    }
+    ancestorScroll && ancestor.addEventListener('scroll', update, {
+      passive: true
+    });
     ancestorResize && ancestor.addEventListener('resize', update);
   });
-  let observer = null;
+  const cleanupIo = referenceEl && layoutShift ? observeMove(referenceEl, update) : null;
+  let reobserveFrame = -1;
+  let resizeObserver = null;
   if (elementResize) {
-    observer = new ResizeObserver(() => {
+    resizeObserver = new ResizeObserver(_ref => {
+      let [firstEntry] = _ref;
+      if (firstEntry && firstEntry.target === referenceEl && resizeObserver) {
+        // Prevent update loops when using the `size` middleware.
+        // https://github.com/floating-ui/floating-ui/issues/1740
+        resizeObserver.unobserve(floating);
+        cancelAnimationFrame(reobserveFrame);
+        reobserveFrame = requestAnimationFrame(() => {
+          var _resizeObserver;
+          (_resizeObserver = resizeObserver) == null || _resizeObserver.observe(floating);
+        });
+      }
       update();
     });
-    isElement(reference) && !animationFrame && observer.observe(reference);
-    if (!isElement(reference) && reference.contextElement && !animationFrame) {
-      observer.observe(reference.contextElement);
+    if (referenceEl && !animationFrame) {
+      resizeObserver.observe(referenceEl);
     }
-    observer.observe(floating);
+    resizeObserver.observe(floating);
   }
   let frameId;
   let prevRefRect = animationFrame ? getBoundingClientRect(reference) : null;
@@ -8189,7 +9246,7 @@ function autoUpdate(reference, floating, update, options) {
   }
   function frameLoop() {
     const nextRefRect = getBoundingClientRect(reference);
-    if (prevRefRect && (nextRefRect.x !== prevRefRect.x || nextRefRect.y !== prevRefRect.y || nextRefRect.width !== prevRefRect.width || nextRefRect.height !== prevRefRect.height)) {
+    if (prevRefRect && !rectsAreEqual(prevRefRect, nextRefRect)) {
       update();
     }
     prevRefRect = nextRefRect;
@@ -8197,22 +9254,91 @@ function autoUpdate(reference, floating, update, options) {
   }
   update();
   return () => {
-    var _observer;
+    var _resizeObserver2;
     ancestors.forEach(ancestor => {
       ancestorScroll && ancestor.removeEventListener('scroll', update);
       ancestorResize && ancestor.removeEventListener('resize', update);
     });
-    (_observer = observer) == null ? void 0 : _observer.disconnect();
-    observer = null;
+    cleanupIo == null || cleanupIo();
+    (_resizeObserver2 = resizeObserver) == null || _resizeObserver2.disconnect();
+    resizeObserver = null;
     if (animationFrame) {
       cancelAnimationFrame(frameId);
     }
   };
 }
 
-var index = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
+/**
+ * Modifies the placement by translating the floating element along the
+ * specified axes.
+ * A number (shorthand for `mainAxis` or distance), or an axes configuration
+ * object may be passed.
+ * @see https://floating-ui.com/docs/offset
+ */
+offset;
 
-var _excluded$3 = ["className", "clearValue", "cx", "getStyles", "getClassNames", "getValue", "hasValue", "isMulti", "isRtl", "options", "selectOption", "selectProps", "setValue", "theme"];
+/**
+ * Optimizes the visibility of the floating element by choosing the placement
+ * that has the most space available automatically, without needing to specify a
+ * preferred placement. Alternative to `flip`.
+ * @see https://floating-ui.com/docs/autoPlacement
+ */
+autoPlacement;
+
+/**
+ * Optimizes the visibility of the floating element by shifting it in order to
+ * keep it in view when it will overflow the clipping boundary.
+ * @see https://floating-ui.com/docs/shift
+ */
+shift;
+
+/**
+ * Optimizes the visibility of the floating element by flipping the `placement`
+ * in order to keep it in view when the preferred placement(s) will overflow the
+ * clipping boundary. Alternative to `autoPlacement`.
+ * @see https://floating-ui.com/docs/flip
+ */
+flip;
+
+/**
+ * Provides data that allows you to change the size of the floating element —
+ * for instance, prevent it from overflowing the clipping boundary or match the
+ * width of the reference element.
+ * @see https://floating-ui.com/docs/size
+ */
+size;
+
+/**
+ * Provides data to hide the floating element in applicable situations, such as
+ * when it is not in the same clipping context as the reference element.
+ * @see https://floating-ui.com/docs/hide
+ */
+hide;
+
+/**
+ * Provides data to position an inner element of the floating element so that it
+ * appears centered to the reference element.
+ * @see https://floating-ui.com/docs/arrow
+ */
+arrow;
+
+/**
+ * Provides improved positioning for inline reference elements that can span
+ * over multiple lines, such as hyperlinks or range selections.
+ * @see https://floating-ui.com/docs/inline
+ */
+inline;
+
+/**
+ * Built-in `limiter` that will stop `shift()` at a certain point.
+ */
+limitShift;
+
+var isClient = typeof document !== 'undefined';
+
+var index = isClient ? React.useLayoutEffect : React.useEffect;
+
+var _excluded$4 = ["className", "clearValue", "cx", "getStyles", "getClassNames", "getValue", "hasValue", "isMulti", "isRtl", "options", "selectOption", "selectProps", "setValue", "theme"];
 // ==============================
 // NO OP
 // ==============================
@@ -8289,7 +9415,7 @@ var cleanCommonProps = function cleanCommonProps(props) {
     props.selectProps;
     props.setValue;
     props.theme;
-    var innerProps = _objectWithoutProperties(props, _excluded$3);
+    var innerProps = _objectWithoutProperties(props, _excluded$4);
   return _objectSpread2({}, innerProps);
 };
 
@@ -8503,6 +9629,8 @@ var removeProps = function removeProps(propsObj) {
   }, {});
 };
 
+var _excluded$3 = ["children", "innerProps"],
+  _excluded2$1 = ["children", "innerProps"];
 function getMenuPlacement(_ref) {
   var preferredMaxHeight = _ref.maxHeight,
     menuEl = _ref.menuEl,
@@ -8797,37 +9925,41 @@ var noticeCSS = function noticeCSS(_ref5, unstyled) {
 };
 var noOptionsMessageCSS = noticeCSS;
 var loadingMessageCSS = noticeCSS;
-var NoOptionsMessage = function NoOptionsMessage(props) {
-  var children = props.children,
-    innerProps = props.innerProps;
-  return jsx("div", _extends({}, getStyleProps(props, 'noOptionsMessage', {
+var NoOptionsMessage = function NoOptionsMessage(_ref6) {
+  var _ref6$children = _ref6.children,
+    children = _ref6$children === void 0 ? 'No options' : _ref6$children,
+    innerProps = _ref6.innerProps,
+    restProps = _objectWithoutProperties(_ref6, _excluded$3);
+  return jsx("div", _extends({}, getStyleProps(_objectSpread2(_objectSpread2({}, restProps), {}, {
+    children: children,
+    innerProps: innerProps
+  }), 'noOptionsMessage', {
     'menu-notice': true,
     'menu-notice--no-options': true
   }), innerProps), children);
 };
-NoOptionsMessage.defaultProps = {
-  children: 'No options'
-};
-var LoadingMessage = function LoadingMessage(props) {
-  var children = props.children,
-    innerProps = props.innerProps;
-  return jsx("div", _extends({}, getStyleProps(props, 'loadingMessage', {
+var LoadingMessage = function LoadingMessage(_ref7) {
+  var _ref7$children = _ref7.children,
+    children = _ref7$children === void 0 ? 'Loading...' : _ref7$children,
+    innerProps = _ref7.innerProps,
+    restProps = _objectWithoutProperties(_ref7, _excluded2$1);
+  return jsx("div", _extends({}, getStyleProps(_objectSpread2(_objectSpread2({}, restProps), {}, {
+    children: children,
+    innerProps: innerProps
+  }), 'loadingMessage', {
     'menu-notice': true,
     'menu-notice--loading': true
   }), innerProps), children);
-};
-LoadingMessage.defaultProps = {
-  children: 'Loading...'
 };
 
 // ==============================
 // Menu Portal
 // ==============================
 
-var menuPortalCSS = function menuPortalCSS(_ref6) {
-  var rect = _ref6.rect,
-    offset = _ref6.offset,
-    position = _ref6.position;
+var menuPortalCSS = function menuPortalCSS(_ref8) {
+  var rect = _ref8.rect,
+    offset = _ref8.offset,
+    position = _ref8.position;
   return {
     left: rect.left,
     position: position,
@@ -8907,7 +10039,7 @@ var MenuPortal = function MenuPortal(props) {
   }), innerProps), children);
   return jsx(PortalPlacementContext.Provider, {
     value: portalPlacementContext
-  }, appendTo ? /*#__PURE__*/ReactDOM.createPortal(menuWrapper, appendTo) : menuWrapper);
+  }, appendTo ? /*#__PURE__*/reactDom.exports.createPortal(menuWrapper, appendTo) : menuWrapper);
 };
 
 // ==============================
@@ -8990,7 +10122,8 @@ var IndicatorsContainer = function IndicatorsContainer(props) {
 };
 
 var _templateObject;
-var _excluded$2$1 = ["size"];
+var _excluded$2$1 = ["size"],
+  _excluded2 = ["innerProps", "isRtl", "size"];
 function _EMOTION_STRINGIFIED_CSS_ERROR__$3() { return "You have tried to stringify object returned from `css` function. It isn't supposed to be used directly (e.g. as value of the `className` prop), but rather handed to emotion so it can handle it (e.g. as value of `css` prop)."; }
 
 // ==============================
@@ -9002,7 +10135,7 @@ var _ref2$2 = process.env.NODE_ENV === "production" ? {
 } : {
   name: "tj5bde-Svg",
   styles: "display:inline-block;fill:currentColor;line-height:1;stroke:currentColor;stroke-width:0;label:Svg;",
-  map: "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGljYXRvcnMudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQXlCSSIsImZpbGUiOiJpbmRpY2F0b3JzLnRzeCIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAanN4IGpzeCAqL1xuaW1wb3J0IHsgUmVhY3ROb2RlIH0gZnJvbSAncmVhY3QnO1xuaW1wb3J0IHsganN4LCBrZXlmcmFtZXMgfSBmcm9tICdAZW1vdGlvbi9yZWFjdCc7XG5cbmltcG9ydCB7XG4gIENvbW1vblByb3BzQW5kQ2xhc3NOYW1lLFxuICBDU1NPYmplY3RXaXRoTGFiZWwsXG4gIEdyb3VwQmFzZSxcbn0gZnJvbSAnLi4vdHlwZXMnO1xuaW1wb3J0IHsgZ2V0U3R5bGVQcm9wcyB9IGZyb20gJy4uL3V0aWxzJztcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBEcm9wZG93biAmIENsZWFyIEljb25zXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuY29uc3QgU3ZnID0gKHtcbiAgc2l6ZSxcbiAgLi4ucHJvcHNcbn06IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snc3ZnJ10gJiB7IHNpemU6IG51bWJlciB9KSA9PiAoXG4gIDxzdmdcbiAgICBoZWlnaHQ9e3NpemV9XG4gICAgd2lkdGg9e3NpemV9XG4gICAgdmlld0JveD1cIjAgMCAyMCAyMFwiXG4gICAgYXJpYS1oaWRkZW49XCJ0cnVlXCJcbiAgICBmb2N1c2FibGU9XCJmYWxzZVwiXG4gICAgY3NzPXt7XG4gICAgICBkaXNwbGF5OiAnaW5saW5lLWJsb2NrJyxcbiAgICAgIGZpbGw6ICdjdXJyZW50Q29sb3InLFxuICAgICAgbGluZUhlaWdodDogMSxcbiAgICAgIHN0cm9rZTogJ2N1cnJlbnRDb2xvcicsXG4gICAgICBzdHJva2VXaWR0aDogMCxcbiAgICB9fVxuICAgIHsuLi5wcm9wc31cbiAgLz5cbik7XG5cbmV4cG9ydCB0eXBlIENyb3NzSWNvblByb3BzID0gSlNYLkludHJpbnNpY0VsZW1lbnRzWydzdmcnXSAmIHsgc2l6ZT86IG51bWJlciB9O1xuZXhwb3J0IGNvbnN0IENyb3NzSWNvbiA9IChwcm9wczogQ3Jvc3NJY29uUHJvcHMpID0+IChcbiAgPFN2ZyBzaXplPXsyMH0gey4uLnByb3BzfT5cbiAgICA8cGF0aCBkPVwiTTE0LjM0OCAxNC44NDljLTAuNDY5IDAuNDY5LTEuMjI5IDAuNDY5LTEuNjk3IDBsLTIuNjUxLTMuMDMwLTIuNjUxIDMuMDI5Yy0wLjQ2OSAwLjQ2OS0xLjIyOSAwLjQ2OS0xLjY5NyAwLTAuNDY5LTAuNDY5LTAuNDY5LTEuMjI5IDAtMS42OTdsMi43NTgtMy4xNS0yLjc1OS0zLjE1MmMtMC40NjktMC40NjktMC40NjktMS4yMjggMC0xLjY5N3MxLjIyOC0wLjQ2OSAxLjY5NyAwbDIuNjUyIDMuMDMxIDIuNjUxLTMuMDMxYzAuNDY5LTAuNDY5IDEuMjI4LTAuNDY5IDEuNjk3IDBzMC40NjkgMS4yMjkgMCAxLjY5N2wtMi43NTggMy4xNTIgMi43NTggMy4xNWMwLjQ2OSAwLjQ2OSAwLjQ2OSAxLjIyOSAwIDEuNjk4elwiIC8+XG4gIDwvU3ZnPlxuKTtcbmV4cG9ydCB0eXBlIERvd25DaGV2cm9uUHJvcHMgPSBKU1guSW50cmluc2ljRWxlbWVudHNbJ3N2ZyddICYgeyBzaXplPzogbnVtYmVyIH07XG5leHBvcnQgY29uc3QgRG93bkNoZXZyb24gPSAocHJvcHM6IERvd25DaGV2cm9uUHJvcHMpID0+IChcbiAgPFN2ZyBzaXplPXsyMH0gey4uLnByb3BzfT5cbiAgICA8cGF0aCBkPVwiTTQuNTE2IDcuNTQ4YzAuNDM2LTAuNDQ2IDEuMDQzLTAuNDgxIDEuNTc2IDBsMy45MDggMy43NDcgMy45MDgtMy43NDdjMC41MzMtMC40ODEgMS4xNDEtMC40NDYgMS41NzQgMCAwLjQzNiAwLjQ0NSAwLjQwOCAxLjE5NyAwIDEuNjE1LTAuNDA2IDAuNDE4LTQuNjk1IDQuNTAyLTQuNjk1IDQuNTAyLTAuMjE3IDAuMjIzLTAuNTAyIDAuMzM1LTAuNzg3IDAuMzM1cy0wLjU3LTAuMTEyLTAuNzg5LTAuMzM1YzAgMC00LjI4Ny00LjA4NC00LjY5NS00LjUwMnMtMC40MzYtMS4xNyAwLTEuNjE1elwiIC8+XG4gIDwvU3ZnPlxuKTtcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBEcm9wZG93biAmIENsZWFyIEJ1dHRvbnNcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG5leHBvcnQgaW50ZXJmYWNlIERyb3Bkb3duSW5kaWNhdG9yUHJvcHM8XG4gIE9wdGlvbiA9IHVua25vd24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuID0gYm9vbGVhbixcbiAgR3JvdXAgZXh0ZW5kcyBHcm91cEJhc2U8T3B0aW9uPiA9IEdyb3VwQmFzZTxPcHRpb24+XG4+IGV4dGVuZHMgQ29tbW9uUHJvcHNBbmRDbGFzc05hbWU8T3B0aW9uLCBJc011bHRpLCBHcm91cD4ge1xuICAvKiogVGhlIGNoaWxkcmVuIHRvIGJlIHJlbmRlcmVkIGluc2lkZSB0aGUgaW5kaWNhdG9yLiAqL1xuICBjaGlsZHJlbj86IFJlYWN0Tm9kZTtcbiAgLyoqIFByb3BzIHRoYXQgd2lsbCBiZSBwYXNzZWQgb24gdG8gdGhlIGNoaWxkcmVuLiAqL1xuICBpbm5lclByb3BzOiBKU1guSW50cmluc2ljRWxlbWVudHNbJ2RpdiddO1xuICAvKiogVGhlIGZvY3VzZWQgc3RhdGUgb2YgdGhlIHNlbGVjdC4gKi9cbiAgaXNGb2N1c2VkOiBib29sZWFuO1xuICBpc0Rpc2FibGVkOiBib29sZWFuO1xufVxuXG5jb25zdCBiYXNlQ1NTID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICB7XG4gICAgaXNGb2N1c2VkLFxuICAgIHRoZW1lOiB7XG4gICAgICBzcGFjaW5nOiB7IGJhc2VVbml0IH0sXG4gICAgICBjb2xvcnMsXG4gICAgfSxcbiAgfTpcbiAgICB8IERyb3Bkb3duSW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD5cbiAgICB8IENsZWFySW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD4sXG4gIHVuc3R5bGVkOiBib29sZWFuXG4pOiBDU1NPYmplY3RXaXRoTGFiZWwgPT4gKHtcbiAgbGFiZWw6ICdpbmRpY2F0b3JDb250YWluZXInLFxuICBkaXNwbGF5OiAnZmxleCcsXG4gIHRyYW5zaXRpb246ICdjb2xvciAxNTBtcycsXG4gIC4uLih1bnN0eWxlZFxuICAgID8ge31cbiAgICA6IHtcbiAgICAgICAgY29sb3I6IGlzRm9jdXNlZCA/IGNvbG9ycy5uZXV0cmFsNjAgOiBjb2xvcnMubmV1dHJhbDIwLFxuICAgICAgICBwYWRkaW5nOiBiYXNlVW5pdCAqIDIsXG4gICAgICAgICc6aG92ZXInOiB7XG4gICAgICAgICAgY29sb3I6IGlzRm9jdXNlZCA/IGNvbG9ycy5uZXV0cmFsODAgOiBjb2xvcnMubmV1dHJhbDQwLFxuICAgICAgICB9LFxuICAgICAgfSksXG59KTtcblxuZXhwb3J0IGNvbnN0IGRyb3Bkb3duSW5kaWNhdG9yQ1NTID0gYmFzZUNTUztcbmV4cG9ydCBjb25zdCBEcm9wZG93bkluZGljYXRvciA9IDxcbiAgT3B0aW9uLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbixcbiAgR3JvdXAgZXh0ZW5kcyBHcm91cEJhc2U8T3B0aW9uPlxuPihcbiAgcHJvcHM6IERyb3Bkb3duSW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD5cbikgPT4ge1xuICBjb25zdCB7IGNoaWxkcmVuLCBpbm5lclByb3BzIH0gPSBwcm9wcztcbiAgcmV0dXJuIChcbiAgICA8ZGl2XG4gICAgICB7Li4uZ2V0U3R5bGVQcm9wcyhwcm9wcywgJ2Ryb3Bkb3duSW5kaWNhdG9yJywge1xuICAgICAgICBpbmRpY2F0b3I6IHRydWUsXG4gICAgICAgICdkcm9wZG93bi1pbmRpY2F0b3InOiB0cnVlLFxuICAgICAgfSl9XG4gICAgICB7Li4uaW5uZXJQcm9wc31cbiAgICA+XG4gICAgICB7Y2hpbGRyZW4gfHwgPERvd25DaGV2cm9uIC8+fVxuICAgIDwvZGl2PlxuICApO1xufTtcblxuZXhwb3J0IGludGVyZmFjZSBDbGVhckluZGljYXRvclByb3BzPFxuICBPcHRpb24gPSB1bmtub3duLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbiA9IGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj4gPSBHcm91cEJhc2U8T3B0aW9uPlxuPiBleHRlbmRzIENvbW1vblByb3BzQW5kQ2xhc3NOYW1lPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+IHtcbiAgLyoqIFRoZSBjaGlsZHJlbiB0byBiZSByZW5kZXJlZCBpbnNpZGUgdGhlIGluZGljYXRvci4gKi9cbiAgY2hpbGRyZW4/OiBSZWFjdE5vZGU7XG4gIC8qKiBQcm9wcyB0aGF0IHdpbGwgYmUgcGFzc2VkIG9uIHRvIHRoZSBjaGlsZHJlbi4gKi9cbiAgaW5uZXJQcm9wczogSlNYLkludHJpbnNpY0VsZW1lbnRzWydkaXYnXTtcbiAgLyoqIFRoZSBmb2N1c2VkIHN0YXRlIG9mIHRoZSBzZWxlY3QuICovXG4gIGlzRm9jdXNlZDogYm9vbGVhbjtcbn1cblxuZXhwb3J0IGNvbnN0IGNsZWFySW5kaWNhdG9yQ1NTID0gYmFzZUNTUztcbmV4cG9ydCBjb25zdCBDbGVhckluZGljYXRvciA9IDxcbiAgT3B0aW9uLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbixcbiAgR3JvdXAgZXh0ZW5kcyBHcm91cEJhc2U8T3B0aW9uPlxuPihcbiAgcHJvcHM6IENsZWFySW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD5cbikgPT4ge1xuICBjb25zdCB7IGNoaWxkcmVuLCBpbm5lclByb3BzIH0gPSBwcm9wcztcbiAgcmV0dXJuIChcbiAgICA8ZGl2XG4gICAgICB7Li4uZ2V0U3R5bGVQcm9wcyhwcm9wcywgJ2NsZWFySW5kaWNhdG9yJywge1xuICAgICAgICBpbmRpY2F0b3I6IHRydWUsXG4gICAgICAgICdjbGVhci1pbmRpY2F0b3InOiB0cnVlLFxuICAgICAgfSl9XG4gICAgICB7Li4uaW5uZXJQcm9wc31cbiAgICA+XG4gICAgICB7Y2hpbGRyZW4gfHwgPENyb3NzSWNvbiAvPn1cbiAgICA8L2Rpdj5cbiAgKTtcbn07XG5cbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuLy8gU2VwYXJhdG9yXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuZXhwb3J0IGludGVyZmFjZSBJbmRpY2F0b3JTZXBhcmF0b3JQcm9wczxcbiAgT3B0aW9uID0gdW5rbm93bixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4gPSBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+ID0gR3JvdXBCYXNlPE9wdGlvbj5cbj4gZXh0ZW5kcyBDb21tb25Qcm9wc0FuZENsYXNzTmFtZTxPcHRpb24sIElzTXVsdGksIEdyb3VwPiB7XG4gIGlzRGlzYWJsZWQ6IGJvb2xlYW47XG4gIGlzRm9jdXNlZDogYm9vbGVhbjtcbiAgaW5uZXJQcm9wcz86IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snc3BhbiddO1xufVxuXG5leHBvcnQgY29uc3QgaW5kaWNhdG9yU2VwYXJhdG9yQ1NTID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICB7XG4gICAgaXNEaXNhYmxlZCxcbiAgICB0aGVtZToge1xuICAgICAgc3BhY2luZzogeyBiYXNlVW5pdCB9LFxuICAgICAgY29sb3JzLFxuICAgIH0sXG4gIH06IEluZGljYXRvclNlcGFyYXRvclByb3BzPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+LFxuICB1bnN0eWxlZDogYm9vbGVhblxuKTogQ1NTT2JqZWN0V2l0aExhYmVsID0+ICh7XG4gIGxhYmVsOiAnaW5kaWNhdG9yU2VwYXJhdG9yJyxcbiAgYWxpZ25TZWxmOiAnc3RyZXRjaCcsXG4gIHdpZHRoOiAxLFxuICAuLi4odW5zdHlsZWRcbiAgICA/IHt9XG4gICAgOiB7XG4gICAgICAgIGJhY2tncm91bmRDb2xvcjogaXNEaXNhYmxlZCA/IGNvbG9ycy5uZXV0cmFsMTAgOiBjb2xvcnMubmV1dHJhbDIwLFxuICAgICAgICBtYXJnaW5Cb3R0b206IGJhc2VVbml0ICogMixcbiAgICAgICAgbWFyZ2luVG9wOiBiYXNlVW5pdCAqIDIsXG4gICAgICB9KSxcbn0pO1xuXG5leHBvcnQgY29uc3QgSW5kaWNhdG9yU2VwYXJhdG9yID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICBwcm9wczogSW5kaWNhdG9yU2VwYXJhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD5cbikgPT4ge1xuICBjb25zdCB7IGlubmVyUHJvcHMgfSA9IHByb3BzO1xuICByZXR1cm4gKFxuICAgIDxzcGFuXG4gICAgICB7Li4uaW5uZXJQcm9wc31cbiAgICAgIHsuLi5nZXRTdHlsZVByb3BzKHByb3BzLCAnaW5kaWNhdG9yU2VwYXJhdG9yJywge1xuICAgICAgICAnaW5kaWNhdG9yLXNlcGFyYXRvcic6IHRydWUsXG4gICAgICB9KX1cbiAgICAvPlxuICApO1xufTtcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBMb2FkaW5nXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuY29uc3QgbG9hZGluZ0RvdEFuaW1hdGlvbnMgPSBrZXlmcmFtZXNgXG4gIDAlLCA4MCUsIDEwMCUgeyBvcGFjaXR5OiAwOyB9XG4gIDQwJSB7IG9wYWNpdHk6IDE7IH1cbmA7XG5cbmV4cG9ydCBjb25zdCBsb2FkaW5nSW5kaWNhdG9yQ1NTID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICB7XG4gICAgaXNGb2N1c2VkLFxuICAgIHNpemUsXG4gICAgdGhlbWU6IHtcbiAgICAgIGNvbG9ycyxcbiAgICAgIHNwYWNpbmc6IHsgYmFzZVVuaXQgfSxcbiAgICB9LFxuICB9OiBMb2FkaW5nSW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD4sXG4gIHVuc3R5bGVkOiBib29sZWFuXG4pOiBDU1NPYmplY3RXaXRoTGFiZWwgPT4gKHtcbiAgbGFiZWw6ICdsb2FkaW5nSW5kaWNhdG9yJyxcbiAgZGlzcGxheTogJ2ZsZXgnLFxuICB0cmFuc2l0aW9uOiAnY29sb3IgMTUwbXMnLFxuICBhbGlnblNlbGY6ICdjZW50ZXInLFxuICBmb250U2l6ZTogc2l6ZSxcbiAgbGluZUhlaWdodDogMSxcbiAgbWFyZ2luUmlnaHQ6IHNpemUsXG4gIHRleHRBbGlnbjogJ2NlbnRlcicsXG4gIHZlcnRpY2FsQWxpZ246ICdtaWRkbGUnLFxuICAuLi4odW5zdHlsZWRcbiAgICA/IHt9XG4gICAgOiB7XG4gICAgICAgIGNvbG9yOiBpc0ZvY3VzZWQgPyBjb2xvcnMubmV1dHJhbDYwIDogY29sb3JzLm5ldXRyYWwyMCxcbiAgICAgICAgcGFkZGluZzogYmFzZVVuaXQgKiAyLFxuICAgICAgfSksXG59KTtcblxuaW50ZXJmYWNlIExvYWRpbmdEb3RQcm9wcyB7XG4gIGRlbGF5OiBudW1iZXI7XG4gIG9mZnNldDogYm9vbGVhbjtcbn1cbmNvbnN0IExvYWRpbmdEb3QgPSAoeyBkZWxheSwgb2Zmc2V0IH06IExvYWRpbmdEb3RQcm9wcykgPT4gKFxuICA8c3BhblxuICAgIGNzcz17e1xuICAgICAgYW5pbWF0aW9uOiBgJHtsb2FkaW5nRG90QW5pbWF0aW9uc30gMXMgZWFzZS1pbi1vdXQgJHtkZWxheX1tcyBpbmZpbml0ZTtgLFxuICAgICAgYmFja2dyb3VuZENvbG9yOiAnY3VycmVudENvbG9yJyxcbiAgICAgIGJvcmRlclJhZGl1czogJzFlbScsXG4gICAgICBkaXNwbGF5OiAnaW5saW5lLWJsb2NrJyxcbiAgICAgIG1hcmdpbkxlZnQ6IG9mZnNldCA/ICcxZW0nIDogdW5kZWZpbmVkLFxuICAgICAgaGVpZ2h0OiAnMWVtJyxcbiAgICAgIHZlcnRpY2FsQWxpZ246ICd0b3AnLFxuICAgICAgd2lkdGg6ICcxZW0nLFxuICAgIH19XG4gIC8+XG4pO1xuXG5leHBvcnQgaW50ZXJmYWNlIExvYWRpbmdJbmRpY2F0b3JQcm9wczxcbiAgT3B0aW9uID0gdW5rbm93bixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4gPSBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+ID0gR3JvdXBCYXNlPE9wdGlvbj5cbj4gZXh0ZW5kcyBDb21tb25Qcm9wc0FuZENsYXNzTmFtZTxPcHRpb24sIElzTXVsdGksIEdyb3VwPiB7XG4gIC8qKiBQcm9wcyB0aGF0IHdpbGwgYmUgcGFzc2VkIG9uIHRvIHRoZSBjaGlsZHJlbi4gKi9cbiAgaW5uZXJQcm9wczogSlNYLkludHJpbnNpY0VsZW1lbnRzWydkaXYnXTtcbiAgLyoqIFRoZSBmb2N1c2VkIHN0YXRlIG9mIHRoZSBzZWxlY3QuICovXG4gIGlzRm9jdXNlZDogYm9vbGVhbjtcbiAgaXNEaXNhYmxlZDogYm9vbGVhbjtcbiAgLyoqIFNldCBzaXplIG9mIHRoZSBjb250YWluZXIuICovXG4gIHNpemU6IG51bWJlcjtcbn1cbmV4cG9ydCBjb25zdCBMb2FkaW5nSW5kaWNhdG9yID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICBwcm9wczogTG9hZGluZ0luZGljYXRvclByb3BzPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+XG4pID0+IHtcbiAgY29uc3QgeyBpbm5lclByb3BzLCBpc1J0bCB9ID0gcHJvcHM7XG5cbiAgcmV0dXJuIChcbiAgICA8ZGl2XG4gICAgICB7Li4uZ2V0U3R5bGVQcm9wcyhwcm9wcywgJ2xvYWRpbmdJbmRpY2F0b3InLCB7XG4gICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgJ2xvYWRpbmctaW5kaWNhdG9yJzogdHJ1ZSxcbiAgICAgIH0pfVxuICAgICAgey4uLmlubmVyUHJvcHN9XG4gICAgPlxuICAgICAgPExvYWRpbmdEb3QgZGVsYXk9ezB9IG9mZnNldD17aXNSdGx9IC8+XG4gICAgICA8TG9hZGluZ0RvdCBkZWxheT17MTYwfSBvZmZzZXQgLz5cbiAgICAgIDxMb2FkaW5nRG90IGRlbGF5PXszMjB9IG9mZnNldD17IWlzUnRsfSAvPlxuICAgIDwvZGl2PlxuICApO1xufTtcbkxvYWRpbmdJbmRpY2F0b3IuZGVmYXVsdFByb3BzID0geyBzaXplOiA0IH07XG4iXX0= */",
+  map: "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGljYXRvcnMudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQXlCSSIsImZpbGUiOiJpbmRpY2F0b3JzLnRzeCIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAanN4IGpzeCAqL1xuaW1wb3J0IHsgSlNYLCBSZWFjdE5vZGUgfSBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyBqc3gsIGtleWZyYW1lcyB9IGZyb20gJ0BlbW90aW9uL3JlYWN0JztcblxuaW1wb3J0IHtcbiAgQ29tbW9uUHJvcHNBbmRDbGFzc05hbWUsXG4gIENTU09iamVjdFdpdGhMYWJlbCxcbiAgR3JvdXBCYXNlLFxufSBmcm9tICcuLi90eXBlcyc7XG5pbXBvcnQgeyBnZXRTdHlsZVByb3BzIH0gZnJvbSAnLi4vdXRpbHMnO1xuXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbi8vIERyb3Bkb3duICYgQ2xlYXIgSWNvbnNcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG5jb25zdCBTdmcgPSAoe1xuICBzaXplLFxuICAuLi5wcm9wc1xufTogSlNYLkludHJpbnNpY0VsZW1lbnRzWydzdmcnXSAmIHsgc2l6ZTogbnVtYmVyIH0pID0+IChcbiAgPHN2Z1xuICAgIGhlaWdodD17c2l6ZX1cbiAgICB3aWR0aD17c2l6ZX1cbiAgICB2aWV3Qm94PVwiMCAwIDIwIDIwXCJcbiAgICBhcmlhLWhpZGRlbj1cInRydWVcIlxuICAgIGZvY3VzYWJsZT1cImZhbHNlXCJcbiAgICBjc3M9e3tcbiAgICAgIGRpc3BsYXk6ICdpbmxpbmUtYmxvY2snLFxuICAgICAgZmlsbDogJ2N1cnJlbnRDb2xvcicsXG4gICAgICBsaW5lSGVpZ2h0OiAxLFxuICAgICAgc3Ryb2tlOiAnY3VycmVudENvbG9yJyxcbiAgICAgIHN0cm9rZVdpZHRoOiAwLFxuICAgIH19XG4gICAgey4uLnByb3BzfVxuICAvPlxuKTtcblxuZXhwb3J0IHR5cGUgQ3Jvc3NJY29uUHJvcHMgPSBKU1guSW50cmluc2ljRWxlbWVudHNbJ3N2ZyddICYgeyBzaXplPzogbnVtYmVyIH07XG5leHBvcnQgY29uc3QgQ3Jvc3NJY29uID0gKHByb3BzOiBDcm9zc0ljb25Qcm9wcykgPT4gKFxuICA8U3ZnIHNpemU9ezIwfSB7Li4ucHJvcHN9PlxuICAgIDxwYXRoIGQ9XCJNMTQuMzQ4IDE0Ljg0OWMtMC40NjkgMC40NjktMS4yMjkgMC40NjktMS42OTcgMGwtMi42NTEtMy4wMzAtMi42NTEgMy4wMjljLTAuNDY5IDAuNDY5LTEuMjI5IDAuNDY5LTEuNjk3IDAtMC40NjktMC40NjktMC40NjktMS4yMjkgMC0xLjY5N2wyLjc1OC0zLjE1LTIuNzU5LTMuMTUyYy0wLjQ2OS0wLjQ2OS0wLjQ2OS0xLjIyOCAwLTEuNjk3czEuMjI4LTAuNDY5IDEuNjk3IDBsMi42NTIgMy4wMzEgMi42NTEtMy4wMzFjMC40NjktMC40NjkgMS4yMjgtMC40NjkgMS42OTcgMHMwLjQ2OSAxLjIyOSAwIDEuNjk3bC0yLjc1OCAzLjE1MiAyLjc1OCAzLjE1YzAuNDY5IDAuNDY5IDAuNDY5IDEuMjI5IDAgMS42OTh6XCIgLz5cbiAgPC9Tdmc+XG4pO1xuZXhwb3J0IHR5cGUgRG93bkNoZXZyb25Qcm9wcyA9IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snc3ZnJ10gJiB7IHNpemU/OiBudW1iZXIgfTtcbmV4cG9ydCBjb25zdCBEb3duQ2hldnJvbiA9IChwcm9wczogRG93bkNoZXZyb25Qcm9wcykgPT4gKFxuICA8U3ZnIHNpemU9ezIwfSB7Li4ucHJvcHN9PlxuICAgIDxwYXRoIGQ9XCJNNC41MTYgNy41NDhjMC40MzYtMC40NDYgMS4wNDMtMC40ODEgMS41NzYgMGwzLjkwOCAzLjc0NyAzLjkwOC0zLjc0N2MwLjUzMy0wLjQ4MSAxLjE0MS0wLjQ0NiAxLjU3NCAwIDAuNDM2IDAuNDQ1IDAuNDA4IDEuMTk3IDAgMS42MTUtMC40MDYgMC40MTgtNC42OTUgNC41MDItNC42OTUgNC41MDItMC4yMTcgMC4yMjMtMC41MDIgMC4zMzUtMC43ODcgMC4zMzVzLTAuNTctMC4xMTItMC43ODktMC4zMzVjMCAwLTQuMjg3LTQuMDg0LTQuNjk1LTQuNTAycy0wLjQzNi0xLjE3IDAtMS42MTV6XCIgLz5cbiAgPC9Tdmc+XG4pO1xuXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbi8vIERyb3Bkb3duICYgQ2xlYXIgQnV0dG9uc1xuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG5cbmV4cG9ydCBpbnRlcmZhY2UgRHJvcGRvd25JbmRpY2F0b3JQcm9wczxcbiAgT3B0aW9uID0gdW5rbm93bixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4gPSBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+ID0gR3JvdXBCYXNlPE9wdGlvbj5cbj4gZXh0ZW5kcyBDb21tb25Qcm9wc0FuZENsYXNzTmFtZTxPcHRpb24sIElzTXVsdGksIEdyb3VwPiB7XG4gIC8qKiBUaGUgY2hpbGRyZW4gdG8gYmUgcmVuZGVyZWQgaW5zaWRlIHRoZSBpbmRpY2F0b3IuICovXG4gIGNoaWxkcmVuPzogUmVhY3ROb2RlO1xuICAvKiogUHJvcHMgdGhhdCB3aWxsIGJlIHBhc3NlZCBvbiB0byB0aGUgY2hpbGRyZW4uICovXG4gIGlubmVyUHJvcHM6IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snZGl2J107XG4gIC8qKiBUaGUgZm9jdXNlZCBzdGF0ZSBvZiB0aGUgc2VsZWN0LiAqL1xuICBpc0ZvY3VzZWQ6IGJvb2xlYW47XG4gIGlzRGlzYWJsZWQ6IGJvb2xlYW47XG59XG5cbmNvbnN0IGJhc2VDU1MgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oXG4gIHtcbiAgICBpc0ZvY3VzZWQsXG4gICAgdGhlbWU6IHtcbiAgICAgIHNwYWNpbmc6IHsgYmFzZVVuaXQgfSxcbiAgICAgIGNvbG9ycyxcbiAgICB9LFxuICB9OlxuICAgIHwgRHJvcGRvd25JbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPlxuICAgIHwgQ2xlYXJJbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPixcbiAgdW5zdHlsZWQ6IGJvb2xlYW5cbik6IENTU09iamVjdFdpdGhMYWJlbCA9PiAoe1xuICBsYWJlbDogJ2luZGljYXRvckNvbnRhaW5lcicsXG4gIGRpc3BsYXk6ICdmbGV4JyxcbiAgdHJhbnNpdGlvbjogJ2NvbG9yIDE1MG1zJyxcbiAgLi4uKHVuc3R5bGVkXG4gICAgPyB7fVxuICAgIDoge1xuICAgICAgICBjb2xvcjogaXNGb2N1c2VkID8gY29sb3JzLm5ldXRyYWw2MCA6IGNvbG9ycy5uZXV0cmFsMjAsXG4gICAgICAgIHBhZGRpbmc6IGJhc2VVbml0ICogMixcbiAgICAgICAgJzpob3Zlcic6IHtcbiAgICAgICAgICBjb2xvcjogaXNGb2N1c2VkID8gY29sb3JzLm5ldXRyYWw4MCA6IGNvbG9ycy5uZXV0cmFsNDAsXG4gICAgICAgIH0sXG4gICAgICB9KSxcbn0pO1xuXG5leHBvcnQgY29uc3QgZHJvcGRvd25JbmRpY2F0b3JDU1MgPSBiYXNlQ1NTO1xuZXhwb3J0IGNvbnN0IERyb3Bkb3duSW5kaWNhdG9yID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICBwcm9wczogRHJvcGRvd25JbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPlxuKSA9PiB7XG4gIGNvbnN0IHsgY2hpbGRyZW4sIGlubmVyUHJvcHMgfSA9IHByb3BzO1xuICByZXR1cm4gKFxuICAgIDxkaXZcbiAgICAgIHsuLi5nZXRTdHlsZVByb3BzKHByb3BzLCAnZHJvcGRvd25JbmRpY2F0b3InLCB7XG4gICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgJ2Ryb3Bkb3duLWluZGljYXRvcic6IHRydWUsXG4gICAgICB9KX1cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgID5cbiAgICAgIHtjaGlsZHJlbiB8fCA8RG93bkNoZXZyb24gLz59XG4gICAgPC9kaXY+XG4gICk7XG59O1xuXG5leHBvcnQgaW50ZXJmYWNlIENsZWFySW5kaWNhdG9yUHJvcHM8XG4gIE9wdGlvbiA9IHVua25vd24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuID0gYm9vbGVhbixcbiAgR3JvdXAgZXh0ZW5kcyBHcm91cEJhc2U8T3B0aW9uPiA9IEdyb3VwQmFzZTxPcHRpb24+XG4+IGV4dGVuZHMgQ29tbW9uUHJvcHNBbmRDbGFzc05hbWU8T3B0aW9uLCBJc011bHRpLCBHcm91cD4ge1xuICAvKiogVGhlIGNoaWxkcmVuIHRvIGJlIHJlbmRlcmVkIGluc2lkZSB0aGUgaW5kaWNhdG9yLiAqL1xuICBjaGlsZHJlbj86IFJlYWN0Tm9kZTtcbiAgLyoqIFByb3BzIHRoYXQgd2lsbCBiZSBwYXNzZWQgb24gdG8gdGhlIGNoaWxkcmVuLiAqL1xuICBpbm5lclByb3BzOiBKU1guSW50cmluc2ljRWxlbWVudHNbJ2RpdiddO1xuICAvKiogVGhlIGZvY3VzZWQgc3RhdGUgb2YgdGhlIHNlbGVjdC4gKi9cbiAgaXNGb2N1c2VkOiBib29sZWFuO1xufVxuXG5leHBvcnQgY29uc3QgY2xlYXJJbmRpY2F0b3JDU1MgPSBiYXNlQ1NTO1xuZXhwb3J0IGNvbnN0IENsZWFySW5kaWNhdG9yID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICBwcm9wczogQ2xlYXJJbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPlxuKSA9PiB7XG4gIGNvbnN0IHsgY2hpbGRyZW4sIGlubmVyUHJvcHMgfSA9IHByb3BzO1xuICByZXR1cm4gKFxuICAgIDxkaXZcbiAgICAgIHsuLi5nZXRTdHlsZVByb3BzKHByb3BzLCAnY2xlYXJJbmRpY2F0b3InLCB7XG4gICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgJ2NsZWFyLWluZGljYXRvcic6IHRydWUsXG4gICAgICB9KX1cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgID5cbiAgICAgIHtjaGlsZHJlbiB8fCA8Q3Jvc3NJY29uIC8+fVxuICAgIDwvZGl2PlxuICApO1xufTtcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBTZXBhcmF0b3Jcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG5leHBvcnQgaW50ZXJmYWNlIEluZGljYXRvclNlcGFyYXRvclByb3BzPFxuICBPcHRpb24gPSB1bmtub3duLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbiA9IGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj4gPSBHcm91cEJhc2U8T3B0aW9uPlxuPiBleHRlbmRzIENvbW1vblByb3BzQW5kQ2xhc3NOYW1lPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+IHtcbiAgaXNEaXNhYmxlZDogYm9vbGVhbjtcbiAgaXNGb2N1c2VkOiBib29sZWFuO1xuICBpbm5lclByb3BzPzogSlNYLkludHJpbnNpY0VsZW1lbnRzWydzcGFuJ107XG59XG5cbmV4cG9ydCBjb25zdCBpbmRpY2F0b3JTZXBhcmF0b3JDU1MgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oXG4gIHtcbiAgICBpc0Rpc2FibGVkLFxuICAgIHRoZW1lOiB7XG4gICAgICBzcGFjaW5nOiB7IGJhc2VVbml0IH0sXG4gICAgICBjb2xvcnMsXG4gICAgfSxcbiAgfTogSW5kaWNhdG9yU2VwYXJhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD4sXG4gIHVuc3R5bGVkOiBib29sZWFuXG4pOiBDU1NPYmplY3RXaXRoTGFiZWwgPT4gKHtcbiAgbGFiZWw6ICdpbmRpY2F0b3JTZXBhcmF0b3InLFxuICBhbGlnblNlbGY6ICdzdHJldGNoJyxcbiAgd2lkdGg6IDEsXG4gIC4uLih1bnN0eWxlZFxuICAgID8ge31cbiAgICA6IHtcbiAgICAgICAgYmFja2dyb3VuZENvbG9yOiBpc0Rpc2FibGVkID8gY29sb3JzLm5ldXRyYWwxMCA6IGNvbG9ycy5uZXV0cmFsMjAsXG4gICAgICAgIG1hcmdpbkJvdHRvbTogYmFzZVVuaXQgKiAyLFxuICAgICAgICBtYXJnaW5Ub3A6IGJhc2VVbml0ICogMixcbiAgICAgIH0pLFxufSk7XG5cbmV4cG9ydCBjb25zdCBJbmRpY2F0b3JTZXBhcmF0b3IgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oXG4gIHByb3BzOiBJbmRpY2F0b3JTZXBhcmF0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPlxuKSA9PiB7XG4gIGNvbnN0IHsgaW5uZXJQcm9wcyB9ID0gcHJvcHM7XG4gIHJldHVybiAoXG4gICAgPHNwYW5cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgICAgey4uLmdldFN0eWxlUHJvcHMocHJvcHMsICdpbmRpY2F0b3JTZXBhcmF0b3InLCB7XG4gICAgICAgICdpbmRpY2F0b3Itc2VwYXJhdG9yJzogdHJ1ZSxcbiAgICAgIH0pfVxuICAgIC8+XG4gICk7XG59O1xuXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbi8vIExvYWRpbmdcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG5jb25zdCBsb2FkaW5nRG90QW5pbWF0aW9ucyA9IGtleWZyYW1lc2BcbiAgMCUsIDgwJSwgMTAwJSB7IG9wYWNpdHk6IDA7IH1cbiAgNDAlIHsgb3BhY2l0eTogMTsgfVxuYDtcblxuZXhwb3J0IGNvbnN0IGxvYWRpbmdJbmRpY2F0b3JDU1MgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oXG4gIHtcbiAgICBpc0ZvY3VzZWQsXG4gICAgc2l6ZSxcbiAgICB0aGVtZToge1xuICAgICAgY29sb3JzLFxuICAgICAgc3BhY2luZzogeyBiYXNlVW5pdCB9LFxuICAgIH0sXG4gIH06IExvYWRpbmdJbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPixcbiAgdW5zdHlsZWQ6IGJvb2xlYW5cbik6IENTU09iamVjdFdpdGhMYWJlbCA9PiAoe1xuICBsYWJlbDogJ2xvYWRpbmdJbmRpY2F0b3InLFxuICBkaXNwbGF5OiAnZmxleCcsXG4gIHRyYW5zaXRpb246ICdjb2xvciAxNTBtcycsXG4gIGFsaWduU2VsZjogJ2NlbnRlcicsXG4gIGZvbnRTaXplOiBzaXplLFxuICBsaW5lSGVpZ2h0OiAxLFxuICBtYXJnaW5SaWdodDogc2l6ZSxcbiAgdGV4dEFsaWduOiAnY2VudGVyJyxcbiAgdmVydGljYWxBbGlnbjogJ21pZGRsZScsXG4gIC4uLih1bnN0eWxlZFxuICAgID8ge31cbiAgICA6IHtcbiAgICAgICAgY29sb3I6IGlzRm9jdXNlZCA/IGNvbG9ycy5uZXV0cmFsNjAgOiBjb2xvcnMubmV1dHJhbDIwLFxuICAgICAgICBwYWRkaW5nOiBiYXNlVW5pdCAqIDIsXG4gICAgICB9KSxcbn0pO1xuXG5pbnRlcmZhY2UgTG9hZGluZ0RvdFByb3BzIHtcbiAgZGVsYXk6IG51bWJlcjtcbiAgb2Zmc2V0OiBib29sZWFuO1xufVxuY29uc3QgTG9hZGluZ0RvdCA9ICh7IGRlbGF5LCBvZmZzZXQgfTogTG9hZGluZ0RvdFByb3BzKSA9PiAoXG4gIDxzcGFuXG4gICAgY3NzPXt7XG4gICAgICBhbmltYXRpb246IGAke2xvYWRpbmdEb3RBbmltYXRpb25zfSAxcyBlYXNlLWluLW91dCAke2RlbGF5fW1zIGluZmluaXRlO2AsXG4gICAgICBiYWNrZ3JvdW5kQ29sb3I6ICdjdXJyZW50Q29sb3InLFxuICAgICAgYm9yZGVyUmFkaXVzOiAnMWVtJyxcbiAgICAgIGRpc3BsYXk6ICdpbmxpbmUtYmxvY2snLFxuICAgICAgbWFyZ2luTGVmdDogb2Zmc2V0ID8gJzFlbScgOiB1bmRlZmluZWQsXG4gICAgICBoZWlnaHQ6ICcxZW0nLFxuICAgICAgdmVydGljYWxBbGlnbjogJ3RvcCcsXG4gICAgICB3aWR0aDogJzFlbScsXG4gICAgfX1cbiAgLz5cbik7XG5cbmV4cG9ydCBpbnRlcmZhY2UgTG9hZGluZ0luZGljYXRvclByb3BzPFxuICBPcHRpb24gPSB1bmtub3duLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbiA9IGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj4gPSBHcm91cEJhc2U8T3B0aW9uPlxuPiBleHRlbmRzIENvbW1vblByb3BzQW5kQ2xhc3NOYW1lPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+IHtcbiAgLyoqIFByb3BzIHRoYXQgd2lsbCBiZSBwYXNzZWQgb24gdG8gdGhlIGNoaWxkcmVuLiAqL1xuICBpbm5lclByb3BzOiBKU1guSW50cmluc2ljRWxlbWVudHNbJ2RpdiddO1xuICAvKiogVGhlIGZvY3VzZWQgc3RhdGUgb2YgdGhlIHNlbGVjdC4gKi9cbiAgaXNGb2N1c2VkOiBib29sZWFuO1xuICBpc0Rpc2FibGVkOiBib29sZWFuO1xuICAvKiogU2V0IHNpemUgb2YgdGhlIGNvbnRhaW5lci4gKi9cbiAgc2l6ZTogbnVtYmVyO1xufVxuZXhwb3J0IGNvbnN0IExvYWRpbmdJbmRpY2F0b3IgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oe1xuICBpbm5lclByb3BzLFxuICBpc1J0bCxcbiAgc2l6ZSA9IDQsXG4gIC4uLnJlc3RQcm9wc1xufTogTG9hZGluZ0luZGljYXRvclByb3BzPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+KSA9PiB7XG4gIHJldHVybiAoXG4gICAgPGRpdlxuICAgICAgey4uLmdldFN0eWxlUHJvcHMoXG4gICAgICAgIHsgLi4ucmVzdFByb3BzLCBpbm5lclByb3BzLCBpc1J0bCwgc2l6ZSB9LFxuICAgICAgICAnbG9hZGluZ0luZGljYXRvcicsXG4gICAgICAgIHtcbiAgICAgICAgICBpbmRpY2F0b3I6IHRydWUsXG4gICAgICAgICAgJ2xvYWRpbmctaW5kaWNhdG9yJzogdHJ1ZSxcbiAgICAgICAgfVxuICAgICAgKX1cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgID5cbiAgICAgIDxMb2FkaW5nRG90IGRlbGF5PXswfSBvZmZzZXQ9e2lzUnRsfSAvPlxuICAgICAgPExvYWRpbmdEb3QgZGVsYXk9ezE2MH0gb2Zmc2V0IC8+XG4gICAgICA8TG9hZGluZ0RvdCBkZWxheT17MzIwfSBvZmZzZXQ9eyFpc1J0bH0gLz5cbiAgICA8L2Rpdj5cbiAgKTtcbn07XG4iXX0= */",
   toString: _EMOTION_STRINGIFIED_CSS_ERROR__$3
 };
 var Svg = function Svg(_ref) {
@@ -9137,13 +10270,20 @@ var LoadingDot = function LoadingDot(_ref6) {
       height: '1em',
       verticalAlign: 'top',
       width: '1em'
-    }, process.env.NODE_ENV === "production" ? "" : ";label:LoadingDot;", process.env.NODE_ENV === "production" ? "" : "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGljYXRvcnMudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQW1RSSIsImZpbGUiOiJpbmRpY2F0b3JzLnRzeCIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAanN4IGpzeCAqL1xuaW1wb3J0IHsgUmVhY3ROb2RlIH0gZnJvbSAncmVhY3QnO1xuaW1wb3J0IHsganN4LCBrZXlmcmFtZXMgfSBmcm9tICdAZW1vdGlvbi9yZWFjdCc7XG5cbmltcG9ydCB7XG4gIENvbW1vblByb3BzQW5kQ2xhc3NOYW1lLFxuICBDU1NPYmplY3RXaXRoTGFiZWwsXG4gIEdyb3VwQmFzZSxcbn0gZnJvbSAnLi4vdHlwZXMnO1xuaW1wb3J0IHsgZ2V0U3R5bGVQcm9wcyB9IGZyb20gJy4uL3V0aWxzJztcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBEcm9wZG93biAmIENsZWFyIEljb25zXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuY29uc3QgU3ZnID0gKHtcbiAgc2l6ZSxcbiAgLi4ucHJvcHNcbn06IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snc3ZnJ10gJiB7IHNpemU6IG51bWJlciB9KSA9PiAoXG4gIDxzdmdcbiAgICBoZWlnaHQ9e3NpemV9XG4gICAgd2lkdGg9e3NpemV9XG4gICAgdmlld0JveD1cIjAgMCAyMCAyMFwiXG4gICAgYXJpYS1oaWRkZW49XCJ0cnVlXCJcbiAgICBmb2N1c2FibGU9XCJmYWxzZVwiXG4gICAgY3NzPXt7XG4gICAgICBkaXNwbGF5OiAnaW5saW5lLWJsb2NrJyxcbiAgICAgIGZpbGw6ICdjdXJyZW50Q29sb3InLFxuICAgICAgbGluZUhlaWdodDogMSxcbiAgICAgIHN0cm9rZTogJ2N1cnJlbnRDb2xvcicsXG4gICAgICBzdHJva2VXaWR0aDogMCxcbiAgICB9fVxuICAgIHsuLi5wcm9wc31cbiAgLz5cbik7XG5cbmV4cG9ydCB0eXBlIENyb3NzSWNvblByb3BzID0gSlNYLkludHJpbnNpY0VsZW1lbnRzWydzdmcnXSAmIHsgc2l6ZT86IG51bWJlciB9O1xuZXhwb3J0IGNvbnN0IENyb3NzSWNvbiA9IChwcm9wczogQ3Jvc3NJY29uUHJvcHMpID0+IChcbiAgPFN2ZyBzaXplPXsyMH0gey4uLnByb3BzfT5cbiAgICA8cGF0aCBkPVwiTTE0LjM0OCAxNC44NDljLTAuNDY5IDAuNDY5LTEuMjI5IDAuNDY5LTEuNjk3IDBsLTIuNjUxLTMuMDMwLTIuNjUxIDMuMDI5Yy0wLjQ2OSAwLjQ2OS0xLjIyOSAwLjQ2OS0xLjY5NyAwLTAuNDY5LTAuNDY5LTAuNDY5LTEuMjI5IDAtMS42OTdsMi43NTgtMy4xNS0yLjc1OS0zLjE1MmMtMC40NjktMC40NjktMC40NjktMS4yMjggMC0xLjY5N3MxLjIyOC0wLjQ2OSAxLjY5NyAwbDIuNjUyIDMuMDMxIDIuNjUxLTMuMDMxYzAuNDY5LTAuNDY5IDEuMjI4LTAuNDY5IDEuNjk3IDBzMC40NjkgMS4yMjkgMCAxLjY5N2wtMi43NTggMy4xNTIgMi43NTggMy4xNWMwLjQ2OSAwLjQ2OSAwLjQ2OSAxLjIyOSAwIDEuNjk4elwiIC8+XG4gIDwvU3ZnPlxuKTtcbmV4cG9ydCB0eXBlIERvd25DaGV2cm9uUHJvcHMgPSBKU1guSW50cmluc2ljRWxlbWVudHNbJ3N2ZyddICYgeyBzaXplPzogbnVtYmVyIH07XG5leHBvcnQgY29uc3QgRG93bkNoZXZyb24gPSAocHJvcHM6IERvd25DaGV2cm9uUHJvcHMpID0+IChcbiAgPFN2ZyBzaXplPXsyMH0gey4uLnByb3BzfT5cbiAgICA8cGF0aCBkPVwiTTQuNTE2IDcuNTQ4YzAuNDM2LTAuNDQ2IDEuMDQzLTAuNDgxIDEuNTc2IDBsMy45MDggMy43NDcgMy45MDgtMy43NDdjMC41MzMtMC40ODEgMS4xNDEtMC40NDYgMS41NzQgMCAwLjQzNiAwLjQ0NSAwLjQwOCAxLjE5NyAwIDEuNjE1LTAuNDA2IDAuNDE4LTQuNjk1IDQuNTAyLTQuNjk1IDQuNTAyLTAuMjE3IDAuMjIzLTAuNTAyIDAuMzM1LTAuNzg3IDAuMzM1cy0wLjU3LTAuMTEyLTAuNzg5LTAuMzM1YzAgMC00LjI4Ny00LjA4NC00LjY5NS00LjUwMnMtMC40MzYtMS4xNyAwLTEuNjE1elwiIC8+XG4gIDwvU3ZnPlxuKTtcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBEcm9wZG93biAmIENsZWFyIEJ1dHRvbnNcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG5leHBvcnQgaW50ZXJmYWNlIERyb3Bkb3duSW5kaWNhdG9yUHJvcHM8XG4gIE9wdGlvbiA9IHVua25vd24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuID0gYm9vbGVhbixcbiAgR3JvdXAgZXh0ZW5kcyBHcm91cEJhc2U8T3B0aW9uPiA9IEdyb3VwQmFzZTxPcHRpb24+XG4+IGV4dGVuZHMgQ29tbW9uUHJvcHNBbmRDbGFzc05hbWU8T3B0aW9uLCBJc011bHRpLCBHcm91cD4ge1xuICAvKiogVGhlIGNoaWxkcmVuIHRvIGJlIHJlbmRlcmVkIGluc2lkZSB0aGUgaW5kaWNhdG9yLiAqL1xuICBjaGlsZHJlbj86IFJlYWN0Tm9kZTtcbiAgLyoqIFByb3BzIHRoYXQgd2lsbCBiZSBwYXNzZWQgb24gdG8gdGhlIGNoaWxkcmVuLiAqL1xuICBpbm5lclByb3BzOiBKU1guSW50cmluc2ljRWxlbWVudHNbJ2RpdiddO1xuICAvKiogVGhlIGZvY3VzZWQgc3RhdGUgb2YgdGhlIHNlbGVjdC4gKi9cbiAgaXNGb2N1c2VkOiBib29sZWFuO1xuICBpc0Rpc2FibGVkOiBib29sZWFuO1xufVxuXG5jb25zdCBiYXNlQ1NTID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICB7XG4gICAgaXNGb2N1c2VkLFxuICAgIHRoZW1lOiB7XG4gICAgICBzcGFjaW5nOiB7IGJhc2VVbml0IH0sXG4gICAgICBjb2xvcnMsXG4gICAgfSxcbiAgfTpcbiAgICB8IERyb3Bkb3duSW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD5cbiAgICB8IENsZWFySW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD4sXG4gIHVuc3R5bGVkOiBib29sZWFuXG4pOiBDU1NPYmplY3RXaXRoTGFiZWwgPT4gKHtcbiAgbGFiZWw6ICdpbmRpY2F0b3JDb250YWluZXInLFxuICBkaXNwbGF5OiAnZmxleCcsXG4gIHRyYW5zaXRpb246ICdjb2xvciAxNTBtcycsXG4gIC4uLih1bnN0eWxlZFxuICAgID8ge31cbiAgICA6IHtcbiAgICAgICAgY29sb3I6IGlzRm9jdXNlZCA/IGNvbG9ycy5uZXV0cmFsNjAgOiBjb2xvcnMubmV1dHJhbDIwLFxuICAgICAgICBwYWRkaW5nOiBiYXNlVW5pdCAqIDIsXG4gICAgICAgICc6aG92ZXInOiB7XG4gICAgICAgICAgY29sb3I6IGlzRm9jdXNlZCA/IGNvbG9ycy5uZXV0cmFsODAgOiBjb2xvcnMubmV1dHJhbDQwLFxuICAgICAgICB9LFxuICAgICAgfSksXG59KTtcblxuZXhwb3J0IGNvbnN0IGRyb3Bkb3duSW5kaWNhdG9yQ1NTID0gYmFzZUNTUztcbmV4cG9ydCBjb25zdCBEcm9wZG93bkluZGljYXRvciA9IDxcbiAgT3B0aW9uLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbixcbiAgR3JvdXAgZXh0ZW5kcyBHcm91cEJhc2U8T3B0aW9uPlxuPihcbiAgcHJvcHM6IERyb3Bkb3duSW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD5cbikgPT4ge1xuICBjb25zdCB7IGNoaWxkcmVuLCBpbm5lclByb3BzIH0gPSBwcm9wcztcbiAgcmV0dXJuIChcbiAgICA8ZGl2XG4gICAgICB7Li4uZ2V0U3R5bGVQcm9wcyhwcm9wcywgJ2Ryb3Bkb3duSW5kaWNhdG9yJywge1xuICAgICAgICBpbmRpY2F0b3I6IHRydWUsXG4gICAgICAgICdkcm9wZG93bi1pbmRpY2F0b3InOiB0cnVlLFxuICAgICAgfSl9XG4gICAgICB7Li4uaW5uZXJQcm9wc31cbiAgICA+XG4gICAgICB7Y2hpbGRyZW4gfHwgPERvd25DaGV2cm9uIC8+fVxuICAgIDwvZGl2PlxuICApO1xufTtcblxuZXhwb3J0IGludGVyZmFjZSBDbGVhckluZGljYXRvclByb3BzPFxuICBPcHRpb24gPSB1bmtub3duLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbiA9IGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj4gPSBHcm91cEJhc2U8T3B0aW9uPlxuPiBleHRlbmRzIENvbW1vblByb3BzQW5kQ2xhc3NOYW1lPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+IHtcbiAgLyoqIFRoZSBjaGlsZHJlbiB0byBiZSByZW5kZXJlZCBpbnNpZGUgdGhlIGluZGljYXRvci4gKi9cbiAgY2hpbGRyZW4/OiBSZWFjdE5vZGU7XG4gIC8qKiBQcm9wcyB0aGF0IHdpbGwgYmUgcGFzc2VkIG9uIHRvIHRoZSBjaGlsZHJlbi4gKi9cbiAgaW5uZXJQcm9wczogSlNYLkludHJpbnNpY0VsZW1lbnRzWydkaXYnXTtcbiAgLyoqIFRoZSBmb2N1c2VkIHN0YXRlIG9mIHRoZSBzZWxlY3QuICovXG4gIGlzRm9jdXNlZDogYm9vbGVhbjtcbn1cblxuZXhwb3J0IGNvbnN0IGNsZWFySW5kaWNhdG9yQ1NTID0gYmFzZUNTUztcbmV4cG9ydCBjb25zdCBDbGVhckluZGljYXRvciA9IDxcbiAgT3B0aW9uLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbixcbiAgR3JvdXAgZXh0ZW5kcyBHcm91cEJhc2U8T3B0aW9uPlxuPihcbiAgcHJvcHM6IENsZWFySW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD5cbikgPT4ge1xuICBjb25zdCB7IGNoaWxkcmVuLCBpbm5lclByb3BzIH0gPSBwcm9wcztcbiAgcmV0dXJuIChcbiAgICA8ZGl2XG4gICAgICB7Li4uZ2V0U3R5bGVQcm9wcyhwcm9wcywgJ2NsZWFySW5kaWNhdG9yJywge1xuICAgICAgICBpbmRpY2F0b3I6IHRydWUsXG4gICAgICAgICdjbGVhci1pbmRpY2F0b3InOiB0cnVlLFxuICAgICAgfSl9XG4gICAgICB7Li4uaW5uZXJQcm9wc31cbiAgICA+XG4gICAgICB7Y2hpbGRyZW4gfHwgPENyb3NzSWNvbiAvPn1cbiAgICA8L2Rpdj5cbiAgKTtcbn07XG5cbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuLy8gU2VwYXJhdG9yXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuZXhwb3J0IGludGVyZmFjZSBJbmRpY2F0b3JTZXBhcmF0b3JQcm9wczxcbiAgT3B0aW9uID0gdW5rbm93bixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4gPSBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+ID0gR3JvdXBCYXNlPE9wdGlvbj5cbj4gZXh0ZW5kcyBDb21tb25Qcm9wc0FuZENsYXNzTmFtZTxPcHRpb24sIElzTXVsdGksIEdyb3VwPiB7XG4gIGlzRGlzYWJsZWQ6IGJvb2xlYW47XG4gIGlzRm9jdXNlZDogYm9vbGVhbjtcbiAgaW5uZXJQcm9wcz86IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snc3BhbiddO1xufVxuXG5leHBvcnQgY29uc3QgaW5kaWNhdG9yU2VwYXJhdG9yQ1NTID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICB7XG4gICAgaXNEaXNhYmxlZCxcbiAgICB0aGVtZToge1xuICAgICAgc3BhY2luZzogeyBiYXNlVW5pdCB9LFxuICAgICAgY29sb3JzLFxuICAgIH0sXG4gIH06IEluZGljYXRvclNlcGFyYXRvclByb3BzPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+LFxuICB1bnN0eWxlZDogYm9vbGVhblxuKTogQ1NTT2JqZWN0V2l0aExhYmVsID0+ICh7XG4gIGxhYmVsOiAnaW5kaWNhdG9yU2VwYXJhdG9yJyxcbiAgYWxpZ25TZWxmOiAnc3RyZXRjaCcsXG4gIHdpZHRoOiAxLFxuICAuLi4odW5zdHlsZWRcbiAgICA/IHt9XG4gICAgOiB7XG4gICAgICAgIGJhY2tncm91bmRDb2xvcjogaXNEaXNhYmxlZCA/IGNvbG9ycy5uZXV0cmFsMTAgOiBjb2xvcnMubmV1dHJhbDIwLFxuICAgICAgICBtYXJnaW5Cb3R0b206IGJhc2VVbml0ICogMixcbiAgICAgICAgbWFyZ2luVG9wOiBiYXNlVW5pdCAqIDIsXG4gICAgICB9KSxcbn0pO1xuXG5leHBvcnQgY29uc3QgSW5kaWNhdG9yU2VwYXJhdG9yID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICBwcm9wczogSW5kaWNhdG9yU2VwYXJhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD5cbikgPT4ge1xuICBjb25zdCB7IGlubmVyUHJvcHMgfSA9IHByb3BzO1xuICByZXR1cm4gKFxuICAgIDxzcGFuXG4gICAgICB7Li4uaW5uZXJQcm9wc31cbiAgICAgIHsuLi5nZXRTdHlsZVByb3BzKHByb3BzLCAnaW5kaWNhdG9yU2VwYXJhdG9yJywge1xuICAgICAgICAnaW5kaWNhdG9yLXNlcGFyYXRvcic6IHRydWUsXG4gICAgICB9KX1cbiAgICAvPlxuICApO1xufTtcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBMb2FkaW5nXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuY29uc3QgbG9hZGluZ0RvdEFuaW1hdGlvbnMgPSBrZXlmcmFtZXNgXG4gIDAlLCA4MCUsIDEwMCUgeyBvcGFjaXR5OiAwOyB9XG4gIDQwJSB7IG9wYWNpdHk6IDE7IH1cbmA7XG5cbmV4cG9ydCBjb25zdCBsb2FkaW5nSW5kaWNhdG9yQ1NTID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICB7XG4gICAgaXNGb2N1c2VkLFxuICAgIHNpemUsXG4gICAgdGhlbWU6IHtcbiAgICAgIGNvbG9ycyxcbiAgICAgIHNwYWNpbmc6IHsgYmFzZVVuaXQgfSxcbiAgICB9LFxuICB9OiBMb2FkaW5nSW5kaWNhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD4sXG4gIHVuc3R5bGVkOiBib29sZWFuXG4pOiBDU1NPYmplY3RXaXRoTGFiZWwgPT4gKHtcbiAgbGFiZWw6ICdsb2FkaW5nSW5kaWNhdG9yJyxcbiAgZGlzcGxheTogJ2ZsZXgnLFxuICB0cmFuc2l0aW9uOiAnY29sb3IgMTUwbXMnLFxuICBhbGlnblNlbGY6ICdjZW50ZXInLFxuICBmb250U2l6ZTogc2l6ZSxcbiAgbGluZUhlaWdodDogMSxcbiAgbWFyZ2luUmlnaHQ6IHNpemUsXG4gIHRleHRBbGlnbjogJ2NlbnRlcicsXG4gIHZlcnRpY2FsQWxpZ246ICdtaWRkbGUnLFxuICAuLi4odW5zdHlsZWRcbiAgICA/IHt9XG4gICAgOiB7XG4gICAgICAgIGNvbG9yOiBpc0ZvY3VzZWQgPyBjb2xvcnMubmV1dHJhbDYwIDogY29sb3JzLm5ldXRyYWwyMCxcbiAgICAgICAgcGFkZGluZzogYmFzZVVuaXQgKiAyLFxuICAgICAgfSksXG59KTtcblxuaW50ZXJmYWNlIExvYWRpbmdEb3RQcm9wcyB7XG4gIGRlbGF5OiBudW1iZXI7XG4gIG9mZnNldDogYm9vbGVhbjtcbn1cbmNvbnN0IExvYWRpbmdEb3QgPSAoeyBkZWxheSwgb2Zmc2V0IH06IExvYWRpbmdEb3RQcm9wcykgPT4gKFxuICA8c3BhblxuICAgIGNzcz17e1xuICAgICAgYW5pbWF0aW9uOiBgJHtsb2FkaW5nRG90QW5pbWF0aW9uc30gMXMgZWFzZS1pbi1vdXQgJHtkZWxheX1tcyBpbmZpbml0ZTtgLFxuICAgICAgYmFja2dyb3VuZENvbG9yOiAnY3VycmVudENvbG9yJyxcbiAgICAgIGJvcmRlclJhZGl1czogJzFlbScsXG4gICAgICBkaXNwbGF5OiAnaW5saW5lLWJsb2NrJyxcbiAgICAgIG1hcmdpbkxlZnQ6IG9mZnNldCA/ICcxZW0nIDogdW5kZWZpbmVkLFxuICAgICAgaGVpZ2h0OiAnMWVtJyxcbiAgICAgIHZlcnRpY2FsQWxpZ246ICd0b3AnLFxuICAgICAgd2lkdGg6ICcxZW0nLFxuICAgIH19XG4gIC8+XG4pO1xuXG5leHBvcnQgaW50ZXJmYWNlIExvYWRpbmdJbmRpY2F0b3JQcm9wczxcbiAgT3B0aW9uID0gdW5rbm93bixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4gPSBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+ID0gR3JvdXBCYXNlPE9wdGlvbj5cbj4gZXh0ZW5kcyBDb21tb25Qcm9wc0FuZENsYXNzTmFtZTxPcHRpb24sIElzTXVsdGksIEdyb3VwPiB7XG4gIC8qKiBQcm9wcyB0aGF0IHdpbGwgYmUgcGFzc2VkIG9uIHRvIHRoZSBjaGlsZHJlbi4gKi9cbiAgaW5uZXJQcm9wczogSlNYLkludHJpbnNpY0VsZW1lbnRzWydkaXYnXTtcbiAgLyoqIFRoZSBmb2N1c2VkIHN0YXRlIG9mIHRoZSBzZWxlY3QuICovXG4gIGlzRm9jdXNlZDogYm9vbGVhbjtcbiAgaXNEaXNhYmxlZDogYm9vbGVhbjtcbiAgLyoqIFNldCBzaXplIG9mIHRoZSBjb250YWluZXIuICovXG4gIHNpemU6IG51bWJlcjtcbn1cbmV4cG9ydCBjb25zdCBMb2FkaW5nSW5kaWNhdG9yID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICBwcm9wczogTG9hZGluZ0luZGljYXRvclByb3BzPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+XG4pID0+IHtcbiAgY29uc3QgeyBpbm5lclByb3BzLCBpc1J0bCB9ID0gcHJvcHM7XG5cbiAgcmV0dXJuIChcbiAgICA8ZGl2XG4gICAgICB7Li4uZ2V0U3R5bGVQcm9wcyhwcm9wcywgJ2xvYWRpbmdJbmRpY2F0b3InLCB7XG4gICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgJ2xvYWRpbmctaW5kaWNhdG9yJzogdHJ1ZSxcbiAgICAgIH0pfVxuICAgICAgey4uLmlubmVyUHJvcHN9XG4gICAgPlxuICAgICAgPExvYWRpbmdEb3QgZGVsYXk9ezB9IG9mZnNldD17aXNSdGx9IC8+XG4gICAgICA8TG9hZGluZ0RvdCBkZWxheT17MTYwfSBvZmZzZXQgLz5cbiAgICAgIDxMb2FkaW5nRG90IGRlbGF5PXszMjB9IG9mZnNldD17IWlzUnRsfSAvPlxuICAgIDwvZGl2PlxuICApO1xufTtcbkxvYWRpbmdJbmRpY2F0b3IuZGVmYXVsdFByb3BzID0geyBzaXplOiA0IH07XG4iXX0= */")
+    }, process.env.NODE_ENV === "production" ? "" : ";label:LoadingDot;", process.env.NODE_ENV === "production" ? "" : "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGljYXRvcnMudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQW1RSSIsImZpbGUiOiJpbmRpY2F0b3JzLnRzeCIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAanN4IGpzeCAqL1xuaW1wb3J0IHsgSlNYLCBSZWFjdE5vZGUgfSBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyBqc3gsIGtleWZyYW1lcyB9IGZyb20gJ0BlbW90aW9uL3JlYWN0JztcblxuaW1wb3J0IHtcbiAgQ29tbW9uUHJvcHNBbmRDbGFzc05hbWUsXG4gIENTU09iamVjdFdpdGhMYWJlbCxcbiAgR3JvdXBCYXNlLFxufSBmcm9tICcuLi90eXBlcyc7XG5pbXBvcnQgeyBnZXRTdHlsZVByb3BzIH0gZnJvbSAnLi4vdXRpbHMnO1xuXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbi8vIERyb3Bkb3duICYgQ2xlYXIgSWNvbnNcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG5jb25zdCBTdmcgPSAoe1xuICBzaXplLFxuICAuLi5wcm9wc1xufTogSlNYLkludHJpbnNpY0VsZW1lbnRzWydzdmcnXSAmIHsgc2l6ZTogbnVtYmVyIH0pID0+IChcbiAgPHN2Z1xuICAgIGhlaWdodD17c2l6ZX1cbiAgICB3aWR0aD17c2l6ZX1cbiAgICB2aWV3Qm94PVwiMCAwIDIwIDIwXCJcbiAgICBhcmlhLWhpZGRlbj1cInRydWVcIlxuICAgIGZvY3VzYWJsZT1cImZhbHNlXCJcbiAgICBjc3M9e3tcbiAgICAgIGRpc3BsYXk6ICdpbmxpbmUtYmxvY2snLFxuICAgICAgZmlsbDogJ2N1cnJlbnRDb2xvcicsXG4gICAgICBsaW5lSGVpZ2h0OiAxLFxuICAgICAgc3Ryb2tlOiAnY3VycmVudENvbG9yJyxcbiAgICAgIHN0cm9rZVdpZHRoOiAwLFxuICAgIH19XG4gICAgey4uLnByb3BzfVxuICAvPlxuKTtcblxuZXhwb3J0IHR5cGUgQ3Jvc3NJY29uUHJvcHMgPSBKU1guSW50cmluc2ljRWxlbWVudHNbJ3N2ZyddICYgeyBzaXplPzogbnVtYmVyIH07XG5leHBvcnQgY29uc3QgQ3Jvc3NJY29uID0gKHByb3BzOiBDcm9zc0ljb25Qcm9wcykgPT4gKFxuICA8U3ZnIHNpemU9ezIwfSB7Li4ucHJvcHN9PlxuICAgIDxwYXRoIGQ9XCJNMTQuMzQ4IDE0Ljg0OWMtMC40NjkgMC40NjktMS4yMjkgMC40NjktMS42OTcgMGwtMi42NTEtMy4wMzAtMi42NTEgMy4wMjljLTAuNDY5IDAuNDY5LTEuMjI5IDAuNDY5LTEuNjk3IDAtMC40NjktMC40NjktMC40NjktMS4yMjkgMC0xLjY5N2wyLjc1OC0zLjE1LTIuNzU5LTMuMTUyYy0wLjQ2OS0wLjQ2OS0wLjQ2OS0xLjIyOCAwLTEuNjk3czEuMjI4LTAuNDY5IDEuNjk3IDBsMi42NTIgMy4wMzEgMi42NTEtMy4wMzFjMC40NjktMC40NjkgMS4yMjgtMC40NjkgMS42OTcgMHMwLjQ2OSAxLjIyOSAwIDEuNjk3bC0yLjc1OCAzLjE1MiAyLjc1OCAzLjE1YzAuNDY5IDAuNDY5IDAuNDY5IDEuMjI5IDAgMS42OTh6XCIgLz5cbiAgPC9Tdmc+XG4pO1xuZXhwb3J0IHR5cGUgRG93bkNoZXZyb25Qcm9wcyA9IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snc3ZnJ10gJiB7IHNpemU/OiBudW1iZXIgfTtcbmV4cG9ydCBjb25zdCBEb3duQ2hldnJvbiA9IChwcm9wczogRG93bkNoZXZyb25Qcm9wcykgPT4gKFxuICA8U3ZnIHNpemU9ezIwfSB7Li4ucHJvcHN9PlxuICAgIDxwYXRoIGQ9XCJNNC41MTYgNy41NDhjMC40MzYtMC40NDYgMS4wNDMtMC40ODEgMS41NzYgMGwzLjkwOCAzLjc0NyAzLjkwOC0zLjc0N2MwLjUzMy0wLjQ4MSAxLjE0MS0wLjQ0NiAxLjU3NCAwIDAuNDM2IDAuNDQ1IDAuNDA4IDEuMTk3IDAgMS42MTUtMC40MDYgMC40MTgtNC42OTUgNC41MDItNC42OTUgNC41MDItMC4yMTcgMC4yMjMtMC41MDIgMC4zMzUtMC43ODcgMC4zMzVzLTAuNTctMC4xMTItMC43ODktMC4zMzVjMCAwLTQuMjg3LTQuMDg0LTQuNjk1LTQuNTAycy0wLjQzNi0xLjE3IDAtMS42MTV6XCIgLz5cbiAgPC9Tdmc+XG4pO1xuXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbi8vIERyb3Bkb3duICYgQ2xlYXIgQnV0dG9uc1xuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG5cbmV4cG9ydCBpbnRlcmZhY2UgRHJvcGRvd25JbmRpY2F0b3JQcm9wczxcbiAgT3B0aW9uID0gdW5rbm93bixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4gPSBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+ID0gR3JvdXBCYXNlPE9wdGlvbj5cbj4gZXh0ZW5kcyBDb21tb25Qcm9wc0FuZENsYXNzTmFtZTxPcHRpb24sIElzTXVsdGksIEdyb3VwPiB7XG4gIC8qKiBUaGUgY2hpbGRyZW4gdG8gYmUgcmVuZGVyZWQgaW5zaWRlIHRoZSBpbmRpY2F0b3IuICovXG4gIGNoaWxkcmVuPzogUmVhY3ROb2RlO1xuICAvKiogUHJvcHMgdGhhdCB3aWxsIGJlIHBhc3NlZCBvbiB0byB0aGUgY2hpbGRyZW4uICovXG4gIGlubmVyUHJvcHM6IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snZGl2J107XG4gIC8qKiBUaGUgZm9jdXNlZCBzdGF0ZSBvZiB0aGUgc2VsZWN0LiAqL1xuICBpc0ZvY3VzZWQ6IGJvb2xlYW47XG4gIGlzRGlzYWJsZWQ6IGJvb2xlYW47XG59XG5cbmNvbnN0IGJhc2VDU1MgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oXG4gIHtcbiAgICBpc0ZvY3VzZWQsXG4gICAgdGhlbWU6IHtcbiAgICAgIHNwYWNpbmc6IHsgYmFzZVVuaXQgfSxcbiAgICAgIGNvbG9ycyxcbiAgICB9LFxuICB9OlxuICAgIHwgRHJvcGRvd25JbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPlxuICAgIHwgQ2xlYXJJbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPixcbiAgdW5zdHlsZWQ6IGJvb2xlYW5cbik6IENTU09iamVjdFdpdGhMYWJlbCA9PiAoe1xuICBsYWJlbDogJ2luZGljYXRvckNvbnRhaW5lcicsXG4gIGRpc3BsYXk6ICdmbGV4JyxcbiAgdHJhbnNpdGlvbjogJ2NvbG9yIDE1MG1zJyxcbiAgLi4uKHVuc3R5bGVkXG4gICAgPyB7fVxuICAgIDoge1xuICAgICAgICBjb2xvcjogaXNGb2N1c2VkID8gY29sb3JzLm5ldXRyYWw2MCA6IGNvbG9ycy5uZXV0cmFsMjAsXG4gICAgICAgIHBhZGRpbmc6IGJhc2VVbml0ICogMixcbiAgICAgICAgJzpob3Zlcic6IHtcbiAgICAgICAgICBjb2xvcjogaXNGb2N1c2VkID8gY29sb3JzLm5ldXRyYWw4MCA6IGNvbG9ycy5uZXV0cmFsNDAsXG4gICAgICAgIH0sXG4gICAgICB9KSxcbn0pO1xuXG5leHBvcnQgY29uc3QgZHJvcGRvd25JbmRpY2F0b3JDU1MgPSBiYXNlQ1NTO1xuZXhwb3J0IGNvbnN0IERyb3Bkb3duSW5kaWNhdG9yID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICBwcm9wczogRHJvcGRvd25JbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPlxuKSA9PiB7XG4gIGNvbnN0IHsgY2hpbGRyZW4sIGlubmVyUHJvcHMgfSA9IHByb3BzO1xuICByZXR1cm4gKFxuICAgIDxkaXZcbiAgICAgIHsuLi5nZXRTdHlsZVByb3BzKHByb3BzLCAnZHJvcGRvd25JbmRpY2F0b3InLCB7XG4gICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgJ2Ryb3Bkb3duLWluZGljYXRvcic6IHRydWUsXG4gICAgICB9KX1cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgID5cbiAgICAgIHtjaGlsZHJlbiB8fCA8RG93bkNoZXZyb24gLz59XG4gICAgPC9kaXY+XG4gICk7XG59O1xuXG5leHBvcnQgaW50ZXJmYWNlIENsZWFySW5kaWNhdG9yUHJvcHM8XG4gIE9wdGlvbiA9IHVua25vd24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuID0gYm9vbGVhbixcbiAgR3JvdXAgZXh0ZW5kcyBHcm91cEJhc2U8T3B0aW9uPiA9IEdyb3VwQmFzZTxPcHRpb24+XG4+IGV4dGVuZHMgQ29tbW9uUHJvcHNBbmRDbGFzc05hbWU8T3B0aW9uLCBJc011bHRpLCBHcm91cD4ge1xuICAvKiogVGhlIGNoaWxkcmVuIHRvIGJlIHJlbmRlcmVkIGluc2lkZSB0aGUgaW5kaWNhdG9yLiAqL1xuICBjaGlsZHJlbj86IFJlYWN0Tm9kZTtcbiAgLyoqIFByb3BzIHRoYXQgd2lsbCBiZSBwYXNzZWQgb24gdG8gdGhlIGNoaWxkcmVuLiAqL1xuICBpbm5lclByb3BzOiBKU1guSW50cmluc2ljRWxlbWVudHNbJ2RpdiddO1xuICAvKiogVGhlIGZvY3VzZWQgc3RhdGUgb2YgdGhlIHNlbGVjdC4gKi9cbiAgaXNGb2N1c2VkOiBib29sZWFuO1xufVxuXG5leHBvcnQgY29uc3QgY2xlYXJJbmRpY2F0b3JDU1MgPSBiYXNlQ1NTO1xuZXhwb3J0IGNvbnN0IENsZWFySW5kaWNhdG9yID0gPFxuICBPcHRpb24sXG4gIElzTXVsdGkgZXh0ZW5kcyBib29sZWFuLFxuICBHcm91cCBleHRlbmRzIEdyb3VwQmFzZTxPcHRpb24+XG4+KFxuICBwcm9wczogQ2xlYXJJbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPlxuKSA9PiB7XG4gIGNvbnN0IHsgY2hpbGRyZW4sIGlubmVyUHJvcHMgfSA9IHByb3BzO1xuICByZXR1cm4gKFxuICAgIDxkaXZcbiAgICAgIHsuLi5nZXRTdHlsZVByb3BzKHByb3BzLCAnY2xlYXJJbmRpY2F0b3InLCB7XG4gICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgJ2NsZWFyLWluZGljYXRvcic6IHRydWUsXG4gICAgICB9KX1cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgID5cbiAgICAgIHtjaGlsZHJlbiB8fCA8Q3Jvc3NJY29uIC8+fVxuICAgIDwvZGl2PlxuICApO1xufTtcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBTZXBhcmF0b3Jcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG5leHBvcnQgaW50ZXJmYWNlIEluZGljYXRvclNlcGFyYXRvclByb3BzPFxuICBPcHRpb24gPSB1bmtub3duLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbiA9IGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj4gPSBHcm91cEJhc2U8T3B0aW9uPlxuPiBleHRlbmRzIENvbW1vblByb3BzQW5kQ2xhc3NOYW1lPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+IHtcbiAgaXNEaXNhYmxlZDogYm9vbGVhbjtcbiAgaXNGb2N1c2VkOiBib29sZWFuO1xuICBpbm5lclByb3BzPzogSlNYLkludHJpbnNpY0VsZW1lbnRzWydzcGFuJ107XG59XG5cbmV4cG9ydCBjb25zdCBpbmRpY2F0b3JTZXBhcmF0b3JDU1MgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oXG4gIHtcbiAgICBpc0Rpc2FibGVkLFxuICAgIHRoZW1lOiB7XG4gICAgICBzcGFjaW5nOiB7IGJhc2VVbml0IH0sXG4gICAgICBjb2xvcnMsXG4gICAgfSxcbiAgfTogSW5kaWNhdG9yU2VwYXJhdG9yUHJvcHM8T3B0aW9uLCBJc011bHRpLCBHcm91cD4sXG4gIHVuc3R5bGVkOiBib29sZWFuXG4pOiBDU1NPYmplY3RXaXRoTGFiZWwgPT4gKHtcbiAgbGFiZWw6ICdpbmRpY2F0b3JTZXBhcmF0b3InLFxuICBhbGlnblNlbGY6ICdzdHJldGNoJyxcbiAgd2lkdGg6IDEsXG4gIC4uLih1bnN0eWxlZFxuICAgID8ge31cbiAgICA6IHtcbiAgICAgICAgYmFja2dyb3VuZENvbG9yOiBpc0Rpc2FibGVkID8gY29sb3JzLm5ldXRyYWwxMCA6IGNvbG9ycy5uZXV0cmFsMjAsXG4gICAgICAgIG1hcmdpbkJvdHRvbTogYmFzZVVuaXQgKiAyLFxuICAgICAgICBtYXJnaW5Ub3A6IGJhc2VVbml0ICogMixcbiAgICAgIH0pLFxufSk7XG5cbmV4cG9ydCBjb25zdCBJbmRpY2F0b3JTZXBhcmF0b3IgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oXG4gIHByb3BzOiBJbmRpY2F0b3JTZXBhcmF0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPlxuKSA9PiB7XG4gIGNvbnN0IHsgaW5uZXJQcm9wcyB9ID0gcHJvcHM7XG4gIHJldHVybiAoXG4gICAgPHNwYW5cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgICAgey4uLmdldFN0eWxlUHJvcHMocHJvcHMsICdpbmRpY2F0b3JTZXBhcmF0b3InLCB7XG4gICAgICAgICdpbmRpY2F0b3Itc2VwYXJhdG9yJzogdHJ1ZSxcbiAgICAgIH0pfVxuICAgIC8+XG4gICk7XG59O1xuXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbi8vIExvYWRpbmdcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG5jb25zdCBsb2FkaW5nRG90QW5pbWF0aW9ucyA9IGtleWZyYW1lc2BcbiAgMCUsIDgwJSwgMTAwJSB7IG9wYWNpdHk6IDA7IH1cbiAgNDAlIHsgb3BhY2l0eTogMTsgfVxuYDtcblxuZXhwb3J0IGNvbnN0IGxvYWRpbmdJbmRpY2F0b3JDU1MgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oXG4gIHtcbiAgICBpc0ZvY3VzZWQsXG4gICAgc2l6ZSxcbiAgICB0aGVtZToge1xuICAgICAgY29sb3JzLFxuICAgICAgc3BhY2luZzogeyBiYXNlVW5pdCB9LFxuICAgIH0sXG4gIH06IExvYWRpbmdJbmRpY2F0b3JQcm9wczxPcHRpb24sIElzTXVsdGksIEdyb3VwPixcbiAgdW5zdHlsZWQ6IGJvb2xlYW5cbik6IENTU09iamVjdFdpdGhMYWJlbCA9PiAoe1xuICBsYWJlbDogJ2xvYWRpbmdJbmRpY2F0b3InLFxuICBkaXNwbGF5OiAnZmxleCcsXG4gIHRyYW5zaXRpb246ICdjb2xvciAxNTBtcycsXG4gIGFsaWduU2VsZjogJ2NlbnRlcicsXG4gIGZvbnRTaXplOiBzaXplLFxuICBsaW5lSGVpZ2h0OiAxLFxuICBtYXJnaW5SaWdodDogc2l6ZSxcbiAgdGV4dEFsaWduOiAnY2VudGVyJyxcbiAgdmVydGljYWxBbGlnbjogJ21pZGRsZScsXG4gIC4uLih1bnN0eWxlZFxuICAgID8ge31cbiAgICA6IHtcbiAgICAgICAgY29sb3I6IGlzRm9jdXNlZCA/IGNvbG9ycy5uZXV0cmFsNjAgOiBjb2xvcnMubmV1dHJhbDIwLFxuICAgICAgICBwYWRkaW5nOiBiYXNlVW5pdCAqIDIsXG4gICAgICB9KSxcbn0pO1xuXG5pbnRlcmZhY2UgTG9hZGluZ0RvdFByb3BzIHtcbiAgZGVsYXk6IG51bWJlcjtcbiAgb2Zmc2V0OiBib29sZWFuO1xufVxuY29uc3QgTG9hZGluZ0RvdCA9ICh7IGRlbGF5LCBvZmZzZXQgfTogTG9hZGluZ0RvdFByb3BzKSA9PiAoXG4gIDxzcGFuXG4gICAgY3NzPXt7XG4gICAgICBhbmltYXRpb246IGAke2xvYWRpbmdEb3RBbmltYXRpb25zfSAxcyBlYXNlLWluLW91dCAke2RlbGF5fW1zIGluZmluaXRlO2AsXG4gICAgICBiYWNrZ3JvdW5kQ29sb3I6ICdjdXJyZW50Q29sb3InLFxuICAgICAgYm9yZGVyUmFkaXVzOiAnMWVtJyxcbiAgICAgIGRpc3BsYXk6ICdpbmxpbmUtYmxvY2snLFxuICAgICAgbWFyZ2luTGVmdDogb2Zmc2V0ID8gJzFlbScgOiB1bmRlZmluZWQsXG4gICAgICBoZWlnaHQ6ICcxZW0nLFxuICAgICAgdmVydGljYWxBbGlnbjogJ3RvcCcsXG4gICAgICB3aWR0aDogJzFlbScsXG4gICAgfX1cbiAgLz5cbik7XG5cbmV4cG9ydCBpbnRlcmZhY2UgTG9hZGluZ0luZGljYXRvclByb3BzPFxuICBPcHRpb24gPSB1bmtub3duLFxuICBJc011bHRpIGV4dGVuZHMgYm9vbGVhbiA9IGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj4gPSBHcm91cEJhc2U8T3B0aW9uPlxuPiBleHRlbmRzIENvbW1vblByb3BzQW5kQ2xhc3NOYW1lPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+IHtcbiAgLyoqIFByb3BzIHRoYXQgd2lsbCBiZSBwYXNzZWQgb24gdG8gdGhlIGNoaWxkcmVuLiAqL1xuICBpbm5lclByb3BzOiBKU1guSW50cmluc2ljRWxlbWVudHNbJ2RpdiddO1xuICAvKiogVGhlIGZvY3VzZWQgc3RhdGUgb2YgdGhlIHNlbGVjdC4gKi9cbiAgaXNGb2N1c2VkOiBib29sZWFuO1xuICBpc0Rpc2FibGVkOiBib29sZWFuO1xuICAvKiogU2V0IHNpemUgb2YgdGhlIGNvbnRhaW5lci4gKi9cbiAgc2l6ZTogbnVtYmVyO1xufVxuZXhwb3J0IGNvbnN0IExvYWRpbmdJbmRpY2F0b3IgPSA8XG4gIE9wdGlvbixcbiAgSXNNdWx0aSBleHRlbmRzIGJvb2xlYW4sXG4gIEdyb3VwIGV4dGVuZHMgR3JvdXBCYXNlPE9wdGlvbj5cbj4oe1xuICBpbm5lclByb3BzLFxuICBpc1J0bCxcbiAgc2l6ZSA9IDQsXG4gIC4uLnJlc3RQcm9wc1xufTogTG9hZGluZ0luZGljYXRvclByb3BzPE9wdGlvbiwgSXNNdWx0aSwgR3JvdXA+KSA9PiB7XG4gIHJldHVybiAoXG4gICAgPGRpdlxuICAgICAgey4uLmdldFN0eWxlUHJvcHMoXG4gICAgICAgIHsgLi4ucmVzdFByb3BzLCBpbm5lclByb3BzLCBpc1J0bCwgc2l6ZSB9LFxuICAgICAgICAnbG9hZGluZ0luZGljYXRvcicsXG4gICAgICAgIHtcbiAgICAgICAgICBpbmRpY2F0b3I6IHRydWUsXG4gICAgICAgICAgJ2xvYWRpbmctaW5kaWNhdG9yJzogdHJ1ZSxcbiAgICAgICAgfVxuICAgICAgKX1cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgID5cbiAgICAgIDxMb2FkaW5nRG90IGRlbGF5PXswfSBvZmZzZXQ9e2lzUnRsfSAvPlxuICAgICAgPExvYWRpbmdEb3QgZGVsYXk9ezE2MH0gb2Zmc2V0IC8+XG4gICAgICA8TG9hZGluZ0RvdCBkZWxheT17MzIwfSBvZmZzZXQ9eyFpc1J0bH0gLz5cbiAgICA8L2Rpdj5cbiAgKTtcbn07XG4iXX0= */")
   });
 };
-var LoadingIndicator = function LoadingIndicator(props) {
-  var innerProps = props.innerProps,
-    isRtl = props.isRtl;
-  return jsx("div", _extends({}, getStyleProps(props, 'loadingIndicator', {
+var LoadingIndicator = function LoadingIndicator(_ref7) {
+  var innerProps = _ref7.innerProps,
+    isRtl = _ref7.isRtl,
+    _ref7$size = _ref7.size,
+    size = _ref7$size === void 0 ? 4 : _ref7$size,
+    restProps = _objectWithoutProperties(_ref7, _excluded2);
+  return jsx("div", _extends({}, getStyleProps(_objectSpread2(_objectSpread2({}, restProps), {}, {
+    innerProps: innerProps,
+    isRtl: isRtl,
+    size: size
+  }), 'loadingIndicator', {
     indicator: true,
     'loading-indicator': true
   }), innerProps), jsx(LoadingDot, {
@@ -9156,9 +10296,6 @@ var LoadingIndicator = function LoadingIndicator(props) {
     delay: 320,
     offset: !isRtl
   }));
-};
-LoadingIndicator.defaultProps = {
-  size: 4
 };
 
 var css$1 = function css(_ref, unstyled) {
@@ -9205,7 +10342,9 @@ var Control = function Control(props) {
     'control--is-disabled': isDisabled,
     'control--is-focused': isFocused,
     'control--menu-is-open': menuIsOpen
-  }), innerProps), children);
+  }), innerProps, {
+    "aria-disabled": isDisabled || undefined
+  }), children);
 };
 var Control$1 = Control;
 
@@ -9266,7 +10405,7 @@ var GroupHeading = function GroupHeading(props) {
 };
 var Group$1 = Group;
 
-var _excluded$4 = ["innerRef", "isDisabled", "isHidden", "inputClassName"];
+var _excluded$5 = ["innerRef", "isDisabled", "isHidden", "inputClassName"];
 var inputCSS = function inputCSS(_ref, unstyled) {
   var isDisabled = _ref.isDisabled,
     value = _ref.value,
@@ -9322,7 +10461,7 @@ var Input = function Input(props) {
     isDisabled = _cleanCommonProps.isDisabled,
     isHidden = _cleanCommonProps.isHidden,
     inputClassName = _cleanCommonProps.inputClassName,
-    innerProps = _objectWithoutProperties(_cleanCommonProps, _excluded$4);
+    innerProps = _objectWithoutProperties(_cleanCommonProps, _excluded$5);
   return jsx("div", _extends({}, getStyleProps(props, 'input', {
     'input-container': true
   }), {
@@ -9627,7 +10766,7 @@ var _ref = process.env.NODE_ENV === "production" ? {
 } : {
   name: "1f43avz-a11yText-A11yText",
   styles: "label:a11yText;z-index:9999;border:0;clip:rect(1px, 1px, 1px, 1px);height:1px;width:1px;position:absolute;overflow:hidden;padding:0;white-space:nowrap;label:A11yText;",
-  map: "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkExMXlUZXh0LnRzeCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFNSSIsImZpbGUiOiJBMTF5VGV4dC50c3giLCJzb3VyY2VzQ29udGVudCI6WyIvKiogQGpzeCBqc3ggKi9cbmltcG9ydCB7IGpzeCB9IGZyb20gJ0BlbW90aW9uL3JlYWN0JztcblxuLy8gQXNzaXN0aXZlIHRleHQgdG8gZGVzY3JpYmUgdmlzdWFsIGVsZW1lbnRzLiBIaWRkZW4gZm9yIHNpZ2h0ZWQgdXNlcnMuXG5jb25zdCBBMTF5VGV4dCA9IChwcm9wczogSlNYLkludHJpbnNpY0VsZW1lbnRzWydzcGFuJ10pID0+IChcbiAgPHNwYW5cbiAgICBjc3M9e3tcbiAgICAgIGxhYmVsOiAnYTExeVRleHQnLFxuICAgICAgekluZGV4OiA5OTk5LFxuICAgICAgYm9yZGVyOiAwLFxuICAgICAgY2xpcDogJ3JlY3QoMXB4LCAxcHgsIDFweCwgMXB4KScsXG4gICAgICBoZWlnaHQ6IDEsXG4gICAgICB3aWR0aDogMSxcbiAgICAgIHBvc2l0aW9uOiAnYWJzb2x1dGUnLFxuICAgICAgb3ZlcmZsb3c6ICdoaWRkZW4nLFxuICAgICAgcGFkZGluZzogMCxcbiAgICAgIHdoaXRlU3BhY2U6ICdub3dyYXAnLFxuICAgIH19XG4gICAgey4uLnByb3BzfVxuICAvPlxuKTtcblxuZXhwb3J0IGRlZmF1bHQgQTExeVRleHQ7XG4iXX0= */",
+  map: "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkExMXlUZXh0LnRzeCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFPSSIsImZpbGUiOiJBMTF5VGV4dC50c3giLCJzb3VyY2VzQ29udGVudCI6WyIvKiogQGpzeCBqc3ggKi9cbmltcG9ydCB7IEpTWCB9IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IGpzeCB9IGZyb20gJ0BlbW90aW9uL3JlYWN0JztcblxuLy8gQXNzaXN0aXZlIHRleHQgdG8gZGVzY3JpYmUgdmlzdWFsIGVsZW1lbnRzLiBIaWRkZW4gZm9yIHNpZ2h0ZWQgdXNlcnMuXG5jb25zdCBBMTF5VGV4dCA9IChwcm9wczogSlNYLkludHJpbnNpY0VsZW1lbnRzWydzcGFuJ10pID0+IChcbiAgPHNwYW5cbiAgICBjc3M9e3tcbiAgICAgIGxhYmVsOiAnYTExeVRleHQnLFxuICAgICAgekluZGV4OiA5OTk5LFxuICAgICAgYm9yZGVyOiAwLFxuICAgICAgY2xpcDogJ3JlY3QoMXB4LCAxcHgsIDFweCwgMXB4KScsXG4gICAgICBoZWlnaHQ6IDEsXG4gICAgICB3aWR0aDogMSxcbiAgICAgIHBvc2l0aW9uOiAnYWJzb2x1dGUnLFxuICAgICAgb3ZlcmZsb3c6ICdoaWRkZW4nLFxuICAgICAgcGFkZGluZzogMCxcbiAgICAgIHdoaXRlU3BhY2U6ICdub3dyYXAnLFxuICAgIH19XG4gICAgey4uLnByb3BzfVxuICAvPlxuKTtcblxuZXhwb3J0IGRlZmF1bHQgQTExeVRleHQ7XG4iXX0= */",
   toString: _EMOTION_STRINGIFIED_CSS_ERROR__$2
 };
 var A11yText = function A11yText(props) {
@@ -9641,14 +10780,14 @@ var defaultAriaLiveMessages = {
   guidance: function guidance(props) {
     var isSearchable = props.isSearchable,
       isMulti = props.isMulti,
-      isDisabled = props.isDisabled,
       tabSelectsValue = props.tabSelectsValue,
-      context = props.context;
+      context = props.context,
+      isInitialFocus = props.isInitialFocus;
     switch (context) {
       case 'menu':
-        return "Use Up and Down to choose options".concat(isDisabled ? '' : ', press Enter to select the currently focused option', ", press Escape to exit the menu").concat(tabSelectsValue ? ', press Tab to select the option and exit the menu' : '', ".");
+        return "Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu".concat(tabSelectsValue ? ', press Tab to select the option and exit the menu' : '', ".");
       case 'input':
-        return "".concat(props['aria-label'] || 'Select', " is focused ").concat(isSearchable ? ',type to refine list' : '', ", press Down to open the menu, ").concat(isMulti ? ' press left to focus selected values' : '');
+        return isInitialFocus ? "".concat(props['aria-label'] || 'Select', " is focused ").concat(isSearchable ? ',type to refine list' : '', ", press Down to open the menu, ").concat(isMulti ? ' press left to focus selected values' : '') : '';
       case 'value':
         return 'Use left and right to toggle between focused values, press Backspace to remove the currently focused value';
       default:
@@ -9684,17 +10823,18 @@ var defaultAriaLiveMessages = {
       label = _props$label2 === void 0 ? '' : _props$label2,
       selectValue = props.selectValue,
       isDisabled = props.isDisabled,
-      isSelected = props.isSelected;
+      isSelected = props.isSelected,
+      isAppleDevice = props.isAppleDevice;
     var getArrayIndex = function getArrayIndex(arr, item) {
       return arr && arr.length ? "".concat(arr.indexOf(item) + 1, " of ").concat(arr.length) : '';
     };
     if (context === 'value' && selectValue) {
       return "value ".concat(label, " focused, ").concat(getArrayIndex(selectValue, focused), ".");
     }
-    if (context === 'menu') {
+    if (context === 'menu' && isAppleDevice) {
       var disabled = isDisabled ? ' disabled' : '';
-      var status = "".concat(isSelected ? 'selected' : 'focused').concat(disabled);
-      return "option ".concat(label, " ").concat(status, ", ").concat(getArrayIndex(options, focused), ".");
+      var status = "".concat(isSelected ? ' selected' : '').concat(disabled);
+      return "".concat(label).concat(status, ", ").concat(getArrayIndex(options, focused), ".");
     }
     return '';
   },
@@ -9713,7 +10853,8 @@ var LiveRegion = function LiveRegion(props) {
     isFocused = props.isFocused,
     selectValue = props.selectValue,
     selectProps = props.selectProps,
-    id = props.id;
+    id = props.id,
+    isAppleDevice = props.isAppleDevice;
   var ariaLiveMessages = selectProps.ariaLiveMessages,
     getOptionLabel = selectProps.getOptionLabel,
     inputValue = selectProps.inputValue,
@@ -9723,7 +10864,8 @@ var LiveRegion = function LiveRegion(props) {
     menuIsOpen = selectProps.menuIsOpen,
     options = selectProps.options,
     screenReaderStatus = selectProps.screenReaderStatus,
-    tabSelectsValue = selectProps.tabSelectsValue;
+    tabSelectsValue = selectProps.tabSelectsValue,
+    isLoading = selectProps.isLoading;
   var ariaLabel = selectProps['aria-label'];
   var ariaLive = selectProps['aria-live'];
 
@@ -9776,15 +10918,16 @@ var LiveRegion = function LiveRegion(props) {
         isSelected: isSelected,
         options: focusableOptions,
         context: focused === focusedOption ? 'menu' : 'value',
-        selectValue: selectValue
+        selectValue: selectValue,
+        isAppleDevice: isAppleDevice
       };
       focusMsg = messages.onFocus(onFocusProps);
     }
     return focusMsg;
-  }, [focusedOption, focusedValue, getOptionLabel, isOptionDisabled, messages, focusableOptions, selectValue]);
+  }, [focusedOption, focusedValue, getOptionLabel, isOptionDisabled, messages, focusableOptions, selectValue, isAppleDevice]);
   var ariaResults = React.useMemo(function () {
     var resultsMsg = '';
-    if (menuIsOpen && options.length && messages.onFilter) {
+    if (menuIsOpen && options.length && !isLoading && messages.onFilter) {
       var resultsMessage = screenReaderStatus({
         count: focusableOptions.length
       });
@@ -9794,7 +10937,8 @@ var LiveRegion = function LiveRegion(props) {
       });
     }
     return resultsMsg;
-  }, [focusableOptions, inputValue, menuIsOpen, messages, options, screenReaderStatus]);
+  }, [focusableOptions, inputValue, menuIsOpen, messages, options, screenReaderStatus, isLoading]);
+  var isInitialFocus = (ariaSelection === null || ariaSelection === void 0 ? void 0 : ariaSelection.action) === 'initial-input-focus';
   var ariaGuidance = React.useMemo(function () {
     var guidanceMsg = '';
     if (messages.guidance) {
@@ -9805,24 +10949,28 @@ var LiveRegion = function LiveRegion(props) {
         isDisabled: focusedOption && isOptionDisabled(focusedOption, selectValue),
         isMulti: isMulti,
         isSearchable: isSearchable,
-        tabSelectsValue: tabSelectsValue
+        tabSelectsValue: tabSelectsValue,
+        isInitialFocus: isInitialFocus
       });
     }
     return guidanceMsg;
-  }, [ariaLabel, focusedOption, focusedValue, isMulti, isOptionDisabled, isSearchable, menuIsOpen, messages, selectValue, tabSelectsValue]);
-  var ariaContext = "".concat(ariaFocused, " ").concat(ariaResults, " ").concat(ariaGuidance);
+  }, [ariaLabel, focusedOption, focusedValue, isMulti, isOptionDisabled, isSearchable, menuIsOpen, messages, selectValue, tabSelectsValue, isInitialFocus]);
   var ScreenReaderText = jsx(React.Fragment, null, jsx("span", {
     id: "aria-selection"
   }, ariaSelected), jsx("span", {
-    id: "aria-context"
-  }, ariaContext));
-  var isInitialFocus = (ariaSelection === null || ariaSelection === void 0 ? void 0 : ariaSelection.action) === 'initial-input-focus';
+    id: "aria-focused"
+  }, ariaFocused), jsx("span", {
+    id: "aria-results"
+  }, ariaResults), jsx("span", {
+    id: "aria-guidance"
+  }, ariaGuidance));
   return jsx(React.Fragment, null, jsx(A11yText$1, {
     id: id
   }, isInitialFocus && ScreenReaderText), jsx(A11yText$1, {
     "aria-live": ariaLive,
     "aria-atomic": "false",
-    "aria-relevant": "additions text"
+    "aria-relevant": "additions text",
+    role: "log"
   }, isFocused && !isInitialFocus && ScreenReaderText));
 };
 var LiveRegion$1 = LiveRegion;
@@ -10162,12 +11310,12 @@ function DummyInput(_ref) {
       opacity: 0,
       position: 'relative',
       transform: 'scale(.01)'
-    }, process.env.NODE_ENV === "production" ? "" : ";label:DummyInput;", process.env.NODE_ENV === "production" ? "" : "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkR1bW15SW5wdXQudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQXlCTSIsImZpbGUiOiJEdW1teUlucHV0LnRzeCIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAanN4IGpzeCAqL1xuaW1wb3J0IHsgUmVmIH0gZnJvbSAncmVhY3QnO1xuaW1wb3J0IHsganN4IH0gZnJvbSAnQGVtb3Rpb24vcmVhY3QnO1xuaW1wb3J0IHsgcmVtb3ZlUHJvcHMgfSBmcm9tICcuLi91dGlscyc7XG5cbmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIER1bW15SW5wdXQoe1xuICBpbm5lclJlZixcbiAgLi4ucHJvcHNcbn06IEpTWC5JbnRyaW5zaWNFbGVtZW50c1snaW5wdXQnXSAmIHtcbiAgcmVhZG9ubHkgaW5uZXJSZWY6IFJlZjxIVE1MSW5wdXRFbGVtZW50Pjtcbn0pIHtcbiAgLy8gUmVtb3ZlIGFuaW1hdGlvbiBwcm9wcyBub3QgbWVhbnQgZm9yIEhUTUwgZWxlbWVudHNcbiAgY29uc3QgZmlsdGVyZWRQcm9wcyA9IHJlbW92ZVByb3BzKFxuICAgIHByb3BzLFxuICAgICdvbkV4aXRlZCcsXG4gICAgJ2luJyxcbiAgICAnZW50ZXInLFxuICAgICdleGl0JyxcbiAgICAnYXBwZWFyJ1xuICApO1xuXG4gIHJldHVybiAoXG4gICAgPGlucHV0XG4gICAgICByZWY9e2lubmVyUmVmfVxuICAgICAgey4uLmZpbHRlcmVkUHJvcHN9XG4gICAgICBjc3M9e3tcbiAgICAgICAgbGFiZWw6ICdkdW1teUlucHV0JyxcbiAgICAgICAgLy8gZ2V0IHJpZCBvZiBhbnkgZGVmYXVsdCBzdHlsZXNcbiAgICAgICAgYmFja2dyb3VuZDogMCxcbiAgICAgICAgYm9yZGVyOiAwLFxuICAgICAgICAvLyBpbXBvcnRhbnQhIHRoaXMgaGlkZXMgdGhlIGZsYXNoaW5nIGN1cnNvclxuICAgICAgICBjYXJldENvbG9yOiAndHJhbnNwYXJlbnQnLFxuICAgICAgICBmb250U2l6ZTogJ2luaGVyaXQnLFxuICAgICAgICBncmlkQXJlYTogJzEgLyAxIC8gMiAvIDMnLFxuICAgICAgICBvdXRsaW5lOiAwLFxuICAgICAgICBwYWRkaW5nOiAwLFxuICAgICAgICAvLyBpbXBvcnRhbnQhIHdpdGhvdXQgYHdpZHRoYCBicm93c2VycyB3b24ndCBhbGxvdyBmb2N1c1xuICAgICAgICB3aWR0aDogMSxcblxuICAgICAgICAvLyByZW1vdmUgY3Vyc29yIG9uIGRlc2t0b3BcbiAgICAgICAgY29sb3I6ICd0cmFuc3BhcmVudCcsXG5cbiAgICAgICAgLy8gcmVtb3ZlIGN1cnNvciBvbiBtb2JpbGUgd2hpbHN0IG1haW50YWluaW5nIFwic2Nyb2xsIGludG8gdmlld1wiIGJlaGF2aW91clxuICAgICAgICBsZWZ0OiAtMTAwLFxuICAgICAgICBvcGFjaXR5OiAwLFxuICAgICAgICBwb3NpdGlvbjogJ3JlbGF0aXZlJyxcbiAgICAgICAgdHJhbnNmb3JtOiAnc2NhbGUoLjAxKScsXG4gICAgICB9fVxuICAgIC8+XG4gICk7XG59XG4iXX0= */")
+    }, process.env.NODE_ENV === "production" ? "" : ";label:DummyInput;", process.env.NODE_ENV === "production" ? "" : "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkR1bW15SW5wdXQudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQXlCTSIsImZpbGUiOiJEdW1teUlucHV0LnRzeCIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAanN4IGpzeCAqL1xuaW1wb3J0IHsgSlNYLCBSZWYgfSBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyBqc3ggfSBmcm9tICdAZW1vdGlvbi9yZWFjdCc7XG5pbXBvcnQgeyByZW1vdmVQcm9wcyB9IGZyb20gJy4uL3V0aWxzJztcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRHVtbXlJbnB1dCh7XG4gIGlubmVyUmVmLFxuICAuLi5wcm9wc1xufTogSlNYLkludHJpbnNpY0VsZW1lbnRzWydpbnB1dCddICYge1xuICByZWFkb25seSBpbm5lclJlZjogUmVmPEhUTUxJbnB1dEVsZW1lbnQ+O1xufSkge1xuICAvLyBSZW1vdmUgYW5pbWF0aW9uIHByb3BzIG5vdCBtZWFudCBmb3IgSFRNTCBlbGVtZW50c1xuICBjb25zdCBmaWx0ZXJlZFByb3BzID0gcmVtb3ZlUHJvcHMoXG4gICAgcHJvcHMsXG4gICAgJ29uRXhpdGVkJyxcbiAgICAnaW4nLFxuICAgICdlbnRlcicsXG4gICAgJ2V4aXQnLFxuICAgICdhcHBlYXInXG4gICk7XG5cbiAgcmV0dXJuIChcbiAgICA8aW5wdXRcbiAgICAgIHJlZj17aW5uZXJSZWZ9XG4gICAgICB7Li4uZmlsdGVyZWRQcm9wc31cbiAgICAgIGNzcz17e1xuICAgICAgICBsYWJlbDogJ2R1bW15SW5wdXQnLFxuICAgICAgICAvLyBnZXQgcmlkIG9mIGFueSBkZWZhdWx0IHN0eWxlc1xuICAgICAgICBiYWNrZ3JvdW5kOiAwLFxuICAgICAgICBib3JkZXI6IDAsXG4gICAgICAgIC8vIGltcG9ydGFudCEgdGhpcyBoaWRlcyB0aGUgZmxhc2hpbmcgY3Vyc29yXG4gICAgICAgIGNhcmV0Q29sb3I6ICd0cmFuc3BhcmVudCcsXG4gICAgICAgIGZvbnRTaXplOiAnaW5oZXJpdCcsXG4gICAgICAgIGdyaWRBcmVhOiAnMSAvIDEgLyAyIC8gMycsXG4gICAgICAgIG91dGxpbmU6IDAsXG4gICAgICAgIHBhZGRpbmc6IDAsXG4gICAgICAgIC8vIGltcG9ydGFudCEgd2l0aG91dCBgd2lkdGhgIGJyb3dzZXJzIHdvbid0IGFsbG93IGZvY3VzXG4gICAgICAgIHdpZHRoOiAxLFxuXG4gICAgICAgIC8vIHJlbW92ZSBjdXJzb3Igb24gZGVza3RvcFxuICAgICAgICBjb2xvcjogJ3RyYW5zcGFyZW50JyxcblxuICAgICAgICAvLyByZW1vdmUgY3Vyc29yIG9uIG1vYmlsZSB3aGlsc3QgbWFpbnRhaW5pbmcgXCJzY3JvbGwgaW50byB2aWV3XCIgYmVoYXZpb3VyXG4gICAgICAgIGxlZnQ6IC0xMDAsXG4gICAgICAgIG9wYWNpdHk6IDAsXG4gICAgICAgIHBvc2l0aW9uOiAncmVsYXRpdmUnLFxuICAgICAgICB0cmFuc2Zvcm06ICdzY2FsZSguMDEpJyxcbiAgICAgIH19XG4gICAgLz5cbiAgKTtcbn1cbiJdfQ== */")
   }));
 }
 
 var cancelScroll = function cancelScroll(event) {
-  event.preventDefault();
+  if (event.cancelable) event.preventDefault();
   event.stopPropagation();
 };
 function useScrollCapture(_ref) {
@@ -10275,7 +11423,7 @@ var LOCK_STYLES = {
   height: '100%'
 };
 function preventTouchMove(e) {
-  e.preventDefault();
+  if (e.cancelable) e.preventDefault();
 }
 function allowTouchMove(e) {
   e.stopPropagation();
@@ -10392,8 +11540,9 @@ function useScrollLock(_ref) {
 }
 
 function _EMOTION_STRINGIFIED_CSS_ERROR__$1() { return "You have tried to stringify object returned from `css` function. It isn't supposed to be used directly (e.g. as value of the `className` prop), but rather handed to emotion so it can handle it (e.g. as value of `css` prop)."; }
-var blurSelectInput = function blurSelectInput() {
-  return document.activeElement && document.activeElement.blur();
+var blurSelectInput = function blurSelectInput(event) {
+  var element = event.target;
+  return element.ownerDocument.activeElement && element.ownerDocument.activeElement.blur();
 };
 var _ref2$1 = process.env.NODE_ENV === "production" ? {
   name: "1kfdb0e",
@@ -10401,7 +11550,7 @@ var _ref2$1 = process.env.NODE_ENV === "production" ? {
 } : {
   name: "bp8cua-ScrollManager",
   styles: "position:fixed;left:0;bottom:0;right:0;top:0;label:ScrollManager;",
-  map: "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIlNjcm9sbE1hbmFnZXIudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQStDVSIsImZpbGUiOiJTY3JvbGxNYW5hZ2VyLnRzeCIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAanN4IGpzeCAqL1xuaW1wb3J0IHsganN4IH0gZnJvbSAnQGVtb3Rpb24vcmVhY3QnO1xuaW1wb3J0IHsgRnJhZ21lbnQsIFJlYWN0RWxlbWVudCwgUmVmQ2FsbGJhY2sgfSBmcm9tICdyZWFjdCc7XG5pbXBvcnQgdXNlU2Nyb2xsQ2FwdHVyZSBmcm9tICcuL3VzZVNjcm9sbENhcHR1cmUnO1xuaW1wb3J0IHVzZVNjcm9sbExvY2sgZnJvbSAnLi91c2VTY3JvbGxMb2NrJztcblxuaW50ZXJmYWNlIFByb3BzIHtcbiAgcmVhZG9ubHkgY2hpbGRyZW46IChyZWY6IFJlZkNhbGxiYWNrPEhUTUxFbGVtZW50PikgPT4gUmVhY3RFbGVtZW50O1xuICByZWFkb25seSBsb2NrRW5hYmxlZDogYm9vbGVhbjtcbiAgcmVhZG9ubHkgY2FwdHVyZUVuYWJsZWQ6IGJvb2xlYW47XG4gIHJlYWRvbmx5IG9uQm90dG9tQXJyaXZlPzogKGV2ZW50OiBXaGVlbEV2ZW50IHwgVG91Y2hFdmVudCkgPT4gdm9pZDtcbiAgcmVhZG9ubHkgb25Cb3R0b21MZWF2ZT86IChldmVudDogV2hlZWxFdmVudCB8IFRvdWNoRXZlbnQpID0+IHZvaWQ7XG4gIHJlYWRvbmx5IG9uVG9wQXJyaXZlPzogKGV2ZW50OiBXaGVlbEV2ZW50IHwgVG91Y2hFdmVudCkgPT4gdm9pZDtcbiAgcmVhZG9ubHkgb25Ub3BMZWF2ZT86IChldmVudDogV2hlZWxFdmVudCB8IFRvdWNoRXZlbnQpID0+IHZvaWQ7XG59XG5cbmNvbnN0IGJsdXJTZWxlY3RJbnB1dCA9ICgpID0+XG4gIGRvY3VtZW50LmFjdGl2ZUVsZW1lbnQgJiYgKGRvY3VtZW50LmFjdGl2ZUVsZW1lbnQgYXMgSFRNTEVsZW1lbnQpLmJsdXIoKTtcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gU2Nyb2xsTWFuYWdlcih7XG4gIGNoaWxkcmVuLFxuICBsb2NrRW5hYmxlZCxcbiAgY2FwdHVyZUVuYWJsZWQgPSB0cnVlLFxuICBvbkJvdHRvbUFycml2ZSxcbiAgb25Cb3R0b21MZWF2ZSxcbiAgb25Ub3BBcnJpdmUsXG4gIG9uVG9wTGVhdmUsXG59OiBQcm9wcykge1xuICBjb25zdCBzZXRTY3JvbGxDYXB0dXJlVGFyZ2V0ID0gdXNlU2Nyb2xsQ2FwdHVyZSh7XG4gICAgaXNFbmFibGVkOiBjYXB0dXJlRW5hYmxlZCxcbiAgICBvbkJvdHRvbUFycml2ZSxcbiAgICBvbkJvdHRvbUxlYXZlLFxuICAgIG9uVG9wQXJyaXZlLFxuICAgIG9uVG9wTGVhdmUsXG4gIH0pO1xuICBjb25zdCBzZXRTY3JvbGxMb2NrVGFyZ2V0ID0gdXNlU2Nyb2xsTG9jayh7IGlzRW5hYmxlZDogbG9ja0VuYWJsZWQgfSk7XG5cbiAgY29uc3QgdGFyZ2V0UmVmOiBSZWZDYWxsYmFjazxIVE1MRWxlbWVudD4gPSAoZWxlbWVudCkgPT4ge1xuICAgIHNldFNjcm9sbENhcHR1cmVUYXJnZXQoZWxlbWVudCk7XG4gICAgc2V0U2Nyb2xsTG9ja1RhcmdldChlbGVtZW50KTtcbiAgfTtcblxuICByZXR1cm4gKFxuICAgIDxGcmFnbWVudD5cbiAgICAgIHtsb2NrRW5hYmxlZCAmJiAoXG4gICAgICAgIDxkaXZcbiAgICAgICAgICBvbkNsaWNrPXtibHVyU2VsZWN0SW5wdXR9XG4gICAgICAgICAgY3NzPXt7IHBvc2l0aW9uOiAnZml4ZWQnLCBsZWZ0OiAwLCBib3R0b206IDAsIHJpZ2h0OiAwLCB0b3A6IDAgfX1cbiAgICAgICAgLz5cbiAgICAgICl9XG4gICAgICB7Y2hpbGRyZW4odGFyZ2V0UmVmKX1cbiAgICA8L0ZyYWdtZW50PlxuICApO1xufVxuIl19 */",
+  map: "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIlNjcm9sbE1hbmFnZXIudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQW9EVSIsImZpbGUiOiJTY3JvbGxNYW5hZ2VyLnRzeCIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAanN4IGpzeCAqL1xuaW1wb3J0IHsganN4IH0gZnJvbSAnQGVtb3Rpb24vcmVhY3QnO1xuaW1wb3J0IHsgRnJhZ21lbnQsIFJlYWN0RWxlbWVudCwgUmVmQ2FsbGJhY2ssIE1vdXNlRXZlbnQgfSBmcm9tICdyZWFjdCc7XG5pbXBvcnQgdXNlU2Nyb2xsQ2FwdHVyZSBmcm9tICcuL3VzZVNjcm9sbENhcHR1cmUnO1xuaW1wb3J0IHVzZVNjcm9sbExvY2sgZnJvbSAnLi91c2VTY3JvbGxMb2NrJztcblxuaW50ZXJmYWNlIFByb3BzIHtcbiAgcmVhZG9ubHkgY2hpbGRyZW46IChyZWY6IFJlZkNhbGxiYWNrPEhUTUxFbGVtZW50PikgPT4gUmVhY3RFbGVtZW50O1xuICByZWFkb25seSBsb2NrRW5hYmxlZDogYm9vbGVhbjtcbiAgcmVhZG9ubHkgY2FwdHVyZUVuYWJsZWQ6IGJvb2xlYW47XG4gIHJlYWRvbmx5IG9uQm90dG9tQXJyaXZlPzogKGV2ZW50OiBXaGVlbEV2ZW50IHwgVG91Y2hFdmVudCkgPT4gdm9pZDtcbiAgcmVhZG9ubHkgb25Cb3R0b21MZWF2ZT86IChldmVudDogV2hlZWxFdmVudCB8IFRvdWNoRXZlbnQpID0+IHZvaWQ7XG4gIHJlYWRvbmx5IG9uVG9wQXJyaXZlPzogKGV2ZW50OiBXaGVlbEV2ZW50IHwgVG91Y2hFdmVudCkgPT4gdm9pZDtcbiAgcmVhZG9ubHkgb25Ub3BMZWF2ZT86IChldmVudDogV2hlZWxFdmVudCB8IFRvdWNoRXZlbnQpID0+IHZvaWQ7XG59XG5cbmNvbnN0IGJsdXJTZWxlY3RJbnB1dCA9IChldmVudDogTW91c2VFdmVudDxIVE1MRGl2RWxlbWVudD4pID0+IHtcbiAgY29uc3QgZWxlbWVudCA9IGV2ZW50LnRhcmdldCBhcyBIVE1MRGl2RWxlbWVudDtcbiAgcmV0dXJuIChcbiAgICBlbGVtZW50Lm93bmVyRG9jdW1lbnQuYWN0aXZlRWxlbWVudCAmJlxuICAgIChlbGVtZW50Lm93bmVyRG9jdW1lbnQuYWN0aXZlRWxlbWVudCBhcyBIVE1MRWxlbWVudCkuYmx1cigpXG4gICk7XG59O1xuXG5leHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBTY3JvbGxNYW5hZ2VyKHtcbiAgY2hpbGRyZW4sXG4gIGxvY2tFbmFibGVkLFxuICBjYXB0dXJlRW5hYmxlZCA9IHRydWUsXG4gIG9uQm90dG9tQXJyaXZlLFxuICBvbkJvdHRvbUxlYXZlLFxuICBvblRvcEFycml2ZSxcbiAgb25Ub3BMZWF2ZSxcbn06IFByb3BzKSB7XG4gIGNvbnN0IHNldFNjcm9sbENhcHR1cmVUYXJnZXQgPSB1c2VTY3JvbGxDYXB0dXJlKHtcbiAgICBpc0VuYWJsZWQ6IGNhcHR1cmVFbmFibGVkLFxuICAgIG9uQm90dG9tQXJyaXZlLFxuICAgIG9uQm90dG9tTGVhdmUsXG4gICAgb25Ub3BBcnJpdmUsXG4gICAgb25Ub3BMZWF2ZSxcbiAgfSk7XG4gIGNvbnN0IHNldFNjcm9sbExvY2tUYXJnZXQgPSB1c2VTY3JvbGxMb2NrKHsgaXNFbmFibGVkOiBsb2NrRW5hYmxlZCB9KTtcblxuICBjb25zdCB0YXJnZXRSZWY6IFJlZkNhbGxiYWNrPEhUTUxFbGVtZW50PiA9IChlbGVtZW50KSA9PiB7XG4gICAgc2V0U2Nyb2xsQ2FwdHVyZVRhcmdldChlbGVtZW50KTtcbiAgICBzZXRTY3JvbGxMb2NrVGFyZ2V0KGVsZW1lbnQpO1xuICB9O1xuXG4gIHJldHVybiAoXG4gICAgPEZyYWdtZW50PlxuICAgICAge2xvY2tFbmFibGVkICYmIChcbiAgICAgICAgPGRpdlxuICAgICAgICAgIG9uQ2xpY2s9e2JsdXJTZWxlY3RJbnB1dH1cbiAgICAgICAgICBjc3M9e3sgcG9zaXRpb246ICdmaXhlZCcsIGxlZnQ6IDAsIGJvdHRvbTogMCwgcmlnaHQ6IDAsIHRvcDogMCB9fVxuICAgICAgICAvPlxuICAgICAgKX1cbiAgICAgIHtjaGlsZHJlbih0YXJnZXRSZWYpfVxuICAgIDwvRnJhZ21lbnQ+XG4gICk7XG59XG4iXX0= */",
   toString: _EMOTION_STRINGIFIED_CSS_ERROR__$1
 };
 function ScrollManager(_ref) {
@@ -10460,6 +11609,30 @@ var RequiredInput = function RequiredInput(_ref) {
   });
 };
 var RequiredInput$1 = RequiredInput;
+
+/// <reference types="user-agent-data-types" />
+
+function testPlatform(re) {
+  var _window$navigator$use;
+  return typeof window !== 'undefined' && window.navigator != null ? re.test(((_window$navigator$use = window.navigator['userAgentData']) === null || _window$navigator$use === void 0 ? void 0 : _window$navigator$use.platform) || window.navigator.platform) : false;
+}
+function isIPhone() {
+  return testPlatform(/^iPhone/i);
+}
+function isMac() {
+  return testPlatform(/^Mac/i);
+}
+function isIPad() {
+  return testPlatform(/^iPad/i) ||
+  // iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
+  isMac() && navigator.maxTouchPoints > 1;
+}
+function isIOS() {
+  return isIPhone() || isIPad();
+}
+function isAppleDevice() {
+  return isMac() || isIOS();
+}
 
 var formatGroupLabel = function formatGroupLabel(group) {
   return group.label;
@@ -10630,6 +11803,24 @@ function buildFocusableOptionsFromCategorizedOptions(categorizedOptions) {
     return optionsAccumulator;
   }, []);
 }
+function buildFocusableOptionsWithIds(categorizedOptions, optionId) {
+  return categorizedOptions.reduce(function (optionsAccumulator, categorizedOption) {
+    if (categorizedOption.type === 'group') {
+      optionsAccumulator.push.apply(optionsAccumulator, _toConsumableArray(categorizedOption.options.map(function (option) {
+        return {
+          data: option.data,
+          id: "".concat(optionId, "-").concat(categorizedOption.index, "-").concat(option.index)
+        };
+      })));
+    } else {
+      optionsAccumulator.push({
+        data: categorizedOption.data,
+        id: "".concat(optionId, "-").concat(categorizedOption.index)
+      });
+    }
+    return optionsAccumulator;
+  }, []);
+}
 function buildFocusableOptions(props, selectValue) {
   return buildFocusableOptionsFromCategorizedOptions(buildCategorizedOptions(props, selectValue));
 }
@@ -10667,6 +11858,13 @@ function getNextFocusedOption(state, options) {
   var lastFocusedOption = state.focusedOption;
   return lastFocusedOption && options.indexOf(lastFocusedOption) > -1 ? lastFocusedOption : options[0];
 }
+var getFocusedOptionId = function getFocusedOptionId(focusableOptionsWithIds, focusedOption) {
+  var _focusableOptionsWith;
+  var focusedOptionId = (_focusableOptionsWith = focusableOptionsWithIds.find(function (option) {
+    return option.data === focusedOption;
+  })) === null || _focusableOptionsWith === void 0 ? void 0 : _focusableOptionsWith.id;
+  return focusedOptionId || null;
+};
 var getOptionLabel = function getOptionLabel(props, data) {
   return props.getOptionLabel(data);
 };
@@ -10717,6 +11915,8 @@ var Select = /*#__PURE__*/function (_Component) {
     _this.state = {
       ariaSelection: null,
       focusedOption: null,
+      focusedOptionId: null,
+      focusableOptionsWithIds: [],
       focusedValue: null,
       inputIsHidden: false,
       isFocused: false,
@@ -10724,17 +11924,18 @@ var Select = /*#__PURE__*/function (_Component) {
       clearFocusValueOnUpdate: false,
       prevWasFocused: false,
       inputIsHiddenAfterUpdate: undefined,
-      prevProps: undefined
+      prevProps: undefined,
+      instancePrefix: ''
     };
     _this.blockOptionHover = false;
     _this.isComposing = false;
     _this.commonProps = void 0;
     _this.initialTouchX = 0;
     _this.initialTouchY = 0;
-    _this.instancePrefix = '';
     _this.openAfterFocus = false;
     _this.scrollToFocusedOptionOnUpdate = false;
     _this.userIsDragging = void 0;
+    _this.isAppleDevice = isAppleDevice();
     _this.controlRef = null;
     _this.getControlRef = function (ref) {
       _this.controlRef = ref;
@@ -10844,10 +12045,18 @@ var Select = /*#__PURE__*/function (_Component) {
       var lastSelectedValue = selectValue[selectValue.length - 1];
       var newValueArray = selectValue.slice(0, selectValue.length - 1);
       var newValue = valueTernary(isMulti, newValueArray, newValueArray[0] || null);
-      _this.onChange(newValue, {
-        action: 'pop-value',
-        removedValue: lastSelectedValue
-      });
+      if (lastSelectedValue) {
+        _this.onChange(newValue, {
+          action: 'pop-value',
+          removedValue: lastSelectedValue
+        });
+      }
+    };
+    _this.getFocusedOptionId = function (focusedOption) {
+      return getFocusedOptionId(_this.state.focusableOptionsWithIds, focusedOption);
+    };
+    _this.getFocusableOptionsWithIds = function () {
+      return buildFocusableOptionsWithIds(buildCategorizedOptions(_this.props, _this.state.selectValue), _this.getElementId('option'));
     };
     _this.getValue = function () {
       return _this.state.selectValue;
@@ -10876,7 +12085,7 @@ var Select = /*#__PURE__*/function (_Component) {
       return (_this$props$className = (_this$props$className2 = _this.props.classNames)[key]) === null || _this$props$className === void 0 ? void 0 : _this$props$className.call(_this$props$className2, props);
     };
     _this.getElementId = function (element) {
-      return "".concat(_this.instancePrefix, "-").concat(element);
+      return "".concat(_this.state.instancePrefix, "-").concat(element);
     };
     _this.getComponents = function () {
       return defaultComponents(_this.props);
@@ -11085,8 +12294,11 @@ var Select = /*#__PURE__*/function (_Component) {
       if (_this.blockOptionHover || _this.state.focusedOption === focusedOption) {
         return;
       }
+      var options = _this.getFocusableOptions();
+      var focusedOptionIndex = options.indexOf(focusedOption);
       _this.setState({
-        focusedOption: focusedOption
+        focusedOption: focusedOption,
+        focusedOptionId: focusedOptionIndex > -1 ? _this.getFocusedOptionId(focusedOption) : null
       });
     };
     _this.shouldHideSelectedOptions = function () {
@@ -11230,14 +12442,16 @@ var Select = /*#__PURE__*/function (_Component) {
       }
       event.preventDefault();
     };
-    _this.instancePrefix = 'react-select-' + (_this.props.instanceId || ++instanceId);
+    _this.state.instancePrefix = 'react-select-' + (_this.props.instanceId || ++instanceId);
     _this.state.selectValue = cleanValue(_props.value);
-
     // Set focusedOption if menuIsOpen is set on init (e.g. defaultMenuIsOpen)
     if (_props.menuIsOpen && _this.state.selectValue.length) {
+      var focusableOptionsWithIds = _this.getFocusableOptionsWithIds();
       var focusableOptions = _this.buildFocusableOptions();
       var optionIndex = focusableOptions.indexOf(_this.state.selectValue[0]);
+      _this.state.focusableOptionsWithIds = focusableOptionsWithIds;
       _this.state.focusedOption = focusableOptions[optionIndex];
+      _this.state.focusedOptionId = getFocusedOptionId(focusableOptionsWithIds, focusableOptions[optionIndex]);
     }
     return _this;
   }
@@ -11362,7 +12576,8 @@ var Select = /*#__PURE__*/function (_Component) {
       this.setState({
         inputIsHiddenAfterUpdate: false,
         focusedValue: null,
-        focusedOption: focusableOptions[openAtIndex]
+        focusedOption: focusableOptions[openAtIndex],
+        focusedOptionId: this.getFocusedOptionId(focusableOptions[openAtIndex])
       }, function () {
         return _this2.onMenuOpen();
       });
@@ -11438,7 +12653,8 @@ var Select = /*#__PURE__*/function (_Component) {
       this.scrollToFocusedOptionOnUpdate = true;
       this.setState({
         focusedOption: options[nextFocus],
-        focusedValue: null
+        focusedValue: null,
+        focusedOptionId: this.getFocusedOptionId(options[nextFocus])
       });
     }
   }, {
@@ -11634,10 +12850,10 @@ var Select = /*#__PURE__*/function (_Component) {
         'aria-label': this.props['aria-label'],
         'aria-labelledby': this.props['aria-labelledby'],
         'aria-required': required,
-        role: 'combobox'
+        role: 'combobox',
+        'aria-activedescendant': this.isAppleDevice ? undefined : this.state.focusedOptionId || ''
       }, menuIsOpen && {
-        'aria-controls': this.getElementId('listbox'),
-        'aria-owns': this.getElementId('listbox')
+        'aria-controls': this.getElementId('listbox')
       }), !isSearchable && {
         'aria-readonly': true
       }), this.hasValue() ? (ariaSelection === null || ariaSelection === void 0 ? void 0 : ariaSelection.action) === 'initial-input-focus' && {
@@ -11882,8 +13098,11 @@ var Select = /*#__PURE__*/function (_Component) {
           onClick: onSelect,
           onMouseMove: onHover,
           onMouseOver: onHover,
-          tabIndex: -1
+          tabIndex: -1,
+          role: 'option',
+          'aria-selected': _this4.isAppleDevice ? undefined : isSelected // is not supported on Apple devices
         };
+
         return /*#__PURE__*/React__namespace.createElement(Option, _extends({}, commonProps, {
           innerProps: innerProps,
           data: data,
@@ -11952,8 +13171,7 @@ var Select = /*#__PURE__*/function (_Component) {
           innerRef: ref,
           innerProps: {
             onMouseDown: _this4.onMenuMouseDown,
-            onMouseMove: _this4.onMenuMouseMove,
-            id: _this4.getElementId('listbox')
+            onMouseMove: _this4.onMenuMouseMove
           },
           isLoading: isLoading,
           placement: placement
@@ -11967,6 +13185,11 @@ var Select = /*#__PURE__*/function (_Component) {
             innerRef: function innerRef(instance) {
               _this4.getMenuListRef(instance);
               scrollTargetRef(instance);
+            },
+            innerProps: {
+              role: 'listbox',
+              'aria-multiselectable': commonProps.isMulti,
+              id: _this4.getElementId('listbox')
             },
             isLoading: isLoading,
             maxHeight: maxHeight,
@@ -12055,7 +13278,8 @@ var Select = /*#__PURE__*/function (_Component) {
         focusedValue: focusedValue,
         isFocused: isFocused,
         selectValue: selectValue,
-        focusableOptions: focusableOptions
+        focusableOptions: focusableOptions,
+        isAppleDevice: this.isAppleDevice
       }));
     }
   }, {
@@ -12104,7 +13328,8 @@ var Select = /*#__PURE__*/function (_Component) {
         inputIsHiddenAfterUpdate = state.inputIsHiddenAfterUpdate,
         ariaSelection = state.ariaSelection,
         isFocused = state.isFocused,
-        prevWasFocused = state.prevWasFocused;
+        prevWasFocused = state.prevWasFocused,
+        instancePrefix = state.instancePrefix;
       var options = props.options,
         value = props.value,
         menuIsOpen = props.menuIsOpen,
@@ -12114,11 +13339,15 @@ var Select = /*#__PURE__*/function (_Component) {
       var newMenuOptionsState = {};
       if (prevProps && (value !== prevProps.value || options !== prevProps.options || menuIsOpen !== prevProps.menuIsOpen || inputValue !== prevProps.inputValue)) {
         var focusableOptions = menuIsOpen ? buildFocusableOptions(props, selectValue) : [];
+        var focusableOptionsWithIds = menuIsOpen ? buildFocusableOptionsWithIds(buildCategorizedOptions(props, selectValue), "".concat(instancePrefix, "-option")) : [];
         var focusedValue = clearFocusValueOnUpdate ? getNextFocusedValue(state, selectValue) : null;
         var focusedOption = getNextFocusedOption(state, focusableOptions);
+        var focusedOptionId = getFocusedOptionId(focusableOptionsWithIds, focusedOption);
         newMenuOptionsState = {
           selectValue: selectValue,
           focusedOption: focusedOption,
+          focusedOptionId: focusedOptionId,
+          focusableOptionsWithIds: focusableOptionsWithIds,
           focusedValue: focusedValue,
           clearFocusValueOnUpdate: false
         };
@@ -13935,6 +15164,13 @@ const HOUR_IN_MS = 3600000;
  */
 const DAY_IN_MS = 86400000;
 
+/**
+ * Route for checking the status of the current user's
+ *   access to log review
+ * @author Gabe Abrams
+ */
+const LOG_REVIEW_STATUS_ROUTE = `${ROUTE_PATH_PREFIX}/logs/access_allowed`;
+
 // True if user is on mobile or tablet
 let cachedResult = undefined;
 /**
@@ -14121,1278 +15357,6 @@ const padZerosLeft = (num, numDigits) => {
 };
 
 /**
- * Route for checking the status of the current user's
- *   access to log review
- * @author Gabe Abrams
- */
-const LOG_REVIEW_STATUS_ROUTE = `${ROUTE_PATH_PREFIX}/logs/access_allowed`;
-
-// Stored copy of caccl functions
-let _cacclGetLaunchInfo;
-// Stored copy of dce-mango log collection
-let _logCollection;
-/*------------------------------------------------------------------------*/
-/*                                 Helpers                                */
-/*------------------------------------------------------------------------*/
-/**
- * Get launch info via CACCL
- * @author Gabe Abrams
- * @param req express request object
- * @returns object { launched, launchInfo }
- */
-const cacclGetLaunchInfo = (req) => {
-    if (!_cacclGetLaunchInfo) {
-        throw new ErrorWithCode('Could not get launch info because server was not initialized with dce-reactkit\'s initServer function', ReactKitErrorCode$1.NoCACCLGetLaunchInfoFunction);
-    }
-    return _cacclGetLaunchInfo(req);
-};
-/**
- * Get log collection
- * @author Gabe Abrams
- * @returns log collection if one was included during launch or null if we don't
- *   have a log collection (yet)
- */
-const internalGetLogCollection = () => {
-    return _logCollection !== null && _logCollection !== void 0 ? _logCollection : null;
-};
-/*------------------------------------------------------------------------*/
-/*                                  Main                                  */
-/*------------------------------------------------------------------------*/
-/**
- * Prepare dce-reactkit to run on the server
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.app express app from inside of the postprocessor function that
- *   we will add routes to
- * @param opts.getLaunchInfo CACCL LTI's get launch info function
- * @param [opts.logCollection] mongo collection from dce-mango to use for
- *   storing logs. If none is included, logs are written to the console
- * @param [opts.logReviewAdmins=all] info on which admins can review
- *   logs from the client. If not included, all Canvas admins are allowed to
- *   review logs. If null, no Canvas admins are allowed to review logs.
- *   If an array of Canvas userIds (numbers), only Canvas admins with those
- *   userIds are allowed to review logs. If a dce-mango collection, only
- *   Canvas admins with entries in that collection ({ userId, ...}) are allowed
- *   to review logs
- */
-const initServer = (opts) => {
-    _cacclGetLaunchInfo = opts.getLaunchInfo;
-    _logCollection = opts.logCollection;
-    /*----------------------------------------*/
-    /*                Logging                 */
-    /*----------------------------------------*/
-    /**
-     * Log an event
-     * @author Gabe Abrams
-     * @param {string} context Context of the event (each app determines how to
-     *   organize its contexts)
-     * @param {string} subcontext Subcontext of the event (each app determines
-     *   how to organize its subcontexts)
-     * @param {string} tags stringified list of tags that apply to this action
-     *   (each app determines tag usage)
-     * @param {string} metadata stringified object containing optional custom metadata
-     * @param {string} level log level
-     * @param {string} [errorMessage] error message if type is an error
-     * @param {string} [errorCode] error code if type is an error
-     * @param {string} [errorStack] error stack if type is an error
-     * @param {string} [target] Target of the action (each app determines the list
-     *   of targets) These are usually buttons, panels, elements, etc.
-     * @param {LogAction} [action] the type of action performed on the target
-     * @returns {Log}
-     */
-    opts.app.post(LOG_ROUTE_PATH, genRouteHandler({
-        paramTypes: {
-            context: ParamType$1.String,
-            subcontext: ParamType$1.String,
-            tags: ParamType$1.JSON,
-            level: ParamType$1.String,
-            metadata: ParamType$1.JSON,
-            errorMessage: ParamType$1.StringOptional,
-            errorCode: ParamType$1.StringOptional,
-            errorStack: ParamType$1.StringOptional,
-            target: ParamType$1.StringOptional,
-            action: ParamType$1.StringOptional,
-        },
-        handler: ({ params, logServerEvent }) => {
-            // Create log info
-            const logInfo = ((params.errorMessage || params.errorCode || params.errorStack)
-                // Error
-                ? {
-                    context: params.context,
-                    subcontext: params.subcontext,
-                    tags: params.tags,
-                    level: params.level,
-                    metadata: params.metadata,
-                    error: {
-                        message: params.errorMessage,
-                        code: params.errorCode,
-                        stack: params.errorStack,
-                    },
-                }
-                // Action
-                : {
-                    context: params.context,
-                    subcontext: params.subcontext,
-                    tags: params.tags,
-                    level: params.level,
-                    metadata: params.metadata,
-                    target: params.target,
-                    action: params.action,
-                });
-            // Add hidden boolean to change source to "client"
-            const logInfoForcedFromClient = Object.assign(Object.assign({}, logInfo), { overrideAsClientEvent: true });
-            // Write the log
-            const log = logServerEvent(logInfoForcedFromClient);
-            // Return
-            return log;
-        },
-    }));
-    /*----------------------------------------*/
-    /*              Log Reviewer              */
-    /*----------------------------------------*/
-    /**
-     * Check if a given user is allowed to review logs
-     * @author Gabe Abrams
-     * @param userId the id of the user
-     * @param isAdmin if true, the user is an admin
-     * @returns true if the user can review logs
-     */
-    const canReviewLogs = (userId, isAdmin) => __awaiter(void 0, void 0, void 0, function* () {
-        // Immediately deny access if user is not an admin
-        if (!isAdmin) {
-            return false;
-        }
-        // If all admins are allowed, we're done
-        if (!opts.logReviewAdmins) {
-            return true;
-        }
-        // Do a dynamic check
-        try {
-            // Array of userIds
-            if (Array.isArray(opts.logReviewAdmins)) {
-                return opts.logReviewAdmins.some((allowedId) => {
-                    return (userId === allowedId);
-                });
-            }
-            // Must be a collection
-            const matches = yield opts.logReviewAdmins.find({ userId });
-            // Make sure at least one entry matches
-            return matches.length > 0;
-        }
-        catch (err) {
-            // If an error occurred, simply return false
-            return false;
-        }
-    });
-    /**
-     * Check if the current user has access to logs
-     * @author Gabe Abrams
-     * @returns {boolean} true if user has access
-     */
-    opts.app.get(LOG_REVIEW_STATUS_ROUTE, genRouteHandler({
-        handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
-            const { userId, isAdmin } = params;
-            const canReview = yield canReviewLogs(userId, isAdmin);
-            return canReview;
-        }),
-    }));
-    /**
-     * Get all logs for a certain month
-     * @author Gabe Abrams
-     * @param {number} year the year to query (e.g. 2022)
-     * @param {number} month the month to query (e.g. 1 = January)
-     * @returns {Log[]} list of logs from the given month
-     */
-    opts.app.get(`${LOG_REVIEW_ROUTE_PATH_PREFIX}/years/:year/months/:month`, genRouteHandler({
-        paramTypes: {
-            year: ParamType$1.Int,
-            month: ParamType$1.Int,
-            pageNumber: ParamType$1.Int,
-        },
-        handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
-            // Get user info
-            const { year, month, pageNumber, userId, isAdmin, } = params;
-            // Validate user
-            const canReview = yield canReviewLogs(userId, isAdmin);
-            if (!canReview) {
-                throw new ErrorWithCode('You cannot access this resource because you do not have the appropriate permissions.', ReactKitErrorCode$1.NotAllowedToReviewLogs);
-            }
-            // Query for logs
-            const response = yield _logCollection.findPaged({
-                query: {
-                    year,
-                    month,
-                },
-                perPage: 1000,
-                pageNumber,
-            });
-            // Return response
-            return response;
-        }),
-    }));
-};
-
-// Import shared types
-/**
- * Handle an error and respond to the client
- * @author Gabe Abrams
- * @param res express response
- * @param error error info
- * @param opts.err the error to send to the client
- *   or the error message
- * @param [opts.code] an error code (only used if err.code is not
- *   included)
- * @param [opts.status=500] the https status code to use
- *   defined)
- */
-const handleError = (res, error) => {
-    // Get the error message
-    let message;
-    if (error && error.message) {
-        message = (error.message || 'An unknown error occurred.');
-    }
-    else if (typeof error === 'string') {
-        message = (error.trim().length > 0
-            ? error
-            : 'An unknown error occurred.');
-    }
-    else {
-        message = 'An unknown error occurred.';
-    }
-    // Get the error code
-    const code = (error.code || ReactKitErrorCode$1.NoCode);
-    // Get the status code
-    const status = (error.status || 500);
-    // Respond to user
-    res
-        // Set the http status code
-        .status(status)
-        // Send a JSON response
-        .json({
-        // Error message
-        message,
-        // Error code
-        code,
-        // Success = false flag so client can detect server-side errors
-        success: false,
-    });
-    return undefined;
-};
-
-/**
- * Send successful API response
- * @author Gabe Abrams
- * @param res express response
- * @param body the body of the response to send to the client
- */
-const handleSuccess = (res, body) => {
-    // Send a http 200 json response
-    res.json({
-        // Include the body as a parameter
-        body,
-        // Success = true flag so client can detect successful responses
-        success: true,
-    });
-    return undefined;
-};
-
-// Import shared types
-/**
- * Generate a static error page
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param [opts.title=An Error Occurred] title of the error box
- * @param [opts.description=An unknown server error occurred. Please contact support.]
- *   a human-readable description of the error
- * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
- * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
- *   the title of the error
- * @returns html of the page
- */
-const genErrorPage = (opts = {}) => {
-    var _a, _b, _c, _d;
-    const title = ((_a = opts.title) !== null && _a !== void 0 ? _a : 'An Error Occurred');
-    const pageTitle = ((_b = opts.pageTitle) !== null && _b !== void 0 ? _b : title);
-    const description = ((_c = opts.description) !== null && _c !== void 0 ? _c : 'An unknown server error occurred. Please contact support.');
-    const code = ((_d = opts.code) !== null && _d !== void 0 ? _d : ReactKitErrorCode$1.NoCode);
-    return `
-<head>
-  <!-- Metadata -->
-  <meta
-    name="viewport"
-    content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"
-  >
-
-  <!-- Title -->
-  <title>${pageTitle}</title>
-
-  <!-- Bootstrap -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
-    integrity="sha512-siwe/oXMhSjGCwLn+scraPOWrJxHlUgMBMZXdPe2Tnk3I0x3ESCoLz7WZ5NTH6SZrywMY+PB1cjyqJ5jAluCOg=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/js/bootstrap.min.js"
-    integrity="sha512-vyRAVI0IEm6LI/fVSv/Wq/d0KUfrg3hJq2Qz5FlfER69sf3ZHlOrsLriNm49FxnpUGmhx+TaJKwJ+ByTLKT+Yg=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
-
-  <!-- FontAwesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
-    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-
-  <!-- Style -->
-  <style>
-    .DCEReactKit-pop-in {
-      animation-name: DCEReactKit-pop-in;
-      animation-duration: 0.5s;
-      animation-iteration-count: 1;
-      animation-timing-function: ease-out;
-      animation-fill-mode: both;
-
-      transform-origin: center;
-    }
-
-    @keyframes DCEReactKit-pop-in {
-      0% {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .DCEReactKit-slide-in {
-      animation-name: DCEReactKit-slide-in;
-      animation-duration: 1s;
-      animation-iteration-count: 1;
-      animation-timing-function: ease-out;
-      animation-fill-mode: both;
-      animation-delay: 0.2s;
-    }
-
-    @keyframes DCEReactKit-slide-in {
-      0% {
-        opacity: 0;
-        transform: translate(0, 0.3em);
-      }
-      100% {
-        opacity: 1;
-        transform: translate(0, 0);
-      }
-    }
-  </style>
-</head>
-
-<!-- Body -->
-<body class="bg-dark text-center pt-3 ps-3 pe-3">
-  <!-- Alert -->
-  <div
-    class="DCEReactKit-pop-in alert alert-warning d-inline-block"
-    style="width: 50em; max-width: 100%"
-  >
-    <!-- Title -->
-    <h2>
-      <i class="me-1 fa-solid fa-triangle-exclamation"></i>
-      ${title}
-    </h2>
-    <!-- Description -->
-    <div>
-      ${description}
-    </div>
-  </div>
-
-  <!-- Error Code -->
-  <div class="DCEReactKit-slide-in text-light">
-    <strong>
-      Error Code:
-    </strong>
-    ${code}
-  </div>
-</body>
-  `;
-};
-
-/**
- * Generate a static info page
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.title title of the info box
- * @param opts.body a human-readable text body for the info alert
- * @returns the HTML for the info page
- */
-const genInfoPage = (opts) => {
-    const { title, body, } = opts;
-    return `
-<head>
-  <!-- Metadata -->
-  <meta
-    name="viewport"
-    content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"
-  >
-
-  <!-- Title -->
-  <title>${title}</title>
-
-  <!-- Bootstrap -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
-    integrity="sha512-siwe/oXMhSjGCwLn+scraPOWrJxHlUgMBMZXdPe2Tnk3I0x3ESCoLz7WZ5NTH6SZrywMY+PB1cjyqJ5jAluCOg=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/js/bootstrap.min.js"
-    integrity="sha512-vyRAVI0IEm6LI/fVSv/Wq/d0KUfrg3hJq2Qz5FlfER69sf3ZHlOrsLriNm49FxnpUGmhx+TaJKwJ+ByTLKT+Yg=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
-
-  <!-- FontAwesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
-    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-
-  <!-- Style -->
-  <style>
-    .DCEReactKit-pop-in {
-      animation-name: DCEReactKit-pop-in;
-      animation-duration: 0.5s;
-      animation-iteration-count: 1;
-      animation-timing-function: ease-out;
-      animation-fill-mode: both;
-
-      transform-origin: center;
-    }
-
-    @keyframes DCEReactKit-pop-in {
-      0% {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-  </style>
-</head>
-
-<!-- Body -->
-<body class="bg-dark text-center pt-3 ps-3 pe-3">
-  <!-- Alert -->
-  <div
-    class="DCEReactKit-pop-in alert alert-info d-inline-block"
-    style="width: 50em; max-width: 100%"
-  >
-    <!-- Title -->
-    <h2>
-      <i class="me-1 fa-solid fa-circle-info"></i>
-      ${title}
-    </h2>
-    <!-- Body -->
-    <div>
-      ${body}
-    </div>
-  </div>
-</body>
-  `;
-};
-
-/**
- * Perform a rudimentary parsing of the user's browser agent string
- * @author Gabe Abrams
- * @param userAgent the user's browser agent
- * @returns user info
- */
-const parseUserAgent = (userAgent) => {
-    /* ------------- Browser ------------ */
-    let browser = {
-        name: 'Unknown',
-        version: 'Unknown',
-    };
-    // Parse user agent
-    let verOffset;
-    let nameOffset;
-    if ((verOffset = userAgent.indexOf('Opera')) !== -1) {
-        // In Opera, the true version is after 'Opera' or after 'Version'
-        browser = {
-            name: 'Opera',
-            version: userAgent.substring(verOffset + 6),
-        };
-        if ((verOffset = userAgent.indexOf('Version')) !== -1) {
-            browser.version = userAgent.substring(verOffset + 8);
-        }
-    }
-    else if ((verOffset = userAgent.indexOf('MSIE')) !== -1) {
-        // In MSIE, the true version is after 'MSIE' in userAgent
-        browser = {
-            name: 'Internet Explorer',
-            version: userAgent.substring(verOffset + 5),
-        };
-    }
-    else if ((verOffset = userAgent.indexOf('Chrome')) !== -1) {
-        // In Chrome, the true version is after 'Chrome'
-        browser = {
-            name: 'Chrome',
-            version: userAgent.substring(verOffset + 7),
-        };
-    }
-    else if ((verOffset = userAgent.indexOf('Safari')) !== -1) {
-        // In Safari, the true version is after 'Safari' or after 'Version'
-        browser = {
-            name: 'Safari',
-            version: userAgent.substring(verOffset + 7),
-        };
-        if ((verOffset = userAgent.indexOf('Version')) !== -1) {
-            browser.version = userAgent.substring(verOffset + 8);
-        }
-    }
-    else if ((verOffset = userAgent.indexOf('Firefox')) != -1) {
-        // In Firefox, the true version is after 'Firefox'
-        browser = {
-            name: 'Firefox',
-            version: userAgent.substring(verOffset + 8),
-        };
-    }
-    else if ((nameOffset = userAgent.lastIndexOf(' ') + 1)
-        < (verOffset = userAgent.lastIndexOf('/'))) {
-        browser = {
-            name: userAgent.substring(nameOffset, verOffset),
-            version: userAgent.substring(verOffset + 1),
-        };
-    }
-    // Postprocess version
-    // trim the fullVersion string at semicolon/space if present
-    let ix;
-    if ((ix = browser.version.indexOf(';')) !== -1) {
-        browser.version = browser.version.substring(0, ix);
-    }
-    if ((ix = browser.version.indexOf(' ')) !== -1) {
-        browser.version = browser.version.substring(0, ix);
-    }
-    /* ------------- Device ------------- */
-    // Detect os
-    let os = 'Unknown';
-    if (userAgent.includes('Linux')) {
-        os = 'Linux';
-    }
-    else if (userAgent.includes('like Mac')) {
-        os = 'iOS';
-    }
-    else if (userAgent.includes('Mac')) {
-        os = 'Mac';
-    }
-    else if (userAgent.includes('Android')) {
-        os = 'Android';
-    }
-    else if (userAgent.includes('Win')) {
-        os = 'Win';
-    }
-    // Check if mobile
-    const isMobile = !!userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
-    // Device
-    const device = {
-        isMobile,
-        os,
-    };
-    /* ------------- Finish ------------- */
-    // Return info
-    return {
-        browser,
-        device,
-    };
-};
-
-/**
- * Generate an express API route handler
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.paramTypes map containing the types for each parameter that is
- *   included in the request (map: param name => type)
- * @param opts.handler function that processes the request
- * @param [opts.skipSessionCheck] if true, skip the session check (allow users
- *   to not be logged in and launched via LTI)
- * @param [opts.allowedHosts] if included, only allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
- * @param [opts.bannedHosts] if included, do not allow requests from these hosts
- *   (start a hostname with a "*" to only check the end of the hostname)
- *   you can include just one string instead of an array
- * @param [opts.unhandledErrorMessagePrefix] if included, when an error that
- *   is not of type ErrorWithCode is thrown, the client will receive an error
- *   where the error message is prefixed with this string. For example,
- *   if unhandledErrorMessagePrefix is
- *   'While saving progress, we encountered an error:'
- *   and the error is 'progressInfo is not an object',
- *   the client will receive an error with the message
- *   'While saving progress, we encountered an error: progressInfo is not an object'
- * @returns express route handler that takes the following arguments:
- *   params (map: param name => value),
- *   req (express request object),
- *   next (express next function),
- *   send (a function that sends a string to the client),
- *   redirect (takes a url and redirects the user to that url),
- *   renderErrorPage (shows a static error page to the user),
- *   renderInfoPage (shows a static info page to the user),
- *   renderCustomHTML (renders custom html and sends it to the user),
- *   and returns the value to send to the client as a JSON API response, or
- *   calls next() or redirect(...) or send(...) or renderErrorPage(...).
- *   Note: params also has userId, userFirstName,
- *   userLastName, userEmail, userAvatarURL, isLearner, isTTM, isAdmin,
- *   and any other variables that
- *   are directly added to the session, if the user does have a session.
- */
-const genRouteHandler = (opts) => {
-    // Return a route handler
-    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-        // Output params
-        const output = {};
-        /*----------------------------------------*/
-        /* ----------- Hostname Check ----------- */
-        /*----------------------------------------*/
-        // Get hostnames
-        const originURL = String(req.get('origin')
-            || req.headers.origin
-            || req.headers.referer);
-        const originHostname = (originURL
-            // Remove protocol
-            .replace(/(^\w+:|^)\/\//, '')
-            // Remove port
-            .replace(/:\d+$/, ''));
-        const serverHostname = String(req.hostname);
-        // Check allowed
-        if (opts.allowedHosts) {
-            // Only accept requests from allowed hosts
-            const allowedArray = (Array.isArray(opts.allowedHosts)
-                ? opts.allowedHosts
-                : [opts.allowedHosts]);
-            // Check if server is localhost
-            if (serverHostname === 'localhost') {
-                // Allow localhost
-                allowedArray.push('localhost');
-            }
-            // Check if current host is allowed
-            const allowed = allowedArray.some((allowedHost) => {
-                if (allowedHost.startsWith('*')) {
-                    // Check end of hostname
-                    return originHostname.endsWith(allowedHost.substring(1));
-                }
-                // Check full hostname
-                return originHostname.toLowerCase() === allowedHost.toLowerCase();
-            });
-            // If not allowed, return error
-            if (!allowed) {
-                return handleError(res, {
-                    message: 'You are not allowed to access this endpoint.',
-                    code: ReactKitErrorCode$1.HostNotAllowed,
-                    status: 403,
-                });
-            }
-        }
-        // Check banned
-        if (opts.bannedHosts) {
-            // Do not allow requests from banned hosts
-            const bannedArray = (Array.isArray(opts.bannedHosts)
-                ? opts.bannedHosts
-                : [opts.bannedHosts]);
-            // Check if current host is banned
-            const banned = bannedArray.some((bannedHost) => {
-                if (bannedHost.startsWith('*')) {
-                    // Check end of hostname
-                    return originHostname.endsWith(bannedHost.substring(1));
-                }
-                // Check full hostname
-                return originHostname.toLowerCase() === bannedHost.toLowerCase();
-            });
-            // If banned, return error
-            if (banned) {
-                return handleError(res, {
-                    message: 'You are not allowed to access this endpoint.',
-                    code: ReactKitErrorCode$1.HostBanned,
-                    status: 403,
-                });
-            }
-        }
-        /*----------------------------------------*/
-        /* ------------ Parse Params ------------ */
-        /*----------------------------------------*/
-        // Process items one by one
-        const paramList = Object.entries((_a = opts.paramTypes) !== null && _a !== void 0 ? _a : {});
-        for (let i = 0; i < paramList.length; i++) {
-            const [name, type] = paramList[i];
-            // Find the value as a string
-            const value = (req.params[name]
-                || req.query[name]
-                || req.body[name]);
-            // Parse
-            if (type === ParamType$1.Boolean || type === ParamType$1.BooleanOptional) {
-                // Boolean
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.BooleanOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Simplify value
-                    const simpleVal = (String(value)
-                        .trim()
-                        .toLowerCase());
-                    // Parse
-                    output[name] = ([
-                        'true',
-                        'yes',
-                        'y',
-                        '1',
-                        't',
-                    ].indexOf(simpleVal) >= 0);
-                }
-            }
-            else if (type === ParamType$1.Float || type === ParamType$1.FloatOptional) {
-                // Float
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.FloatOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else if (!Number.isNaN(Number.parseFloat(String(value)))) {
-                    // Value is a number
-                    output[name] = Number.parseFloat(String(value));
-                }
-                else {
-                    // Issue!
-                    return handleError(res, {
-                        message: `Request data was malformed: ${name} was not a valid float.`,
-                        code: ReactKitErrorCode$1.InvalidParameter,
-                        status: 422,
-                    });
-                }
-            }
-            else if (type === ParamType$1.Int || type === ParamType$1.IntOptional) {
-                // Int
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.IntOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else if (!Number.isNaN(Number.parseInt(String(value), 10))) {
-                    // Value is a number
-                    output[name] = Number.parseInt(String(value), 10);
-                }
-                else {
-                    // Issue!
-                    return handleError(res, {
-                        message: `Request data was malformed: ${name} was not a valid int.`,
-                        code: ReactKitErrorCode$1.InvalidParameter,
-                        status: 422,
-                    });
-                }
-            }
-            else if (type === ParamType$1.JSON || type === ParamType$1.JSONOptional) {
-                // Stringified JSON
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.JSONOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Parse
-                    try {
-                        output[name] = JSON.parse(String(value));
-                    }
-                    catch (err) {
-                        return handleError(res, {
-                            message: `Request data was malformed: ${name} was not a valid JSON payload.`,
-                            code: ReactKitErrorCode$1.InvalidParameter,
-                            status: 422,
-                        });
-                    }
-                }
-            }
-            else if (type === ParamType$1.String || type === ParamType$1.StringOptional) {
-                // String
-                // Handle case where value doesn't exist
-                if (value === undefined) {
-                    if (type === ParamType$1.StringOptional) {
-                        output[name] = undefined;
-                    }
-                    else {
-                        return handleError(res, {
-                            message: `Parameter ${name} is required, but it was not included.`,
-                            code: ReactKitErrorCode$1.MissingParameter,
-                            status: 422,
-                        });
-                    }
-                }
-                else {
-                    // Value exists
-                    // Leave as is
-                    output[name] = value;
-                }
-            }
-            else {
-                // No valid data type
-                return handleError(res, {
-                    message: `An internal error occurred: we could not determine the type of ${name}.`,
-                    code: ReactKitErrorCode$1.InvalidParameter,
-                    status: 422,
-                });
-            }
-        }
-        /*----------------------------------------*/
-        /* ------------- Launch Info ------------ */
-        /*----------------------------------------*/
-        // Get launch info
-        const { launched, launchInfo } = cacclGetLaunchInfo(req);
-        if (
-        // Not launched
-        (!launched || !launchInfo)
-            // Not skipping the session check
-            && !opts.skipSessionCheck) {
-            return handleError(res, {
-                message: 'Your session has expired. Please refresh the page and try again.',
-                code: ReactKitErrorCode$1.SessionExpired,
-                status: 401,
-            });
-        }
-        // Error if user info cannot be found
-        if (
-        // User information is incomplete
-        (!launchInfo
-            || !launchInfo.userId
-            || !launchInfo.userFirstName
-            || !launchInfo.userLastName
-            || (launchInfo.notInCourse
-                && !launchInfo.isAdmin)
-            || (!launchInfo.isTTM
-                && !launchInfo.isLearner
-                && !launchInfo.isAdmin))
-            // Not skipping the session check
-            && !opts.skipSessionCheck) {
-            return handleError(res, {
-                message: 'Your session was invalid. Please refresh the page and try again.',
-                code: ReactKitErrorCode$1.SessionExpired,
-                status: 401,
-            });
-        }
-        // Add launch info to output
-        output.userId = (launchInfo
-            ? launchInfo.userId
-            : ((_b = output.userId) !== null && _b !== void 0 ? _b : undefined));
-        output.userFirstName = (launchInfo
-            ? launchInfo.userFirstName
-            : ((_c = output.userFirstName) !== null && _c !== void 0 ? _c : undefined));
-        output.userLastName = (launchInfo
-            ? launchInfo.userLastName
-            : ((_d = output.userLastName) !== null && _d !== void 0 ? _d : undefined));
-        output.userEmail = (launchInfo
-            ? launchInfo.userEmail
-            : ((_e = output.userEmail) !== null && _e !== void 0 ? _e : undefined));
-        output.userAvatarURL = (launchInfo
-            ? ((_f = launchInfo.userImage) !== null && _f !== void 0 ? _f : 'http://www.gravatar.com/avatar/?d=identicon')
-            : ((_g = output.userAvatarURL) !== null && _g !== void 0 ? _g : undefined));
-        output.isLearner = (launchInfo
-            ? !!launchInfo.isLearner
-            : ((_h = output.isLearner) !== null && _h !== void 0 ? _h : undefined));
-        output.isTTM = (launchInfo
-            ? !!launchInfo.isTTM
-            : ((_j = output.isTTM) !== null && _j !== void 0 ? _j : undefined));
-        output.isAdmin = (launchInfo
-            ? !!launchInfo.isAdmin
-            : ((_k = output.isAdmin) !== null && _k !== void 0 ? _k : undefined));
-        output.courseId = (launchInfo
-            ? ((_l = output.courseId) !== null && _l !== void 0 ? _l : launchInfo.courseId)
-            : ((_m = output.courseId) !== null && _m !== void 0 ? _m : undefined));
-        output.courseName = (launchInfo
-            ? launchInfo.contextLabel
-            : ((_o = output.courseName) !== null && _o !== void 0 ? _o : undefined));
-        // Add other session variables
-        Object.keys(req.session).forEach((propName) => {
-            // Skip if prop already in output
-            if (output[propName] !== undefined) {
-                return;
-            }
-            // Add to output
-            const value = req.session[propName];
-            if (typeof value === 'string'
-                || typeof value === 'boolean'
-                || typeof value === 'number') {
-                output[propName] = value;
-            }
-        });
-        /*----------------------------------------*/
-        /* ----- Require Course Consistency ----- */
-        /*----------------------------------------*/
-        // Make sure the user actually launched from the appropriate course
-        if (output.courseId
-            && launchInfo
-            && launchInfo.courseId
-            && output.courseId !== launchInfo.courseId
-            && !output.isTTM
-            && !output.isAdmin) {
-            // Course of interest is not the launch course
-            return handleError(res, {
-                message: 'You switched sessions by opening this app in another tab. Please refresh the page and try again.',
-                code: ReactKitErrorCode$1.WrongCourse,
-                status: 401,
-            });
-        }
-        /*----------------------------------------*/
-        /*       Require Proper Permissions       */
-        /*----------------------------------------*/
-        // Add TTM endpoint security
-        if (
-        // This is a TTM endpoint
-        req.path.startsWith('/api/ttm')
-            // User is not a TTM
-            && (
-            // User is not a TTM
-            !output.isTTM
-                // User is not an admin
-                && !output.isAdmin)) {
-            // User does not have access
-            return handleError(res, {
-                message: 'This action is only allowed if you are a teaching team member for the course. Please go back to Canvas, log in as a teaching team member, and try again.',
-                code: ReactKitErrorCode$1.NotTTM,
-                status: 401,
-            });
-        }
-        // Add Admin endpoint security
-        if (
-        // This is an admin endpoint
-        req.path.startsWith('/api/admin')
-            // User is not an admin
-            && !output.isAdmin) {
-            // User does not have access
-            return handleError(res, {
-                message: 'This action is only allowed if you are a Canvas admin. Please go back to Canvas, log in as an admin, and try again.',
-                code: ReactKitErrorCode$1.NotAdmin,
-                status: 401,
-            });
-        }
-        /*----------------------------------------*/
-        /* ------------- Log Handler ------------ */
-        /*----------------------------------------*/
-        // Create a log handler function
-        /**
-         * Log an event on the server
-         * @author Gabe Abrams
-         */
-        const logServerEvent = (logOpts) => __awaiter(void 0, void 0, void 0, function* () {
-            var _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1;
-            // NOTE: internally, we slip through an opts.overrideAsClientEvent boolean
-            // that indicates that this is actually a client event, but we don't
-            // include that in the LogFunction type because this is internal and
-            // hidden from users
-            try {
-                // Parse user agent
-                const { browser, device, } = parseUserAgent(req.headers['user-agent']);
-                // Get time info in ET
-                const { timestamp, year, month, day, hour, minute, } = getTimeInfoInET();
-                // Main log info
-                const mainLogInfo = {
-                    id: `${launchInfo ? launchInfo.userId : 'unknown'}-${Date.now()}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100000)}`,
-                    userFirstName: (launchInfo ? launchInfo.userFirstName : 'unknown'),
-                    userLastName: (launchInfo ? launchInfo.userLastName : 'unknown'),
-                    userEmail: (launchInfo ? launchInfo.userEmail : 'unknown'),
-                    userId: (launchInfo ? launchInfo.userId : 'unknown'),
-                    isLearner: (launchInfo && !!launchInfo.isLearner),
-                    isAdmin: (launchInfo && !!launchInfo.isAdmin),
-                    isTTM: (launchInfo && !!launchInfo.isTTM),
-                    courseId: (launchInfo ? launchInfo.courseId : 'unknown'),
-                    courseName: (launchInfo ? launchInfo.contextLabel : 'unknown'),
-                    browser,
-                    device,
-                    year,
-                    month,
-                    day,
-                    hour,
-                    minute,
-                    timestamp,
-                    context: (typeof logOpts.context === 'string'
-                        ? logOpts.context
-                        : ((_q = ((_p = logOpts.context) !== null && _p !== void 0 ? _p : {})._) !== null && _q !== void 0 ? _q : LogBuiltInMetadata.Context.Uncategorized)),
-                    subcontext: ((_r = logOpts.subcontext) !== null && _r !== void 0 ? _r : LogBuiltInMetadata.Context.Uncategorized),
-                    tags: ((_s = logOpts.tags) !== null && _s !== void 0 ? _s : []),
-                    level: ((_t = logOpts.level) !== null && _t !== void 0 ? _t : LogLevel$1.Info),
-                    metadata: ((_u = logOpts.metadata) !== null && _u !== void 0 ? _u : {}),
-                };
-                // Type-specific info
-                const typeSpecificInfo = (('error' in opts && opts.error)
-                    ? {
-                        type: LogType$1.Error,
-                        errorMessage: (_v = logOpts.error.message) !== null && _v !== void 0 ? _v : 'Unknown message',
-                        errorCode: (_w = logOpts.error.code) !== null && _w !== void 0 ? _w : ReactKitErrorCode$1.NoCode,
-                        errorStack: (_x = logOpts.error.stack) !== null && _x !== void 0 ? _x : 'No stack',
-                    }
-                    : {
-                        type: LogType$1.Action,
-                        target: ((_y = logOpts.target) !== null && _y !== void 0 ? _y : LogBuiltInMetadata.Target.NoTarget),
-                        action: ((_z = logOpts.action) !== null && _z !== void 0 ? _z : LogAction$1.Unknown),
-                    });
-                // Source-specific info
-                const sourceSpecificInfo = (logOpts.overrideAsClientEvent
-                    ? {
-                        source: LogSource$1.Client,
-                    }
-                    : {
-                        source: LogSource$1.Server,
-                        routePath: req.path,
-                        routeTemplate: req.route.path,
-                    });
-                // Build log event
-                const log = Object.assign(Object.assign(Object.assign({}, mainLogInfo), typeSpecificInfo), sourceSpecificInfo);
-                // Either print to console or save to db
-                const logCollection = internalGetLogCollection();
-                if (logCollection) {
-                    // Store to the log collection
-                    yield logCollection.insert(log);
-                }
-                else if (log.type === LogType$1.Error) {
-                    // Print to console
-                    // eslint-disable-next-line no-console
-                    console.error('dce-reactkit error log:', log);
-                }
-                else {
-                    // eslint-disable-next-line no-console
-                    console.log('dce-reactkit action log:', log);
-                }
-                // Return log entry
-                return log;
-            }
-            catch (err) {
-                // Print because we cannot store the error
-                // eslint-disable-next-line no-console
-                console.error('Could not log the following:', logOpts, 'due to this error:', ((_0 = err) !== null && _0 !== void 0 ? _0 : {}).message, ((_1 = err) !== null && _1 !== void 0 ? _1 : {}).stack);
-                // Create a dummy log to return
-                const dummyMainInfo = {
-                    id: '-1',
-                    userFirstName: 'Unknown',
-                    userLastName: 'Unknown',
-                    userEmail: 'unknown@harvard.edu',
-                    userId: 1,
-                    isLearner: false,
-                    isAdmin: false,
-                    isTTM: false,
-                    courseId: 1,
-                    courseName: 'Unknown',
-                    browser: {
-                        name: 'Unknown',
-                        version: 'Unknown',
-                    },
-                    device: {
-                        isMobile: false,
-                        os: 'Unknown',
-                    },
-                    year: 1,
-                    month: 1,
-                    day: 1,
-                    hour: 1,
-                    minute: 1,
-                    timestamp: Date.now(),
-                    tags: [],
-                    level: LogLevel$1.Warn,
-                    metadata: {},
-                    context: LogBuiltInMetadata.Context.Uncategorized,
-                    subcontext: LogBuiltInMetadata.Context.Uncategorized,
-                };
-                const dummyTypeSpecificInfo = {
-                    type: LogType$1.Error,
-                    errorMessage: 'Unknown',
-                    errorCode: 'Unknown',
-                    errorStack: 'No Stack',
-                };
-                const dummySourceSpecificInfo = {
-                    source: LogSource$1.Server,
-                    routePath: req.path,
-                    routeTemplate: req.route.path,
-                };
-                const log = Object.assign(Object.assign(Object.assign({}, dummyMainInfo), dummyTypeSpecificInfo), dummySourceSpecificInfo);
-                return log;
-            }
-        });
-        /*------------------------------------------------------------------------*/
-        /*                              Call handler                              */
-        /*------------------------------------------------------------------------*/
-        // Keep track of whether a response was already sent
-        let responseSent = false;
-        /**
-         * Redirect the user to another path or url
-         * @author Gabe Abrams
-         * @param pathOrURL the path or url to redirect to
-         */
-        const redirect = (pathOrURL) => {
-            responseSent = true;
-            res.redirect(pathOrURL);
-        };
-        /**
-         * Send text to the client (with an optional status code)
-         * @author Gabe Abrams
-         * @param text the text to send to the client
-         * @parm [status=200] the http status code to send
-         */
-        const send = (text, status = 200) => {
-            responseSent = true;
-            res.status(status).send(text);
-        };
-        /**
-         * Render an error page
-         * @author Gabe Abrams
-         * @param renderOpts object containing all arguments
-         * @param [renderOpts.title=An Error Occurred] title of the error box
-         * @param [renderOpts.description=An unknown server error occurred. Please contact support.]
-         *   a human-readable description of the error
-         * @param [renderOpts.code=ReactKitErrorCode.NoCode] error code to show
-         * @param [renderOpts.pageTitle=renderOpts.title] title of the page/tab if it differs from
-         *   the title of the error
-         * @param [renderOpts.status=500] http status code
-         */
-        const renderErrorPage = (renderOpts = {}) => {
-            var _a, _b, _c;
-            const html = genErrorPage(renderOpts);
-            send(html, (_a = renderOpts.status) !== null && _a !== void 0 ? _a : 500);
-            // Log server-side error if not a session expired error or 404
-            if (renderOpts.status && renderOpts.status === 404) {
-                return;
-            }
-            if ((_b = renderOpts.title) === null || _b === void 0 ? void 0 : _b.toLowerCase().includes('session expired')) {
-                return;
-            }
-            logServerEvent({
-                context: LogBuiltInMetadata.Context.ServerRenderedErrorPage,
-                error: {
-                    message: `${renderOpts.title}: ${renderOpts.description}`,
-                    code: renderOpts.code,
-                },
-                metadata: {
-                    title: renderOpts.title,
-                    description: renderOpts.description,
-                    code: renderOpts.code,
-                    pageTitle: renderOpts.pageTitle,
-                    status: (_c = renderOpts.status) !== null && _c !== void 0 ? _c : 500,
-                },
-            });
-        };
-        /**
-         * Render an info page
-         * @author Gabe Abrams
-         * @param renderOpts object containing all arguments
-         * @param renderOpts.title title of the info box
-         * @param renderOpts.body a human-readable text body for the info alert
-         */
-        const renderInfoPage = (renderOpts) => {
-            const html = genInfoPage(renderOpts);
-            send(html, 200);
-        };
-        /**
-         * Render custom HTML
-         * @author Gabe Abrams
-         * @param htmlOpts object containing all arguments
-         * @param htmlOpts.html the HTML to send to the client
-         * @param [ejsOpts.status=200] the http status code to send
-         */
-        const renderCustomHTML = (htmlOpts) => {
-            var _a;
-            send(htmlOpts.html, (_a = htmlOpts.status) !== null && _a !== void 0 ? _a : 200);
-        };
-        // Call the handler
-        try {
-            const results = yield opts.handler({
-                params: output,
-                req,
-                send,
-                next: () => {
-                    responseSent = true;
-                    next();
-                },
-                redirect,
-                renderErrorPage,
-                renderInfoPage,
-                renderCustomHTML,
-                logServerEvent,
-            });
-            // Send results to client (only if next wasn't called)
-            if (!responseSent) {
-                return handleSuccess(res, results !== null && results !== void 0 ? results : undefined);
-            }
-        }
-        catch (err) {
-            // Prefix error message if needed
-            if (opts.unhandledErrorMessagePrefix
-                && err instanceof Error
-                && err.message
-                && err.name !== 'ErrorWithCode') {
-                err.message = `${opts.unhandledErrorMessagePrefix.trim()} ${err.message.trim()}`;
-            }
-            // Send error to client (only if next wasn't called)
-            if (!responseSent) {
-                handleError(res, err);
-                // Log server-side error
-                logServerEvent({
-                    context: LogBuiltInMetadata.Context.ServerEndpointError,
-                    error: err,
-                });
-                return;
-            }
-            // Log error that was not responded with
-            // eslint-disable-next-line no-console
-            console.log('Error occurred but could not be sent to client because a response was already sent:', err);
-        }
-    });
-};
-
-/**
  * Stub a server endpoint response
  * @author Gabe Abrams
  * @param opts object containing all arguments
@@ -15544,29 +15508,6 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
     return results;
 });
 
-/**
- * Initialize a log collection given the dce-mango Collection class
- * @author Gabe Abrams
- * @param Collection the Collection class from dce-mango
- * @returns initialized logCollection
- */
-const initLogCollection = (Collection) => {
-    return new Collection('Log', {
-        uniqueIndexKey: 'id',
-        indexKeys: [
-            'courseId',
-            'context',
-            'subcontext',
-            'tags',
-            'year',
-            'month',
-            'day',
-            'hour',
-            'type',
-        ],
-    });
-};
-
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Cache ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -15705,66 +15646,6 @@ const getLocalTimeInfo = (dateOrTimestamp) => {
         isPM,
         minute,
     };
-};
-
-/**
- * Add all routes for the DBEditor
- * @author Yuen Ler Chow
- * @param opts object containing all arguments
- * @param opts.app express app to add routes too
- * @param opts.collectionName the name of the collection
- * @param opts.adminsOnly true if the endpoint is for admins only
- * @param opts.collection dce-mango db collection
- */
-const addDBEditorEndpoints = (opts) => {
-    const { app, collectionName, adminsOnly, collection, } = opts;
-    // Generate the endpoint path
-    const endpointPath = generateEndpointPath(collectionName, adminsOnly);
-    /**
-     * List all items in the collection
-     * @author Yuen Ler Chow
-     * @returns {any[]} the list of items in the collection
-     */
-    app.get(endpointPath, genRouteHandler({
-        paramTypes: {
-            filterQuery: ParamType$1.JSONOptional,
-        },
-        handler: ({ params }) => __awaiter(void 0, void 0, void 0, function* () {
-            var _a;
-            const filterQuery = (_a = params.filterQuery) !== null && _a !== void 0 ? _a : {};
-            const categories = yield collection.find(filterQuery);
-            return categories;
-        }),
-    }));
-    /**
-     * Create a new item in the collection
-     * @author Yuen Ler Chow
-     * @param {any} item the item to create
-     */
-    app.post(endpointPath, genRouteHandler({
-        paramTypes: {
-            item: ParamType$1.JSON,
-        },
-        handler: ({ params, }) => __awaiter(void 0, void 0, void 0, function* () {
-            // Destructure params
-            const { item, } = params;
-            yield collection.insert(item);
-        }),
-    }));
-    /**
-     * Remove an item from the collection by id
-     * @author Yuen Ler Chow
-     */
-    app.delete(`${endpointPath}/:id`, genRouteHandler({
-        paramTypes: {
-            id: ParamType$1.String,
-        },
-        handler: ({ params, }) => __awaiter(void 0, void 0, void 0, function* () {
-            // Destructure params
-            const { id, } = params;
-            yield collection.delete({ id });
-        }),
-    }));
 };
 
 /**
@@ -16308,182 +16189,6 @@ const shuffleArray = (arr) => {
     return newArr;
 };
 
-/**
- * Sends and retries an http request
- * @author Gabriel Abrams
- * @param opts object containing all arguments
- * @param opts.path path to send request to
- * @param [opts.host] host to send request to
- * @param [opts.method=GET] http method to use
- * @param [opts.params] body/data to include in the request
- * @param [opts.headers] headers to include in the request
- * @param [opts.sendCrossDomainCredentials=true if in development mode] if true,
- *   send cross-domain credentials even if not in dev mode
- * @param [opts.responseType=JSON] expected response type
- * @returns { body, status, headers } on success
- */
-const sendServerToServerRequest = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    // Process method
-    const method = (opts.method || 'GET');
-    // Encode objects within params
-    let params;
-    if (opts.params) {
-        params = {};
-        Object.entries(opts.params).forEach(([key, val]) => {
-            if (typeof val === 'object' && !Array.isArray(val)) {
-                params[key] = JSON.stringify(val);
-            }
-            else {
-                params[key] = val;
-            }
-        });
-    }
-    // Stringify parameters
-    const stringifiedParams = qs__default["default"].stringify(params || {}, {
-        encodeValuesOnly: true,
-        arrayFormat: 'brackets',
-    });
-    // Create url (include query if GET)
-    const query = (method === 'GET' ? `?${stringifiedParams}` : '');
-    let url;
-    if (!opts.host) {
-        // No host included at all. Just send to a path
-        url = `${opts.path}${query}`;
-    }
-    else {
-        url = `https://${opts.host}${opts.path}${query}`;
-    }
-    // Update headers
-    const headers = opts.headers || {};
-    let data = null;
-    if (!headers['Content-Type']) {
-        // Form encoded
-        headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        // Add data if applicable
-        data = (method !== 'GET' ? stringifiedParams : null);
-    }
-    else {
-        // JSON encode
-        data = params;
-    }
-    // Encode data
-    let encodedData;
-    if (data) {
-        if (headers['Content-Type'] === 'application/x-www-form-urlencoded') {
-            encodedData = new URLSearchParams(params);
-        }
-        else {
-            encodedData = JSON.stringify(data);
-        }
-    }
-    // Send request
-    try {
-        const response = yield fetch(url, {
-            method,
-            mode: 'cors',
-            headers: headers !== null && headers !== void 0 ? headers : {},
-            body: ((method !== 'GET' && encodedData)
-                ? encodedData
-                : undefined),
-            redirect: 'follow',
-        });
-        // Get headers map
-        const responseHeaders = {};
-        response.headers.forEach((value, key) => {
-            responseHeaders[key] = value;
-        });
-        // Process response based on responseType
-        try {
-            // Parse response
-            let responseBody;
-            if (opts.responseType
-                && opts.responseType === 'Text') {
-                // Response type is text
-                responseBody = yield response.text();
-            }
-            else {
-                // Response type is JSON
-                responseBody = yield response.json();
-            }
-            // Return response
-            return {
-                body: responseBody,
-                status: response.status,
-                headers: responseHeaders,
-            };
-        }
-        catch (err) {
-            throw new ErrorWithCode(`Failed to parse response as ${opts.responseType}: ${err === null || err === void 0 ? void 0 : err.message}`, ReactKitErrorCode$1.ResponseParseError);
-        }
-    }
-    catch (err) {
-        // Self-signed certificate error:
-        if ((_a = err === null || err === void 0 ? void 0 : err.message) === null || _a === void 0 ? void 0 : _a.includes('self signed certificate')) {
-            throw new ErrorWithCode('We refused to send a request because the receiver has self-signed certificates.', ReactKitErrorCode$1.SelfSigned);
-        }
-        // No tries left
-        throw new ErrorWithCode(`We encountered an error when trying to send a network request. If this issue persists, contact an admin. Error: ${err === null || err === void 0 ? void 0 : err.message}`, ReactKitErrorCode$1.NotConnected);
-    }
-});
-
-/**
- * Send a server-to-server request from this sever to another server that uses
- *   dce-reactkit [for server only]
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.host - the host of the other server
- * @param opts.path - the path of the other server's endpoint
- * @param [opts.method=GET] - the method of the endpoint
- * @param [opts.params] - query/body parameters to include
- * @param [opts.headers] - headers to include
- * @returns response from server
- */
-const visitEndpointOnAnotherServer = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    // Remove properties with undefined values
-    let params;
-    if (opts.params) {
-        params = Object.fromEntries(Object
-            .entries(opts.params)
-            .filter(([, value]) => {
-            return value !== undefined;
-        }));
-    }
-    // Automatically JSONify arrays and objects
-    if (params) {
-        params = Object.fromEntries(Object
-            .entries(params)
-            .map(([key, value]) => {
-            if (Array.isArray(value) || typeof value === 'object') {
-                return [key, JSON.stringify(value)];
-            }
-            return [key, value];
-        }));
-    }
-    // Send the request
-    const response = yield sendServerToServerRequest({
-        host: opts.host,
-        path: opts.path,
-        method: (_a = opts.method) !== null && _a !== void 0 ? _a : 'GET',
-        params,
-    });
-    // Check for failure
-    if (!response || !response.body) {
-        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
-    }
-    if (!response.body.success) {
-        // Other errors
-        throw new ErrorWithCode((response.body.message
-            || 'An unknown error occurred. Please contact an admin.'), (response.body.code
-            || ReactKitErrorCode$1.NoCode));
-    }
-    // Success! Extract the body
-    const { body } = response.body;
-    // Return
-    return body;
-});
-
 const punctuationRegex = /[!@#$%^&*(),.?\/;:'"\-\[\]]/g;
 /**
  * Get number of words in string
@@ -16540,9 +16245,13 @@ exports.ErrorWithCode = ErrorWithCode;
 exports.HOUR_IN_MS = HOUR_IN_MS;
 exports.IntelliTable = IntelliTable;
 exports.ItemPicker = ItemPicker;
+exports.LOG_REVIEW_ROUTE_PATH_PREFIX = LOG_REVIEW_ROUTE_PATH_PREFIX;
+exports.LOG_REVIEW_STATUS_ROUTE = LOG_REVIEW_STATUS_ROUTE;
+exports.LOG_ROUTE_PATH = LOG_ROUTE_PATH;
 exports.LoadingSpinner = LoadingSpinner;
 exports.LogAction = LogAction$1;
 exports.LogBuiltInMetadata = LogBuiltInMetadata;
+exports.LogLevel = LogLevel$1;
 exports.LogReviewer = LogReviewer;
 exports.LogSource = LogSource$1;
 exports.LogType = LogType$1;
@@ -16564,7 +16273,6 @@ exports.ToggleSwitch = ToggleSwitch;
 exports.Tooltip = Tooltip;
 exports.Variant = Variant$1;
 exports.abbreviate = abbreviate;
-exports.addDBEditorEndpoints = addDBEditorEndpoints;
 exports.addFatalErrorHandler = addFatalErrorHandler;
 exports.alert = alert;
 exports.avg = avg;
@@ -16582,7 +16290,6 @@ exports.forEachAsync = forEachAsync;
 exports.forceNumIntoBounds = forceNumIntoBounds;
 exports.genCSV = genCSV;
 exports.genCommaList = genCommaList;
-exports.genRouteHandler = genRouteHandler;
 exports.getHumanReadableDate = getHumanReadableDate;
 exports.getLocalTimeInfo = getLocalTimeInfo;
 exports.getMonthName = getMonthName;
@@ -16590,12 +16297,8 @@ exports.getOrdinal = getOrdinal;
 exports.getPartOfDay = getPartOfDay;
 exports.getTimeInfoInET = getTimeInfoInET;
 exports.getWordCount = getWordCount;
-exports.handleError = handleError;
-exports.handleSuccess = handleSuccess;
 exports.idify = idify;
 exports.initClient = initClient;
-exports.initLogCollection = initLogCollection;
-exports.initServer = initServer;
 exports.isMobileOrTablet = isMobileOrTablet;
 exports.leaveToURL = leaveToURL;
 exports.logClientEvent = logClientEvent;
@@ -16620,7 +16323,6 @@ exports.useForceRender = useForceRender;
 exports.validateEmail = validateEmail;
 exports.validatePhoneNumber = validatePhoneNumber;
 exports.validateString = validateString;
-exports.visitEndpointOnAnotherServer = visitEndpointOnAnotherServer;
 exports.visitServerEndpoint = visitServerEndpoint;
 exports.waitMs = waitMs;
 //# sourceMappingURL=index.js.map

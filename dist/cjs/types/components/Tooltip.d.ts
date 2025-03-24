@@ -5,7 +5,7 @@
 import React from 'react';
 type Props = {
     text: string;
-    children: JSX.Element;
+    children: any;
 };
 declare const Tooltip: React.FC<Props>;
 export default Tooltip;

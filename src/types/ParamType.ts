@@ -3,16 +3,16 @@
  * @author Gabe Abrams
  */
 enum ParamType {
-  Boolean = 'boolean', // Boolean
-  BooleanOptional = 'boolean-optional', // Optional boolean
-  Float = 'float', // Float Number
-  FloatOptional = 'float-optional', // Optional Float Number
-  Int = 'int', // Integer Number
-  IntOptional = 'int-optional', // Optional Integer Number
-  JSON = 'json', // JSONified object
-  JSONOptional = 'json-optional', // Optional JSONified object
-  String = 'string', // String
-  StringOptional = 'string-optional', // Optional string
+  Boolean = 'Boolean', // Boolean
+  BooleanOptional = 'BooleanOptional', // Optional boolean
+  Float = 'Float', // Float Number
+  FloatOptional = 'FloatOptional', // Optional Float Number
+  Int = 'Int', // Integer Number
+  IntOptional = 'IntOptional', // Optional Integer Number
+  JSON = 'JSON', // JSONified object
+  JSONOptional = 'JSONOptional', // Optional JSONified object
+  String = 'String', // String
+  StringOptional = 'StringOptional', // Optional string
 }
 
 export default ParamType;

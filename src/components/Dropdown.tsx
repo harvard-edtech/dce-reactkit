@@ -16,7 +16,7 @@ import Variant from '../types/Variant';
 import DropdownItemType from '../types/DropdownItemType';
 
 // Check dark mode
-import { isDarkModeOn } from '../client/initClient';
+import { isDarkModeOn } from '../helpers/initClient';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */

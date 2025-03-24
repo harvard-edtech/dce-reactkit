@@ -3,9 +3,11 @@
 // eslint-disable-next-line import/no-cycle
 import { showFatalError } from '../components/AppWrapper';
 
+// Import other helpers
+import waitMs from './waitMs';
+
 // Import shared types
 import ErrorWithCode from '../errors/ErrorWithCode';
-import waitMs from '../helpers/waitMs';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 /*----------------------------------------*/
@@ -164,10 +166,12 @@ const initClient = (
     storedSendRequest = async () => {
       throw new Error('Cannot send requests because there is no server');
     };
+    noServer = true;
   } else {
     // Store values
     storedSendRequest = opts.sendRequest;
     sessionExpiredMessage = opts.sessionExpiredMessage;
+    noServer = false;
   }
 
   // Handle universal parts

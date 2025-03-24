@@ -32,10 +32,12 @@ import ErrorWithCode from '../errors/ErrorWithCode';
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
 import logClientEvent from '../helpers/logClientEvent';
+// TODO: fix dependency cycle
+// eslint-disable-next-line import/no-cycle
 import {
   getSessionExpiredMessage,
   isDarkModeOn,
-} from '../client/initClient';
+} from '../helpers/initClient';
 import waitMs from '../helpers/waitMs';
 
 // Import constants

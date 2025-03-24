@@ -7,7 +7,7 @@ import ReactKitErrorCode from '../types/ReactKitErrorCode';
 // Import helpers
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
-import { getSendRequest } from '../client/initClient';
+import { getSendRequest } from './initClient';
 import { showSessionExpiredMessage } from '../components/AppWrapper';
 
 /*------------------------------------------------------------------------*/
