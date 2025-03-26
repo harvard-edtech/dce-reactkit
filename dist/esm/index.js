@@ -3,6 +3,7 @@ import React__default, { useState, useRef, useEffect, useReducer, forwardRef, us
 import { faExclamationTriangle, faCircle, faHourglassEnd, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faArrowLeft, faArrowRight, faCalendar, faTag, faHammer, faList, faTimes, faSearch, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
+import clone from 'nanoclone';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -4094,58 +4095,69 @@ const IntelliTable = (props) => {
             } }, table)));
 };
 
+// Import React
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 const Pagination = ({ currentPage, numPages, loading = false, onPageChanged, }) => {
-    // computes an array of page numbers to display.
-    const getPageNumbers = () => {
-        const pages = [];
-        const delta = 2; // how many pages to show on either side of current
-        let start = Math.max(1, currentPage - delta);
-        let end = Math.min(numPages, currentPage + delta);
-        // If we are too close to the beginning or end, shift the window.
-        if (currentPage - delta < 1) {
-            end = Math.min(numPages, end + (1 - (currentPage - delta)));
-        }
-        if (currentPage + delta > numPages) {
-            start = Math.max(1, start - ((currentPage + delta) - numPages));
-        }
-        for (let i = start; i <= end; i++) {
-            pages.push(i);
-        }
-        return pages;
-    };
-    const pages = getPageNumbers();
-    return (React__default.createElement("nav", { "aria-label": "Page navigation", className: "mt-3" },
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    // Compute pages to display
+    const pages = [];
+    const delta = 2; // how many pages to show on either side of current
+    let start = Math.max(1, currentPage - delta);
+    let end = Math.min(numPages, currentPage + delta);
+    // If we are too close to the beginning or end, shift the window.
+    if (currentPage - delta < 1) {
+        end = Math.min(numPages, end + (1 - (currentPage - delta)));
+    }
+    if (currentPage + delta > numPages) {
+        start = Math.max(1, start - ((currentPage + delta) - numPages));
+    }
+    for (let i = start; i <= end; i++) {
+        pages.push(i);
+    }
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    return (React__default.createElement("nav", { "aria-label": "Page navigation for logs", className: "mt-3" },
         React__default.createElement("ul", { className: "pagination justify-content-center" },
             React__default.createElement("li", { className: `page-item ${(currentPage <= 1 || loading) ? 'disabled' : ''}` },
-                React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(currentPage - 1); }, disabled: currentPage <= 1 || loading },
+                React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(currentPage - 1); }, disabled: currentPage <= 1 || loading, "aria-label": "Go to previous page" },
                     React__default.createElement(FontAwesomeIcon, { icon: faArrowLeft }),
                     ' ',
                     "Prev")),
             currentPage > 3
                 && pages[0] !== 1
                 && (React__default.createElement("li", { className: "page-item" },
-                    React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(1); }, disabled: loading }, "1"))),
+                    React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(1); }, disabled: loading, "aria-label": "Go to page 1" }, "1"))),
             currentPage > 4 && (React__default.createElement("li", { className: "page-item disabled" },
                 React__default.createElement("span", { className: "page-link" }, "..."))),
             pages.map((pageNum) => {
                 return (React__default.createElement("li", { key: pageNum, className: `page-item ${pageNum === currentPage ? 'active' : ''}` },
-                    React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(pageNum); }, disabled: loading }, pageNum)));
+                    React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(pageNum); }, disabled: loading, "aria-label": `Go to page ${pageNum}` }, pageNum)));
             }),
             currentPage < numPages - 3 && (React__default.createElement("li", { className: "page-item disabled" },
                 React__default.createElement("span", { className: "page-link" }, "..."))),
             currentPage < numPages - 2
                 && pages[pages.length - 1] !== numPages
                 && (React__default.createElement("li", { className: "page-item" },
-                    React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(numPages); }, disabled: loading }, numPages))),
+                    React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(numPages); }, disabled: loading, "aria-label": "Go to last page" }, numPages))),
             React__default.createElement("li", { className: `page-item ${(currentPage >= numPages || loading) ? 'disabled' : ''}` },
-                React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(currentPage + 1); }, disabled: currentPage >= numPages || loading },
+                React__default.createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(currentPage + 1); }, disabled: currentPage >= numPages || loading, "aria-label": "Go to next page" },
                     "Next",
                     ' ',
                     React__default.createElement(FontAwesomeIcon, { icon: faArrowRight }))))));
 };
+
+/**
+ * Deeply clones an object
+ * @author Yuen Ler Chow
+ * @param obj the object to clone
+ * @returns a deep clone of the object
+ */
+const cloneDeep = clone;
 
 /**
  * Log reviewer panel that allows users (must be approved admins) to
@@ -4538,10 +4550,10 @@ var ActionType$6;
 const reducer$7 = (state, action) => {
     switch (action.type) {
         case ActionType$6.StartLoading: {
-            return Object.assign(Object.assign({}, state), { loading: true, showSpinner: action.filtersChanged });
+            return Object.assign(Object.assign({}, state), { loading: true });
         }
         case ActionType$6.FinishLoading: {
-            return Object.assign(Object.assign({}, state), { loading: false, showSpinner: false, logs: action.logs });
+            return Object.assign(Object.assign({}, state), { loading: false, logs: action.logs });
         }
         case ActionType$6.ToggleFilterDrawer: {
             return Object.assign(Object.assign({}, state), { expandedFilterDrawer: (state.expandedFilterDrawer === action.filterDrawer
@@ -4698,7 +4710,6 @@ const LogReviewer = (props) => {
     // Initial state
     const initialState = {
         loading: true,
-        showSpinner: true,
         logs: [],
         expandedFilterDrawer: undefined,
         pendingDateFilterState: initDateFilterState,
@@ -4714,7 +4725,7 @@ const LogReviewer = (props) => {
     // Initialize state
     const [state, dispatch] = useReducer(reducer$7, initialState);
     // Destructure common state
-    const { loading, showSpinner, logs, expandedFilterDrawer, pendingDateFilterState, pendingContextFilterState, pendingTagFilterState, pendingActionErrorFilterState, pendingAdvancedFilterState, pageNumber, numPages, userMadeFilterChange, } = state;
+    const { loading, logs, expandedFilterDrawer, pendingDateFilterState, pendingContextFilterState, pendingTagFilterState, pendingActionErrorFilterState, pendingAdvancedFilterState, pageNumber, numPages, userMadeFilterChange, } = state;
     /* -------------- Refs -------------- */
     // Initialize refs
     const activeFiltersRef = useRef({
@@ -4729,12 +4740,16 @@ const LogReviewer = (props) => {
     /*------------------------------------------------------------------------*/
     /**
      * Fetch logs from the server based on current filters
+     * @author Yuen Ler Chow
+     * @param opts object containing all arguments
+     * @param opts.filters the filters to apply
+     * @param opts.pageNum the page number to fetch
+     * @param opts.filtersChanged if true, the filters have changed
      */
     const fetchLogs = (opts) => __awaiter(void 0, void 0, void 0, function* () {
         const { filters, pageNum, filtersChanged, } = opts;
         dispatch({
             type: ActionType$6.StartLoading,
-            filtersChanged,
         });
         try {
             // Send filters to the server
@@ -4778,7 +4793,10 @@ const LogReviewer = (props) => {
     /*------------------------------------------------------------------------*/
     /* ------------------------- Lifecycle Functions ------------------------ */
     /*------------------------------------------------------------------------*/
-    // Fetch logs on mount
+    /**
+     * Fetch logs on mount
+     * @author Yuen Ler Chow
+     */
     useEffect(() => {
         fetchLogs({
             filters: {
@@ -4863,13 +4881,15 @@ const LogReviewer = (props) => {
                 "Advanced"),
             React__default.createElement("button", { type: "button", id: "LogReviewer-reset-filters-button", className: "btn btn-light", "aria-label": "reset filters", onClick: () => {
                     // Save active filters
-                    activeFiltersRef.current = {
-                        dateFilterState: JSON.parse(JSON.stringify(initDateFilterState)),
-                        contextFilterState: JSON.parse(JSON.stringify(initContextFilterState)),
-                        tagFilterState: JSON.parse(JSON.stringify(initTagFilterState)),
-                        actionErrorFilterState: JSON.parse(JSON.stringify(initActionErrorFilterState)),
-                        advancedFilterState: JSON.parse(JSON.stringify(initAdvancedFilterState)),
-                    };
+                    // Deep clone the initial filter states to avoid any reference issues
+                    // if the filter states are modified later
+                    activeFiltersRef.current = cloneDeep({
+                        dateFilterState: initDateFilterState,
+                        contextFilterState: initContextFilterState,
+                        tagFilterState: initTagFilterState,
+                        actionErrorFilterState: initActionErrorFilterState,
+                        advancedFilterState: initAdvancedFilterState,
+                    });
                     fetchLogs({
                         filters: {
                             dateFilterState: initDateFilterState,
@@ -4905,13 +4925,15 @@ const LogReviewer = (props) => {
                         type: ActionType$6.ResetUserMadeFilterChange,
                     });
                     // Save active filters
-                    activeFiltersRef.current = {
-                        dateFilterState: JSON.parse(JSON.stringify(pendingDateFilterState)),
-                        contextFilterState: JSON.parse(JSON.stringify(pendingContextFilterState)),
-                        tagFilterState: JSON.parse(JSON.stringify(pendingTagFilterState)),
-                        actionErrorFilterState: JSON.parse(JSON.stringify(pendingActionErrorFilterState)),
-                        advancedFilterState: JSON.parse(JSON.stringify(pendingAdvancedFilterState)),
-                    };
+                    // Deep clone the pending filter states to avoid any reference issues
+                    // if the filter states are modified later
+                    activeFiltersRef.current = cloneDeep({
+                        dateFilterState: pendingDateFilterState,
+                        contextFilterState: pendingContextFilterState,
+                        tagFilterState: pendingTagFilterState,
+                        actionErrorFilterState: pendingActionErrorFilterState,
+                        advancedFilterState: pendingAdvancedFilterState,
+                    });
                     fetchLogs({
                         filters: {
                             dateFilterState: pendingDateFilterState,
@@ -5306,15 +5328,15 @@ const LogReviewer = (props) => {
         filterDrawer && (React__default.createElement(Drawer, { customBackgroundColor: "#eee" }, filterDrawer))));
     // Body that will be filled with the contents of the panel
     const body = (React__default.createElement(React__default.Fragment, null,
-        showSpinner && (React__default.createElement("div", { className: "text-center p-5" },
+        loading && (React__default.createElement("div", { className: "text-center p-5" },
             React__default.createElement(LoadingSpinner, null))),
-        !showSpinner && (React__default.createElement("div", null, filters)),
-        !showSpinner && logs.length === 0 && (React__default.createElement("div", { className: "alert alert-warning text-center mt-2" },
+        !loading && (React__default.createElement("div", null, filters)),
+        !loading && logs.length === 0 && (React__default.createElement("div", { className: "alert alert-warning text-center mt-2" },
             React__default.createElement("h4", { className: "m-1" }, "No Logs to Show"),
             React__default.createElement("div", null, "Either your filters are too strict or no matching logs have been created yet."))),
-        React__default.createElement("div", { className: showSpinner || logs.length === 0 ? 'd-none' : undefined },
+        React__default.createElement("div", { className: loading || logs.length === 0 ? 'd-none' : undefined },
             React__default.createElement(IntelliTable, { title: "Matching Logs", csvName: `Logs from ${getHumanReadableDate()}`, id: "logs", data: logs, columns: columns })),
-        !showSpinner && logs.length > 0 && paginationControls));
+        !loading && logs.length > 0 && paginationControls));
     /* ---------- Wrap in Modal --------- */
     return (React__default.createElement("div", { className: "LogReviewer-outer-container" },
         React__default.createElement("style", null, style$2),
@@ -16065,5 +16087,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogLevel$1 as LogLevel, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogLevel$1 as LogLevel, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, cloneDeep, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map
