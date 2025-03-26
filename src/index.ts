@@ -93,6 +93,7 @@ import someAsync from './helpers/asyncArrayFunctions/someAsync';
 import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
 import getWordCount from './helpers/getWordCount';
+import cloneDeep from './helpers/cloneDeep';
 
 // Import types
 import ParamType from './types/ParamType';
@@ -209,6 +210,7 @@ export {
   capitalize,
   shuffleArray,
   getWordCount,
+  cloneDeep,
   // Client helpers
   initClient,
   visitServerEndpoint,
