@@ -1,4 +1,7 @@
+// Import React
 import React from 'react';
+
+// Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
@@ -28,31 +31,34 @@ const Pagination: React.FC<Props> = ({
   loading = false,
   onPageChanged,
 }) => {
-  // computes an array of page numbers to display.
-  const getPageNumbers = () => {
-    const pages: number[] = [];
-    const delta = 2; // how many pages to show on either side of current
-    let start = Math.max(1, currentPage - delta);
-    let end = Math.min(numPages, currentPage + delta);
+  /*------------------------------------------------------------------------*/
+  /* -------------------------------- Setup ------------------------------- */
+  /*------------------------------------------------------------------------*/
 
-    // If we are too close to the beginning or end, shift the window.
-    if (currentPage - delta < 1) {
-      end = Math.min(numPages, end + (1 - (currentPage - delta)));
-    }
-    if (currentPage + delta > numPages) {
-      start = Math.max(1, start - ((currentPage + delta) - numPages));
-    }
+  // Compute pages to display
+  const pages: number[] = [];
+  const delta = 2; // how many pages to show on either side of current
+  let start = Math.max(1, currentPage - delta);
+  let end = Math.min(numPages, currentPage + delta);
 
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
-  };
+  // If we are too close to the beginning or end, shift the window.
+  if (currentPage - delta < 1) {
+    end = Math.min(numPages, end + (1 - (currentPage - delta)));
+  }
+  if (currentPage + delta > numPages) {
+    start = Math.max(1, start - ((currentPage + delta) - numPages));
+  }
 
-  const pages = getPageNumbers();
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------------- Render ------------------------------- */
+  /*------------------------------------------------------------------------*/
 
   return (
-    <nav aria-label="Page navigation" className="mt-3">
+    <nav aria-label="Page navigation for logs" className="mt-3">
       <ul className="pagination justify-content-center">
         {/* Previous Button */}
         <li className={`page-item ${(currentPage <= 1 || loading) ? 'disabled' : ''}`}>
@@ -61,6 +67,7 @@ const Pagination: React.FC<Props> = ({
             className="page-link"
             onClick={() => { return onPageChanged(currentPage - 1); }}
             disabled={currentPage <= 1 || loading}
+            aria-label="Go to previous page"
           >
             <FontAwesomeIcon icon={faArrowLeft} />
             {' '}
@@ -78,6 +85,7 @@ const Pagination: React.FC<Props> = ({
               className="page-link"
               onClick={() => { return onPageChanged(1); }}
               disabled={loading}
+              aria-label="Go to page 1"
             >
               1
             </button>
@@ -100,6 +108,7 @@ const Pagination: React.FC<Props> = ({
                 className="page-link"
                 onClick={() => { return onPageChanged(pageNum); }}
                 disabled={loading}
+                aria-label={`Go to page ${pageNum}`}
               >
                 {pageNum}
               </button>
@@ -124,6 +133,7 @@ const Pagination: React.FC<Props> = ({
               className="page-link"
               onClick={() => { return onPageChanged(numPages); }}
               disabled={loading}
+              aria-label="Go to last page"
             >
               {numPages}
             </button>
@@ -137,6 +147,7 @@ const Pagination: React.FC<Props> = ({
             className="page-link"
             onClick={() => { return onPageChanged(currentPage + 1); }}
             disabled={currentPage >= numPages || loading}
+            aria-label="Go to next page"
           >
             Next
             {' '}

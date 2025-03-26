@@ -45,6 +45,7 @@ import ContextFilterState from '../types/LogReviewerFilterState/ContextFilterSta
 import TagFilterState from '../types/LogReviewerFilterState/TagFilterState';
 import ActionErrorFilterState from '../types/LogReviewerFilterState/ActionErrorFilterState';
 import AdvancedFilterState from '../types/LogReviewerFilterState/AdvancedFilterState';
+import Variant from '../types/Variant';
 
 // Import shared components
 import SimpleDateChooser from './SimpleDateChooser';
@@ -57,8 +58,8 @@ import TabBox from './TabBox';
 import RadioButton from './RadioButton';
 import ButtonInputGroup from './ButtonInputGroup';
 import IntelliTable from './IntelliTable';
-import Variant from '../types/Variant';
 import Pagination from './Pagination';
+import cloneDeep from '../helpers/cloneDeep';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
@@ -447,9 +448,6 @@ type State = {
   /* -------------- Logs -------------- */
   // True if currently loading new logs
   loading: boolean,
-  // True if loading spinner showing. We only show the
-  // spinner when filters change (not page number)
-  showSpinner: boolean,
   // Loaded logs
   logs: Log[],
   /* ------------- Filters ------------ */
@@ -577,7 +575,6 @@ type Action = (
   }
   | {
     type: ActionType.StartLoading,
-    filtersChanged: boolean,
   }
   | {
     // Action type
@@ -600,14 +597,12 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         loading: true,
-        showSpinner: action.filtersChanged,
       };
     }
     case ActionType.FinishLoading: {
       return {
         ...state,
         loading: false,
-        showSpinner: false,
         logs: action.logs,
       };
     }
@@ -834,7 +829,6 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Initial state
   const initialState: State = {
     loading: true,
-    showSpinner: true,
     logs: [],
     expandedFilterDrawer: undefined,
     pendingDateFilterState: initDateFilterState,
@@ -854,7 +848,6 @@ const LogReviewer: React.FC<Props> = (props) => {
   // Destructure common state
   const {
     loading,
-    showSpinner,
     logs,
     expandedFilterDrawer,
     pendingDateFilterState,
@@ -884,6 +877,11 @@ const LogReviewer: React.FC<Props> = (props) => {
 
   /**
    * Fetch logs from the server based on current filters
+   * @author Yuen Ler Chow
+   * @param opts object containing all arguments
+   * @param opts.filters the filters to apply
+   * @param opts.pageNum the page number to fetch
+   * @param opts.filtersChanged if true, the filters have changed
    */
   const fetchLogs = async (
     opts: {
@@ -900,7 +898,6 @@ const LogReviewer: React.FC<Props> = (props) => {
 
     dispatch({
       type: ActionType.StartLoading,
-      filtersChanged,
     });
 
     try {
@@ -951,7 +948,10 @@ const LogReviewer: React.FC<Props> = (props) => {
   /* ------------------------- Lifecycle Functions ------------------------ */
   /*------------------------------------------------------------------------*/
 
-  // Fetch logs on mount
+  /**
+   * Fetch logs on mount
+   * @author Yuen Ler Chow
+   */
   useEffect(() => {
     fetchLogs({
       filters: {
@@ -1112,23 +1112,15 @@ const LogReviewer: React.FC<Props> = (props) => {
           aria-label="reset filters"
           onClick={() => {
             // Save active filters
-            activeFiltersRef.current = {
-              dateFilterState: JSON.parse(
-                JSON.stringify(initDateFilterState),
-              ),
-              contextFilterState: JSON.parse(
-                JSON.stringify(initContextFilterState),
-              ),
-              tagFilterState: JSON.parse(
-                JSON.stringify(initTagFilterState),
-              ),
-              actionErrorFilterState: JSON.parse(
-                JSON.stringify(initActionErrorFilterState),
-              ),
-              advancedFilterState: JSON.parse(
-                JSON.stringify(initAdvancedFilterState),
-              ),
-            };
+            // Deep clone the initial filter states to avoid any reference issues
+            // if the filter states are modified later
+            activeFiltersRef.current = cloneDeep({
+              dateFilterState: initDateFilterState,
+              contextFilterState: initContextFilterState,
+              tagFilterState: initTagFilterState,
+              actionErrorFilterState: initActionErrorFilterState,
+              advancedFilterState: initAdvancedFilterState,
+            });
             fetchLogs(
               {
                 filters: {
@@ -1180,23 +1172,15 @@ const LogReviewer: React.FC<Props> = (props) => {
             });
 
             // Save active filters
-            activeFiltersRef.current = {
-              dateFilterState: JSON.parse(
-                JSON.stringify(pendingDateFilterState),
-              ),
-              contextFilterState: JSON.parse(
-                JSON.stringify(pendingContextFilterState),
-              ),
-              tagFilterState: JSON.parse(
-                JSON.stringify(pendingTagFilterState),
-              ),
-              actionErrorFilterState: JSON.parse(
-                JSON.stringify(pendingActionErrorFilterState),
-              ),
-              advancedFilterState: JSON.parse(
-                JSON.stringify(pendingAdvancedFilterState),
-              ),
-            };
+            // Deep clone the pending filter states to avoid any reference issues
+            // if the filter states are modified later
+            activeFiltersRef.current = cloneDeep({
+              dateFilterState: pendingDateFilterState,
+              contextFilterState: pendingContextFilterState,
+              tagFilterState: pendingTagFilterState,
+              actionErrorFilterState: pendingActionErrorFilterState,
+              advancedFilterState: pendingAdvancedFilterState,
+            });
 
             fetchLogs(
               {
@@ -2066,19 +2050,19 @@ const LogReviewer: React.FC<Props> = (props) => {
   const body: React.ReactNode = (
     <>
       {
-      showSpinner && (
-        <div className="text-center p-5">
-          <LoadingSpinner />
-        </div>
-      )
-    }
-      {!showSpinner && (
+        loading && (
+          <div className="text-center p-5">
+            <LoadingSpinner />
+          </div>
+        )
+      }
+      {!loading && (
         <div>
           {filters}
         </div>
       )}
       {
-      !showSpinner && logs.length === 0 && (
+      !loading && logs.length === 0 && (
         <div className="alert alert-warning text-center mt-2">
           <h4 className="m-1">No Logs to Show</h4>
           <div>
@@ -2089,7 +2073,7 @@ const LogReviewer: React.FC<Props> = (props) => {
       )
     }
       <div
-        className={showSpinner || logs.length === 0 ? 'd-none' : undefined}
+        className={loading || logs.length === 0 ? 'd-none' : undefined}
       >
         <IntelliTable
           title="Matching Logs"
@@ -2099,7 +2083,7 @@ const LogReviewer: React.FC<Props> = (props) => {
           columns={columns}
         />
       </div>
-      {!showSpinner && logs.length > 0 && paginationControls}
+      {!loading && logs.length > 0 && paginationControls}
     </>
   );
 
