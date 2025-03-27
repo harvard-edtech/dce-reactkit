@@ -4,7 +4,7 @@
  */
 
 // Import React
-import React from 'react';
+import React, { useReducer } from 'react';
 
 // Import helpers
 import padZerosLeft from '../helpers/padZerosLeft';
@@ -22,12 +22,12 @@ type Props = {
   hour: number,
   // Currently selected minute within the hour
   minute: number,
-  /**
-   * Handler for when time changes
-   * @param hour new 24hr hour number
-   * @param minute new minute number
-   */
-  onChange: (hour: number, minute: number) => void,
+  // /**
+  //  * Handler for when time changes
+  //  * @param hour new 24hr hour number
+  //  * @param minute new minute number
+  //  */
+  // onChange: (hour: number, minute: number) => void,
   // Interval in minutes between each choice
   // Allowed options: 15, 30, 60, defaults to 15
   // If an unsupported interval is passed in, it will default to 15
@@ -45,6 +45,61 @@ const ALLOWED_INTERVALS = [15, 30, 60]; // min
 const DEFAULT_INTERVAL = ALLOWED_INTERVALS[0]; // min
 
 /*------------------------------------------------------------------------*/
+/* -------------------------------- State ------------------------------- */
+/*------------------------------------------------------------------------*/
+
+/* -------- State Definition -------- */
+
+type State = {
+  // Currently selected hour
+  hour: number,
+  // Currently selected minute
+  minute: number,
+};
+
+/* ------------- Actions ------------ */
+
+// Types of actions
+enum ActionType {
+  // Set a new time
+  SetTime = 'SetTime',
+}
+
+// Action definitions
+type Action = (
+  | {
+    // Action type
+    type: ActionType.SetTime,
+    // New hour
+    hour: number,
+    // New minute
+    minute: number,
+  }
+);
+
+/**
+ * Reducer that executes actions
+ * @author Gardenia Liu
+ * @param state current state
+ * @param action action to execute
+ * @returns updated state
+ */
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case ActionType.SetTime: {
+      return {
+        ...state,
+        hour: action.hour,
+        minute: action.minute,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
+/*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
@@ -60,16 +115,33 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
     name,
     hour,
     minute,
-    onChange,
+    // onChange,
   } = props;
   let {
     intervalMin = DEFAULT_INTERVAL,
   } = props;
 
   // Use default interval if not supported
-  if (ALLOWED_INTERVALS.includes(intervalMin)) {
+  if (!ALLOWED_INTERVALS.includes(intervalMin)) {
     intervalMin = DEFAULT_INTERVAL;
   }
+
+  /* -------------- State ------------- */
+
+  // Initial state
+  const initialState: State = {
+    hour,
+    minute,
+  };
+
+  // Initialize state
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  // Destructure common state
+  // const {
+  //   hour,
+  //   minute,
+  // } = state;
 
   /*------------------------------------------------------------------------*/
   /* ------------------------- Component Functions ------------------------ */
@@ -141,7 +213,7 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
   }
 
   // Create choice options
-  const selectedTimeMin = hour * 60 + minute; // minutes since midnight
+  const selectedTimeMin = state.hour * 60 + state.minute; // minutes since midnight
   const timeOptions: React.ReactNode[] = times.map((timeString, timeIndex) => {
     // Create time option
     const numMinutesForChoice = timeIndex * intervalMin;
@@ -177,8 +249,15 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
           // Convert minutes since midnight to hour and minute
           const timeInfo = convertMinSinceMidnightToHoursAndMin(newTime);
 
+          // Dispatch local update
+          dispatch({
+            type: ActionType.SetTime,
+            hour: timeInfo.hours,
+            minute: timeInfo.minutes,
+          });
+
           // Notify parent of change
-          onChange(timeInfo.hours, timeInfo.minutes);
+          // onChange(timeInfo.hours, timeInfo.minutes);
         }}
       >
         {timeOptions}
