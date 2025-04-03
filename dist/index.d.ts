@@ -23,7 +23,7 @@ declare enum Variant {
  * @author Gabe Abrams
  */
 
-type Props$l = {
+type Props$m = {
     children: React$1.ReactNode;
 };
 /**
@@ -106,7 +106,7 @@ declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>
  * @author Gabe Abrams
  */
 declare const addFatalErrorHandler: (handler: () => void) => void;
-declare const AppWrapper: React$1.FC<Props$l>;
+declare const AppWrapper: React$1.FC<Props$m>;
 
 /**
  * Loading spinner/indicator
@@ -120,14 +120,14 @@ declare const LoadingSpinner: () => React$1.JSX.Element;
  * @author Gabe Abrams
  */
 
-type Props$k = {
+type Props$l = {
     error: any;
     title?: string;
     onClose?: () => void;
     variant?: Variant;
     icon?: IconProp;
 };
-declare const ErrorBox: React$1.FC<Props$k>;
+declare const ErrorBox: React$1.FC<Props$l>;
 
 /**
  * Types of buttons in the modal
@@ -226,21 +226,21 @@ declare const Modal: React$1.FC<ModalProps>;
  * @author Gabe Abrams
  */
 
-type Props$j = {
+type Props$k = {
     title: React$1.ReactNode;
     children: React$1.ReactNode;
     topRightChildren?: React$1.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React$1.FC<Props$j>;
+declare const TabBox: React$1.FC<Props$k>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-type Props$i = {
+type Props$j = {
     text: React$1.ReactNode;
     onSelected: () => void;
     ariaLabel: string;
@@ -254,14 +254,14 @@ type Props$i = {
     small?: boolean;
     useComplexFormatting?: boolean;
 };
-declare const RadioButton: React$1.FC<Props$i>;
+declare const RadioButton: React$1.FC<Props$j>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-type Props$h = {
+type Props$i = {
     text: React$1.ReactNode;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -276,14 +276,14 @@ type Props$h = {
     dashed?: boolean;
     useComplexFormatting?: boolean;
 };
-declare const CheckboxButton: React$1.FC<Props$h>;
+declare const CheckboxButton: React$1.FC<Props$i>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-type Props$g = {
+type Props$h = {
     label: React$1.ReactNode;
     minLabelWidth?: string;
     children: React$1.ReactNode;
@@ -292,14 +292,15 @@ type Props$g = {
     isAdminFeature?: boolean;
     noMarginOnBottom?: boolean;
 };
-declare const ButtonInputGroup: React$1.FC<Props$g>;
+declare const ButtonInputGroup: React$1.FC<Props$h>;
 
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
+ * @author Gardenia Liu
  */
 
-type Props$f = {
+type Props$g = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -313,9 +314,30 @@ type Props$f = {
      */
     onChange: (month: number, day: number, year: number) => void;
     numMonthsToShow?: number;
-    chooseFromPast?: boolean;
+    dontAllowPast?: boolean;
+    dontAllowFuture?: boolean;
 };
-declare const SimpleDateChooser: React$1.FC<Props$f>;
+declare const SimpleDateChooser: React$1.FC<Props$g>;
+
+/**
+ * A very simple, lightweight time chooser
+ * @author Gardenia Liu
+ */
+
+type Props$f = {
+    ariaLabel: string;
+    name: string;
+    hour: number;
+    minute: number;
+    /**
+     * Handler for when time changes
+     * @param hour new 24hr hour number
+     * @param minute new minute number
+     */
+    onChange: (hour: number, minute: number) => void;
+    intervalMin?: number;
+};
+declare const SimpleTimeChooser: React$1.FC<Props$f>;
 
 /**
  * Drawer container
@@ -1550,7 +1572,9 @@ declare enum ReactKitErrorCode {
     NoResponse = "DRK1",
     NoCode = "DRK2",
     SessionExpired = "DRK3",
-    NoCACCLSendRequestFunction = "DRK7"
+    NoCACCLSendRequestFunction = "DRK7",
+    SimpleDateChooserInvalidDateRange = "DRK35",
+    SimpleDateChooserInvalidNumMonths = "DRK36"
 }
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogReviewer, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogReviewer, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };

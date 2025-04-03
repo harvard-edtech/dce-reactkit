@@ -1,6 +1,7 @@
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
+ * @author Gardenia Liu
  */
 import React from 'react';
 type Props = {
@@ -17,7 +18,8 @@ type Props = {
      */
     onChange: (month: number, day: number, year: number) => void;
     numMonthsToShow?: number;
-    chooseFromPast?: boolean;
+    dontAllowPast?: boolean;
+    dontAllowFuture?: boolean;
 };
 declare const SimpleDateChooser: React.FC<Props>;
 export default SimpleDateChooser;
