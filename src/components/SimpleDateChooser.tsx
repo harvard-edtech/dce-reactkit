@@ -5,7 +5,7 @@
  */
 
 // Import React
-import React from 'react';
+import React, { useReducer } from 'react';
 
 // Import helpers
 import getOrdinal from '../helpers/getOrdinal';
@@ -51,6 +51,60 @@ type Props = {
 };
 
 /*------------------------------------------------------------------------*/
+/* -------------------------------- State ------------------------------- */
+/*------------------------------------------------------------------------*/
+
+/* -------------- Views ------------- */
+
+enum View {
+  // Date chooser
+  DateChooser = 'DateChooser',
+  // Invalid date
+  InvalidDate = 'InvalidDate',
+}
+
+/* -------- State Definition -------- */
+
+type State = {
+  view: View,
+};
+
+/* ------------- Actions ------------ */
+
+// Types of actions
+enum ActionType {
+  // Edit invalid date
+  EditDateOutOfRange = 'EditDateOutOfRange',
+}
+
+// Action definitions
+type Action = {
+  // Action type
+  type: ActionType.EditDateOutOfRange,
+};
+
+/**
+ * Reducer that executes actions
+ * @author Gardenia Liu
+ * @param state current state
+ * @param action action to execute
+ * @returns updated state
+ */
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case ActionType.EditDateOutOfRange: {
+      return {
+        ...state,
+        view: View.DateChooser,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
+/*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
@@ -71,12 +125,34 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   } = props;
 
   /*------------------------------------------------------------------------*/
-  /* ------------------------------- Render ------------------------------- */
+  /* ------------------------- Component Functions ------------------------ */
   /*------------------------------------------------------------------------*/
 
-  /*----------------------------------------*/
-  /* --------------- Main UI -------------- */
-  /*----------------------------------------*/
+  /**
+   * Checks whether a given date is outside the valid range of allowed choices
+   * @author Gardenia Liu
+   * @param month 1-indexed month
+   * @param day day of the month
+   * @param year full year
+   * @param choices valid date choices
+   * @returns true if date is out of range
+   */
+  const isDateOutOfRange = (
+    month: number,
+    day: number,
+    year: number,
+    choices: { month: number, year: number, days: number[] }[],
+  ): boolean => {
+    return !choices.some((choice) => (
+      choice.month === month
+      && choice.year === year
+      && choice.days.includes(day)
+    ));
+  };
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------------- Render ------------------------------- */
+  /*------------------------------------------------------------------------*/
 
   // Determine the set of choices allowed
   const today = getTimeInfoInET();
@@ -89,22 +165,6 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
 
   let startYear = today.year;
   let startMonth = today.month;
-
-  // Don't allow past or future dates
-  if (dontAllowPast && dontAllowFuture) {
-    throw new ErrorWithCode(
-      'No past or future dates allowed',
-      ReactKitErrorCode.SimpleDateChooserInvalidDateRange,
-    );
-  }
-
-  // Require numMonthsToShow to be positive
-  if (numMonthsToShow <= 0) {
-    throw new ErrorWithCode(
-      'numMonthsToShow must be positive',
-      ReactKitErrorCode.SimpleDateChooserInvalidNumMonths,
-    );
-  }
 
   // Recalculate startMonth and startYear when allowing past dates
   if (!dontAllowPast) {
@@ -171,7 +231,8 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     });
   }
 
-  // Create choice options
+  /* -------------- State ------------- */ // TODO this is usually higher up
+
   const {
     month,
     day,
@@ -179,6 +240,23 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   } = props;
   const monthOptions: React.ReactNode[] = [];
   const dayOptions: React.ReactNode[] = [];
+
+  // Initial state
+  const initialState: State = {
+    view: isDateOutOfRange(month, day, year, choices)
+      ? View.InvalidDate
+      : View.DateChooser,
+  };
+
+  // Initialize state
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  // Destructure common state
+  const {
+    view,
+  } = state;
+
+  // Create choice options
   choices.forEach((choice) => {
     // Create month option
     monthOptions.push(
@@ -213,52 +291,107 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     }
   });
 
-  return (
-    <div
-      className="SimpleDateChooser d-inline-block"
-      aria-label={`date chooser with selected date: ${month}/${day}/${year}`}
-    >
-      {/* Month Chooser */}
-      <select
-        aria-label={`month for ${ariaLabel}`}
-        className="custom-select d-inline-block mr-1"
-        style={{ width: 'auto' }}
-        id={`SimpleDateChooser-${name}-month`}
-        value={`${month}-${year}`}
-        onChange={(e) => {
-          const choice = choices[e.target.selectedIndex];
+  /*----------------------------------------*/
+  /* ---------------- Views --------------- */
+  /*----------------------------------------*/
 
-          // Change day, month, and year
-          onChange(
-            choice.month,
-            choice.days[0],
-            choice.year,
-          );
-        }}
-      >
-        {monthOptions}
-      </select>
+  // Body that will be filled with the current view
+  let body: React.ReactNode;
 
-      {/* Day Chooser */}
-      <select
-        aria-label={`day for ${ariaLabel}`}
-        className="custom-select d-inline-block"
-        style={{ width: 'auto' }}
-        id={`SimpleDateChooser-${name}-day`}
-        value={day}
-        onChange={(e) => {
-          // Only change the day
-          onChange(
-            month,
-            Number.parseInt(e.target.value, 10),
-            year,
-          );
-        }}
+  /* ---------- DateChooser ---------- */
+
+  if (view === View.DateChooser) {
+    // Create body
+    body = (
+      <div
+        className="SimpleDateChooser d-inline-block"
+        aria-label={`date chooser with selected date: ${month}/${day}/${year}`}
       >
-        {dayOptions}
-      </select>
-    </div>
-  );
+        {/* Month Chooser */}
+        <select
+          aria-label={`month for ${ariaLabel}`}
+          className="custom-select d-inline-block mr-1"
+          style={{ width: 'auto' }}
+          id={`SimpleDateChooser-${name}-month`}
+          value={`${month}-${year}`}
+          onChange={(e) => {
+            const choice = choices[e.target.selectedIndex];
+
+            // Change day, month, and year
+            onChange(
+              choice.month,
+              choice.days[0],
+              choice.year,
+            );
+          }}
+        >
+          {monthOptions}
+        </select>
+
+        {/* Day Chooser */}
+        <select
+          aria-label={`day for ${ariaLabel}`}
+          className="custom-select d-inline-block"
+          style={{ width: 'auto' }}
+          id={`SimpleDateChooser-${name}-day`}
+          value={day}
+          onChange={(e) => {
+            // Only change the day
+            onChange(
+              month,
+              Number.parseInt(e.target.value, 10),
+              year,
+            );
+          }}
+        >
+          {dayOptions}
+        </select>
+      </div>
+    );
+  }
+
+  /* --------- DateOutOfRange --------- */
+
+  if (view === View.InvalidDate) {
+    body = (
+      <div className="SimpleDateChooser d-inline-block">
+        <span>
+          {getMonthName(month).full}
+          {day}
+          {getOrdinal(day)}
+          ,
+          {year}
+        </span>
+        <button
+          type="button"
+          className="btn btn-link ml-2"
+          onClick={async () => {
+            const confirmed = await confirm( // TODO confirm parameters wrong
+              'Are you sure?',
+              // 'The currently selected date is outside the normal range. If you choose to edit this date, you will have to choose one within the normal range.',
+              // {
+              //   confirmButtonText: 'Yes',
+              // },
+            );
+            if (confirmed) {
+              onChange(today.month, today.day, today.year);
+              dispatch({
+                type: ActionType.EditDateOutOfRange,
+              });
+            }
+          }}
+        >
+          Edit
+        </button>
+      </div>
+    );
+  }
+
+  /*----------------------------------------*/
+  /* --------------- Main UI -------------- */
+  /*----------------------------------------*/
+
+  return body;
 };
 
 /*------------------------------------------------------------------------*/
