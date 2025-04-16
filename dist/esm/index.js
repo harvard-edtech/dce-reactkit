@@ -2630,20 +2630,56 @@ const getTimeInfoInET = (dateOrTimestamp) => {
  * @author Gardenia Liu
  */
 /*------------------------------------------------------------------------*/
-/* ------------------------------ Component ----------------------------- */
+/* -------------------------------- State ------------------------------- */
 /*------------------------------------------------------------------------*/
-const SimpleDateChooser = (props) => {
-    /*------------------------------------------------------------------------*/
-    /* -------------------------------- Setup ------------------------------- */
-    /*------------------------------------------------------------------------*/
-    /* -------------- Props ------------- */
-    const { ariaLabel, name, onChange, numMonthsToShow = 6, dontAllowFuture, dontAllowPast, } = props;
-    /*------------------------------------------------------------------------*/
-    /* ------------------------------- Render ------------------------------- */
-    /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /* --------------- Main UI -------------- */
-    /*----------------------------------------*/
+/* -------------- Views ------------- */
+var View;
+(function (View) {
+    // Date chooser
+    View["DateChooser"] = "DateChooser";
+    // Invalid date
+    View["InvalidDate"] = "InvalidDate";
+})(View || (View = {}));
+/* ------------- Actions ------------ */
+// Types of actions
+var ActionType$a;
+(function (ActionType) {
+    // Fix invalid date so it is now in range
+    ActionType["FixInvalidDate"] = "FixInvalidDate";
+})(ActionType$a || (ActionType$a = {}));
+/**
+ * Reducer that executes actions
+ * @author Gardenia Liu
+ * @param state current state
+ * @param action action to execute
+ * @returns updated state
+ */
+const reducer$b = (state, action) => {
+    switch (action.type) {
+        case ActionType$a.FixInvalidDate: {
+            return Object.assign(Object.assign({}, state), { view: View.DateChooser });
+        }
+        default: {
+            return state;
+        }
+    }
+};
+/*------------------------------------------------------------------------*/
+/* --------------------------- Static Helpers --------------------------- */
+/*------------------------------------------------------------------------*/
+/**
+ * Get the list of choices in the date chooser given props
+ * @author Gardenia Liu
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.numMonthsToShow number of months to show
+ * @param opts.dontAllowPast if true, the user isn't allowed to select dates in the past
+ * @param opts.dontAllowFuture if true, the user isn't allowed to select dates in the future
+ * @returns choices
+ */
+const getChoices = (opts) => {
+    // Destructure props
+    const { dontAllowFuture, dontAllowPast, numMonthsToShow = 6, } = opts;
     // Determine the set of choices allowed
     const today = getTimeInfoInET();
     const choices = [];
@@ -2718,36 +2754,143 @@ const SimpleDateChooser = (props) => {
             days,
         });
     }
-    // Create choice options
-    const { month, day, year, } = props;
-    const monthOptions = [];
-    const dayOptions = [];
-    choices.forEach((choice) => {
-        // Create month option
-        monthOptions.push(React__default.createElement("option", { key: `${choice.year}-${choice.month}`, value: `${choice.month}-${choice.year}`, "aria-label": `choose ${choice.choiceName}`, onSelect: () => {
-                onChange(choice.month, choice.days[0], choice.year);
-            } }, choice.choiceName));
-        // This is the currently selected month
-        if (month === choice.month) {
-            // Create day options
-            choice.days.forEach((dayChoice) => {
-                const ordinal = getOrdinal(dayChoice);
-                dayOptions.push(React__default.createElement("option", { key: `${choice.year}-${choice.month}-${dayChoice}`, value: dayChoice, "aria-label": `choose date ${dayChoice}` },
-                    dayChoice,
-                    ordinal));
+    // Return choices
+    return choices;
+};
+/**
+ * Checks whether a given date is outside the valid range of allowed choices
+ * @author Gardenia Liu
+ * @param opts object containing all arguments
+ * @param opts.month 1-indexed month
+ * @param opts.day day of the month
+ * @param opts.year full year
+ * @param opts.choices valid date choices
+ * @returns true if date is out of range
+ */
+const isDateOutOfRange = (opts) => {
+    const { month, day, year, choices, } = opts;
+    return !choices.some((choice) => {
+        return (choice.month === month
+            && choice.year === year
+            && choice.days.includes(day));
+    });
+};
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const SimpleDateChooser = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    const { ariaLabel, name, dontAllowPast, dontAllowFuture, numMonthsToShow, onChange, month, day, year, } = props;
+    // Get choices
+    const choices = getChoices({
+        numMonthsToShow,
+        dontAllowPast,
+        dontAllowFuture,
+    });
+    /* -------------- State ------------- */
+    // Check if the currently selected date is out of range
+    const currentSelectedDateOutOfRange = isDateOutOfRange({
+        month,
+        day,
+        year,
+        choices,
+    });
+    // Initial state
+    const initialState = {
+        view: (currentSelectedDateOutOfRange
+            ? View.InvalidDate
+            : View.DateChooser),
+    };
+    // Initialize state
+    const [state, dispatch] = useReducer(reducer$b, initialState);
+    // Destructure common state
+    const { view, } = state;
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Component Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Ask the user if they want to edit an invalid date
+     * @author Gardenia Liu
+     * @author Gabe Abrams
+     */
+    const askToEditInvalidDate = () => __awaiter(void 0, void 0, void 0, function* () {
+        // Ask the user if they want to edit the date
+        const confirmed = yield confirm('Are you sure?', 'The current date is outside the normal range. If you edit it, you\'ll need to choose a new date in the normal range.', {
+            confirmButtonText: 'Edit Date',
+        });
+        // Check if user confirmed
+        if (confirmed) {
+            // Update the date to today
+            const today = getTimeInfoInET();
+            onChange(today.month, today.day, today.year);
+            // Update state
+            dispatch({
+                type: ActionType$a.FixInvalidDate,
             });
         }
     });
-    return (React__default.createElement("div", { className: "SimpleDateChooser d-inline-block", "aria-label": `date chooser with selected date: ${month}/${day}/${year}` },
-        React__default.createElement("select", { "aria-label": `month for ${ariaLabel}`, className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: `${month}-${year}`, onChange: (e) => {
-                const choice = choices[e.target.selectedIndex];
-                // Change day, month, and year
-                onChange(choice.month, choice.days[0], choice.year);
-            } }, monthOptions),
-        React__default.createElement("select", { "aria-label": `day for ${ariaLabel}`, className: "custom-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
-                // Only change the day
-                onChange(month, Number.parseInt(e.target.value, 10), year);
-            } }, dayOptions)));
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* ---------------- Views --------------- */
+    /*----------------------------------------*/
+    // Body that will be filled with the current view
+    let body;
+    /* ---------- DateChooser ---------- */
+    if (view === View.DateChooser) {
+        // Create lists of options
+        const monthOptions = [];
+        const dayOptions = [];
+        // Render each option and add it to the list
+        choices.forEach((choice) => {
+            // Create month option
+            monthOptions.push(React__default.createElement("option", { key: `${choice.year}-${choice.month}`, value: `${choice.month}-${choice.year}`, "aria-label": `choose ${choice.choiceName}`, onSelect: () => {
+                    onChange(choice.month, choice.days[0], choice.year);
+                } }, choice.choiceName));
+            // This is the currently selected month
+            if (month === choice.month) {
+                // Create day options
+                choice.days.forEach((dayChoice) => {
+                    const ordinal = getOrdinal(dayChoice);
+                    dayOptions.push(React__default.createElement("option", { key: `${choice.year}-${choice.month}-${dayChoice}`, value: dayChoice, "aria-label": `choose date ${dayChoice}` },
+                        dayChoice,
+                        ordinal));
+                });
+            }
+        });
+        // Create body
+        body = (React__default.createElement("div", { className: "SimpleDateChooser-inner-container d-inline-block", "aria-label": `date chooser with selected date: ${month}/${day}/${year}` },
+            React__default.createElement("select", { "aria-label": `month for ${ariaLabel}`, className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: `${month}-${year}`, onChange: (e) => {
+                    const choice = choices[e.target.selectedIndex];
+                    // Change day, month, and year
+                    onChange(choice.month, choice.days[0], choice.year);
+                } }, monthOptions),
+            React__default.createElement("select", { "aria-label": `day for ${ariaLabel}`, className: "custom-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
+                    // Only change the day
+                    onChange(month, Number.parseInt(e.target.value, 10), year);
+                } }, dayOptions)));
+    }
+    /* --------- DateOutOfRange --------- */
+    if (view === View.InvalidDate) {
+        body = (React__default.createElement("div", { className: "SimpleDateChooser-inner-container d-inline-block" },
+            React__default.createElement("button", { type: "button", className: "btn btn-light", onClick: askToEditInvalidDate, "aria-label": `edit date for ${ariaLabel}` },
+                getMonthName(month).full,
+                ' ',
+                day,
+                getOrdinal(day),
+                ",",
+                ' ',
+                year),
+            React__default.createElement("button", { type: "button", className: "btn btn-secondary", onClick: askToEditInvalidDate, "aria-label": `edit date for ${ariaLabel}` }, "Edit")));
+    }
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    return (React__default.createElement("span", { className: "SimpleDateChooser-outer-container" }, body));
 };
 
 /**

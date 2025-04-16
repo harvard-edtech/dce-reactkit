@@ -7,6 +7,9 @@
 // Import React
 import React, { useReducer } from 'react';
 
+// Import AppWrapper helpers
+import { confirm } from './AppWrapper';
+
 // Import helpers
 import getOrdinal from '../helpers/getOrdinal';
 import getMonthName from '../helpers/getMonthName';
@@ -73,14 +76,14 @@ type State = {
 
 // Types of actions
 enum ActionType {
-  // Edit invalid date
-  EditDateOutOfRange = 'EditDateOutOfRange',
+  // Fix invalid date so it is now in range
+  FixInvalidDate = 'FixInvalidDate',
 }
 
 // Action definitions
 type Action = {
   // Action type
-  type: ActionType.EditDateOutOfRange,
+  type: ActionType.FixInvalidDate,
 };
 
 /**
@@ -92,7 +95,7 @@ type Action = {
  */
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case ActionType.EditDateOutOfRange: {
+    case ActionType.FixInvalidDate: {
       return {
         ...state,
         view: View.DateChooser,
@@ -105,60 +108,32 @@ const reducer = (state: State, action: Action): State => {
 };
 
 /*------------------------------------------------------------------------*/
-/* ------------------------------ Component ----------------------------- */
+/* --------------------------- Static Helpers --------------------------- */
 /*------------------------------------------------------------------------*/
 
-const SimpleDateChooser: React.FC<Props> = (props) => {
-  /*------------------------------------------------------------------------*/
-  /* -------------------------------- Setup ------------------------------- */
-  /*------------------------------------------------------------------------*/
-
-  /* -------------- Props ------------- */
-
+/**
+ * Get the list of choices in the date chooser given props
+ * @author Gardenia Liu
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.numMonthsToShow number of months to show
+ * @param opts.dontAllowPast if true, the user isn't allowed to select dates in the past
+ * @param opts.dontAllowFuture if true, the user isn't allowed to select dates in the future
+ * @returns choices
+ */
+const getChoices = (
+  opts: {
+    numMonthsToShow?: number,
+    dontAllowPast?: boolean,
+    dontAllowFuture?: boolean,
+  },
+) => {
+  // Destructure props
   const {
-    ariaLabel,
-    name,
-    onChange,
-    numMonthsToShow = 6,
     dontAllowFuture,
     dontAllowPast,
-  } = props;
-
-  /*------------------------------------------------------------------------*/
-  /* ------------------------- Component Functions ------------------------ */
-  /*------------------------------------------------------------------------*/
-
-  /**
-   * Checks whether a given date is outside the valid range of allowed choices
-   * @author Gardenia Liu
-   * @param month 1-indexed month
-   * @param day day of the month
-   * @param year full year
-   * @param choices valid date choices
-   * @returns true if date is out of range
-   */
-  const isDateOutOfRange = (
-    month: number,
-    day: number,
-    year: number,
-    choices: {
-      month: number,
-      year: number,
-      days: number[]
-    }[],
-  ): boolean => {
-    return !choices.some((choice) => {
-      return (
-        choice.month === month
-        && choice.year === year
-        && choice.days.includes(day)
-      );
-    });
-  };
-
-  /*------------------------------------------------------------------------*/
-  /* ------------------------------- Render ------------------------------- */
-  /*------------------------------------------------------------------------*/
+    numMonthsToShow = 6,
+  } = opts;
 
   // Determine the set of choices allowed
   const today = getTimeInfoInET();
@@ -253,21 +228,95 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     });
   }
 
-  /* -------------- State ------------- */ // TODO this is usually higher up
+  // Return choices
+  return choices;
+};
 
+/**
+ * Checks whether a given date is outside the valid range of allowed choices
+ * @author Gardenia Liu
+ * @param opts object containing all arguments
+ * @param opts.month 1-indexed month
+ * @param opts.day day of the month
+ * @param opts.year full year
+ * @param opts.choices valid date choices
+ * @returns true if date is out of range
+ */
+const isDateOutOfRange = (
+  opts: {
+    month: number,
+    day: number,
+    year: number,
+    choices: {
+      month: number,
+      year: number,
+      days: number[]
+    }[],
+  },
+): boolean => {
   const {
     month,
     day,
     year,
+    choices,
+  } = opts;
+
+  return !choices.some((choice) => {
+    return (
+      choice.month === month
+      && choice.year === year
+      && choice.days.includes(day)
+    );
+  });
+};
+
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+
+const SimpleDateChooser: React.FC<Props> = (props) => {
+  /*------------------------------------------------------------------------*/
+  /* -------------------------------- Setup ------------------------------- */
+  /*------------------------------------------------------------------------*/
+
+  /* -------------- Props ------------- */
+
+  const {
+    ariaLabel,
+    name,
+    dontAllowPast,
+    dontAllowFuture,
+    numMonthsToShow,
+    onChange,
+    month,
+    day,
+    year,
   } = props;
-  const monthOptions: React.ReactNode[] = [];
-  const dayOptions: React.ReactNode[] = [];
+
+  // Get choices
+  const choices = getChoices({
+    numMonthsToShow,
+    dontAllowPast,
+    dontAllowFuture,
+  });
+
+  /* -------------- State ------------- */
+
+  // Check if the currently selected date is out of range
+  const currentSelectedDateOutOfRange = isDateOutOfRange({
+    month,
+    day,
+    year,
+    choices,
+  });
 
   // Initial state
   const initialState: State = {
-    view: isDateOutOfRange(month, day, year, choices)
-      ? View.InvalidDate
-      : View.DateChooser,
+    view: (
+      currentSelectedDateOutOfRange
+        ? View.InvalidDate
+        : View.DateChooser
+    ),
   };
 
   // Initialize state
@@ -278,40 +327,41 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     view,
   } = state;
 
-  // Create choice options
-  choices.forEach((choice) => {
-    // Create month option
-    monthOptions.push(
-      <option
-        key={`${choice.year}-${choice.month}`}
-        value={`${choice.month}-${choice.year}`}
-        aria-label={`choose ${choice.choiceName}`}
-        onSelect={() => {
-          onChange(choice.month, choice.days[0], choice.year);
-        }}
-      >
-        {choice.choiceName}
-      </option>,
+  /*------------------------------------------------------------------------*/
+  /* ------------------------- Component Functions ------------------------ */
+  /*------------------------------------------------------------------------*/
+
+  /**
+   * Ask the user if they want to edit an invalid date
+   * @author Gardenia Liu
+   * @author Gabe Abrams
+   */
+  const askToEditInvalidDate = async () => {
+    // Ask the user if they want to edit the date
+    const confirmed = await confirm(
+      'Are you sure?',
+      'The current date is outside the normal range. If you edit it, you\'ll need to choose a new date in the normal range.',
+      {
+        confirmButtonText: 'Edit Date',
+      },
     );
 
-    // This is the currently selected month
-    if (month === choice.month) {
-      // Create day options
-      choice.days.forEach((dayChoice) => {
-        const ordinal = getOrdinal(dayChoice);
-        dayOptions.push(
-          <option
-            key={`${choice.year}-${choice.month}-${dayChoice}`}
-            value={dayChoice}
-            aria-label={`choose date ${dayChoice}`}
-          >
-            {dayChoice}
-            {ordinal}
-          </option>,
-        );
+    // Check if user confirmed
+    if (confirmed) {
+      // Update the date to today
+      const today = getTimeInfoInET();
+      onChange(today.month, today.day, today.year);
+
+      // Update state
+      dispatch({
+        type: ActionType.FixInvalidDate,
       });
     }
-  });
+  };
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------------- Render ------------------------------- */
+  /*------------------------------------------------------------------------*/
 
   /*----------------------------------------*/
   /* ---------------- Views --------------- */
@@ -323,10 +373,49 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   /* ---------- DateChooser ---------- */
 
   if (view === View.DateChooser) {
+    // Create lists of options
+    const monthOptions: React.ReactNode[] = [];
+    const dayOptions: React.ReactNode[] = [];
+
+    // Render each option and add it to the list
+    choices.forEach((choice) => {
+      // Create month option
+      monthOptions.push(
+        <option
+          key={`${choice.year}-${choice.month}`}
+          value={`${choice.month}-${choice.year}`}
+          aria-label={`choose ${choice.choiceName}`}
+          onSelect={() => {
+            onChange(choice.month, choice.days[0], choice.year);
+          }}
+        >
+          {choice.choiceName}
+        </option>,
+      );
+
+      // This is the currently selected month
+      if (month === choice.month) {
+        // Create day options
+        choice.days.forEach((dayChoice) => {
+          const ordinal = getOrdinal(dayChoice);
+          dayOptions.push(
+            <option
+              key={`${choice.year}-${choice.month}-${dayChoice}`}
+              value={dayChoice}
+              aria-label={`choose date ${dayChoice}`}
+            >
+              {dayChoice}
+              {ordinal}
+            </option>,
+          );
+        });
+      }
+    });
+
     // Create body
     body = (
       <div
-        className="SimpleDateChooser d-inline-block"
+        className="SimpleDateChooser-inner-container d-inline-block"
         aria-label={`date chooser with selected date: ${month}/${day}/${year}`}
       >
         {/* Month Chooser */}
@@ -376,51 +465,26 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
 
   if (view === View.InvalidDate) {
     body = (
-      <div>
+      <div className="SimpleDateChooser-inner-container d-inline-block">
         <button
           type="button"
           className="btn btn-light"
-          onClick={async () => {
-            const confirmed = await confirm( // TODO confirm parameters wrong
-              'Are you sure?',
-              // 'The currently selected date is outside the normal range. If you choose to edit this date, you will have to choose one within the normal range.',
-              // {
-              //   confirmButtonText: 'Yes',
-              // },
-            );
-            if (confirmed) {
-              onChange(today.month, today.day, today.year);
-              dispatch({
-                type: ActionType.EditDateOutOfRange,
-              });
-            }
-          }}
+          onClick={askToEditInvalidDate}
+          aria-label={`edit date for ${ariaLabel}`}
         >
           {getMonthName(month).full}
-          &nbsp;
+          {' '}
           {day}
           {getOrdinal(day)}
-          ,&nbsp;
+          ,
+          {' '}
           {year}
         </button>
         <button
           type="button"
           className="btn btn-secondary"
-          onClick={async () => {
-            const confirmed = await confirm( // TODO confirm parameters wrong
-              'Are you sure?',
-              // 'The currently selected date is outside the normal range. If you choose to edit this date, you will have to choose one within the normal range.',
-              // {
-              //   confirmButtonText: 'Yes',
-              // },
-            );
-            if (confirmed) {
-              onChange(today.month, today.day, today.year);
-              dispatch({
-                type: ActionType.EditDateOutOfRange,
-              });
-            }
-          }}
+          onClick={askToEditInvalidDate}
+          aria-label={`edit date for ${ariaLabel}`}
         >
           Edit
         </button>
@@ -433,9 +497,9 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   /*----------------------------------------*/
 
   return (
-    <div>
+    <span className="SimpleDateChooser-outer-container">
       {body}
-    </div>
+    </span>
   );
 };
 
