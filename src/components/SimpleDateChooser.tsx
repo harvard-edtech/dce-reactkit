@@ -147,11 +147,13 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
       days: number[]
     }[],
   ): boolean => {
-    return !choices.some((choice) => (
-      choice.month === month
-      && choice.year === year
-      && choice.days.includes(day)
-    ));
+    return !choices.some((choice) => {
+      return (
+        choice.month === month
+        && choice.year === year
+        && choice.days.includes(day)
+      );
+    });
   };
 
   /*------------------------------------------------------------------------*/
@@ -430,7 +432,11 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
   /* --------------- Main UI -------------- */
   /*----------------------------------------*/
 
-  return body;
+  return (
+    <div>
+      {body}
+    </div>
+  );
 };
 
 /*------------------------------------------------------------------------*/
