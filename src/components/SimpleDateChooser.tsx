@@ -141,7 +141,11 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     month: number,
     day: number,
     year: number,
-    choices: { month: number, year: number, days: number[] }[],
+    choices: {
+      month: number,
+      year: number,
+      days: number[]
+    }[],
   ): boolean => {
     return !choices.some((choice) => (
       choice.month === month
@@ -165,6 +169,22 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
 
   let startYear = today.year;
   let startMonth = today.month;
+
+  // Don't allow past or future dates
+  if (dontAllowPast && dontAllowFuture) {
+    throw new ErrorWithCode(
+      'No past or future dates allowed',
+      ReactKitErrorCode.SimpleDateChooserInvalidDateRange,
+    );
+  }
+
+  // Require numMonthsToShow to be positive
+  if (numMonthsToShow <= 0) {
+    throw new ErrorWithCode(
+      'numMonthsToShow must be positive',
+      ReactKitErrorCode.SimpleDateChooserInvalidNumMonths,
+    );
+  }
 
   // Recalculate startMonth and startYear when allowing past dates
   if (!dontAllowPast) {
@@ -354,17 +374,36 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
 
   if (view === View.InvalidDate) {
     body = (
-      <div className="SimpleDateChooser d-inline-block">
-        <span>
-          {getMonthName(month).full}
-          {day}
-          {getOrdinal(day)}
-          ,
-          {year}
-        </span>
+      <div>
         <button
           type="button"
-          className="btn btn-link ml-2"
+          className="btn btn-light"
+          onClick={async () => {
+            const confirmed = await confirm( // TODO confirm parameters wrong
+              'Are you sure?',
+              // 'The currently selected date is outside the normal range. If you choose to edit this date, you will have to choose one within the normal range.',
+              // {
+              //   confirmButtonText: 'Yes',
+              // },
+            );
+            if (confirmed) {
+              onChange(today.month, today.day, today.year);
+              dispatch({
+                type: ActionType.EditDateOutOfRange,
+              });
+            }
+          }}
+        >
+          {getMonthName(month).full}
+          &nbsp;
+          {day}
+          {getOrdinal(day)}
+          ,&nbsp;
+          {year}
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary"
           onClick={async () => {
             const confirmed = await confirm( // TODO confirm parameters wrong
               'Are you sure?',
