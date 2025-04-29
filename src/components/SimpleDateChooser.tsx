@@ -250,7 +250,7 @@ const isDateOutOfRange = (
     choices: {
       month: number,
       year: number,
-      days: number[]
+      days: number[],
     }[],
   },
 ): boolean => {
