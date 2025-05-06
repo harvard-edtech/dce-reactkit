@@ -1,4 +1,7 @@
-// Context filter state
+/**
+ * Context filter state
+ * @author Yuen Ler Chow
+ */
 type ContextFilterState = {
   [k: string]: (
     // No subcontexts

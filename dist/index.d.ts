@@ -1567,6 +1567,10 @@ declare enum ReactKitErrorCode {
     NoCACCLSendRequestFunction = "DRK7"
 }
 
+/**
+ * Date filter state
+ * @author Yuen Ler Chow
+ */
 type DateFilterState = {
     startDate: {
         year: number;
@@ -1580,16 +1584,28 @@ type DateFilterState = {
     };
 };
 
+/**
+ * Context filter state
+ * @author Yuen Ler Chow
+ */
 type ContextFilterState = {
     [k: string]: (boolean | {
         [k: string]: boolean;
     });
 };
 
+/**
+ * Tag filter state
+ * @author Yuen Ler Chow
+ */
 type TagFilterState = {
     [k: string]: boolean;
 };
 
+/**
+ * Action filter state (only relevant for action logs)
+ * @author Yuen Ler Chow
+ */
 type ActionErrorFilterState = {
     type: LogType | undefined;
     errorMessage: string;
@@ -1602,6 +1618,10 @@ type ActionErrorFilterState = {
     };
 };
 
+/**
+ * Advanced filter state
+ * @author Yuen Ler Chow
+ */
 type AdvancedFilterState = {
     userFirstName: string;
     userLastName: string;

@@ -1,4 +1,8 @@
 import LogSource from '../LogSource';
+/**
+ * Advanced filter state
+ * @author Yuen Ler Chow
+ */
 type AdvancedFilterState = {
     userFirstName: string;
     userLastName: string;

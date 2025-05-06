@@ -16,23 +16,35 @@ type Props = {
   // Total number of pages
   numPages: number,
   // True if a page change is in progress (to disable buttons)
-  loading?: boolean;
-  // Callback when a page is clicked
-  onPageChanged: (page: number) => void;
+  loading?: boolean,
+  /**
+   * Handler for when page is changed
+   * @param page - the new page number
+   */
+  onPageChanged: (page: number) => void,
 };
 
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
 
-const Pagination: React.FC<Props> = ({
-  currentPage,
-  numPages,
-  loading = false,
-  onPageChanged,
-}) => {
+const Pagination: React.FC<Props> = (props: Props) => {
   /*------------------------------------------------------------------------*/
   /* -------------------------------- Setup ------------------------------- */
+  /*------------------------------------------------------------------------*/
+
+  /* -------------- Props ------------- */
+
+  // Destructure props
+  const {
+    currentPage,
+    numPages,
+    loading = false,
+    onPageChanged,
+  } = props;
+
+  /*------------------------------------------------------------------------*/
+  /* ------------------------------- Render ------------------------------- */
   /*------------------------------------------------------------------------*/
 
   // Compute pages to display
@@ -48,17 +60,16 @@ const Pagination: React.FC<Props> = ({
   if (currentPage + delta > numPages) {
     start = Math.max(1, start - ((currentPage + delta) - numPages));
   }
-
   for (let i = start; i <= end; i++) {
     pages.push(i);
   }
 
-  /*------------------------------------------------------------------------*/
-  /* ------------------------------- Render ------------------------------- */
-  /*------------------------------------------------------------------------*/
-
+  // Render
   return (
-    <nav aria-label="Page navigation for logs" className="mt-3">
+    <nav
+      aria-label="Page navigation for logs"
+      className="mt-3"
+    >
       <ul className="pagination justify-content-center">
         {/* Previous Button */}
         <li className={`page-item ${(currentPage <= 1 || loading) ? 'disabled' : ''}`}>
@@ -76,9 +87,7 @@ const Pagination: React.FC<Props> = ({
         </li>
 
         {/* First page (if needed) */}
-        {currentPage > 3
-        && pages[0] !== 1
-        && (
+        {(currentPage > 3 && pages[0] !== 1) && (
           <li className="page-item">
             <button
               type="button"
@@ -124,9 +133,10 @@ const Pagination: React.FC<Props> = ({
         )}
 
         {/* Last page (if needed) */}
-        {currentPage < numPages - 2
-        && pages[pages.length - 1] !== numPages
-        && (
+        {(
+          currentPage < numPages - 2
+          && pages[pages.length - 1] !== numPages
+        ) && (
           <li className="page-item">
             <button
               type="button"

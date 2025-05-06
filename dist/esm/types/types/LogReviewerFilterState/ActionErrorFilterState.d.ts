@@ -1,4 +1,8 @@
 import LogType from '../LogType';
+/**
+ * Action filter state (only relevant for action logs)
+ * @author Yuen Ler Chow
+ */
 type ActionErrorFilterState = {
     type: LogType | undefined;
     errorMessage: string;

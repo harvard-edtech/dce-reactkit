@@ -1,6 +1,9 @@
 import LogType from '../LogType';
 
-// Action filter state (only relevant for action logs)
+/**
+ * Action filter state (only relevant for action logs)
+ * @author Yuen Ler Chow
+ */
 type ActionErrorFilterState = {
   // Required type of log
   type: LogType | undefined, // If undefined, no filter applied

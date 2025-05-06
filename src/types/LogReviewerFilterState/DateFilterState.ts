@@ -1,4 +1,7 @@
-// Date filter state
+/**
+ * Date filter state
+ * @author Yuen Ler Chow
+ */
 type DateFilterState = {
   // Current start date
   startDate: {

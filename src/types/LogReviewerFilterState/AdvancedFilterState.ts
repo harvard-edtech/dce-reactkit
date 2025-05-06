@@ -1,6 +1,9 @@
 import LogSource from '../LogSource';
 
-// Advanced filter state
+/**
+ * Advanced filter state
+ * @author Yuen Ler Chow
+ */
 type AdvancedFilterState = {
   // Query for user first name (case insensitive)
   userFirstName: string, // If empty, no filter applied

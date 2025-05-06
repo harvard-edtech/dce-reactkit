@@ -1,3 +1,7 @@
+/**
+ * Date filter state
+ * @author Yuen Ler Chow
+ */
 type DateFilterState = {
     startDate: {
         year: number;

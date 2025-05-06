@@ -4126,9 +4126,15 @@ const IntelliTable = (props) => {
 /*------------------------------------------------------------------------*/
 /* ------------------------------ Component ----------------------------- */
 /*------------------------------------------------------------------------*/
-const Pagination = ({ currentPage, numPages, loading = false, onPageChanged, }) => {
+const Pagination = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure props
+    const { currentPage, numPages, loading = false, onPageChanged, } = props;
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     // Compute pages to display
     const pages = [];
@@ -4145,9 +4151,7 @@ const Pagination = ({ currentPage, numPages, loading = false, onPageChanged, }) 
     for (let i = start; i <= end; i++) {
         pages.push(i);
     }
-    /*------------------------------------------------------------------------*/
-    /* ------------------------------- Render ------------------------------- */
-    /*------------------------------------------------------------------------*/
+    // Render
     return (React__default["default"].createElement("nav", { "aria-label": "Page navigation for logs", className: "mt-3" },
         React__default["default"].createElement("ul", { className: "pagination justify-content-center" },
             React__default["default"].createElement("li", { className: `page-item ${(currentPage <= 1 || loading) ? 'disabled' : ''}` },
@@ -4155,10 +4159,8 @@ const Pagination = ({ currentPage, numPages, loading = false, onPageChanged, }) 
                     React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faArrowLeft }),
                     ' ',
                     "Prev")),
-            currentPage > 3
-                && pages[0] !== 1
-                && (React__default["default"].createElement("li", { className: "page-item" },
-                    React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(1); }, disabled: loading, "aria-label": "Go to page 1" }, "1"))),
+            (currentPage > 3 && pages[0] !== 1) && (React__default["default"].createElement("li", { className: "page-item" },
+                React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(1); }, disabled: loading, "aria-label": "Go to page 1" }, "1"))),
             currentPage > 4 && (React__default["default"].createElement("li", { className: "page-item disabled" },
                 React__default["default"].createElement("span", { className: "page-link" }, "..."))),
             pages.map((pageNum) => {
@@ -4167,10 +4169,9 @@ const Pagination = ({ currentPage, numPages, loading = false, onPageChanged, }) 
             }),
             currentPage < numPages - 3 && (React__default["default"].createElement("li", { className: "page-item disabled" },
                 React__default["default"].createElement("span", { className: "page-link" }, "..."))),
-            currentPage < numPages - 2
-                && pages[pages.length - 1] !== numPages
-                && (React__default["default"].createElement("li", { className: "page-item" },
-                    React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(numPages); }, disabled: loading, "aria-label": "Go to last page" }, numPages))),
+            (currentPage < numPages - 2
+                && pages[pages.length - 1] !== numPages) && (React__default["default"].createElement("li", { className: "page-item" },
+                React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(numPages); }, disabled: loading, "aria-label": "Go to last page" }, numPages))),
             React__default["default"].createElement("li", { className: `page-item ${(currentPage >= numPages || loading) ? 'disabled' : ''}` },
                 React__default["default"].createElement("button", { type: "button", className: "page-link", onClick: () => { return onPageChanged(currentPage + 1); }, disabled: currentPage >= numPages || loading, "aria-label": "Go to next page" },
                     "Next",
