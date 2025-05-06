@@ -15,6 +15,7 @@ import RadioButton from './components/RadioButton';
 import CheckboxButton from './components/CheckboxButton';
 import ButtonInputGroup from './components/ButtonInputGroup';
 import SimpleDateChooser from './components/SimpleDateChooser';
+import SimpleTimeChooser from './components/SimpleTimeChooser';
 import Drawer from './components/Drawer';
 import PopSuccessMark from './components/PopSuccessMark';
 import PopFailureMark from './components/PopFailureMark';
@@ -136,6 +137,7 @@ export {
   CheckboxButton,
   ButtonInputGroup,
   SimpleDateChooser,
+  SimpleTimeChooser,
   Drawer,
   PopSuccessMark,
   PopFailureMark,

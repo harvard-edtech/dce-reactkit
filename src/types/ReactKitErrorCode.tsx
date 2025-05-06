@@ -1,4 +1,4 @@
-// Highest error code = DRK34
+// Highest error code = DRK36
 
 /**
  * List of error codes built into the react kit
@@ -9,6 +9,8 @@ enum ReactKitErrorCode {
   NoCode = 'DRK2',
   SessionExpired = 'DRK3',
   NoCACCLSendRequestFunction = 'DRK7',
+  SimpleDateChooserInvalidDateRange = 'DRK35',
+  SimpleDateChooserInvalidNumMonths = 'DRK36',
 }
 
 export default ReactKitErrorCode;

@@ -7,6 +7,6 @@ enum LogSource {
   Client = 'client',
   // Server
   Server = 'server',
-};
+}
 
 export default LogSource;
