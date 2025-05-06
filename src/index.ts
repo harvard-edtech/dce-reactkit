@@ -42,6 +42,7 @@ import DAY_IN_MS from './constants/DAY_IN_MS';
 import LOG_REVIEW_ROUTE_PATH_PREFIX from './constants/LOG_REVIEW_ROUTE_PATH_PREFIX';
 import LOG_ROUTE_PATH from './constants/LOG_ROUTE_PATH';
 import LOG_REVIEW_STATUS_ROUTE from './constants/LOG_REVIEW_STATUS_ROUTE';
+import LOG_REVIEW_GET_LOGS_ROUTE from './constants/LOG_REVIEW_GET_LOGS_ROUTE';
 
 // Import dynamic constants
 import DynamicWord from './dynamicConstants/DynamicWord';
@@ -93,6 +94,7 @@ import someAsync from './helpers/asyncArrayFunctions/someAsync';
 import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
 import getWordCount from './helpers/getWordCount';
+import cloneDeep from './helpers/cloneDeep';
 
 // Import types
 import ParamType from './types/ParamType';
@@ -115,6 +117,7 @@ import LogLevel from './types/LogLevel';
 import IntelliTableColumn from './types/IntelliTableColumn';
 import DropdownItemType from './types/DropdownItemType';
 import ReactKitErrorCode from './types/ReactKitErrorCode';
+import LogReviewerFilterState from './types/LogReviewerFilterState';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -164,6 +167,7 @@ export {
   LOG_REVIEW_ROUTE_PATH_PREFIX,
   LOG_ROUTE_PATH,
   LOG_REVIEW_STATUS_ROUTE,
+  LOG_REVIEW_GET_LOGS_ROUTE,
   // Dynamic Constants
   DynamicWord,
   // Helpers
@@ -208,6 +212,7 @@ export {
   capitalize,
   shuffleArray,
   getWordCount,
+  cloneDeep,
   // Client helpers
   initClient,
   visitServerEndpoint,
@@ -238,6 +243,7 @@ export {
   LogLevel,
   IntelliTableColumn,
   DropdownItemType,
+  LogReviewerFilterState,
   // Component-specific-types
   PickableItem,
   DBEntry,
