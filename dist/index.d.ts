@@ -816,6 +816,12 @@ declare const LOG_ROUTE_PATH: string;
 declare const LOG_REVIEW_STATUS_ROUTE: string;
 
 /**
+ * Path of the route for getting logs for log review
+ * @author Gabe Abrams
+ */
+declare const LOG_REVIEW_GET_LOGS_ROUTE: string;
+
+/**
  * Dynamic words determined by the user's platform
  * @author Gabe Abrams
  */
@@ -1535,6 +1541,14 @@ declare const shuffleArray: <T>(arr: T[]) => T[];
 declare const getWordCount: (text: string) => number;
 
 /**
+ * Deeply clones an object
+ * @author Yuen Ler Chow
+ * @param obj the object to clone
+ * @returns a deep clone of the object
+ */
+declare const cloneDeep: <T>(obj: T) => T;
+
+/**
  * Days of the week
  * @author Gabe Abrams
  */
@@ -1577,4 +1591,87 @@ declare enum ReactKitErrorCode {
     SimpleDateChooserInvalidNumMonths = "DRK36"
 }
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogReviewer, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+/**
+ * Date filter state
+ * @author Yuen Ler Chow
+ */
+type DateFilterState = {
+    startDate: {
+        year: number;
+        month: number;
+        day: number;
+    };
+    endDate: {
+        year: number;
+        month: number;
+        day: number;
+    };
+};
+
+/**
+ * Context filter state
+ * @author Yuen Ler Chow
+ */
+type ContextFilterState = {
+    [k: string]: (boolean | {
+        [k: string]: boolean;
+    });
+};
+
+/**
+ * Tag filter state
+ * @author Yuen Ler Chow
+ */
+type TagFilterState = {
+    [k: string]: boolean;
+};
+
+/**
+ * Action filter state (only relevant for action logs)
+ * @author Yuen Ler Chow
+ */
+type ActionErrorFilterState = {
+    type: LogType | undefined;
+    errorMessage: string;
+    errorCode: string;
+    target: {
+        [k: string]: boolean;
+    };
+    action: {
+        [k: string]: boolean;
+    };
+};
+
+/**
+ * Advanced filter state
+ * @author Yuen Ler Chow
+ */
+type AdvancedFilterState = {
+    userFirstName: string;
+    userLastName: string;
+    userEmail: string;
+    userId: string;
+    includeLearners: boolean;
+    includeTTMs: boolean;
+    includeAdmins: boolean;
+    courseId: string;
+    courseName: string;
+    isMobile: (true | false | undefined);
+    source: LogSource | undefined;
+    routePath: string;
+    routeTemplate: string;
+};
+
+/**
+ * A bundle of filter state objects for each type of filter
+ * @author Gabe Abrams
+ */
+type LogReviewerFilterState = {
+    dateFilterState: DateFilterState;
+    contextFilterState: ContextFilterState;
+    tagFilterState: TagFilterState;
+    actionErrorFilterState: ActionErrorFilterState;
+    advancedFilterState: AdvancedFilterState;
+};
+
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogReviewer, LogReviewerFilterState, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, cloneDeep, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
