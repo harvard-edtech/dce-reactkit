@@ -2571,7 +2571,7 @@ const getMonthName = (month) => {
  * @author Gabe Abrams
  * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
  * @returns object with timestamp (ms since epoch) and numbers
- *   corresponding to ET time values for year, month, day, hour, hour12, minute, isPM
+ *   corresponding to ET time values for year, month, day, hour, hour12, minute, second, isPM
  *   where hour is in 24hr time and hour12 is in 12hr time.
  */
 const getTimeInfoInET = (dateOrTimestamp) => {
@@ -2601,6 +2601,9 @@ const getTimeInfoInET = (dateOrTimestamp) => {
     const month = Number.parseInt(monthStr, 10);
     const day = Number.parseInt(dayStr, 10);
     const minute = Number.parseInt(minStr, 10);
+    const second = (ending.split(' ')[0]
+        ? Number.parseInt(ending.split(' ')[0], 10)
+        : 0);
     const hour12 = Number.parseInt(hourStr, 10);
     // Convert from am/pm to 24hr
     const isAM = ending.toLowerCase().includes('am');
@@ -2622,6 +2625,7 @@ const getTimeInfoInET = (dateOrTimestamp) => {
         hour12,
         isPM,
         minute,
+        second,
     };
 };
 
