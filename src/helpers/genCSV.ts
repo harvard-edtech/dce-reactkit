@@ -21,7 +21,10 @@ const escapeCellText = (text: string): string => {
  * Generate a CSV file
  * @author Gabe Abrams
  * @param data list of row data in the form of json objects
- * @param columns list of columns to include in the csv
+ * @param columns list of columns to include in the csv where each column is an object with:
+ * - title: the column title
+ * - param: the key in the data object to use for this column
+ * - textIfUndefined: optional text to use if the value is undefined (defaults to empty string)
  * @returns multiline csv string
  */
 const genCSV = (
@@ -31,6 +34,7 @@ const genCSV = (
   columns: {
     title: string,
     param: string,
+    textIfUndefined?: string,
   }[],
 ): string => {
   let csv = '';
@@ -57,11 +61,13 @@ const genCSV = (
             || typeof cell === 'number'
           ) {
             contents = String(cell);
-          } else if (
-            typeof cell === 'undefined'
-            || cell === null
-          ) {
+          } else if (cell === null) {
             contents = '';
+          } else if (typeof cell === 'undefined') {
+            contents = (
+              column.textIfUndefined
+              ?? ''
+            );
           } else if (typeof cell === 'object') {
             contents = JSON.stringify(cell);
           } else {

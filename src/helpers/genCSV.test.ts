@@ -23,7 +23,7 @@ describe('genCSV', () => {
       { name: 'Bob', age: 30, email: 'bob@example.com' },
       { name: 'Charlie', age: 35, email: 'charlie@example.com' },
     ];
-    const expected = `Name,Age,Email\nAlice,25,alice@example.com\nBob,30,bob@example.com\nCharlie,35,charlie@example.com`;
+    const expected = 'Name,Age,Email\nAlice,25,alice@example.com\nBob,30,bob@example.com\nCharlie,35,charlie@example.com';
     const result = genCSV(data, columns);
     expect(result).toEqual(expected);
   });
@@ -39,7 +39,7 @@ describe('genCSV', () => {
       { name: 'Bob', age: null, email: 'bob@example.com' },
       { name: 'Charlie', age: 35, email: undefined },
     ];
-    const expected = `Name,Age,Email\nAlice,,\nBob,,bob@example.com\nCharlie,35,`;
+    const expected = 'Name,Age,Email\nAlice,,\nBob,,bob@example.com\nCharlie,35,';
     const result = genCSV(data, columns);
     expect(result).toEqual(expected);
   });
@@ -54,7 +54,21 @@ describe('genCSV', () => {
       { name: 'Bob', data: [1, 2, 3] },
       { name: 'Charlie', data: null },
     ];
-    const expected = `Name,Data\nAlice,"{""foo"":""bar""}"\nBob,"[1,2,3]"\nCharlie,`;
+    const expected = 'Name,Data\nAlice,"{""foo"":""bar""}"\nBob,"[1,2,3]"\nCharlie,';
+    const result = genCSV(data, columns);
+    expect(result).toEqual(expected);
+  });
+
+  it('should use textIfUndefined for undefined values', () => {
+    const columns = [
+      { title: 'Name', param: 'name' },
+      { title: 'Age', param: 'age', textIfUndefined: 'N/A' },
+    ];
+    const data = [
+      { name: 'Alice', age: undefined },
+      { name: 'Bob', age: 30 },
+    ];
+    const expected = 'Name,Age\nAlice,N/A\nBob,30';
     const result = genCSV(data, columns);
     expect(result).toEqual(expected);
   });
