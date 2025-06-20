@@ -20,6 +20,8 @@ type Props = {
   filename: string,
   // The contents of the CSV file to download
   csv: string,
+  // Label for the button
+  label?: string,
   // Id of the button
   id?: string,
   // Class name of the button
@@ -55,6 +57,7 @@ const CSVDownloadButton: React.FC<Props> = (props) => {
     style,
     onClick,
     children,
+    label = 'Download CSV',
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -86,7 +89,7 @@ const CSVDownloadButton: React.FC<Props> = (props) => {
             icon={faCloudDownloadAlt}
           />
           {' '}
-          Download CSV
+          {label}
         </>
       )}
       {children}

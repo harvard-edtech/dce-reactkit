@@ -543,6 +543,7 @@ declare const IntelliTable: React$1.FC<Props$7>;
 type Props$6 = {
     filename: string;
     csv: string;
+    label?: string;
     id?: string;
     className?: string;
     ariaLabel?: string;

@@ -59,6 +59,7 @@ const genCSV = (
           if (
             typeof cell === 'string'
             || typeof cell === 'number'
+            || typeof cell === 'boolean'
           ) {
             contents = String(cell);
           } else if (cell === null) {
