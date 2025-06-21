@@ -3952,7 +3952,8 @@ const genCSV = (data, columns) => {
             let contents;
             const cell = datum[column.param];
             if (typeof cell === 'string'
-                || typeof cell === 'number') {
+                || typeof cell === 'number'
+                || typeof cell === 'boolean') {
                 contents = String(cell);
             }
             else if (cell === null) {
