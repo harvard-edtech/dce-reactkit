@@ -6,6 +6,7 @@ import React from 'react';
 type Props = {
     filename: string;
     csv: string;
+    label?: string;
     id?: string;
     className?: string;
     ariaLabel?: string;

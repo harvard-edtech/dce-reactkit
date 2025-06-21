@@ -3961,7 +3961,7 @@ const CSVDownloadButton = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { filename, csv, id, className, ariaLabel, style, onClick, children, } = props;
+    const { filename, csv, id, className, ariaLabel, style, onClick, children, label = 'Download CSV', } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -3975,7 +3975,7 @@ const CSVDownloadButton = (props) => {
         !children && (React__default.createElement(React__default.Fragment, null,
             React__default.createElement(FontAwesomeIcon, { icon: faCloudDownloadAlt }),
             ' ',
-            "Download CSV")),
+            label)),
         children));
 };
 
