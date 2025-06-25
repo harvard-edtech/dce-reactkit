@@ -8,6 +8,7 @@ import padZerosLeft from './padZerosLeft';
 
 /**
  * Get a timestamp (ms since epoch) from time info (year, month, day, hour, minute, etc.) in Eastern Time (ET)
+ * @author Gardenia Liu
  * @author Gabe Abrams
  * @param opts object containing all arguments
  * @param opts.year Year (e.g. 2023)
