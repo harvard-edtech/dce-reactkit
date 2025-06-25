@@ -8,6 +8,7 @@ declare enum ReactKitErrorCode {
     SessionExpired = "DRK3",
     NoCACCLSendRequestFunction = "DRK7",
     SimpleDateChooserInvalidDateRange = "DRK35",
-    SimpleDateChooserInvalidNumMonths = "DRK36"
+    SimpleDateChooserInvalidNumMonths = "DRK36",
+    ETTimestampInvalid = "DRK37"
 }
 export default ReactKitErrorCode;

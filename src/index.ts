@@ -95,6 +95,7 @@ import capitalize from './helpers/capitalize';
 import shuffleArray from './helpers/shuffleArray';
 import getWordCount from './helpers/getWordCount';
 import cloneDeep from './helpers/cloneDeep';
+import getTimestampFromTimeInfoInET from './helpers/getTimestampFromTimeInfoInET';
 
 // Import types
 import ParamType from './types/ParamType';
@@ -213,6 +214,7 @@ export {
   shuffleArray,
   getWordCount,
   cloneDeep,
+  getTimestampFromTimeInfoInET,
   // Client helpers
   initClient,
   visitServerEndpoint,
