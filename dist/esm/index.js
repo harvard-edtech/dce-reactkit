@@ -30,7 +30,7 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK36
+// Highest error code = DRK37
 /**
  * List of error codes built into the react kit
  * @author Gabe Abrams
@@ -43,6 +43,7 @@ var ReactKitErrorCode;
     ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
     ReactKitErrorCode["SimpleDateChooserInvalidDateRange"] = "DRK35";
     ReactKitErrorCode["SimpleDateChooserInvalidNumMonths"] = "DRK36";
+    ReactKitErrorCode["ETTimestampInvalid"] = "DRK37";
 })(ReactKitErrorCode || (ReactKitErrorCode = {}));
 var ReactKitErrorCode$1 = ReactKitErrorCode;
 
@@ -16346,6 +16347,47 @@ const getWordCount = (text) => {
     return trimmedTextWithoutPunctuation.split(/\s+/g).length;
 };
 
+// Import shared types
+/**
+ * Get a timestamp (ms since epoch) from time info (year, month, day, hour, minute, etc.) in Eastern Time (ET)
+ * @author Gabe Abrams
+ * @param opts object containing all arguments
+ * @param opts.year Year (e.g. 2023)
+ * @param opts.month Month (1-12)
+ * @param opts.day Day of the month (1-31)
+ * @param opts.hour Hour (0-23)
+ * @param opts.minute Minute (0-59))
+ * @returns Timestamp in milliseconds since epoch
+ */
+const getTimestampFromTimeInfoInET = (opts) => {
+    // Destructure opts
+    const { year, month, day, hour, minute, } = opts;
+    // Determine if the date is in DST in Eastern Time
+    const tempDate = new Date(year, month - 1, day);
+    const janOffset = new Date(year, 0, 1).getTimezoneOffset();
+    const isDST = tempDate.getTimezoneOffset() < janOffset;
+    const etOffset = isDST ? '-04:00' : '-05:00';
+    // Format with leading zeroes
+    const mm = padZerosLeft(month, 2);
+    const dd = padZerosLeft(day, 2);
+    const hh = padZerosLeft(hour, 2);
+    const min = padZerosLeft(minute, 2);
+    // Build ET ISO string and convert to UTC timestamp
+    const etISOString = `${year}-${mm}-${dd}T${hh}:${min}:00${etOffset}`;
+    const timestamp = (new Date(etISOString)).getTime();
+    // Verify that the timestamp is correct
+    const timeInfoInET = getTimeInfoInET(timestamp);
+    if (timeInfoInET.year !== year
+        || timeInfoInET.month !== month
+        || timeInfoInET.day !== day
+        || timeInfoInET.hour !== hour
+        || timeInfoInET.minute !== minute) {
+        throw new ErrorWithCode(`Timestamp mismatch: expected ${year}-${mm}-${dd} ${hh}:${min}, got ${timeInfoInET.year}-${padZerosLeft(timeInfoInET.month, 2)}-${padZerosLeft(timeInfoInET.day, 2)} ${padZerosLeft(timeInfoInET.hour, 2)}:${padZerosLeft(timeInfoInET.minute, 2)}`, ReactKitErrorCode$1.ETTimestampInvalid);
+    }
+    // Valid! Return the timestamp
+    return timestamp;
+};
+
 /**
  * Days of the week
  * @author Gabe Abrams
@@ -16362,5 +16404,5 @@ var DayOfWeek;
 })(DayOfWeek || (DayOfWeek = {}));
 var DayOfWeek$1 = DayOfWeek;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogLevel$1 as LogLevel, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, cloneDeep, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogLevel$1 as LogLevel, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, cloneDeep, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
 //# sourceMappingURL=index.js.map
