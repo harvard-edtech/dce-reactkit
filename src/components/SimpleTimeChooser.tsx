@@ -167,7 +167,7 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
       {/* Time Chooser */}
       <select
         aria-label={`time for ${ariaLabel}`}
-        className="custom-select d-inline-block"
+        className="custom-select form-select d-inline-block"
         style={{ width: 'auto' }}
         id={`SimpleTimeChooser-${name}-time`}
         value={selectedTimeMin}

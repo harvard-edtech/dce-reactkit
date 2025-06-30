@@ -421,7 +421,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
         {/* Month Chooser */}
         <select
           aria-label={`month for ${ariaLabel}`}
-          className="custom-select d-inline-block mr-1"
+          className="custom-select form-select d-inline-block mr-1"
           style={{ width: 'auto' }}
           id={`SimpleDateChooser-${name}-month`}
           value={`${month}-${year}`}
@@ -442,7 +442,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
         {/* Day Chooser */}
         <select
           aria-label={`day for ${ariaLabel}`}
-          className="custom-select d-inline-block"
+          className="custom-select form-select d-inline-block"
           style={{ width: 'auto' }}
           id={`SimpleDateChooser-${name}-day`}
           value={day}
