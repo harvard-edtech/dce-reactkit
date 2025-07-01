@@ -2897,12 +2897,12 @@ const SimpleDateChooser = (props) => {
         });
         // Create body
         body = (React__default["default"].createElement("div", { className: "SimpleDateChooser-inner-container d-inline-block", "aria-label": `date chooser with selected date: ${month}/${day}/${year}` },
-            React__default["default"].createElement("select", { "aria-label": `month for ${ariaLabel}`, className: "custom-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: `${month}-${year}`, onChange: (e) => {
+            React__default["default"].createElement("select", { "aria-label": `month for ${ariaLabel}`, className: "custom-select form-select d-inline-block mr-1", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-month`, value: `${month}-${year}`, onChange: (e) => {
                     const choice = choices[e.target.selectedIndex];
                     // Change day, month, and year
                     onChange(choice.month, choice.days[0], choice.year);
                 } }, monthOptions),
-            React__default["default"].createElement("select", { "aria-label": `day for ${ariaLabel}`, className: "custom-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
+            React__default["default"].createElement("select", { "aria-label": `day for ${ariaLabel}`, className: "custom-select form-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
                     // Only change the day
                     onChange(month, Number.parseInt(e.target.value, 10), year);
                 } }, dayOptions)));
@@ -3035,7 +3035,7 @@ const SimpleTimeChooser = (props) => {
         return (React__default["default"].createElement("option", { key: numMinutesForChoice, value: numMinutesForChoice, "aria-label": `choose ${timeString}` }, timeString));
     });
     return (React__default["default"].createElement("div", { className: "SimpleTimeChooser-container", "aria-label": `time chooser with selected time: ${formatTime(selectedTimeMin)}` },
-        React__default["default"].createElement("select", { "aria-label": `time for ${ariaLabel}`, className: "custom-select d-inline-block", style: { width: 'auto' }, id: `SimpleTimeChooser-${name}-time`, value: selectedTimeMin, onChange: (e) => {
+        React__default["default"].createElement("select", { "aria-label": `time for ${ariaLabel}`, className: "custom-select form-select d-inline-block", style: { width: 'auto' }, id: `SimpleTimeChooser-${name}-time`, value: selectedTimeMin, onChange: (e) => {
                 // Parse selector value (string)
                 const newTime = Number.parseInt(e.target.value, 10);
                 // Convert minutes since midnight to hour and minute
