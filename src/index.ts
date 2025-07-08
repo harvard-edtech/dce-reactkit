@@ -97,6 +97,7 @@ import shuffleArray from './helpers/shuffleArray';
 import getWordCount from './helpers/getWordCount';
 import cloneDeep from './helpers/cloneDeep';
 import getTimestampFromTimeInfoInET from './helpers/getTimestampFromTimeInfoInET';
+import isSelectAdmin from './helpers/isSelectAdmin';
 
 // Import types
 import ParamType from './types/ParamType';
@@ -217,6 +218,7 @@ export {
   getWordCount,
   cloneDeep,
   getTimestampFromTimeInfoInET,
+  isSelectAdmin,
   // Client helpers
   initClient,
   visitServerEndpoint,
