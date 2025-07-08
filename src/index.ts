@@ -43,6 +43,7 @@ import LOG_REVIEW_ROUTE_PATH_PREFIX from './constants/LOG_REVIEW_ROUTE_PATH_PREF
 import LOG_ROUTE_PATH from './constants/LOG_ROUTE_PATH';
 import LOG_REVIEW_STATUS_ROUTE from './constants/LOG_REVIEW_STATUS_ROUTE';
 import LOG_REVIEW_GET_LOGS_ROUTE from './constants/LOG_REVIEW_GET_LOGS_ROUTE';
+import SELECT_ADMIN_CHECK_ROUTE from './constants/SELECT_ADMIN_CHECK_ROUTE';
 
 // Import dynamic constants
 import DynamicWord from './dynamicConstants/DynamicWord';
@@ -169,6 +170,7 @@ export {
   LOG_ROUTE_PATH,
   LOG_REVIEW_STATUS_ROUTE,
   LOG_REVIEW_GET_LOGS_ROUTE,
+  SELECT_ADMIN_CHECK_ROUTE,
   // Dynamic Constants
   DynamicWord,
   // Helpers
