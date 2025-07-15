@@ -1,11 +1,12 @@
-// TODO: import whatever you need
+import SELECT_ADMIN_CHECK_ROUTE from '../constants/SELECT_ADMIN_CHECK_ROUTE';
+import visitServerEndpoint from './visitServerEndpoint';
 
 /*------------------------------------------------------------------------*/
 /* ------------------------------- Caching ------------------------------ */
 /*------------------------------------------------------------------------*/
 
-// TODO: Implement a caching mechanism. We should only check if the user
-// is a select admin once.
+// True if user is a select admin
+let cachedResult: boolean | undefined;
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Main -------------------------------- */
@@ -17,8 +18,22 @@
  * @returns true if the user is a select admin, false otherwise
  */
 const isSelectAdmin = async (): Promise<boolean> => {
-  // TODO: check if the user is a select admin, catch error and return false
-  // if there are any errors checking
+  if (cachedResult !== undefined) {
+    return cachedResult;
+  }
+
+  try {
+    let check = false;
+    check = await visitServerEndpoint({
+      path: SELECT_ADMIN_CHECK_ROUTE,
+      method: 'GET',
+    });
+    cachedResult = check;
+    return check;
+  } catch (err) {
+    cachedResult = false;
+    return false;
+  }
 };
 
 export default isSelectAdmin;
