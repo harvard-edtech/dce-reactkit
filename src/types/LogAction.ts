@@ -41,6 +41,10 @@ enum LogAction {
   Jump = 'Jump',
   // Post a submission/message/etc. into the target
   Post = 'Post',
+  // Like something
+  Like = 'Like',
+  // Dislike something
+  Dislike = 'Dislike',
   // Unknown action
   Unknown = 'Unknown',
 }

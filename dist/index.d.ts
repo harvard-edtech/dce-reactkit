@@ -1177,6 +1177,8 @@ declare enum LogAction {
     Resume = "Resume",
     Jump = "Jump",
     Post = "Post",
+    Like = "Like",
+    Dislike = "Dislike",
     Unknown = "Unknown"
 }
 

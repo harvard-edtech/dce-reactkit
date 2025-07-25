@@ -3875,6 +3875,10 @@ var LogAction;
     LogAction["Jump"] = "Jump";
     // Post a submission/message/etc. into the target
     LogAction["Post"] = "Post";
+    // Like something
+    LogAction["Like"] = "Like";
+    // Dislike something
+    LogAction["Dislike"] = "Dislike";
     // Unknown action
     LogAction["Unknown"] = "Unknown";
 })(LogAction || (LogAction = {}));
