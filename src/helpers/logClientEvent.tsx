@@ -115,6 +115,11 @@ const logClientEvent: LogFunction = async (opts) => {
           ? (opts as any).action
           : undefined
       ),
+      overriddenUserInfo: {
+        userId: opts.userId,
+        userFirstName: opts.userFirstName,
+        userLastName: opts.userLastName,
+      },
     },
   });
 };
