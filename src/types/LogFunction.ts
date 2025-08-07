@@ -23,6 +23,12 @@ type LogFunction = (
       },
       // Log level (default is info)
       level?: LogLevel,
+      // Optional Canvas userId that overrides the current userId from the session (if there is one)
+      userId?: number,
+      // Optional Canvas user first name that overrides the current user first name from the session (if there is one)
+      userFirstName?: string,
+      // Optional Canvas user last name that overrides the current user last name from the session (if there is one)
+      userLastName?: string,
     } & (
       // Error
       | {

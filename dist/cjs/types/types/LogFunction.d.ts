@@ -15,6 +15,9 @@ type LogFunction = (opts: ({
         [k: string]: any;
     };
     level?: LogLevel;
+    userId?: number;
+    userFirstName?: string;
+    userLastName?: string;
 } & ({
     error: any;
 } | {

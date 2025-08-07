@@ -1717,6 +1717,11 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
             action: (opts.action
                 ? opts.action
                 : undefined),
+            overriddenUserInfo: {
+                userId: opts.userId,
+                userFirstName: opts.userFirstName,
+                userLastName: opts.userLastName,
+            },
         },
     });
 });
