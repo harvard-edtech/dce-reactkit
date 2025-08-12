@@ -15357,6 +15357,12 @@ const LOG_REVIEW_ROUTE_PATH_PREFIX = `/admin${ROUTE_PATH_PREFIX}/logs`;
  */
 const LOG_REVIEW_STATUS_ROUTE = `${ROUTE_PATH_PREFIX}/logs/access_allowed`;
 
+/**
+ * Route for checking if the current user is a select admin
+ * @author Gabe Abrams
+ */
+const SELECT_ADMIN_CHECK_ROUTE = '/api/admin/select/is-select-admin';
+
 // True if user is on mobile or tablet
 let cachedResult = undefined;
 /**
@@ -16420,6 +16426,42 @@ const getTimestampFromTimeInfoInET = (opts) => {
     return timestamp;
 };
 
+/*------------------------------------------------------------------------*/
+/* ------------------------------- Caching ------------------------------ */
+/*------------------------------------------------------------------------*/
+// If true, user is a select admin
+let cachedUserIsSelectAdmin;
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Main -------------------------------- */
+/*------------------------------------------------------------------------*/
+/**
+ * Checks if the current user is a select admin
+ * @author Gardenia Liu
+ * @returns true if the user is a select admin, false otherwise
+ */
+const isSelectAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
+    // Use cached version if we have one
+    if (cachedUserIsSelectAdmin !== undefined) {
+        return cachedUserIsSelectAdmin;
+    }
+    // Check if the user is a select admin
+    try {
+        const userIsSelectAdmin = yield visitServerEndpoint({
+            path: SELECT_ADMIN_CHECK_ROUTE,
+            method: 'GET',
+        });
+        // Cache the result
+        cachedUserIsSelectAdmin = !!userIsSelectAdmin;
+        // Return the result
+        return userIsSelectAdmin;
+    }
+    catch (err) {
+        // Error means the user isn't a select admin
+        cachedUserIsSelectAdmin = false;
+        return false;
+    }
+});
+
 /**
  * Days of the week
  * @author Gabe Abrams
@@ -16478,6 +16520,7 @@ exports.PopPendingMark = PopPendingMark;
 exports.PopSuccessMark = PopSuccessMark;
 exports.RadioButton = RadioButton;
 exports.ReactKitErrorCode = ReactKitErrorCode$1;
+exports.SELECT_ADMIN_CHECK_ROUTE = SELECT_ADMIN_CHECK_ROUTE;
 exports.SimpleDateChooser = SimpleDateChooser;
 exports.SimpleTimeChooser = SimpleTimeChooser;
 exports.TabBox = TabBox;
@@ -16514,6 +16557,7 @@ exports.getWordCount = getWordCount;
 exports.idify = idify;
 exports.initClient = initClient;
 exports.isMobileOrTablet = isMobileOrTablet;
+exports.isSelectAdmin = isSelectAdmin;
 exports.leaveToURL = leaveToURL;
 exports.logClientEvent = logClientEvent;
 exports.makeLinksClickable = makeLinksClickable;
