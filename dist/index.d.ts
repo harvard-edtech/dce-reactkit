@@ -316,6 +316,7 @@ type Props$g = {
     numMonthsToShow?: number;
     dontAllowPast?: boolean;
     dontAllowFuture?: boolean;
+    isDisabled?: boolean;
 };
 declare const SimpleDateChooser: React$1.FC<Props$g>;
 
@@ -336,6 +337,7 @@ type Props$f = {
      */
     onChange: (hour: number, minute: number) => void;
     intervalMin?: number;
+    isDisabled?: boolean;
 };
 declare const SimpleTimeChooser: React$1.FC<Props$f>;
 

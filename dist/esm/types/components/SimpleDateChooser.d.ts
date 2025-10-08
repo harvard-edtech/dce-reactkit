@@ -20,6 +20,7 @@ type Props = {
     numMonthsToShow?: number;
     dontAllowPast?: boolean;
     dontAllowFuture?: boolean;
+    isDisabled?: boolean;
 };
 declare const SimpleDateChooser: React.FC<Props>;
 export default SimpleDateChooser;

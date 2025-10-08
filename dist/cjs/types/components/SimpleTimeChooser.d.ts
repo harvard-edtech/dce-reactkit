@@ -15,6 +15,7 @@ type Props = {
      */
     onChange: (hour: number, minute: number) => void;
     intervalMin?: number;
+    isDisabled?: boolean;
 };
 declare const SimpleTimeChooser: React.FC<Props>;
 export default SimpleTimeChooser;

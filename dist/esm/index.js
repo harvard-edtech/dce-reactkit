@@ -2789,7 +2789,7 @@ const SimpleDateChooser = (props) => {
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { ariaLabel, name, dontAllowPast, dontAllowFuture, numMonthsToShow, onChange, month, day, year, } = props;
+    const { ariaLabel, name, dontAllowPast, dontAllowFuture, numMonthsToShow, onChange, month, day, year, isDisabled = false, } = props;
     // Get choices
     const choices = getChoices({
         numMonthsToShow,
@@ -2874,11 +2874,11 @@ const SimpleDateChooser = (props) => {
                     const choice = choices[e.target.selectedIndex];
                     // Change day, month, and year
                     onChange(choice.month, choice.days[0], choice.year);
-                } }, monthOptions),
+                }, disabled: isDisabled }, monthOptions),
             React__default.createElement("select", { "aria-label": `day for ${ariaLabel}`, className: "custom-select form-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
                     // Only change the day
                     onChange(month, Number.parseInt(e.target.value, 10), year);
-                } }, dayOptions)));
+                }, disabled: isDisabled }, dayOptions)));
     }
     /* --------- DateOutOfRange --------- */
     if (view === View.InvalidDate) {
@@ -2936,7 +2936,7 @@ const SimpleTimeChooser = (props) => {
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { ariaLabel, name, hour, minute, onChange, } = props;
+    const { ariaLabel, name, hour, minute, onChange, isDisabled = false, } = props;
     let { intervalMin = DEFAULT_INTERVAL, } = props;
     // Use default interval if not supported
     if (!ALLOWED_INTERVALS.includes(intervalMin)) {
@@ -3015,7 +3015,7 @@ const SimpleTimeChooser = (props) => {
                 const timeInfo = convertMinSinceMidnightToHoursAndMin(newTime);
                 // Notify parent
                 onChange(timeInfo.hours, timeInfo.minutes);
-            } }, timeOptions)));
+            }, disabled: isDisabled }, timeOptions)));
 };
 
 /**
