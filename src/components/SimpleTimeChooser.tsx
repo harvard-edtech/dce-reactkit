@@ -63,7 +63,7 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
     hour,
     minute,
     onChange,
-    isDisabled,
+    isDisabled = false,
   } = props;
   let {
     intervalMin = DEFAULT_INTERVAL,

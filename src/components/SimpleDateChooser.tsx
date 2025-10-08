@@ -293,7 +293,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     month,
     day,
     year,
-    isDisabled,
+    isDisabled = false,
   } = props;
 
   // Get choices
