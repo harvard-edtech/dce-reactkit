@@ -32,6 +32,8 @@ type Props = {
   // Allowed options: 15, 30, 60, defaults to 15
   // If an unsupported interval is passed in, it will default to 15
   intervalMin?: number,
+  // If true, the chooser is disabled
+  isDisabled?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -61,6 +63,7 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
     hour,
     minute,
     onChange,
+    isDisabled,
   } = props;
   let {
     intervalMin = DEFAULT_INTERVAL,
@@ -181,6 +184,7 @@ const SimpleTimeChooser: React.FC<Props> = (props) => {
           // Notify parent
           onChange(timeInfo.hours, timeInfo.minutes);
         }}
+        disabled={isDisabled}
       >
         {timeOptions}
       </select>

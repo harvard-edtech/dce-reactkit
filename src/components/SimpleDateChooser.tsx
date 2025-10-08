@@ -51,6 +51,8 @@ type Props = {
   dontAllowPast?: boolean,
   // If true, the user isn't allowed to select dates in the future
   dontAllowFuture?: boolean,
+  // If true, the chooser is disabled
+  isDisabled?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -291,6 +293,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     month,
     day,
     year,
+    isDisabled,
   } = props;
 
   // Get choices
@@ -435,6 +438,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
               choice.year,
             );
           }}
+          disabled={isDisabled}
         >
           {monthOptions}
         </select>
@@ -454,6 +458,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
               year,
             );
           }}
+          disabled={isDisabled}
         >
           {dayOptions}
         </select>
