@@ -104,7 +104,7 @@ const ErrorBox: React.FC<Props> = (props) => {
         />
         {title}
       </h4>
-      <div>
+      <div className="text-break">
         {errorText}
         {errorCodeBox}
       </div>

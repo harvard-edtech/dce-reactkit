@@ -139,7 +139,7 @@ const ErrorBox = (props) => {
         React__default["default"].createElement("h4", { className: "mb-1" },
             React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: icon, className: "me-2" }),
             title),
-        React__default["default"].createElement("div", null,
+        React__default["default"].createElement("div", { className: "text-break" },
             errorText,
             errorCodeBox),
         onClose && (React__default["default"].createElement("div", { className: "mt-2" },
