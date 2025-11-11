@@ -9,6 +9,7 @@ type Props = {
     topRightChildren?: React.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
+    minTitleWidth?: string;
 };
 declare const TabBox: React.FC<Props>;
 export default TabBox;

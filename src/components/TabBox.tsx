@@ -21,6 +21,8 @@ type Props = {
   noBottomMargin?: boolean,
   // If true, don't add padding to bottom of tab box
   noBottomPadding?: boolean,
+  // Minimum width of the tab part of the box that contains the title (css units)
+  minTitleWidth?: string,
 };
 
 /*------------------------------------------------------------------------*/
@@ -121,6 +123,7 @@ const TabBox: React.FC<Props> = (props) => {
     topRightChildren,
     noBottomPadding,
     noBottomMargin,
+    minTitleWidth,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -134,7 +137,10 @@ const TabBox: React.FC<Props> = (props) => {
 
       {/* Title Row with Left and Right sections */}
       <div className="TabBox-title-container">
-        <div className="TabBox-title">
+        <div
+          className="TabBox-title"
+          style={{ minWidth: minTitleWidth }}
+        >
           {title}
         </div>
         {topRightChildren && (
