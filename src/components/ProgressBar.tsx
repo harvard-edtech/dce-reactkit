@@ -8,7 +8,7 @@ import React from 'react';
 
 // Import types
 import Variant from '../types/Variant';
-import ModalSize from '../types/ModalSize';
+import ProgressBarSize from '../types/ProgressBarSize';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
@@ -41,7 +41,7 @@ type Props = (
     // Hide outline (default false)
     hideOutline?: boolean,
     // Size of the progress bar (default md)
-    size?: ModalSize,
+    size?: ProgressBarSize,
   }
 );
 
@@ -113,7 +113,7 @@ const ProgressBar: React.FC<Props> = (props) => {
     variant = Variant.Warning,
     bgVariant = Variant.Secondary,
     hideOutline = false,
-    size = ModalSize.Medium,
+    size = ProgressBarSize.Medium,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -126,7 +126,7 @@ const ProgressBar: React.FC<Props> = (props) => {
 
   // Size styles
   switch (size) {
-    case ModalSize.Small:
+    case ProgressBarSize.Small:
       // Small size
       style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
@@ -150,7 +150,7 @@ const ProgressBar: React.FC<Props> = (props) => {
         }
       `;
       break;
-    case ModalSize.Medium:
+    case ProgressBarSize.Medium:
       // Medium size
       style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
@@ -174,7 +174,7 @@ const ProgressBar: React.FC<Props> = (props) => {
         }
       `;
       break;
-    case ModalSize.Large:
+    case ProgressBarSize.Large:
       // Large size
       style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
@@ -205,9 +205,9 @@ const ProgressBar: React.FC<Props> = (props) => {
   // Get the width of the outline based on size
   const outlineWidth = (() => {
     switch (size) {
-      case ModalSize.Small: return '1px';
-      case ModalSize.Medium: return '1.5px';
-      case ModalSize.Large: return '2px';
+      case ProgressBarSize.Small: return '1px';
+      case ProgressBarSize.Medium: return '1.5px';
+      case ProgressBarSize.Large: return '2px';
       default: return '1px';
     }
   })();
