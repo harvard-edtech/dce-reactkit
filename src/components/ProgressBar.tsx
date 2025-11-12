@@ -14,6 +14,7 @@ import ProgressBarSize from '../types/ProgressBarSize';
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
 
+// Props definition
 type Props = (
   & (
     // Percent
@@ -45,10 +46,45 @@ type Props = (
   }
 );
 
+// Progress status definition
+type ProgressStatus = (
+  | {
+    // usePercent true
+    usePercent: true,
+    // Percentage progress (0-100)
+    percentProgress: number,
+    // Num decimal places to show (default 0)
+    numDecimalPlaces?: number,
+  }
+  // Items
+  | {
+    // usePercent false
+    usePercent: false,
+    // Current progress (number of items completed)
+    numComplete: number,
+    // Maximum progress (total number of items)
+    total: number,
+  }
+);
+
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Constants ----------------------------- */
+/*------------------------------------------------------------------------*/
+
+// Multiplier for calculating width of number of items
+const ITEM_WIDTH_MULTIPLIER = 1.3;
+
+// Constant for percent width
+const PERCENT_WIDTH = 3;
+
+// Constant for item width
+const ITEM_WIDTH = 2;
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
 
+// Base styles
 let style = `
   .ProgressBar-number-of,
   .ProgressBar-percent {
@@ -57,7 +93,7 @@ let style = `
     padding-right: 0.5em;
     padding-left: 0.25em;
     text-align: right;
-    transition: width 240ms ease;
+    transition: width .25s ease;
   }
 
   .ProgressBar-background {
@@ -65,7 +101,7 @@ let style = `
   }
 
   .ProgressBar-bar {
-    transition: all 1s ease;
+    transition: width 1s ease;
     overflow: hidden;
   }
 `;
@@ -81,40 +117,44 @@ const ProgressBar: React.FC<Props> = (props) => {
 
   /* -------------- Props ------------- */
 
-  // Get either items or percentage props
+  // Destructure props
   const {
-    percentProgress,
-    numDecimalPlaces,
-    numComplete,
-    total,
-  } = (() => {
-    if ('percentProgress' in props) {
-      const {
-        percentProgress: progress,
-        numDecimalPlaces: num,
-      } = props;
-      return {
-        percentProgress: progress,
-        numDecimalPlaces: num,
-      };
-    }
-    const {
-      numComplete: num,
-      total: tot,
-    } = props;
-    return {
-      numComplete: num,
-      total: tot,
-    };
-  })();
-
-  const {
-    striped = false,
+    striped,
     variant = Variant.Warning,
     bgVariant = Variant.Secondary,
-    hideOutline = false,
+    hideOutline,
     size = ProgressBarSize.Medium,
   } = props;
+
+  /* -------------- Status ------------- */
+
+  // Determine progress status
+  let status: ProgressStatus;
+
+  // Check whether to use percent or items
+  if ('percentProgress' in props) {
+    // Percent
+    const {
+      percentProgress,
+      numDecimalPlaces,
+    } = props;
+    status = {
+      usePercent: true,
+      percentProgress,
+      numDecimalPlaces,
+    };
+  } else {
+    // Items
+    const {
+      numComplete,
+      total,
+    } = props;
+    status = {
+      usePercent: false,
+      numComplete,
+      total,
+    };
+  }
 
   /*------------------------------------------------------------------------*/
   /* ------------------------------- Render ------------------------------- */
@@ -141,12 +181,12 @@ const ProgressBar: React.FC<Props> = (props) => {
           border-radius: 0.5em;
         }
         .ProgressBar-percent {
-          min-width: ${((numDecimalPlaces || 0) * 1) + 3}em;
-          max-width: ${((numDecimalPlaces || 0) * 1) + 3}em;
+          min-width: ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
+          max-width: ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
         }
         .ProgressBar-number-of {
-          min-width: ${((total?.toString().length || 1) * 1.3) + 2}em;
-          max-width: ${((total?.toString().length || 1) * 1.3) + 2}em;
+          min-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+          max-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
         }
       `;
       break;
@@ -165,12 +205,12 @@ const ProgressBar: React.FC<Props> = (props) => {
           border-radius: 0.7em;
         }
         .ProgressBar-percent {
-          min-width: ${((numDecimalPlaces || 0) * 1) + 3}em;
-          max-width: ${((numDecimalPlaces || 0) * 1) + 3}em;
+          min-width: ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
+          max-width: ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
         }
         .ProgressBar-number-of {
-          min-width: ${((total?.toString().length || 1) * 1.2) + 2}em;
-          max-width: ${((total?.toString().length || 1) * 1.2) + 2}em;
+          min-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+          max-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
         }
       `;
       break;
@@ -189,12 +229,12 @@ const ProgressBar: React.FC<Props> = (props) => {
           border-radius: 1em;
         }
         .ProgressBar-percent {
-          min-width: ${((numDecimalPlaces || 0) * 1) + 3}em;
-          max-width: ${((numDecimalPlaces || 0) * 1) + 3}em;
+          min-width:  ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
+          max-width:  ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
         }
         .ProgressBar-number-of {
-          min-width: ${((total?.toString().length || 1) * 1.2) + 2}em;
-          max-width: ${((total?.toString().length || 1) * 1.2) + 2}em;
+          min-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+          max-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
         }
       `;
       break;
@@ -259,20 +299,22 @@ const ProgressBar: React.FC<Props> = (props) => {
     <div className="ProgressBar-container d-flex align-items-center">
       {/* Style */}
       <style>{style}</style>
-      {numComplete && (
+      {/* Use items */}
+      {!status.usePercent && status.numComplete && (
         <span
           className="ProgressBar-number-of pe-2 align-self-center"
         >
-          {numComplete}
+          {status.numComplete}
           &nbsp;of&nbsp;
-          {total}
+          {status.total}
         </span>
       )}
-      {percentProgress && (
+      {/* Use percentage */}
+      {status.usePercent && status.percentProgress && (
         <span
           className="ProgressBar-percent pe-2 align-self-center"
         >
-          {percentProgress.toFixed(numDecimalPlaces ?? 0)}
+          {status.percentProgress.toFixed(status?.numDecimalPlaces ?? 0)}
           %
         </span>
       )}
@@ -281,13 +323,16 @@ const ProgressBar: React.FC<Props> = (props) => {
         style={{
           boxShadow: `0px 0px 0 ${outlineWidth} ${hideOutline ? '#DEE2E6' : '#000'}`,
         }}
+        aria-valuenow={status.usePercent ? status.percentProgress : status.numComplete}
+        aria-valuemin={0}
+        aria-valuemax={status.usePercent ? 100 : status.total}
       >
         <div
           className={
             `ProgressBar-bar bg-${variant} text-start position-relative`
           }
           style={{
-            width: `${(percentProgress ?? (numComplete / total) * 100).toFixed(numDecimalPlaces ?? 0)}%`,
+            width: `${(status.usePercent ? status.percentProgress : (status.numComplete / status.total) * 100)}%`,
             overflow: 'hidden',
           }}
         >
