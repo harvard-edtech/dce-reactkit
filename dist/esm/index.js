@@ -16371,21 +16371,52 @@ const getWordCount = (text) => {
  * @returns Timestamp in milliseconds since epoch
  */
 const getTimestampFromTimeInfoInET = (opts) => {
+    var _a, _b, _c, _d, _e, _f;
     // Destructure opts
     const { year, month, day, hour, minute, } = opts;
-    // Determine if the date is in DST in Eastern Time
-    const tempDate = new Date(year, month - 1, day);
-    const janOffset = new Date(year, 0, 1).getTimezoneOffset();
-    const isDST = tempDate.getTimezoneOffset() < janOffset;
-    const etOffset = isDST ? '-04:00' : '-05:00';
     // Format with leading zeroes
     const mm = padZerosLeft(month, 2);
     const dd = padZerosLeft(day, 2);
     const hh = padZerosLeft(hour, 2);
     const min = padZerosLeft(minute, 2);
-    // Build ET ISO string and convert to UTC timestamp
-    const etISOString = `${year}-${mm}-${dd}T${hh}:${min}:00${etOffset}`;
-    const timestamp = (new Date(etISOString)).getTime();
+    // Use Intl.DateTimeFormat to get the ET offset for the given date
+    const dateForET = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));
+    const options = {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    };
+    const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(dateForET);
+    const etYear = (_a = parts.find((p) => {
+        return p.type === 'year';
+    })) === null || _a === void 0 ? void 0 : _a.value;
+    const etMonth = (_b = parts.find((p) => {
+        return p.type === 'month';
+    })) === null || _b === void 0 ? void 0 : _b.value;
+    const etDay = (_c = parts.find((p) => {
+        return p.type === 'day';
+    })) === null || _c === void 0 ? void 0 : _c.value;
+    const etHour = (_d = parts.find((p) => {
+        return p.type === 'hour';
+    })) === null || _d === void 0 ? void 0 : _d.value;
+    const etMinute = (_e = parts.find((p) => {
+        return p.type === 'minute';
+    })) === null || _e === void 0 ? void 0 : _e.value;
+    const etSecond = (_f = parts.find((p) => {
+        return p.type === 'second';
+    })) === null || _f === void 0 ? void 0 : _f.value;
+    // Build ET date string and parse as if local, then get UTC timestamp
+    if (!etYear || !etMonth || !etDay || !etHour || !etMinute || !etSecond) {
+        throw new ErrorWithCode('Failed to parse date parts from Intl.DateTimeFormat', ReactKitErrorCode$1.ETTimestampInvalid);
+    }
+    const etDateString = `${etYear}-${etMonth}-${etDay}T${etHour}:${etMinute}:${etSecond}`;
+    const etDate = new Date(etDateString);
+    const timestamp = etDate.getTime();
     // Verify that the timestamp is correct
     const timeInfoInET = getTimeInfoInET(timestamp);
     if (timeInfoInET.year !== year
