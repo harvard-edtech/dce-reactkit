@@ -3,8 +3,8 @@
  * @author Allison Zhang
  */
 declare enum ProgressBarSize {
-    Small = "sm",
-    Medium = "md",
-    Large = "lg"
+    Small = "Small",
+    Medium = "Medium",
+    Large = "Large"
 }
 export default ProgressBarSize;

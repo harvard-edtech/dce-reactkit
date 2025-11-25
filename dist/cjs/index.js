@@ -15332,9 +15332,9 @@ const Dropdown = (props) => {
  */
 var ProgressBarSize;
 (function (ProgressBarSize) {
-    ProgressBarSize["Small"] = "sm";
-    ProgressBarSize["Medium"] = "md";
-    ProgressBarSize["Large"] = "lg";
+    ProgressBarSize["Small"] = "Small";
+    ProgressBarSize["Medium"] = "Medium";
+    ProgressBarSize["Large"] = "Large";
 })(ProgressBarSize || (ProgressBarSize = {}));
 var ProgressBarSize$1 = ProgressBarSize;
 
