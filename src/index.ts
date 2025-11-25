@@ -31,6 +31,7 @@ import ToggleSwitch from './components/ToggleSwitch';
 import AutoscrollToBottomContainer from './components/AutoscrollToBottomContainer';
 import MultiSwitch from './components/MultiSwitch';
 import Dropdown from './components/Dropdown';
+import ProgressBar from './components/ProgressBar';
 
 // Import errors
 import ErrorWithCode from './errors/ErrorWithCode';
@@ -156,6 +157,7 @@ export {
   AutoscrollToBottomContainer,
   MultiSwitch,
   Dropdown,
+  ProgressBar,
   // Global functions
   alert,
   prompt,

@@ -23,7 +23,7 @@ declare enum Variant {
  * @author Gabe Abrams
  */
 
-type Props$m = {
+type Props$n = {
     children: React$1.ReactNode;
 };
 /**
@@ -106,7 +106,7 @@ declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>
  * @author Gabe Abrams
  */
 declare const addFatalErrorHandler: (handler: () => void) => void;
-declare const AppWrapper: React$1.FC<Props$m>;
+declare const AppWrapper: React$1.FC<Props$n>;
 
 /**
  * Loading spinner/indicator
@@ -120,14 +120,14 @@ declare const LoadingSpinner: () => React$1.JSX.Element;
  * @author Gabe Abrams
  */
 
-type Props$l = {
+type Props$m = {
     error: any;
     title?: string;
     onClose?: () => void;
     variant?: Variant;
     icon?: IconProp;
 };
-declare const ErrorBox: React$1.FC<Props$l>;
+declare const ErrorBox: React$1.FC<Props$m>;
 
 /**
  * Types of buttons in the modal
@@ -226,21 +226,21 @@ declare const Modal: React$1.FC<ModalProps>;
  * @author Gabe Abrams
  */
 
-type Props$k = {
+type Props$l = {
     title: React$1.ReactNode;
     children: React$1.ReactNode;
     topRightChildren?: React$1.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
 };
-declare const TabBox: React$1.FC<Props$k>;
+declare const TabBox: React$1.FC<Props$l>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-type Props$j = {
+type Props$k = {
     text: React$1.ReactNode;
     onSelected: () => void;
     ariaLabel: string;
@@ -254,14 +254,14 @@ type Props$j = {
     small?: boolean;
     useComplexFormatting?: boolean;
 };
-declare const RadioButton: React$1.FC<Props$j>;
+declare const RadioButton: React$1.FC<Props$k>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-type Props$i = {
+type Props$j = {
     text: React$1.ReactNode;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -276,14 +276,14 @@ type Props$i = {
     dashed?: boolean;
     useComplexFormatting?: boolean;
 };
-declare const CheckboxButton: React$1.FC<Props$i>;
+declare const CheckboxButton: React$1.FC<Props$j>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-type Props$h = {
+type Props$i = {
     label: React$1.ReactNode;
     minLabelWidth?: string;
     children: React$1.ReactNode;
@@ -292,7 +292,7 @@ type Props$h = {
     isAdminFeature?: boolean;
     noMarginOnBottom?: boolean;
 };
-declare const ButtonInputGroup: React$1.FC<Props$h>;
+declare const ButtonInputGroup: React$1.FC<Props$i>;
 
 /**
  * A very simple, lightweight date chooser
@@ -300,7 +300,7 @@ declare const ButtonInputGroup: React$1.FC<Props$h>;
  * @author Gardenia Liu
  */
 
-type Props$g = {
+type Props$h = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -318,14 +318,14 @@ type Props$g = {
     dontAllowFuture?: boolean;
     isDisabled?: boolean;
 };
-declare const SimpleDateChooser: React$1.FC<Props$g>;
+declare const SimpleDateChooser: React$1.FC<Props$h>;
 
 /**
  * A very simple, lightweight time chooser
  * @author Gardenia Liu
  */
 
-type Props$f = {
+type Props$g = {
     ariaLabel: string;
     name: string;
     hour: number;
@@ -339,62 +339,62 @@ type Props$f = {
     intervalMin?: number;
     isDisabled?: boolean;
 };
-declare const SimpleTimeChooser: React$1.FC<Props$f>;
+declare const SimpleTimeChooser: React$1.FC<Props$g>;
 
 /**
  * Drawer container
  * @author Gabe Abrams
  */
 
-type Props$e = {
+type Props$f = {
     grayBackground?: boolean;
     customBackgroundColor?: string;
     children: React$1.ReactNode;
 };
-declare const Drawer: React$1.FC<Props$e>;
+declare const Drawer: React$1.FC<Props$f>;
 
 /**
  * Success checkmark that pops into view
  * @author Gabe Abrams
  */
 
-type Props$d = {
+type Props$e = {
     sizeRem?: number;
     circleVariant?: string;
     checkVariant?: string;
 };
-declare const PopSuccessMark: React$1.FC<Props$d>;
+declare const PopSuccessMark: React$1.FC<Props$e>;
 
 /**
  * Failure x mark that pops into view
  * @author Gabe Abrams
  */
 
-type Props$c = {
+type Props$d = {
     sizeRem?: number;
     circleVariant?: string;
     xVariant?: string;
 };
-declare const PopFailureMark: React$1.FC<Props$c>;
+declare const PopFailureMark: React$1.FC<Props$d>;
 
 /**
  * Failure pending that pops into view
  * @author Gabe Abrams
  */
 
-type Props$b = {
+type Props$c = {
     sizeRem?: number;
     circleVariant?: string;
     hourglassVariant?: string;
 };
-declare const PopPendingMark: React$1.FC<Props$b>;
+declare const PopPendingMark: React$1.FC<Props$c>;
 
 /**
  * Copiable text box
  * @author Gabe Abrams
  */
 
-type Props$a = {
+type Props$b = {
     text: string;
     maxTextWidthRem?: number;
     label?: string;
@@ -406,7 +406,7 @@ type Props$a = {
     textAreaId?: string;
     copyButtonId?: string;
 };
-declare const CopiableBox: React$1.FC<Props$a>;
+declare const CopiableBox: React$1.FC<Props$b>;
 
 /**
  * An item that can be chosen (for use within ItemPicker)
@@ -429,7 +429,7 @@ type PickableItem = ({
  * @author Yuen Ler Chow
  */
 
-type Props$9 = {
+type Props$a = {
     title: string;
     items: PickableItem[];
     /**
@@ -441,7 +441,7 @@ type Props$9 = {
     noBottomMargin?: boolean;
     hideSelectAllOrNoneButtons?: boolean;
 };
-declare const ItemPicker: React$1.FC<Props$9>;
+declare const ItemPicker: React$1.FC<Props$a>;
 
 /**
  * Type of the context map in a LogMetadata file
@@ -486,11 +486,11 @@ type LogMetadataType = {
  * @author Gabe Abrams
  */
 
-type Props$8 = {
+type Props$9 = {
     LogMetadata: LogMetadataType;
     onClose: () => void;
 };
-declare const LogReviewer: React$1.FC<Props$8>;
+declare const LogReviewer: React$1.FC<Props$9>;
 
 /**
  * Server-side API param types
@@ -525,7 +525,7 @@ type IntelliTableColumn = {
  * @author Gabe Abrams
  */
 
-type Props$7 = {
+type Props$8 = {
     title: string;
     id: string;
     data: {
@@ -535,14 +535,14 @@ type Props$7 = {
     columns: IntelliTableColumn[];
     csvName?: string;
 };
-declare const IntelliTable: React$1.FC<Props$7>;
+declare const IntelliTable: React$1.FC<Props$8>;
 
 /**
  * Button for downloading a csv file
  * @author Gabe Abrams
  */
 
-type Props$6 = {
+type Props$7 = {
     filename: string;
     csv: string;
     label?: string;
@@ -555,7 +555,7 @@ type Props$6 = {
     onClick?: () => void;
     children?: React$1.ReactNode;
 };
-declare const CSVDownloadButton: React$1.FC<Props$6>;
+declare const CSVDownloadButton: React$1.FC<Props$7>;
 
 /**
  * Generic type for an object
@@ -631,7 +631,7 @@ type DBEntryField = ({
  * @author Gabe Abrams
  */
 
-type Props$5 = {
+type Props$6 = {
     entryFields: DBEntryField[];
     idPropName: string;
     titlePropName: string;
@@ -657,18 +657,18 @@ type Props$5 = {
         [k: string]: any;
     };
 };
-declare const DBEntryManagerPanel: React$1.FC<Props$5>;
+declare const DBEntryManagerPanel: React$1.FC<Props$6>;
 
 /**
  * Simple tooltip component
  * @author Gabe Abrams
  */
 
-type Props$4 = {
+type Props$5 = {
     text: string;
     children: any;
 };
-declare const Tooltip: React$1.FC<Props$4>;
+declare const Tooltip: React$1.FC<Props$5>;
 
 /**
  * A toggle switch that toggles on or off
@@ -676,7 +676,7 @@ declare const Tooltip: React$1.FC<Props$4>;
  * @author Gabe Abrams
  */
 
-type Props$3 = {
+type Props$4 = {
     isOn: boolean;
     /**
      * A handler to call when the switch is toggled
@@ -688,7 +688,7 @@ type Props$3 = {
     description: string;
     backgroundVariantWhenOn?: Variant;
 };
-declare const ToggleSwitch: React$1.FC<Props$3>;
+declare const ToggleSwitch: React$1.FC<Props$4>;
 
 /**
  * Container that automatically scrolls when new items are added,
@@ -699,7 +699,7 @@ declare const ToggleSwitch: React$1.FC<Props$3>;
  * @author Gabe Abrams
  */
 
-type Props$2 = {
+type Props$3 = {
     itemsName?: string;
     items: AutoScrollItem[];
     jumpToBottomButtonVariant?: Variant;
@@ -710,7 +710,7 @@ type AutoScrollItem = {
     id: string | number;
     item: React$1.ReactNode;
 };
-declare const AutoscrollToBottomContainer: React$1.FC<Props$2>;
+declare const AutoscrollToBottomContainer: React$1.FC<Props$3>;
 
 /**
  * A switch with multiple options for selection
@@ -719,7 +719,7 @@ declare const AutoscrollToBottomContainer: React$1.FC<Props$2>;
  * @author Austen Money
  */
 
-type Props$1 = {
+type Props$2 = {
     options: Option[];
     selectedOptionId: string;
     /**
@@ -734,7 +734,7 @@ type Option = {
     icon: IconProp;
     id: string;
 };
-declare const MultiSwitch: React$1.FC<Props$1>;
+declare const MultiSwitch: React$1.FC<Props$2>;
 
 declare enum DropdownItemType {
     Header = "Header",
@@ -749,7 +749,7 @@ declare enum DropdownItemType {
  * @author Gabe Abrams
  */
 
-type Props = {
+type Props$1 = {
     items: DropdownItem[];
     dropdownButton: {
         ariaLabel: string;
@@ -770,7 +770,37 @@ type DropdownItem = ({
     id: string;
     onClick: () => void;
 });
-declare const Dropdown: React$1.FC<Props>;
+declare const Dropdown: React$1.FC<Props$1>;
+
+/**
+ * Progress bar sizes
+ * @author Allison Zhang
+ */
+declare enum ProgressBarSize {
+    Small = "sm",
+    Medium = "md",
+    Large = "lg"
+}
+
+/**
+ * Customizable Progress Bar component using Bootstrap styles
+ * @author Allison Zhang
+ */
+
+type Props = (({
+    percentProgress: number;
+    numDecimalPlaces?: number;
+} | {
+    numComplete: number;
+    total: number;
+}) & {
+    striped?: boolean;
+    variant?: Variant;
+    bgVariant?: Variant;
+    showOutline?: boolean;
+    size?: ProgressBarSize;
+});
+declare const ProgressBar: React$1.FC<Props>;
 
 /**
  * An error with a code
@@ -1718,4 +1748,4 @@ type LogReviewerFilterState = {
     advancedFilterState: AdvancedFilterState;
 };
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogReviewer, LogReviewerFilterState, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, RadioButton, ReactKitErrorCode, SELECT_ADMIN_CHECK_ROUTE, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, cloneDeep, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, DayOfWeek, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, IntelliTableColumn, ItemPicker, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogReviewer, LogReviewerFilterState, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, ParamType, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, RadioButton, ReactKitErrorCode, SELECT_ADMIN_CHECK_ROUTE, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, cloneDeep, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
