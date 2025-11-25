@@ -245,10 +245,10 @@ const ProgressBar: React.FC<Props> = (props) => {
   // Get the width of the outline based on size
   const outlineWidth = (() => {
     switch (size) {
-      case ProgressBarSize.Small: return '1px';
-      case ProgressBarSize.Medium: return '1.5px';
-      case ProgressBarSize.Large: return '2px';
-      default: return '1px';
+      case ProgressBarSize.Small: return '0.05em';
+      case ProgressBarSize.Medium: return '0.08em';
+      case ProgressBarSize.Large: return '0.1em';
+      default: return '0.05em';
     }
   })();
 
@@ -321,7 +321,7 @@ const ProgressBar: React.FC<Props> = (props) => {
       <div
         className={`ProgressBar-background bg-${bgVariant} w-100`}
         style={{
-          boxShadow: `0px 0px 0 ${outlineWidth} ${showOutline ? '#000' : '#DEE2E6'}`,
+          boxShadow: `0 0 0 ${outlineWidth} ${showOutline ? '#000' : '#DEE2E6'}`,
         }}
         aria-valuenow={status.usePercent ? status.percentProgress : status.numComplete}
         aria-valuemin={0}
