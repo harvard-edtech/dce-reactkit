@@ -2387,14 +2387,14 @@ const TabBox = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
-    const { title, children, topRightChildren, noBottomPadding, noBottomMargin, } = props;
+    const { title, children, topRightChildren, noBottomPadding, noBottomMargin, minTitleWidth, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     return (React__default.createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
         React__default.createElement("style", null, style$8),
         React__default.createElement("div", { className: "TabBox-title-container" },
-            React__default.createElement("div", { className: "TabBox-title" }, title),
+            React__default.createElement("div", { className: "TabBox-title", style: { minWidth: minTitleWidth } }, title),
             topRightChildren && (React__default.createElement("div", { className: "TabBox-title-right-container" },
                 React__default.createElement("div", { className: "TabBox-title-right-contents" }, topRightChildren)))),
         React__default.createElement("div", { className: `TabBox-box ps-2 pt-2 pe-2 ${noBottomPadding ? '' : 'pb-2'}` },

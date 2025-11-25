@@ -232,6 +232,7 @@ type Props$l = {
     topRightChildren?: React$1.ReactNode;
     noBottomMargin?: boolean;
     noBottomPadding?: boolean;
+    minTitleWidth?: string;
 };
 declare const TabBox: React$1.FC<Props$l>;
 
