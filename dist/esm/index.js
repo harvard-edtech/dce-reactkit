@@ -16358,6 +16358,58 @@ const getWordCount = (text) => {
 };
 
 // Import shared types
+/*----------------------------------------*/
+/* --------------- Helpers -------------- */
+/*----------------------------------------*/
+/**
+ * Check if a timestamp is valid
+ * @param opts object containing all arguments
+ * @param opts.timestamp Timestamp in milliseconds since epoch
+ * @param opts.expectedYear Expected year
+ * @param opts.expectedMonth Expected month
+ * @param opts.expectedDay Expected day
+ * @param opts.expectedHour Expected hour
+ * @param opts.expectedMinute Expected minute
+ * @returns 1 if the timestamp needs to be increased, -1 if it needs to be decreased, 0 if it is valid
+ */
+const checkTimestamp = (opts) => {
+    const { timestamp, expectedYear, expectedMonth, expectedDay, expectedHour, expectedMinute, } = opts;
+    const timeInfoInET = getTimeInfoInET(timestamp);
+    if (timeInfoInET.year < expectedYear) {
+        return 1;
+    }
+    if (timeInfoInET.year > expectedYear) {
+        return -1;
+    }
+    if (timeInfoInET.month < expectedMonth) {
+        return 1;
+    }
+    if (timeInfoInET.month > expectedMonth) {
+        return -1;
+    }
+    if (timeInfoInET.day < expectedDay) {
+        return 1;
+    }
+    if (timeInfoInET.day > expectedDay) {
+        return -1;
+    }
+    if (timeInfoInET.hour < expectedHour) {
+        return 1;
+    }
+    if (timeInfoInET.hour > expectedHour) {
+        return -1;
+    }
+    if (timeInfoInET.minute < expectedMinute) {
+        return 1;
+    }
+    if (timeInfoInET.minute > expectedMinute) {
+        return -1;
+    }
+    return 0;
+};
+/*----------------------------------------*/
+/* ---------------- Main ---------------- */
+/*----------------------------------------*/
 /**
  * Get a timestamp (ms since epoch) from time info (year, month, day, hour, minute, etc.) in Eastern Time (ET)
  * @author Gardenia Liu
@@ -16367,7 +16419,7 @@ const getWordCount = (text) => {
  * @param opts.month Month (1-12)
  * @param opts.day Day of the month (1-31)
  * @param opts.hour Hour (0-23)
- * @param opts.minute Minute (0-59))
+ * @param opts.minute Minute (0-59)
  * @returns Timestamp in milliseconds since epoch
  */
 const getTimestampFromTimeInfoInET = (opts) => {
@@ -16385,18 +16437,46 @@ const getTimestampFromTimeInfoInET = (opts) => {
     const min = padZerosLeft(minute, 2);
     // Build ET ISO string and convert to UTC timestamp
     const etISOString = `${year}-${mm}-${dd}T${hh}:${min}:00${etOffset}`;
-    const timestamp = (new Date(etISOString)).getTime();
-    // Verify that the timestamp is correct
-    const timeInfoInET = getTimeInfoInET(timestamp);
-    if (timeInfoInET.year !== year
-        || timeInfoInET.month !== month
-        || timeInfoInET.day !== day
-        || timeInfoInET.hour !== hour
-        || timeInfoInET.minute !== minute) {
-        throw new ErrorWithCode(`Timestamp mismatch: expected ${year}-${mm}-${dd} ${hh}:${min}, got ${timeInfoInET.year}-${padZerosLeft(timeInfoInET.month, 2)}-${padZerosLeft(timeInfoInET.day, 2)} ${padZerosLeft(timeInfoInET.hour, 2)}:${padZerosLeft(timeInfoInET.minute, 2)}`, ReactKitErrorCode$1.ETTimestampInvalid);
+    let timestamp = (new Date(etISOString)).getTime();
+    // Heat seek to get the right timestamp
+    const maxOffset = 24 * 60; // 24 hours in minutes
+    let currentOffset = 0; // minutes
+    const offsetIncrement = 15; // minutes
+    const offsetDirection = checkTimestamp({
+        timestamp,
+        expectedYear: year,
+        expectedMonth: month,
+        expectedDay: day,
+        expectedHour: hour,
+        expectedMinute: minute,
+    });
+    if (offsetDirection === 0) {
+        // Valid! Return the timestamp
+        return timestamp;
     }
-    // Valid! Return the timestamp
-    return timestamp;
+    // Heat seek
+    while (Math.abs(currentOffset) < maxOffset) {
+        // Update offset
+        currentOffset += (offsetDirection * offsetIncrement);
+        // Update timestamp
+        const offsetMs = currentOffset * 60 * 1000;
+        timestamp += offsetMs;
+        // Check timestamp again
+        const newDirection = checkTimestamp({
+            timestamp,
+            expectedYear: year,
+            expectedMonth: month,
+            expectedDay: day,
+            expectedHour: hour,
+            expectedMinute: minute,
+        });
+        if (newDirection === 0) {
+            // Valid! Return the timestamp
+            return timestamp;
+        }
+        // Invalid. Keep looping.
+    }
+    throw new ErrorWithCode(`Timestamp mismatch: expected ${year}-${mm}-${dd} ${hh}:${min}, seeked to offset ${currentOffset} minutes but could not find a valid timestamp.`, ReactKitErrorCode$1.ETTimestampInvalid);
 };
 
 /*------------------------------------------------------------------------*/
