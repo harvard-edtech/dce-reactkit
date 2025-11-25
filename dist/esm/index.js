@@ -16371,7 +16371,7 @@ const getWordCount = (text) => {
  * @returns Timestamp in milliseconds since epoch
  */
 const getTimestampFromTimeInfoInET = (opts) => {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     // Destructure opts
     const { year, month, day, hour, minute, } = opts;
     // Format with leading zeroes
@@ -16379,7 +16379,7 @@ const getTimestampFromTimeInfoInET = (opts) => {
     const dd = padZerosLeft(day, 2);
     const hh = padZerosLeft(hour, 2);
     const min = padZerosLeft(minute, 2);
-    // Use Intl.DateTimeFormat to get the ET offset for the given date
+    // Use Intl.DateTimeFormat to get the ET offset and ET components
     const dateForET = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));
     const options = {
         timeZone: 'America/New_York',
@@ -16390,6 +16390,7 @@ const getTimestampFromTimeInfoInET = (opts) => {
         minute: '2-digit',
         second: '2-digit',
         hour12: false,
+        timeZoneName: 'shortOffset',
     };
     const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(dateForET);
     const etYear = (_a = parts.find((p) => {
@@ -16410,11 +16411,20 @@ const getTimestampFromTimeInfoInET = (opts) => {
     const etSecond = (_f = parts.find((p) => {
         return p.type === 'second';
     })) === null || _f === void 0 ? void 0 : _f.value;
-    // Build ET date string and parse as if local, then get UTC timestamp
-    if (!etYear || !etMonth || !etDay || !etHour || !etMinute || !etSecond) {
+    const tzName = (_g = parts.find((p) => {
+        return p.type === 'timeZoneName';
+    })) === null || _g === void 0 ? void 0 : _g.value;
+    // Validate we got everything we need
+    if (!etYear || !etMonth || !etDay || !etHour || !etMinute || !etSecond || !tzName) {
         throw new ErrorWithCode('Failed to parse date parts from Intl.DateTimeFormat', ReactKitErrorCode$1.ETTimestampInvalid);
     }
-    const etDateString = `${etYear}-${etMonth}-${etDay}T${etHour}:${etMinute}:${etSecond}`;
+    // Extract numeric offset from "GMT-4" or "UTC-5"
+    const offsetNum = Number(tzName.replace(/^(GMT|UTC)/, ''));
+    const sign = offsetNum >= 0 ? '+' : '-';
+    const offset = `${sign}${padZerosLeft(Math.abs(offsetNum), 2)}:00`;
+    // Build ISO string with offset
+    const etDateString = `${etYear}-${etMonth}-${etDay}T${etHour}:${etMinute}:${etSecond}${offset}`;
+    // Parse into ET timestamp
     const etDate = new Date(etDateString);
     const timestamp = etDate.getTime();
     // Verify that the timestamp is correct
@@ -16424,7 +16434,9 @@ const getTimestampFromTimeInfoInET = (opts) => {
         || timeInfoInET.day !== day
         || timeInfoInET.hour !== hour
         || timeInfoInET.minute !== minute) {
-        throw new ErrorWithCode(`Timestamp mismatch: expected ${year}-${mm}-${dd} ${hh}:${min}, got ${timeInfoInET.year}-${padZerosLeft(timeInfoInET.month, 2)}-${padZerosLeft(timeInfoInET.day, 2)} ${padZerosLeft(timeInfoInET.hour, 2)}:${padZerosLeft(timeInfoInET.minute, 2)}`, ReactKitErrorCode$1.ETTimestampInvalid);
+        throw new ErrorWithCode(`Timestamp mismatch: expected ${year}-${mm}-${dd} ${hh}:${min}, `
+            + `got ${timeInfoInET.year}-${padZerosLeft(timeInfoInET.month, 2)}-${padZerosLeft(timeInfoInET.day, 2)} `
+            + `${padZerosLeft(timeInfoInET.hour, 2)}:${padZerosLeft(timeInfoInET.minute, 2)}`, ReactKitErrorCode$1.ETTimestampInvalid);
     }
     // Valid! Return the timestamp
     return timestamp;
