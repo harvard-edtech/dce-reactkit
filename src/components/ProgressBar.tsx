@@ -40,7 +40,7 @@ type Props = (
     // Background variants (default secondary subtle)
     bgVariant?: Variant,
     // Hide outline (default false)
-    hideOutline?: boolean,
+    showOutline?: boolean,
     // Size of the progress bar (default md)
     size?: ProgressBarSize,
   }
@@ -122,7 +122,7 @@ const ProgressBar: React.FC<Props> = (props) => {
     striped,
     variant = Variant.Warning,
     bgVariant = Variant.Secondary,
-    hideOutline,
+    showOutline,
     size = ProgressBarSize.Medium,
   } = props;
 
@@ -321,7 +321,7 @@ const ProgressBar: React.FC<Props> = (props) => {
       <div
         className={`ProgressBar-background bg-${bgVariant} w-100`}
         style={{
-          boxShadow: `0px 0px 0 ${outlineWidth} ${hideOutline ? '#DEE2E6' : '#000'}`,
+          boxShadow: `0px 0px 0 ${outlineWidth} ${showOutline ? '#000' : '#DEE2E6'}`,
         }}
         aria-valuenow={status.usePercent ? status.percentProgress : status.numComplete}
         aria-valuemin={0}
