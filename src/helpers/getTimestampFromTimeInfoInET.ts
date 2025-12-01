@@ -12,6 +12,8 @@ import padZerosLeft from './padZerosLeft';
 
 /**
  * Check if a timestamp is valid
+ * @author Gabe Abrams
+ * @author Gardenia Liu
  * @param opts object containing all arguments
  * @param opts.timestamp Timestamp in milliseconds since epoch
  * @param opts.expectedYear Expected year
