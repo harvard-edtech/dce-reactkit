@@ -7,7 +7,7 @@
  * @param opts.month Month (1-12)
  * @param opts.day Day of the month (1-31)
  * @param opts.hour Hour (0-23)
- * @param opts.minute Minute (0-59))
+ * @param opts.minute Minute (0-59)
  * @returns Timestamp in milliseconds since epoch
  */
 declare const getTimestampFromTimeInfoInET: (opts: {
