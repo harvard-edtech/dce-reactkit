@@ -909,7 +909,7 @@ var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDom.exports);
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$a = `
+const style$b = `
 /* Container fades in */
 .LoadingSpinner-container {
   animation-name: LoadingSpinner-container-fade-in;
@@ -987,7 +987,7 @@ const LoadingSpinner = () => {
     /*------------------------------------------------------------------------*/
     // Add all four blips to a container
     return (React__default["default"].createElement("div", { className: "text-center LoadingSpinner LoadingSpinner-container" },
-        React__default["default"].createElement("style", null, style$a),
+        React__default["default"].createElement("style", null, style$b),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-1 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-2 me-1" }),
         React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faCircle, className: "LoadingSpinner-blip-3 me-1" }),
@@ -1251,7 +1251,7 @@ const getNextUniqueId = () => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$9 = `
+const style$a = `
   .Modal-backdrop {
     position: fixed;
     top: 0;
@@ -1450,7 +1450,7 @@ const Modal = (props) => {
             left: 0,
             right: 0,
         } },
-        React__default["default"].createElement("style", null, style$9),
+        React__default["default"].createElement("style", null, style$a),
         React__default["default"].createElement("div", { className: `Modal-backdrop ${backdropAnimationClass}`, style: {
                 zIndex: baseZIndex + 1,
             }, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
@@ -2101,7 +2101,7 @@ const showSessionExpiredMessage = () => __awaiter(void 0, void 0, void 0, functi
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$8 = `
+const style$9 = `
   .AppWrapper-leave-to-url-notice {
     opacity: 0;
 
@@ -2315,7 +2315,7 @@ const AppWrapper = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement("style", null, style$8),
+        React__default["default"].createElement("style", null, style$9),
         React__default["default"].createElement("style", null, tooltipStyle),
         modal,
         customModalPortals,
@@ -2329,7 +2329,7 @@ const AppWrapper = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$7 = `
+const style$8 = `
   /* Tab Box */
   .TabBox-box {
     /* Light Border */
@@ -2419,7 +2419,7 @@ const TabBox = (props) => {
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     return (React__default["default"].createElement("div", { className: `TabBox-container ${noBottomMargin ? '' : 'mb-2'}` },
-        React__default["default"].createElement("style", null, style$7),
+        React__default["default"].createElement("style", null, style$8),
         React__default["default"].createElement("div", { className: "TabBox-title-container" },
             React__default["default"].createElement("div", { className: "TabBox-title", style: { minWidth: minTitleWidth } }, title),
             topRightChildren && (React__default["default"].createElement("div", { className: "TabBox-title-right-container" },
@@ -3052,7 +3052,7 @@ const SimpleTimeChooser = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$6 = `
+const style$7 = `
   .Drawer-container {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -3088,7 +3088,7 @@ const Drawer = (props) => {
                 ? '#E2E3E5'
                 : (customBackgroundColor !== null && customBackgroundColor !== void 0 ? customBackgroundColor : undefined)),
         } },
-        React__default["default"].createElement("style", null, style$6),
+        React__default["default"].createElement("style", null, style$7),
         children));
 };
 
@@ -3099,7 +3099,7 @@ const Drawer = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$5 = `
+const style$6 = `
   .PopSuccessMark-outer-container {
     position: relative;
     display: inline-block;
@@ -3204,7 +3204,7 @@ const PopSuccessMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "checkmark indicating success" },
-        React__default["default"].createElement("style", null, style$5),
+        React__default["default"].createElement("style", null, style$6),
         React__default["default"].createElement("div", { className: `PopSuccessMark-check-stroke-1 bg-${checkVariant}`, style: {
                 borderRadius: `${sizeRem / 5}rem`,
             } }),
@@ -3220,7 +3220,7 @@ const PopSuccessMark = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$4 = `
+const style$5 = `
   .PopFailureMark-outer-container {
     position: relative;
     display: inline-block;
@@ -3324,7 +3324,7 @@ const PopFailureMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "mark indicating failure" },
-        React__default["default"].createElement("style", null, style$4),
+        React__default["default"].createElement("style", null, style$5),
         React__default["default"].createElement("div", { className: `PopFailureMark-x-stroke-1 bg-${xVariant}`, style: {
                 borderRadius: `${sizeRem / 5}rem`,
             } }),
@@ -3340,7 +3340,7 @@ const PopFailureMark = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$3 = `
+const style$4 = `
   .PopPendingMark-outer-container {
     position: relative;
     display: inline-block;
@@ -3413,7 +3413,7 @@ const PopPendingMark = (props) => {
             width: `${sizeRem}rem`,
             height: `${sizeRem}rem`,
         }, "aria-label": "mark indicating that the item is pending" },
-        React__default["default"].createElement("style", null, style$3),
+        React__default["default"].createElement("style", null, style$4),
         React__default["default"].createElement("div", null,
             React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: freeSolidSvgIcons.faHourglass, className: `PopPendingMark-hourglass text-${hourglassVariant}`, style: {
                     fontSize: `${sizeRem * 0.6}rem`,
@@ -4501,7 +4501,7 @@ var FilterDrawer;
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$2 = `
+const style$3 = `
   .LogReviewer-outer-container {
     /* Full Screen */
     display: inline-block;
@@ -5664,7 +5664,7 @@ const LogReviewer = (props) => {
         !loading && logs.length > 0 && paginationControls));
     /* ---------- Wrap in Modal --------- */
     return (React__default["default"].createElement("div", { className: "LogReviewer-outer-container" },
-        React__default["default"].createElement("style", null, style$2),
+        React__default["default"].createElement("style", null, style$3),
         React__default["default"].createElement("div", { className: "LogReviewer-inner-container" },
             React__default["default"].createElement("div", { className: "LogReviewer-header" },
                 React__default["default"].createElement("div", { className: "LogReviewer-header-title" },
@@ -13933,7 +13933,7 @@ const CreatableMultiselect = (props) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style$1 = `
+const style$2 = `
   .AddOrEditDBEntry-input-label {
     min-width: 7rem;
   }
@@ -14311,7 +14311,7 @@ const AddOrEditDBEntry = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default["default"].createElement("div", { className: "alert alert-light text-black" },
-        React__default["default"].createElement("style", null, style$1),
+        React__default["default"].createElement("style", null, style$2),
         body));
 };
 
@@ -14687,7 +14687,7 @@ const idify = (str) => {
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Style ------------------------------- */
 /*------------------------------------------------------------------------*/
-const style = `
+const style$1 = `
   .AutoscrollToBottomContainer-outer-container {
     /* Take up all space */
     height: 100%;
@@ -14923,7 +14923,7 @@ const AutoscrollToBottomContainer = (props) => {
     }
     // Main UI
     return (React__default["default"].createElement("div", { className: "AutoscrollToBottomContainer-outer-container" },
-        React__default["default"].createElement("style", null, style),
+        React__default["default"].createElement("style", null, style$1),
         jumpToBottomButton,
         React__default["default"].createElement("div", { className: "AutoscrollToBottomContainer-scrollable-container", onScroll: handleScroll, ref: container },
             messageBeforeItems,
@@ -15324,6 +15324,229 @@ const Dropdown = (props) => {
                         item.onClick();
                     } }, item.content)));
         }))));
+};
+
+/**
+ * Progress bar sizes
+ * @author Allison Zhang
+ */
+var ProgressBarSize;
+(function (ProgressBarSize) {
+    ProgressBarSize["Small"] = "Small";
+    ProgressBarSize["Medium"] = "Medium";
+    ProgressBarSize["Large"] = "Large";
+})(ProgressBarSize || (ProgressBarSize = {}));
+var ProgressBarSize$1 = ProgressBarSize;
+
+/**
+ * Customizable Progress Bar component using Bootstrap styles
+ * @author Allison Zhang
+ */
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Constants ----------------------------- */
+/*------------------------------------------------------------------------*/
+// Multiplier for calculating width of number of items
+const ITEM_WIDTH_MULTIPLIER = 1.3;
+// Constant for percent width
+const PERCENT_WIDTH = 3;
+// Constant for item width
+const ITEM_WIDTH = 2;
+/*------------------------------------------------------------------------*/
+/* -------------------------------- Style ------------------------------- */
+/*------------------------------------------------------------------------*/
+// Base styles
+let style = `
+  .ProgressBar-number-of,
+  .ProgressBar-percent {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding-right: 0.5em;
+    padding-left: 0.25em;
+    text-align: right;
+    transition: width .25s ease;
+  }
+
+  .ProgressBar-background {
+    overflow: hidden;
+  }
+
+  .ProgressBar-bar {
+    transition: width 1s ease;
+    overflow: hidden;
+  }
+`;
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const ProgressBar = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    /* -------------- Props ------------- */
+    // Destructure props
+    const { striped, variant = Variant$1.Warning, bgVariant = Variant$1.Secondary, showOutline, size = ProgressBarSize$1.Medium, } = props;
+    /* -------------- Status ------------- */
+    // Determine progress status
+    let status;
+    // Check whether to use percent or items
+    if ('percentProgress' in props) {
+        // Percent
+        const { percentProgress, numDecimalPlaces, } = props;
+        status = {
+            usePercent: true,
+            percentProgress,
+            numDecimalPlaces,
+        };
+    }
+    else {
+        // Items
+        const { numComplete, total, } = props;
+        status = {
+            usePercent: false,
+            numComplete,
+            total,
+        };
+    }
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* ---------------- Sizes --------------- */
+    /*----------------------------------------*/
+    // Size styles
+    switch (size) {
+        case ProgressBarSize$1.Small:
+            // Small size
+            style += `
+        .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
+          font-size: 1em;
+        }
+        .ProgressBar-container .ProgressBar-background {
+          height: 1.5em;
+          border-radius: 0.5em;
+        }
+        .ProgressBar-container .ProgressBar-bar {
+          height: 1.5em;
+          border-radius: 0.5em;
+        }
+        .ProgressBar-percent {
+          min-width: ${((status.usePercent ? (_a = status.numDecimalPlaces) !== null && _a !== void 0 ? _a : 0 : 0) * 1) + PERCENT_WIDTH}em;
+          max-width: ${((status.usePercent ? (_b = status.numDecimalPlaces) !== null && _b !== void 0 ? _b : 0 : 0) * 1) + PERCENT_WIDTH}em;
+        }
+        .ProgressBar-number-of {
+          min-width: ${((!status.usePercent ? ((_c = status.total) === null || _c === void 0 ? void 0 : _c.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+          max-width: ${((!status.usePercent ? ((_d = status.total) === null || _d === void 0 ? void 0 : _d.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+        }
+      `;
+            break;
+        case ProgressBarSize$1.Medium:
+            // Medium size
+            style += `
+        .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
+          font-size: 1.5em;
+        }
+        .ProgressBar-container .ProgressBar-background {
+          height: 2em;
+          border-radius: 0.7em;
+        }
+        .ProgressBar-container .ProgressBar-bar {
+          height: 2em;
+          border-radius: 0.7em;
+        }
+        .ProgressBar-percent {
+          min-width: ${((status.usePercent ? (_e = status.numDecimalPlaces) !== null && _e !== void 0 ? _e : 0 : 0) * 1) + PERCENT_WIDTH}em;
+          max-width: ${((status.usePercent ? (_f = status.numDecimalPlaces) !== null && _f !== void 0 ? _f : 0 : 0) * 1) + PERCENT_WIDTH}em;
+        }
+        .ProgressBar-number-of {
+          min-width: ${((!status.usePercent ? ((_g = status.total) === null || _g === void 0 ? void 0 : _g.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+          max-width: ${((!status.usePercent ? ((_h = status.total) === null || _h === void 0 ? void 0 : _h.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+        }
+      `;
+            break;
+        case ProgressBarSize$1.Large:
+            // Large size
+            style += `
+        .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
+          font-size: 2em;
+        }
+        .ProgressBar-container .ProgressBar-background {
+          height: 3em;
+          border-radius: 1em;
+        }
+        .ProgressBar-container .ProgressBar-bar {
+          height: 3em;
+          border-radius: 1em;
+        }
+        .ProgressBar-percent {
+          min-width:  ${((status.usePercent ? (_j = status.numDecimalPlaces) !== null && _j !== void 0 ? _j : 0 : 0) * 1) + PERCENT_WIDTH}em;
+          max-width:  ${((status.usePercent ? (_k = status.numDecimalPlaces) !== null && _k !== void 0 ? _k : 0 : 0) * 1) + PERCENT_WIDTH}em;
+        }
+        .ProgressBar-number-of {
+          min-width: ${((!status.usePercent ? ((_l = status.total) === null || _l === void 0 ? void 0 : _l.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+          max-width: ${((!status.usePercent ? ((_m = status.total) === null || _m === void 0 ? void 0 : _m.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+        }
+      `;
+            break;
+    }
+    // Get the width of the outline based on size
+    const outlineWidth = (() => {
+        switch (size) {
+            case ProgressBarSize$1.Small: return '0.05em';
+            case ProgressBarSize$1.Medium: return '0.08em';
+            case ProgressBarSize$1.Large: return '0.1em';
+            default: return '0.05em';
+        }
+    })();
+    /*----------------------------------------*/
+    /* --------------- Stripes -------------- */
+    /*----------------------------------------*/
+    // Stripes style
+    const stripesStyle = `
+    .ProgressBar-stripes {
+      background-image: linear-gradient(315deg, #ffffff 25%, #000000 25%, #000000 50%, #ffffff 50%, #ffffff 75%, #000000 75%, #000000 100%);
+      background-size: 6em 6em;
+      animation: ProgressBar-stripe-animation 2.5s linear infinite;
+      opacity: 0.09;
+    }
+    @keyframes ProgressBar-stripe-animation {
+      0% {
+        background-position: -6em 0;
+      }
+      100% {
+        background-position: 0 0;
+      }
+    }
+  `;
+    // Stripes for striped effect
+    const stripes = (React__default["default"].createElement("div", null,
+        React__default["default"].createElement("style", null, stripesStyle),
+        React__default["default"].createElement("div", { className: "ProgressBar-stripes position-absolute ", style: {
+                width: '200%',
+                height: '100%',
+            } }, "\u00A0")));
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    // Render the progress bar
+    return (React__default["default"].createElement("div", { className: "ProgressBar-container d-flex align-items-center" },
+        React__default["default"].createElement("style", null, style),
+        !status.usePercent && status.numComplete && (React__default["default"].createElement("span", { className: "ProgressBar-number-of pe-2 align-self-center" },
+            status.numComplete,
+            "\u00A0of\u00A0",
+            status.total)),
+        status.usePercent && status.percentProgress && (React__default["default"].createElement("span", { className: "ProgressBar-percent pe-2 align-self-center" },
+            status.percentProgress.toFixed((_o = status === null || status === void 0 ? void 0 : status.numDecimalPlaces) !== null && _o !== void 0 ? _o : 0),
+            "%")),
+        React__default["default"].createElement("div", { className: `ProgressBar-background bg-${bgVariant} w-100`, style: {
+                boxShadow: `0 0 0 ${outlineWidth} ${showOutline ? '#000' : '#DEE2E6'}`,
+            }, "aria-valuenow": status.usePercent ? status.percentProgress : status.numComplete, "aria-valuemin": 0, "aria-valuemax": status.usePercent ? 100 : status.total },
+            React__default["default"].createElement("div", { className: `ProgressBar-bar bg-${variant} text-start position-relative`, style: {
+                    width: `${(status.usePercent ? status.percentProgress : (status.numComplete / status.total) * 100)}%`,
+                    overflow: 'hidden',
+                } },
+                striped && stripes,
+                "\u00A0"))));
 };
 
 /**
@@ -16600,6 +16823,7 @@ exports.ParamType = ParamType$1;
 exports.PopFailureMark = PopFailureMark;
 exports.PopPendingMark = PopPendingMark;
 exports.PopSuccessMark = PopSuccessMark;
+exports.ProgressBar = ProgressBar;
 exports.RadioButton = RadioButton;
 exports.ReactKitErrorCode = ReactKitErrorCode$1;
 exports.SELECT_ADMIN_CHECK_ROUTE = SELECT_ADMIN_CHECK_ROUTE;
