@@ -124,7 +124,8 @@ const getTimestampFromTimeInfoInET = (
 
   // Build ET ISO string and convert to UTC timestamp
   const etISOString = `${year}-${mm}-${dd}T${hh}:${min}:00${etOffset}`;
-  let timestamp = (new Date(etISOString)).getTime();
+  const baseTimestamp = (new Date(etISOString)).getTime();
+  let timestamp = baseTimestamp;
 
   // Heat seek to get the right timestamp
   const maxOffset = 24 * 60; // 24 hours in minutes
@@ -150,7 +151,7 @@ const getTimestampFromTimeInfoInET = (
 
     // Update timestamp
     const offsetMs = currentOffset * 60 * 1000;
-    timestamp += offsetMs;
+    timestamp = baseTimestamp + offsetMs;
 
     // Check timestamp again
     const newDirection = checkTimestamp({
