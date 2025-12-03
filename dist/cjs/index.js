@@ -16825,6 +16825,7 @@ exports.PopFailureMark = PopFailureMark;
 exports.PopPendingMark = PopPendingMark;
 exports.PopSuccessMark = PopSuccessMark;
 exports.ProgressBar = ProgressBar;
+exports.ProgressBarSize = ProgressBarSize$1;
 exports.RadioButton = RadioButton;
 exports.ReactKitErrorCode = ReactKitErrorCode$1;
 exports.SELECT_ADMIN_CHECK_ROUTE = SELECT_ADMIN_CHECK_ROUTE;

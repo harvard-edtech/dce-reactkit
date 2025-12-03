@@ -122,6 +122,7 @@ import IntelliTableColumn from './types/IntelliTableColumn';
 import DropdownItemType from './types/DropdownItemType';
 import ReactKitErrorCode from './types/ReactKitErrorCode';
 import LogReviewerFilterState from './types/LogReviewerFilterState';
+import ProgressBarSize from './types/ProgressBarSize';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -252,6 +253,7 @@ export {
   IntelliTableColumn,
   DropdownItemType,
   LogReviewerFilterState,
+  ProgressBarSize,
   // Component-specific-types
   PickableItem,
   DBEntry,
