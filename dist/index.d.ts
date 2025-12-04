@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import { LogMetadataType, ParamType, LogFunction, LogType, LogSource } from 'dce-commonkit';
-export { DAY_IN_MS, DayOfWeek, ErrorWithCode, HOUR_IN_MS, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, ParamType, SELECT_ADMIN_CHECK_ROUTE, abbreviate, avg, capitalize, ceilToNumDecimals, cloneDeep, compareArraysByProp, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, sum, validateEmail, validatePhoneNumber, validateString, waitMs } from 'dce-commonkit';
+export { CommonKitErrorCode, DAY_IN_MS, DayOfWeek, ErrorWithCode, HOUR_IN_MS, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, ParamType, SELECT_ADMIN_CHECK_ROUTE, abbreviate, avg, capitalize, ceilToNumDecimals, cloneDeep, compareArraysByProp, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, sum, validateEmail, validatePhoneNumber, validateString, waitMs } from 'dce-commonkit';
 import React$1 from 'react';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
@@ -918,20 +918,6 @@ declare const useForceRender: (useReducer: any) => () => void;
 declare const isSelectAdmin: () => Promise<boolean>;
 
 /**
- * List of error codes built into the react kit
- * @author Gabe Abrams
- */
-declare enum ReactKitErrorCode {
-    NoResponse = "DRK1",
-    NoCode = "DRK2",
-    SessionExpired = "DRK3",
-    NoCACCLSendRequestFunction = "DRK7",
-    SimpleDateChooserInvalidDateRange = "DRK35",
-    SimpleDateChooserInvalidNumMonths = "DRK36",
-    ETTimestampInvalid = "DRK37"
-}
-
-/**
  * Date filter state
  * @author Yuen Ler Chow
  */
@@ -1014,4 +1000,4 @@ type LogReviewerFilterState = {
     advancedFilterState: AdvancedFilterState;
 };
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, LogReviewerFilterState, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, ReactKitErrorCode, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, LogReviewerFilterState, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };

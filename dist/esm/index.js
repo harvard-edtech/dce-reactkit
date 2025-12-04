@@ -1,5 +1,5 @@
-import { waitMs, ErrorWithCode, LOG_ROUTE_PATH, LogBuiltInMetadata, LogLevel, getOrdinal, getMonthName, getTimeInfoInET, padZerosLeft, ParamType, roundToNumDecimals, genCSV, LogAction, cloneDeep, LogType, LogSource, getHumanReadableDate, LOG_REVIEW_GET_LOGS_ROUTE, idify, LOG_REVIEW_STATUS_ROUTE, SELECT_ADMIN_CHECK_ROUTE } from 'dce-commonkit';
-export { DAY_IN_MS, DayOfWeek, ErrorWithCode, HOUR_IN_MS, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LogAction, LogBuiltInMetadata, LogLevel, LogSource, LogType, MINUTE_IN_MS, ParamType, SELECT_ADMIN_CHECK_ROUTE, abbreviate, avg, capitalize, ceilToNumDecimals, cloneDeep, compareArraysByProp, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, sum, validateEmail, validatePhoneNumber, validateString, waitMs } from 'dce-commonkit';
+import { CommonKitErrorCode, waitMs, ErrorWithCode, LOG_ROUTE_PATH, LogBuiltInMetadata, LogLevel, getOrdinal, getMonthName, getTimeInfoInET, padZerosLeft, ParamType, roundToNumDecimals, genCSV, LogAction, cloneDeep, LogType, LogSource, getHumanReadableDate, LOG_REVIEW_GET_LOGS_ROUTE, idify, LOG_REVIEW_STATUS_ROUTE, SELECT_ADMIN_CHECK_ROUTE } from 'dce-commonkit';
+export { CommonKitErrorCode, DAY_IN_MS, DayOfWeek, ErrorWithCode, HOUR_IN_MS, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LogAction, LogBuiltInMetadata, LogLevel, LogSource, LogType, MINUTE_IN_MS, ParamType, SELECT_ADMIN_CHECK_ROUTE, abbreviate, avg, capitalize, ceilToNumDecimals, cloneDeep, compareArraysByProp, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, sum, validateEmail, validatePhoneNumber, validateString, waitMs } from 'dce-commonkit';
 import * as React from 'react';
 import React__default, { useState, useRef, useEffect, useReducer, forwardRef, useContext, useLayoutEffect, createContext, useMemo, useCallback, Component, Fragment } from 'react';
 import { faExclamationTriangle, faCircle, faHourglassEnd, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faArrowLeft, faArrowRight, faCalendar, faTag, faHammer, faList, faTimes, faSearch, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -31,23 +31,6 @@ function __awaiter(thisArg, _arguments, P, generator) {
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 }
-
-// Highest error code = DRK37
-/**
- * List of error codes built into the react kit
- * @author Gabe Abrams
- */
-var ReactKitErrorCode;
-(function (ReactKitErrorCode) {
-    ReactKitErrorCode["NoResponse"] = "DRK1";
-    ReactKitErrorCode["NoCode"] = "DRK2";
-    ReactKitErrorCode["SessionExpired"] = "DRK3";
-    ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
-    ReactKitErrorCode["SimpleDateChooserInvalidDateRange"] = "DRK35";
-    ReactKitErrorCode["SimpleDateChooserInvalidNumMonths"] = "DRK36";
-    ReactKitErrorCode["ETTimestampInvalid"] = "DRK37";
-})(ReactKitErrorCode || (ReactKitErrorCode = {}));
-var ReactKitErrorCode$1 = ReactKitErrorCode;
 
 /**
  * Bootstrap variants
@@ -104,7 +87,7 @@ const ErrorBox = (props) => {
                 } },
                 "code:",
                 ' ',
-                String((_a = error.code) !== null && _a !== void 0 ? _a : ReactKitErrorCode$1.NoCode).toUpperCase())));
+                String((_a = error.code) !== null && _a !== void 0 ? _a : CommonKitErrorCode.NoCode).toUpperCase())));
     }
     // Main UI
     return (React__default.createElement("div", { className: `alert alert-${variant} text-center`, style: {
@@ -300,7 +283,7 @@ const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
     (() => __awaiter(void 0, void 0, void 0, function* () {
         yield waitMs(5000);
         if (!successful) {
-            showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
+            showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', CommonKitErrorCode.NoCACCLSendRequestFunction));
         }
     }))();
     // Wait for initialization
@@ -791,7 +774,7 @@ const _setStubResponse = (opts) => {
     const { path, body, } = opts;
     const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET').toUpperCase();
     const errorMessage = ((_b = opts.errorMessage) !== null && _b !== void 0 ? _b : 'An unknown error has occurred.');
-    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode);
+    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : CommonKitErrorCode.NoCode);
     // Store to stub responses
     if (!stubResponses[method]) {
         stubResponses[method] = {};
@@ -869,11 +852,11 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     });
     // Check for failure
     if (!response || !response.body) {
-        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', CommonKitErrorCode.NoResponse);
     }
     if (!response.body.success) {
         // Session expired
-        if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
+        if (response.body.code === CommonKitErrorCode.SessionExpired) {
             showSessionExpiredMessage();
             // Never return (don't continue execution)
             yield new Promise(() => {
@@ -883,7 +866,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
         // Other errors
         throw new ErrorWithCode((response.body.message
             || 'An unknown error occurred. Please contact an admin.'), (response.body.code
-            || ReactKitErrorCode$1.NoCode));
+            || CommonKitErrorCode.NoCode));
     }
     // Success! Extract the body
     const { body } = response.body;
@@ -1232,8 +1215,8 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(vo
         ? error.trim()
         : String((_c = error.message) !== null && _c !== void 0 ? _c : 'An unknown error occurred.'));
     const code = (typeof error === 'string'
-        ? ReactKitErrorCode$1.NoCode
-        : String((_d = error.code) !== null && _d !== void 0 ? _d : ReactKitErrorCode$1.NoCode));
+        ? CommonKitErrorCode.NoCode
+        : String((_d = error.code) !== null && _d !== void 0 ? _d : CommonKitErrorCode.NoCode));
     // Call all fatal error listeners
     try {
         fatalErrorHandlers.forEach((handler) => {
@@ -1464,8 +1447,8 @@ const AppWrapper = (props) => {
         && (fatalErrorMessage || fatalErrorCode || sessionHasExpired)) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
-            ? new ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
-            : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode)));
+            ? new ErrorWithCode(getSessionExpiredMessage(), CommonKitErrorCode.SessionExpired)
+            : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : CommonKitErrorCode.NoCode)));
         // Choose error box variant
         let errorBoxVariant = Variant$1.Danger;
         if (sessionHasExpired) {
@@ -1825,11 +1808,11 @@ const getChoices = (opts) => {
     let startMonth = today.month;
     // Don't allow past or future dates
     if (dontAllowPast && dontAllowFuture) {
-        throw new ErrorWithCode('No past or future dates allowed', ReactKitErrorCode$1.SimpleDateChooserInvalidDateRange);
+        throw new ErrorWithCode('No past or future dates allowed', CommonKitErrorCode.SimpleDateChooserInvalidDateRange);
     }
     // Require numMonthsToShow to be positive
     if (numMonthsToShow <= 0) {
-        throw new ErrorWithCode('numMonthsToShow must be positive', ReactKitErrorCode$1.SimpleDateChooserInvalidNumMonths);
+        throw new ErrorWithCode('numMonthsToShow must be positive', CommonKitErrorCode.SimpleDateChooserInvalidNumMonths);
     }
     // Recalculate startMonth and startYear when allowing past dates
     if (!dontAllowPast) {
@@ -14629,5 +14612,5 @@ const isSelectAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, IntelliTable, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize$1 as ProgressBarSize, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, IntelliTable, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize$1 as ProgressBarSize, RadioButton, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
 //# sourceMappingURL=index.js.map

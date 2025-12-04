@@ -13,13 +13,11 @@ import {
   getMonthName,
   getTimeInfoInET,
   ErrorWithCode,
+  CommonKitErrorCode,
 } from 'dce-commonkit';
 
 // Import AppWrapper helpers
 import { confirm } from './AppWrapper';
-
-// Import types
-import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
@@ -153,7 +151,7 @@ const getChoices = (
   if (dontAllowPast && dontAllowFuture) {
     throw new ErrorWithCode(
       'No past or future dates allowed',
-      ReactKitErrorCode.SimpleDateChooserInvalidDateRange,
+      CommonKitErrorCode.SimpleDateChooserInvalidDateRange,
     );
   }
 
@@ -161,7 +159,7 @@ const getChoices = (
   if (numMonthsToShow <= 0) {
     throw new ErrorWithCode(
       'numMonthsToShow must be positive',
-      ReactKitErrorCode.SimpleDateChooserInvalidNumMonths,
+      CommonKitErrorCode.SimpleDateChooserInvalidNumMonths,
     );
   }
 

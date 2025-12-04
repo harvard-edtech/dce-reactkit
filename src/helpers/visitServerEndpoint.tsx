@@ -1,12 +1,11 @@
 // Import commonkit
 import {
   ErrorWithCode,
+  CommonKitErrorCode,
 } from 'dce-commonkit';
 
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
-// Import custom error
-import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 // Import helpers
 // TODO: fix dependency cycle
@@ -66,7 +65,7 @@ export const _setStubResponse = (
   } = opts;
   const method = (opts.method ?? 'GET').toUpperCase();
   const errorMessage = (opts.errorMessage ?? 'An unknown error has occurred.');
-  const errorCode = (opts.errorCode ?? ReactKitErrorCode.NoCode);
+  const errorCode = (opts.errorCode ?? CommonKitErrorCode.NoCode);
 
   // Store to stub responses
   if (!stubResponses[method]) {
@@ -166,12 +165,12 @@ const visitServerEndpoint = async (
   if (!response || !response.body) {
     throw new ErrorWithCode(
       'We didn\'t get a response from the server. Please check your internet connection.',
-      ReactKitErrorCode.NoResponse,
+      CommonKitErrorCode.NoResponse,
     );
   }
   if (!response.body.success) {
     // Session expired
-    if (response.body.code === ReactKitErrorCode.SessionExpired) {
+    if (response.body.code === CommonKitErrorCode.SessionExpired) {
       showSessionExpiredMessage();
 
       // Never return (don't continue execution)
@@ -188,7 +187,7 @@ const visitServerEndpoint = async (
       ),
       (
         response.body.code
-        || ReactKitErrorCode.NoCode
+        || CommonKitErrorCode.NoCode
       ),
     );
   }

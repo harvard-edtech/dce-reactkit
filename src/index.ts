@@ -65,6 +65,7 @@ import {
   LogMainInfo,
   LogSourceSpecificInfo,
   LogLevel,
+  CommonKitErrorCode,
 } from 'dce-commonkit';
 
 // Import components
@@ -124,7 +125,6 @@ import ModalType from './types/ModalType';
 import Variant from './types/Variant';
 import IntelliTableColumn from './types/IntelliTableColumn';
 import DropdownItemType from './types/DropdownItemType';
-import ReactKitErrorCode from './types/ReactKitErrorCode';
 import LogReviewerFilterState from './types/LogReviewerFilterState';
 import ProgressBarSize from './types/ProgressBarSize';
 
@@ -189,7 +189,6 @@ export {
   ModalButtonType,
   ModalSize,
   ModalType,
-  ReactKitErrorCode,
   Variant,
   IntelliTableColumn,
   DropdownItemType,
@@ -266,4 +265,5 @@ export {
   LogMainInfo,
   LogSourceSpecificInfo,
   LogLevel,
+  CommonKitErrorCode,
 };

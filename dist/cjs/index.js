@@ -58,23 +58,6 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-// Highest error code = DRK37
-/**
- * List of error codes built into the react kit
- * @author Gabe Abrams
- */
-var ReactKitErrorCode;
-(function (ReactKitErrorCode) {
-    ReactKitErrorCode["NoResponse"] = "DRK1";
-    ReactKitErrorCode["NoCode"] = "DRK2";
-    ReactKitErrorCode["SessionExpired"] = "DRK3";
-    ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
-    ReactKitErrorCode["SimpleDateChooserInvalidDateRange"] = "DRK35";
-    ReactKitErrorCode["SimpleDateChooserInvalidNumMonths"] = "DRK36";
-    ReactKitErrorCode["ETTimestampInvalid"] = "DRK37";
-})(ReactKitErrorCode || (ReactKitErrorCode = {}));
-var ReactKitErrorCode$1 = ReactKitErrorCode;
-
 /**
  * Bootstrap variants
  * @author Gabe Abrams
@@ -130,7 +113,7 @@ const ErrorBox = (props) => {
                 } },
                 "code:",
                 ' ',
-                String((_a = error.code) !== null && _a !== void 0 ? _a : ReactKitErrorCode$1.NoCode).toUpperCase())));
+                String((_a = error.code) !== null && _a !== void 0 ? _a : dceCommonkit.CommonKitErrorCode.NoCode).toUpperCase())));
     }
     // Main UI
     return (React__default["default"].createElement("div", { className: `alert alert-${variant} text-center`, style: {
@@ -326,7 +309,7 @@ const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
     (() => __awaiter(void 0, void 0, void 0, function* () {
         yield dceCommonkit.waitMs(5000);
         if (!successful) {
-            showFatalError(new dceCommonkit.ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
+            showFatalError(new dceCommonkit.ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', dceCommonkit.CommonKitErrorCode.NoCACCLSendRequestFunction));
         }
     }))();
     // Wait for initialization
@@ -817,7 +800,7 @@ const _setStubResponse = (opts) => {
     const { path, body, } = opts;
     const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET').toUpperCase();
     const errorMessage = ((_b = opts.errorMessage) !== null && _b !== void 0 ? _b : 'An unknown error has occurred.');
-    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode);
+    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : dceCommonkit.CommonKitErrorCode.NoCode);
     // Store to stub responses
     if (!stubResponses[method]) {
         stubResponses[method] = {};
@@ -895,11 +878,11 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     });
     // Check for failure
     if (!response || !response.body) {
-        throw new dceCommonkit.ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+        throw new dceCommonkit.ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', dceCommonkit.CommonKitErrorCode.NoResponse);
     }
     if (!response.body.success) {
         // Session expired
-        if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
+        if (response.body.code === dceCommonkit.CommonKitErrorCode.SessionExpired) {
             showSessionExpiredMessage();
             // Never return (don't continue execution)
             yield new Promise(() => {
@@ -909,7 +892,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
         // Other errors
         throw new dceCommonkit.ErrorWithCode((response.body.message
             || 'An unknown error occurred. Please contact an admin.'), (response.body.code
-            || ReactKitErrorCode$1.NoCode));
+            || dceCommonkit.CommonKitErrorCode.NoCode));
     }
     // Success! Extract the body
     const { body } = response.body;
@@ -1258,8 +1241,8 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(vo
         ? error.trim()
         : String((_c = error.message) !== null && _c !== void 0 ? _c : 'An unknown error occurred.'));
     const code = (typeof error === 'string'
-        ? ReactKitErrorCode$1.NoCode
-        : String((_d = error.code) !== null && _d !== void 0 ? _d : ReactKitErrorCode$1.NoCode));
+        ? dceCommonkit.CommonKitErrorCode.NoCode
+        : String((_d = error.code) !== null && _d !== void 0 ? _d : dceCommonkit.CommonKitErrorCode.NoCode));
     // Call all fatal error listeners
     try {
         fatalErrorHandlers.forEach((handler) => {
@@ -1490,8 +1473,8 @@ const AppWrapper = (props) => {
         && (fatalErrorMessage || fatalErrorCode || sessionHasExpired)) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
-            ? new dceCommonkit.ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
-            : new dceCommonkit.ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode)));
+            ? new dceCommonkit.ErrorWithCode(getSessionExpiredMessage(), dceCommonkit.CommonKitErrorCode.SessionExpired)
+            : new dceCommonkit.ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : dceCommonkit.CommonKitErrorCode.NoCode)));
         // Choose error box variant
         let errorBoxVariant = Variant$1.Danger;
         if (sessionHasExpired) {
@@ -1851,11 +1834,11 @@ const getChoices = (opts) => {
     let startMonth = today.month;
     // Don't allow past or future dates
     if (dontAllowPast && dontAllowFuture) {
-        throw new dceCommonkit.ErrorWithCode('No past or future dates allowed', ReactKitErrorCode$1.SimpleDateChooserInvalidDateRange);
+        throw new dceCommonkit.ErrorWithCode('No past or future dates allowed', dceCommonkit.CommonKitErrorCode.SimpleDateChooserInvalidDateRange);
     }
     // Require numMonthsToShow to be positive
     if (numMonthsToShow <= 0) {
-        throw new dceCommonkit.ErrorWithCode('numMonthsToShow must be positive', ReactKitErrorCode$1.SimpleDateChooserInvalidNumMonths);
+        throw new dceCommonkit.ErrorWithCode('numMonthsToShow must be positive', dceCommonkit.CommonKitErrorCode.SimpleDateChooserInvalidNumMonths);
     }
     // Recalculate startMonth and startYear when allowing past dates
     if (!dontAllowPast) {
@@ -14655,6 +14638,10 @@ const isSelectAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
+Object.defineProperty(exports, 'CommonKitErrorCode', {
+    enumerable: true,
+    get: function () { return dceCommonkit.CommonKitErrorCode; }
+});
 Object.defineProperty(exports, 'DAY_IN_MS', {
     enumerable: true,
     get: function () { return dceCommonkit.DAY_IN_MS; }
@@ -14903,7 +14890,6 @@ exports.PopSuccessMark = PopSuccessMark;
 exports.ProgressBar = ProgressBar;
 exports.ProgressBarSize = ProgressBarSize$1;
 exports.RadioButton = RadioButton;
-exports.ReactKitErrorCode = ReactKitErrorCode$1;
 exports.SimpleDateChooser = SimpleDateChooser;
 exports.SimpleTimeChooser = SimpleTimeChooser;
 exports.TabBox = TabBox;
