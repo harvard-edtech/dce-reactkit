@@ -66,6 +66,7 @@ import {
   LogSourceSpecificInfo,
   LogLevel,
   CommonKitErrorCode,
+  LogReviewerFilterState,
 } from 'dce-commonkit';
 
 // Import components
@@ -125,7 +126,6 @@ import ModalType from './types/ModalType';
 import Variant from './types/Variant';
 import IntelliTableColumn from './types/IntelliTableColumn';
 import DropdownItemType from './types/DropdownItemType';
-import LogReviewerFilterState from './types/LogReviewerFilterState';
 import ProgressBarSize from './types/ProgressBarSize';
 
 // Component-specific-types

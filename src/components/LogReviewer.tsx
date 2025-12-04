@@ -34,6 +34,12 @@ import {
   LogMetadataContextMap,
   LogMetadataTargetMap,
   cloneDeep,
+  LogReviewerFilterState,
+  DateFilterState,
+  ContextFilterState,
+  TagFilterState,
+  ActionErrorFilterState,
+  AdvancedFilterState,
 } from 'dce-commonkit';
 
 // Import shared helpers
@@ -42,12 +48,6 @@ import { alert, showFatalError } from './AppWrapper';
 
 // Import shared types
 import IntelliTableColumn from '../types/IntelliTableColumn';
-import LogReviewerFilterState from '../types/LogReviewerFilterState';
-import DateFilterState from '../types/LogReviewerFilterState/DateFilterState';
-import ContextFilterState from '../types/LogReviewerFilterState/ContextFilterState';
-import TagFilterState from '../types/LogReviewerFilterState/TagFilterState';
-import ActionErrorFilterState from '../types/LogReviewerFilterState/ActionErrorFilterState';
-import AdvancedFilterState from '../types/LogReviewerFilterState/AdvancedFilterState';
 import Variant from '../types/Variant';
 
 // Import shared components

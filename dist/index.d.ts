@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { LogMetadataType, ParamType, LogFunction, LogType, LogSource } from 'dce-commonkit';
-export { CommonKitErrorCode, DAY_IN_MS, DayOfWeek, ErrorWithCode, HOUR_IN_MS, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, ParamType, SELECT_ADMIN_CHECK_ROUTE, abbreviate, avg, capitalize, ceilToNumDecimals, cloneDeep, compareArraysByProp, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, sum, validateEmail, validatePhoneNumber, validateString, waitMs } from 'dce-commonkit';
+import { LogMetadataType, ParamType, LogFunction } from 'dce-commonkit';
+export { CommonKitErrorCode, DAY_IN_MS, DayOfWeek, ErrorWithCode, HOUR_IN_MS, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, Log, LogAction, LogBuiltInMetadata, LogFunction, LogLevel, LogMainInfo, LogMetadataType, LogReviewerFilterState, LogSource, LogSourceSpecificInfo, LogType, LogTypeSpecificInfo, MINUTE_IN_MS, ParamType, SELECT_ADMIN_CHECK_ROUTE, abbreviate, avg, capitalize, ceilToNumDecimals, cloneDeep, compareArraysByProp, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, sum, validateEmail, validatePhoneNumber, validateString, waitMs } from 'dce-commonkit';
 import React$1 from 'react';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
@@ -917,87 +917,4 @@ declare const useForceRender: (useReducer: any) => () => void;
  */
 declare const isSelectAdmin: () => Promise<boolean>;
 
-/**
- * Date filter state
- * @author Yuen Ler Chow
- */
-type DateFilterState = {
-    startDate: {
-        year: number;
-        month: number;
-        day: number;
-    };
-    endDate: {
-        year: number;
-        month: number;
-        day: number;
-    };
-};
-
-/**
- * Context filter state
- * @author Yuen Ler Chow
- */
-type ContextFilterState = {
-    [k: string]: (boolean | {
-        [k: string]: boolean;
-    });
-};
-
-/**
- * Tag filter state
- * @author Yuen Ler Chow
- */
-type TagFilterState = {
-    [k: string]: boolean;
-};
-
-/**
- * Action filter state (only relevant for action logs)
- * @author Yuen Ler Chow
- */
-type ActionErrorFilterState = {
-    type: LogType | undefined;
-    errorMessage: string;
-    errorCode: string;
-    target: {
-        [k: string]: boolean;
-    };
-    action: {
-        [k: string]: boolean;
-    };
-};
-
-/**
- * Advanced filter state
- * @author Yuen Ler Chow
- */
-type AdvancedFilterState = {
-    userFirstName: string;
-    userLastName: string;
-    userEmail: string;
-    userId: string;
-    includeLearners: boolean;
-    includeTTMs: boolean;
-    includeAdmins: boolean;
-    courseId: string;
-    courseName: string;
-    isMobile: (true | false | undefined);
-    source: LogSource | undefined;
-    routePath: string;
-    routeTemplate: string;
-};
-
-/**
- * A bundle of filter state objects for each type of filter
- * @author Gabe Abrams
- */
-type LogReviewerFilterState = {
-    dateFilterState: DateFilterState;
-    contextFilterState: ContextFilterState;
-    tagFilterState: TagFilterState;
-    actionErrorFilterState: ActionErrorFilterState;
-    advancedFilterState: AdvancedFilterState;
-};
-
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, LogReviewerFilterState, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };

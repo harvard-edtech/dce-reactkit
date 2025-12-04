@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/harvard-edtech/dce-reactkit#readme",
   "dependencies": {
-    "dce-commonkit": "^4.4.2",
+    "dce-commonkit": "^4.4.4",
     "react-select": "^5.7.3"
   },
   "peerDependencies": {
