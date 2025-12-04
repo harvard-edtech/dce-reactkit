@@ -1,4 +1,7 @@
-import LogType from '../LogType';
+// Import commonkit
+import {
+  LogType,
+} from 'dce-commonkit';
 
 /**
  * Action filter state (only relevant for action logs)

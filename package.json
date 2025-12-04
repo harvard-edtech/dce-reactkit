@@ -1,6 +1,6 @@
 {
   "name": "dce-reactkit",
-  "version": "4.3.1",
+  "version": "4.4.1",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/harvard-edtech/dce-reactkit#readme",
   "dependencies": {
-    "nanoclone": "^1.0.2",
+    "dce-commonkit": "^4.4.1",
     "react-select": "^5.7.3"
   },
   "peerDependencies": {
@@ -33,7 +33,8 @@
     "@fortawesome/free-solid-svg-icons": "^x.x.x",
     "@fortawesome/react-fontawesome": "^x.x.x",
     "bootstrap": "^5.x.x",
-    "react": "^x.x.x"
+    "react": "^x.x.x",
+    "react-dom": "^x.x.x"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.0",

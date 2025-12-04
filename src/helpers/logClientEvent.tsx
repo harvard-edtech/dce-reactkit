@@ -1,8 +1,10 @@
-// Import shared types
-import LOG_ROUTE_PATH from '../constants/LOG_ROUTE_PATH';
-import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
-import LogFunction from '../types/LogFunction';
-import LogLevel from '../types/LogLevel';
+// Import commonkit
+import {
+  LOG_ROUTE_PATH,
+  LogBuiltInMetadata,
+  LogFunction,
+  LogLevel,
+} from 'dce-commonkit';
 
 // Import shared functions
 // TODO: fix dependency cycle

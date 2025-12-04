@@ -13,11 +13,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
+// Import commonkit
+import {
+  waitMs,
+} from 'dce-commonkit';
+
 // Import other components
 import LoadingSpinner from '../LoadingSpinner';
-
-// Import helpers
-import waitMs from '../../helpers/waitMs';
 
 // Import types
 import Variant from '../../types/Variant';

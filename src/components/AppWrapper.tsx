@@ -10,6 +10,13 @@ import React, { useState } from 'react';
 // Import FontAwesome
 import { faHourglassEnd } from '@fortawesome/free-solid-svg-icons';
 
+// Import commonkit
+import {
+  LogBuiltInMetadata,
+  ErrorWithCode,
+  waitMs,
+} from 'dce-commonkit';
+
 // Import shared components
 import ErrorBox from './ErrorBox';
 
@@ -18,15 +25,11 @@ import ReactKitErrorCode from '../types/ReactKitErrorCode';
 import ModalButtonType from '../types/ModalButtonType';
 import ModalType from '../types/ModalType';
 import Variant from '../types/Variant';
-import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 
 // Import shared components
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
 import ModalForWrapper from './Modal';
-
-// Import custom errors
-import ErrorWithCode from '../errors/ErrorWithCode';
 
 // Import other helpers
 // TODO: fix dependency cycle
@@ -38,7 +41,6 @@ import {
   getSessionExpiredMessage,
   isDarkModeOn,
 } from '../helpers/initClient';
-import waitMs from '../helpers/waitMs';
 
 // Import constants
 import NUM_MODAL_PORTALS from '../constants/NUM_MODAL_PORTALS';

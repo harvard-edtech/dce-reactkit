@@ -1,8 +1,10 @@
+// Import commonkit
+import {
+  LOG_REVIEW_STATUS_ROUTE,
+} from 'dce-commonkit';
+
 // Import shared helpers
 import visitServerEndpoint from './visitServerEndpoint';
-
-// Import shared constants
-import LOG_REVIEW_STATUS_ROUTE from '../constants/LOG_REVIEW_STATUS_ROUTE';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Cache ------------------------------- */

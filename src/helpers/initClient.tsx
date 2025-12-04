@@ -1,13 +1,15 @@
+// Import commonkit
+import {
+  waitMs,
+  ErrorWithCode,
+} from 'dce-commonkit';
+
 // Import other components
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
 import { showFatalError } from '../components/AppWrapper';
 
-// Import other helpers
-import waitMs from './waitMs';
-
 // Import shared types
-import ErrorWithCode from '../errors/ErrorWithCode';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 /*----------------------------------------*/

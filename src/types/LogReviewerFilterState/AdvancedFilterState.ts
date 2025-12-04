@@ -1,4 +1,7 @@
-import LogSource from '../LogSource';
+// Import commonkit
+import {
+  LogSource,
+} from 'dce-commonkit';
 
 /**
  * Advanced filter state

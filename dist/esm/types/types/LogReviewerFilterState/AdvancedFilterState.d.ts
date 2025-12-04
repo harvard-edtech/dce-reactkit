@@ -1,4 +1,4 @@
-import LogSource from '../LogSource';
+import { LogSource } from 'dce-commonkit';
 /**
  * Advanced filter state
  * @author Yuen Ler Chow

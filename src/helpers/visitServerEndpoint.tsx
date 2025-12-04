@@ -1,7 +1,11 @@
+// Import commonkit
+import {
+  ErrorWithCode,
+} from 'dce-commonkit';
+
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
 // Import custom error
-import ErrorWithCode from '../errors/ErrorWithCode';
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 // Import helpers

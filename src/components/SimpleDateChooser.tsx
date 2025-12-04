@@ -7,16 +7,16 @@
 // Import React
 import React, { useReducer } from 'react';
 
+// Import commonkit
+import {
+  getOrdinal,
+  getMonthName,
+  getTimeInfoInET,
+  ErrorWithCode,
+} from 'dce-commonkit';
+
 // Import AppWrapper helpers
 import { confirm } from './AppWrapper';
-
-// Import helpers
-import getOrdinal from '../helpers/getOrdinal';
-import getMonthName from '../helpers/getMonthName';
-import getTimeInfoInET from '../helpers/getTimeInfoInET';
-
-// Import classes
-import ErrorWithCode from '../errors/ErrorWithCode';
 
 // Import types
 import ReactKitErrorCode from '../types/ReactKitErrorCode';
