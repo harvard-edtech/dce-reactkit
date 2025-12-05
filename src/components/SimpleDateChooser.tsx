@@ -343,7 +343,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     // Ask the user if they want to edit the date
     const confirmed = await confirm(
       'Are you sure?',
-      'The current date is outside the normal range. If you edit it, you\'ll need to choose a new date in the normal range.',
+      `The current date is outside the ${numMonthsToShow} month range. If you edit it, you'll need to choose a new date in the normal range.`,
       {
         confirmButtonText: 'Edit Date',
       },
