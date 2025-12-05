@@ -4,7 +4,7 @@
  * @author Gabe Abrams
  */
 import React from 'react';
-import LogMetadataType from '../types/LogMetadataType';
+import { LogMetadataType } from 'dce-commonkit';
 type Props = {
     LogMetadata: LogMetadataType;
     onClose: () => void;

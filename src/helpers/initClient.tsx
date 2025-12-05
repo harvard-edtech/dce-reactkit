@@ -1,14 +1,14 @@
+// Import commonkit
+import {
+  waitMs,
+  ErrorWithCode,
+  CommonKitErrorCode,
+} from 'dce-commonkit';
+
 // Import other components
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
 import { showFatalError } from '../components/AppWrapper';
-
-// Import other helpers
-import waitMs from './waitMs';
-
-// Import shared types
-import ErrorWithCode from '../errors/ErrorWithCode';
-import ReactKitErrorCode from '../types/ReactKitErrorCode';
 
 /*----------------------------------------*/
 /* ---------------- Types --------------- */
@@ -80,7 +80,7 @@ export const getSendRequest = async () => {
       showFatalError(
         new ErrorWithCode(
           'Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.',
-          ReactKitErrorCode.NoCACCLSendRequestFunction,
+          CommonKitErrorCode.NoCACCLSendRequestFunction,
         ),
       );
     }

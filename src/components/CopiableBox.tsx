@@ -10,9 +10,13 @@ import React, { useReducer } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 
+// Import commonkit
+import {
+  waitMs,
+} from 'dce-commonkit';
+
 // Import other reactkit functions
 import { alert } from './AppWrapper';
-import waitMs from '../helpers/waitMs';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */

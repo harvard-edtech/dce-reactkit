@@ -1,5 +1,7 @@
-// Import shared types
-import ReactKitErrorCode from '../types/ReactKitErrorCode';
+// Import commonkit
+import {
+  CommonKitErrorCode,
+} from 'dce-commonkit';
 
 /**
  * Generate a static error page
@@ -8,7 +10,7 @@ import ReactKitErrorCode from '../types/ReactKitErrorCode';
  * @param [opts.title=An Error Occurred] title of the error box
  * @param [opts.description=An unknown server error occurred. Please contact support.]
  *   a human-readable description of the error
- * @param [opts.code=ReactKitErrorCode.NoCode] error code to show
+ * @param [opts.code=CommonKitErrorCode.NoCode] error code to show
  * @param [opts.pageTitle=opts.title] title of the page/tab if it differs from
  *   the title of the error
  * @returns html of the page
@@ -27,7 +29,7 @@ const genErrorPage = (
     opts.description
     ?? 'An unknown server error occurred. Please contact support.'
   );
-  const code = (opts.code ?? ReactKitErrorCode.NoCode);
+  const code = (opts.code ?? CommonKitErrorCode.NoCode);
 
   return `
 <head>

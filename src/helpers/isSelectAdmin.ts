@@ -1,5 +1,7 @@
-// Import shared constants
-import SELECT_ADMIN_CHECK_ROUTE from '../constants/SELECT_ADMIN_CHECK_ROUTE';
+// Import commonkit
+import {
+  SELECT_ADMIN_CHECK_ROUTE,
+} from 'dce-commonkit';
 
 // Import shared helpers
 import visitServerEndpoint from './visitServerEndpoint';

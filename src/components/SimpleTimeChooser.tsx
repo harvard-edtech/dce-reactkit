@@ -6,8 +6,10 @@
 // Import React
 import React from 'react';
 
-// Import helpers
-import padZerosLeft from '../helpers/padZerosLeft';
+// Import commonkit
+import {
+  padZerosLeft,
+} from 'dce-commonkit';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */

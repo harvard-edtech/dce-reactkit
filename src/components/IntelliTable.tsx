@@ -17,13 +17,15 @@ import {
   faMinus,
 } from '@fortawesome/free-solid-svg-icons';
 
-// Import shared types
-import ParamType from '../types/ParamType';
-import IntelliTableColumn from '../types/IntelliTableColumn';
+// Import commonkit
+import {
+  ParamType,
+  roundToNumDecimals,
+  genCSV,
+} from 'dce-commonkit';
 
-// Import shared helpers
-import roundToNumDecimals from '../helpers/roundToNumDecimals';
-import genCSV from '../helpers/genCSV';
+// Import shared types
+import IntelliTableColumn from '../types/IntelliTableColumn';
 
 // Import shared components
 import Modal from './Modal';

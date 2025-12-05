@@ -16,11 +16,13 @@ import {
   faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 
+// Import commonkit
+import {
+  idify,
+} from 'dce-commonkit';
+
 // Import shared types
 import Variant from '../types/Variant';
-
-// Import shared helper
-import idify from '../helpers/idify';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */

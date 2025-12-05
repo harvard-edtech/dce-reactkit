@@ -11,8 +11,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
+// Import commonkit
+import {
+  CommonKitErrorCode,
+} from 'dce-commonkit';
+
 // Import shared types
-import ReactKitErrorCode from '../types/ReactKitErrorCode';
 import Variant from '../types/Variant';
 
 /*------------------------------------------------------------------------*/
@@ -82,7 +86,7 @@ const ErrorBox: React.FC<Props> = (props) => {
         >
           code:
           {' '}
-          {String((error as any).code ?? ReactKitErrorCode.NoCode).toUpperCase()}
+          {String((error as any).code ?? CommonKitErrorCode.NoCode).toUpperCase()}
         </span>
       </span>
     );

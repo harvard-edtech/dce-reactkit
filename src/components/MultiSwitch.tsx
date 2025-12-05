@@ -12,8 +12,12 @@ import React, { useReducer } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
+// Import commonkit
+import {
+  idify,
+} from 'dce-commonkit';
+
 // Import shared helpers
-import idify from '../helpers/idify';
 import combineClassNames from '../helpers/combineClassNames';
 
 /*------------------------------------------------------------------------*/

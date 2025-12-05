@@ -3,14 +3,16 @@
  * @author Gabe Abrams
  */
 
+// Import commonkit
+import {
+  LOG_REVIEW_STATUS_ROUTE,
+} from 'dce-commonkit';
+
 // Import dce-reactkit
 import stubServerEndpoint from './stubServerEndpoint';
 
 // Import main function
 import canReviewLogs, { resetCanReviewCache } from './canReviewLogs';
-
-// Import shared constants
-import LOG_REVIEW_STATUS_ROUTE from '../constants/LOG_REVIEW_STATUS_ROUTE';
 
 describe('helpers > canReviewLogs', () => {
   beforeEach(() => {

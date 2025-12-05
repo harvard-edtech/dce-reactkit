@@ -1,4 +1,4 @@
-import ParamType from './ParamType';
+import { ParamType } from 'dce-commonkit';
 /**
  * Column description for a column in the IntelliTable
  * @author Gabe Abrams
