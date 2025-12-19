@@ -423,7 +423,7 @@ function requireReactDom_production () {
 	reactDom_production.useFormStatus = function () {
 	  return ReactSharedInternals.H.useHostTransitionStatus();
 	};
-	reactDom_production.version = "19.0.0";
+	reactDom_production.version = "19.2.1";
 	return reactDom_production;
 }
 
@@ -851,7 +851,7 @@ function requireReactDom_development () {
 	    reactDom_development.useFormStatus = function () {
 	      return resolveDispatcher().useHostTransitionStatus();
 	    };
-	    reactDom_development.version = "19.0.0";
+	    reactDom_development.version = "19.2.1";
 	    "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ &&
 	      "function" ===
 	        typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop &&
@@ -2851,7 +2851,7 @@ const SimpleDateChooser = (props) => {
      */
     const askToEditInvalidDate = () => __awaiter(void 0, void 0, void 0, function* () {
         // Ask the user if they want to edit the date
-        const confirmed = yield confirm('Are you sure?', 'The current date is outside the normal range. If you edit it, you\'ll need to choose a new date in the normal range.', {
+        const confirmed = yield confirm('Are you sure?', `The current date is outside the ${numMonthsToShow} month range. If you edit it, you'll need to choose a new date in the normal range.`, {
             confirmButtonText: 'Edit Date',
         });
         // Check if user confirmed
