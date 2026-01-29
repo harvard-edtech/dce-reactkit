@@ -1,6 +1,6 @@
 {
   "name": "dce-reactkit",
-  "version": "4.4.3",
+  "version": "5.0.0",
   "description": "Shared components for Harvard DCE apps",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/harvard-edtech/dce-reactkit#readme",
   "dependencies": {
-    "dce-commonkit": "^4.4.4",
+    "dce-commonkit": "^5.0.0",
     "react-select": "^5.7.3"
   },
   "peerDependencies": {
