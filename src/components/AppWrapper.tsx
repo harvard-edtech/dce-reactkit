@@ -10,23 +10,26 @@ import React, { useState } from 'react';
 // Import FontAwesome
 import { faHourglassEnd } from '@fortawesome/free-solid-svg-icons';
 
+// Import commonkit
+import {
+  LogBuiltInMetadata,
+  ErrorWithCode,
+  waitMs,
+  CommonKitErrorCode,
+} from 'dce-commonkit';
+
 // Import shared components
 import ErrorBox from './ErrorBox';
 
 // Import shared types
-import ReactKitErrorCode from '../types/ReactKitErrorCode';
 import ModalButtonType from '../types/ModalButtonType';
 import ModalType from '../types/ModalType';
 import Variant from '../types/Variant';
-import LogBuiltInMetadata from '../types/LogBuiltInMetadata';
 
 // Import shared components
 // TODO: fix dependency cycle
 // eslint-disable-next-line import/no-cycle
 import ModalForWrapper from './Modal';
-
-// Import custom errors
-import ErrorWithCode from '../errors/ErrorWithCode';
 
 // Import other helpers
 // TODO: fix dependency cycle
@@ -38,7 +41,6 @@ import {
   getSessionExpiredMessage,
   isDarkModeOn,
 } from '../helpers/initClient';
-import waitMs from '../helpers/waitMs';
 
 // Import constants
 import NUM_MODAL_PORTALS from '../constants/NUM_MODAL_PORTALS';
@@ -413,8 +415,8 @@ export const showFatalError = async (
   );
   const code: string = (
     typeof error === 'string'
-      ? ReactKitErrorCode.NoCode
-      : String(error.code ?? ReactKitErrorCode.NoCode)
+      ? CommonKitErrorCode.NoCode
+      : String(error.code ?? CommonKitErrorCode.NoCode)
   );
 
   // Call all fatal error listeners
@@ -856,11 +858,11 @@ const AppWrapper: React.FC<Props> = (props: Props): React.ReactElement => {
       sessionHasExpired
         ? new ErrorWithCode(
           getSessionExpiredMessage(),
-          ReactKitErrorCode.SessionExpired,
+          CommonKitErrorCode.SessionExpired,
         )
         : new ErrorWithCode(
           (fatalErrorMessage ?? 'An unknown error has occurred. Please contact support.'),
-          (fatalErrorCode ?? ReactKitErrorCode.NoCode),
+          (fatalErrorCode ?? CommonKitErrorCode.NoCode),
         )
     );
 

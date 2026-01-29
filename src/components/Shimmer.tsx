@@ -8,8 +8,10 @@
 // Import React
 import React, { useRef, useEffect } from 'react';
 
-// Import helpers
-import waitMs from '../helpers/waitMs';
+// Import commonkit
+import {
+  waitMs,
+} from 'dce-commonkit';
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */

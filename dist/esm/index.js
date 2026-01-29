@@ -1,9 +1,11 @@
+import { CommonKitErrorCode, waitMs, ErrorWithCode, LOG_ROUTE_PATH, LogBuiltInMetadata, LogLevel, getOrdinal, getMonthName, getTimeInfoInET, padZerosLeft, ParamType, roundToNumDecimals, genCSV, LogAction, cloneDeep, LogType, LogSource, getHumanReadableDate, LOG_REVIEW_GET_LOGS_ROUTE, idify, LOG_REVIEW_STATUS_ROUTE, SELECT_ADMIN_CHECK_ROUTE } from 'dce-commonkit';
+export { CommonKitErrorCode, DAY_IN_MS, DayOfWeek, ErrorWithCode, HOUR_IN_MS, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LogAction, LogBuiltInMetadata, LogLevel, LogSource, LogType, MINUTE_IN_MS, ParamType, SELECT_ADMIN_CHECK_ROUTE, abbreviate, avg, capitalize, ceilToNumDecimals, cloneDeep, compareArraysByProp, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, sum, validateEmail, validatePhoneNumber, validateString, waitMs } from 'dce-commonkit';
 import * as React from 'react';
 import React__default, { useState, useRef, useEffect, useReducer, forwardRef, useContext, useLayoutEffect, createContext, useMemo, useCallback, Component, Fragment } from 'react';
 import { faExclamationTriangle, faCircle, faHourglassEnd, faDotCircle, faCheckSquare, faHourglass, faClipboard, faChevronDown, faChevronRight, faCloudDownloadAlt, faMinus, faCheckCircle, faXmarkCircle, faSort, faSortDown, faSortUp, faArrowLeft, faArrowRight, faCalendar, faTag, faHammer, faList, faTimes, faSearch, faSave, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ReactDOM, { createPortal } from 'react-dom';
 import { faCircle as faCircle$1, faSquareMinus, faSquare } from '@fortawesome/free-regular-svg-icons';
-import clone from 'nanoclone';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -29,23 +31,6 @@ function __awaiter(thisArg, _arguments, P, generator) {
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 }
-
-// Highest error code = DRK37
-/**
- * List of error codes built into the react kit
- * @author Gabe Abrams
- */
-var ReactKitErrorCode;
-(function (ReactKitErrorCode) {
-    ReactKitErrorCode["NoResponse"] = "DRK1";
-    ReactKitErrorCode["NoCode"] = "DRK2";
-    ReactKitErrorCode["SessionExpired"] = "DRK3";
-    ReactKitErrorCode["NoCACCLSendRequestFunction"] = "DRK7";
-    ReactKitErrorCode["SimpleDateChooserInvalidDateRange"] = "DRK35";
-    ReactKitErrorCode["SimpleDateChooserInvalidNumMonths"] = "DRK36";
-    ReactKitErrorCode["ETTimestampInvalid"] = "DRK37";
-})(ReactKitErrorCode || (ReactKitErrorCode = {}));
-var ReactKitErrorCode$1 = ReactKitErrorCode;
 
 /**
  * Bootstrap variants
@@ -102,7 +87,7 @@ const ErrorBox = (props) => {
                 } },
                 "code:",
                 ' ',
-                String((_a = error.code) !== null && _a !== void 0 ? _a : ReactKitErrorCode$1.NoCode).toUpperCase())));
+                String((_a = error.code) !== null && _a !== void 0 ? _a : CommonKitErrorCode.NoCode).toUpperCase())));
     }
     // Main UI
     return (React__default.createElement("div", { className: `alert alert-${variant} text-center`, style: {
@@ -156,724 +141,6 @@ var ModalType;
     ModalType["NoButtons"] = "-";
 })(ModalType || (ModalType = {}));
 var ModalType$1 = ModalType;
-
-/**
- * Built-in metadata for logs
- * @author Gabe Abrams
- */
-const LogBuiltInMetadata = {
-    // Contexts
-    Context: {
-        Uncategorized: 'Uncategorized',
-        ServerRenderedErrorPage: 'ServerRenderedErrorPage',
-        ServerEndpointError: 'ServerEndpointError',
-        ClientFatalError: 'ClientFatalError',
-    },
-    // Targets
-    Target: {
-        NoTarget: 'NoTarget',
-    },
-};
-
-function getDefaultExportFromCjs (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-}
-
-var reactDom = {exports: {}};
-
-var reactDom_production = {};
-
-/**
- * @license React
- * react-dom.production.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-var hasRequiredReactDom_production;
-
-function requireReactDom_production () {
-	if (hasRequiredReactDom_production) return reactDom_production;
-	hasRequiredReactDom_production = 1;
-	var React = React__default;
-	function formatProdErrorMessage(code) {
-	  var url = "https://react.dev/errors/" + code;
-	  if (1 < arguments.length) {
-	    url += "?args[]=" + encodeURIComponent(arguments[1]);
-	    for (var i = 2; i < arguments.length; i++)
-	      url += "&args[]=" + encodeURIComponent(arguments[i]);
-	  }
-	  return (
-	    "Minified React error #" +
-	    code +
-	    "; visit " +
-	    url +
-	    " for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-	  );
-	}
-	function noop() {}
-	var Internals = {
-	    d: {
-	      f: noop,
-	      r: function () {
-	        throw Error(formatProdErrorMessage(522));
-	      },
-	      D: noop,
-	      C: noop,
-	      L: noop,
-	      m: noop,
-	      X: noop,
-	      S: noop,
-	      M: noop
-	    },
-	    p: 0,
-	    findDOMNode: null
-	  },
-	  REACT_PORTAL_TYPE = Symbol.for("react.portal");
-	function createPortal$1(children, containerInfo, implementation) {
-	  var key =
-	    3 < arguments.length && void 0 !== arguments[3] ? arguments[3] : null;
-	  return {
-	    $$typeof: REACT_PORTAL_TYPE,
-	    key: null == key ? null : "" + key,
-	    children: children,
-	    containerInfo: containerInfo,
-	    implementation: implementation
-	  };
-	}
-	var ReactSharedInternals =
-	  React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
-	function getCrossOriginStringAs(as, input) {
-	  if ("font" === as) return "";
-	  if ("string" === typeof input)
-	    return "use-credentials" === input ? input : "";
-	}
-	reactDom_production.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE =
-	  Internals;
-	reactDom_production.createPortal = function (children, container) {
-	  var key =
-	    2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : null;
-	  if (
-	    !container ||
-	    (1 !== container.nodeType &&
-	      9 !== container.nodeType &&
-	      11 !== container.nodeType)
-	  )
-	    throw Error(formatProdErrorMessage(299));
-	  return createPortal$1(children, container, null, key);
-	};
-	reactDom_production.flushSync = function (fn) {
-	  var previousTransition = ReactSharedInternals.T,
-	    previousUpdatePriority = Internals.p;
-	  try {
-	    if (((ReactSharedInternals.T = null), (Internals.p = 2), fn)) return fn();
-	  } finally {
-	    (ReactSharedInternals.T = previousTransition),
-	      (Internals.p = previousUpdatePriority),
-	      Internals.d.f();
-	  }
-	};
-	reactDom_production.preconnect = function (href, options) {
-	  "string" === typeof href &&
-	    (options
-	      ? ((options = options.crossOrigin),
-	        (options =
-	          "string" === typeof options
-	            ? "use-credentials" === options
-	              ? options
-	              : ""
-	            : void 0))
-	      : (options = null),
-	    Internals.d.C(href, options));
-	};
-	reactDom_production.prefetchDNS = function (href) {
-	  "string" === typeof href && Internals.d.D(href);
-	};
-	reactDom_production.preinit = function (href, options) {
-	  if ("string" === typeof href && options && "string" === typeof options.as) {
-	    var as = options.as,
-	      crossOrigin = getCrossOriginStringAs(as, options.crossOrigin),
-	      integrity =
-	        "string" === typeof options.integrity ? options.integrity : void 0,
-	      fetchPriority =
-	        "string" === typeof options.fetchPriority
-	          ? options.fetchPriority
-	          : void 0;
-	    "style" === as
-	      ? Internals.d.S(
-	          href,
-	          "string" === typeof options.precedence ? options.precedence : void 0,
-	          {
-	            crossOrigin: crossOrigin,
-	            integrity: integrity,
-	            fetchPriority: fetchPriority
-	          }
-	        )
-	      : "script" === as &&
-	        Internals.d.X(href, {
-	          crossOrigin: crossOrigin,
-	          integrity: integrity,
-	          fetchPriority: fetchPriority,
-	          nonce: "string" === typeof options.nonce ? options.nonce : void 0
-	        });
-	  }
-	};
-	reactDom_production.preinitModule = function (href, options) {
-	  if ("string" === typeof href)
-	    if ("object" === typeof options && null !== options) {
-	      if (null == options.as || "script" === options.as) {
-	        var crossOrigin = getCrossOriginStringAs(
-	          options.as,
-	          options.crossOrigin
-	        );
-	        Internals.d.M(href, {
-	          crossOrigin: crossOrigin,
-	          integrity:
-	            "string" === typeof options.integrity ? options.integrity : void 0,
-	          nonce: "string" === typeof options.nonce ? options.nonce : void 0
-	        });
-	      }
-	    } else null == options && Internals.d.M(href);
-	};
-	reactDom_production.preload = function (href, options) {
-	  if (
-	    "string" === typeof href &&
-	    "object" === typeof options &&
-	    null !== options &&
-	    "string" === typeof options.as
-	  ) {
-	    var as = options.as,
-	      crossOrigin = getCrossOriginStringAs(as, options.crossOrigin);
-	    Internals.d.L(href, as, {
-	      crossOrigin: crossOrigin,
-	      integrity:
-	        "string" === typeof options.integrity ? options.integrity : void 0,
-	      nonce: "string" === typeof options.nonce ? options.nonce : void 0,
-	      type: "string" === typeof options.type ? options.type : void 0,
-	      fetchPriority:
-	        "string" === typeof options.fetchPriority
-	          ? options.fetchPriority
-	          : void 0,
-	      referrerPolicy:
-	        "string" === typeof options.referrerPolicy
-	          ? options.referrerPolicy
-	          : void 0,
-	      imageSrcSet:
-	        "string" === typeof options.imageSrcSet ? options.imageSrcSet : void 0,
-	      imageSizes:
-	        "string" === typeof options.imageSizes ? options.imageSizes : void 0,
-	      media: "string" === typeof options.media ? options.media : void 0
-	    });
-	  }
-	};
-	reactDom_production.preloadModule = function (href, options) {
-	  if ("string" === typeof href)
-	    if (options) {
-	      var crossOrigin = getCrossOriginStringAs(options.as, options.crossOrigin);
-	      Internals.d.m(href, {
-	        as:
-	          "string" === typeof options.as && "script" !== options.as
-	            ? options.as
-	            : void 0,
-	        crossOrigin: crossOrigin,
-	        integrity:
-	          "string" === typeof options.integrity ? options.integrity : void 0
-	      });
-	    } else Internals.d.m(href);
-	};
-	reactDom_production.requestFormReset = function (form) {
-	  Internals.d.r(form);
-	};
-	reactDom_production.unstable_batchedUpdates = function (fn, a) {
-	  return fn(a);
-	};
-	reactDom_production.useFormState = function (action, initialState, permalink) {
-	  return ReactSharedInternals.H.useFormState(action, initialState, permalink);
-	};
-	reactDom_production.useFormStatus = function () {
-	  return ReactSharedInternals.H.useHostTransitionStatus();
-	};
-	reactDom_production.version = "19.2.1";
-	return reactDom_production;
-}
-
-var reactDom_development = {};
-
-/**
- * @license React
- * react-dom.development.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-var hasRequiredReactDom_development;
-
-function requireReactDom_development () {
-	if (hasRequiredReactDom_development) return reactDom_development;
-	hasRequiredReactDom_development = 1;
-	"production" !== process.env.NODE_ENV &&
-	  (function () {
-	    function noop() {}
-	    function testStringCoercion(value) {
-	      return "" + value;
-	    }
-	    function createPortal$1(children, containerInfo, implementation) {
-	      var key =
-	        3 < arguments.length && void 0 !== arguments[3] ? arguments[3] : null;
-	      try {
-	        testStringCoercion(key);
-	        var JSCompiler_inline_result = !1;
-	      } catch (e) {
-	        JSCompiler_inline_result = !0;
-	      }
-	      JSCompiler_inline_result &&
-	        (console.error(
-	          "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
-	          ("function" === typeof Symbol &&
-	            Symbol.toStringTag &&
-	            key[Symbol.toStringTag]) ||
-	            key.constructor.name ||
-	            "Object"
-	        ),
-	        testStringCoercion(key));
-	      return {
-	        $$typeof: REACT_PORTAL_TYPE,
-	        key: null == key ? null : "" + key,
-	        children: children,
-	        containerInfo: containerInfo,
-	        implementation: implementation
-	      };
-	    }
-	    function getCrossOriginStringAs(as, input) {
-	      if ("font" === as) return "";
-	      if ("string" === typeof input)
-	        return "use-credentials" === input ? input : "";
-	    }
-	    function getValueDescriptorExpectingObjectForWarning(thing) {
-	      return null === thing
-	        ? "`null`"
-	        : void 0 === thing
-	          ? "`undefined`"
-	          : "" === thing
-	            ? "an empty string"
-	            : 'something with type "' + typeof thing + '"';
-	    }
-	    function getValueDescriptorExpectingEnumForWarning(thing) {
-	      return null === thing
-	        ? "`null`"
-	        : void 0 === thing
-	          ? "`undefined`"
-	          : "" === thing
-	            ? "an empty string"
-	            : "string" === typeof thing
-	              ? JSON.stringify(thing)
-	              : "number" === typeof thing
-	                ? "`" + thing + "`"
-	                : 'something with type "' + typeof thing + '"';
-	    }
-	    function resolveDispatcher() {
-	      var dispatcher = ReactSharedInternals.H;
-	      null === dispatcher &&
-	        console.error(
-	          "Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem."
-	        );
-	      return dispatcher;
-	    }
-	    "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ &&
-	      "function" ===
-	        typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart &&
-	      __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-	    var React = React__default,
-	      Internals = {
-	        d: {
-	          f: noop,
-	          r: function () {
-	            throw Error(
-	              "Invalid form element. requestFormReset must be passed a form that was rendered by React."
-	            );
-	          },
-	          D: noop,
-	          C: noop,
-	          L: noop,
-	          m: noop,
-	          X: noop,
-	          S: noop,
-	          M: noop
-	        },
-	        p: 0,
-	        findDOMNode: null
-	      },
-	      REACT_PORTAL_TYPE = Symbol.for("react.portal"),
-	      ReactSharedInternals =
-	        React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
-	    ("function" === typeof Map &&
-	      null != Map.prototype &&
-	      "function" === typeof Map.prototype.forEach &&
-	      "function" === typeof Set &&
-	      null != Set.prototype &&
-	      "function" === typeof Set.prototype.clear &&
-	      "function" === typeof Set.prototype.forEach) ||
-	      console.error(
-	        "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
-	      );
-	    reactDom_development.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE =
-	      Internals;
-	    reactDom_development.createPortal = function (children, container) {
-	      var key =
-	        2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : null;
-	      if (
-	        !container ||
-	        (1 !== container.nodeType &&
-	          9 !== container.nodeType &&
-	          11 !== container.nodeType)
-	      )
-	        throw Error("Target container is not a DOM element.");
-	      return createPortal$1(children, container, null, key);
-	    };
-	    reactDom_development.flushSync = function (fn) {
-	      var previousTransition = ReactSharedInternals.T,
-	        previousUpdatePriority = Internals.p;
-	      try {
-	        if (((ReactSharedInternals.T = null), (Internals.p = 2), fn))
-	          return fn();
-	      } finally {
-	        (ReactSharedInternals.T = previousTransition),
-	          (Internals.p = previousUpdatePriority),
-	          Internals.d.f() &&
-	            console.error(
-	              "flushSync was called from inside a lifecycle method. React cannot flush when React is already rendering. Consider moving this call to a scheduler task or micro task."
-	            );
-	      }
-	    };
-	    reactDom_development.preconnect = function (href, options) {
-	      "string" === typeof href && href
-	        ? null != options && "object" !== typeof options
-	          ? console.error(
-	              "ReactDOM.preconnect(): Expected the `options` argument (second) to be an object but encountered %s instead. The only supported option at this time is `crossOrigin` which accepts a string.",
-	              getValueDescriptorExpectingEnumForWarning(options)
-	            )
-	          : null != options &&
-	            "string" !== typeof options.crossOrigin &&
-	            console.error(
-	              "ReactDOM.preconnect(): Expected the `crossOrigin` option (second argument) to be a string but encountered %s instead. Try removing this option or passing a string value instead.",
-	              getValueDescriptorExpectingObjectForWarning(options.crossOrigin)
-	            )
-	        : console.error(
-	            "ReactDOM.preconnect(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
-	            getValueDescriptorExpectingObjectForWarning(href)
-	          );
-	      "string" === typeof href &&
-	        (options
-	          ? ((options = options.crossOrigin),
-	            (options =
-	              "string" === typeof options
-	                ? "use-credentials" === options
-	                  ? options
-	                  : ""
-	                : void 0))
-	          : (options = null),
-	        Internals.d.C(href, options));
-	    };
-	    reactDom_development.prefetchDNS = function (href) {
-	      if ("string" !== typeof href || !href)
-	        console.error(
-	          "ReactDOM.prefetchDNS(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
-	          getValueDescriptorExpectingObjectForWarning(href)
-	        );
-	      else if (1 < arguments.length) {
-	        var options = arguments[1];
-	        "object" === typeof options && options.hasOwnProperty("crossOrigin")
-	          ? console.error(
-	              "ReactDOM.prefetchDNS(): Expected only one argument, `href`, but encountered %s as a second argument instead. This argument is reserved for future options and is currently disallowed. It looks like the you are attempting to set a crossOrigin property for this DNS lookup hint. Browsers do not perform DNS queries using CORS and setting this attribute on the resource hint has no effect. Try calling ReactDOM.prefetchDNS() with just a single string argument, `href`.",
-	              getValueDescriptorExpectingEnumForWarning(options)
-	            )
-	          : console.error(
-	              "ReactDOM.prefetchDNS(): Expected only one argument, `href`, but encountered %s as a second argument instead. This argument is reserved for future options and is currently disallowed. Try calling ReactDOM.prefetchDNS() with just a single string argument, `href`.",
-	              getValueDescriptorExpectingEnumForWarning(options)
-	            );
-	      }
-	      "string" === typeof href && Internals.d.D(href);
-	    };
-	    reactDom_development.preinit = function (href, options) {
-	      "string" === typeof href && href
-	        ? null == options || "object" !== typeof options
-	          ? console.error(
-	              "ReactDOM.preinit(): Expected the `options` argument (second) to be an object with an `as` property describing the type of resource to be preinitialized but encountered %s instead.",
-	              getValueDescriptorExpectingEnumForWarning(options)
-	            )
-	          : "style" !== options.as &&
-	            "script" !== options.as &&
-	            console.error(
-	              'ReactDOM.preinit(): Expected the `as` property in the `options` argument (second) to contain a valid value describing the type of resource to be preinitialized but encountered %s instead. Valid values for `as` are "style" and "script".',
-	              getValueDescriptorExpectingEnumForWarning(options.as)
-	            )
-	        : console.error(
-	            "ReactDOM.preinit(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
-	            getValueDescriptorExpectingObjectForWarning(href)
-	          );
-	      if (
-	        "string" === typeof href &&
-	        options &&
-	        "string" === typeof options.as
-	      ) {
-	        var as = options.as,
-	          crossOrigin = getCrossOriginStringAs(as, options.crossOrigin),
-	          integrity =
-	            "string" === typeof options.integrity ? options.integrity : void 0,
-	          fetchPriority =
-	            "string" === typeof options.fetchPriority
-	              ? options.fetchPriority
-	              : void 0;
-	        "style" === as
-	          ? Internals.d.S(
-	              href,
-	              "string" === typeof options.precedence
-	                ? options.precedence
-	                : void 0,
-	              {
-	                crossOrigin: crossOrigin,
-	                integrity: integrity,
-	                fetchPriority: fetchPriority
-	              }
-	            )
-	          : "script" === as &&
-	            Internals.d.X(href, {
-	              crossOrigin: crossOrigin,
-	              integrity: integrity,
-	              fetchPriority: fetchPriority,
-	              nonce: "string" === typeof options.nonce ? options.nonce : void 0
-	            });
-	      }
-	    };
-	    reactDom_development.preinitModule = function (href, options) {
-	      var encountered = "";
-	      ("string" === typeof href && href) ||
-	        (encountered +=
-	          " The `href` argument encountered was " +
-	          getValueDescriptorExpectingObjectForWarning(href) +
-	          ".");
-	      void 0 !== options && "object" !== typeof options
-	        ? (encountered +=
-	            " The `options` argument encountered was " +
-	            getValueDescriptorExpectingObjectForWarning(options) +
-	            ".")
-	        : options &&
-	          "as" in options &&
-	          "script" !== options.as &&
-	          (encountered +=
-	            " The `as` option encountered was " +
-	            getValueDescriptorExpectingEnumForWarning(options.as) +
-	            ".");
-	      if (encountered)
-	        console.error(
-	          "ReactDOM.preinitModule(): Expected up to two arguments, a non-empty `href` string and, optionally, an `options` object with a valid `as` property.%s",
-	          encountered
-	        );
-	      else
-	        switch (
-	          ((encountered =
-	            options && "string" === typeof options.as ? options.as : "script"),
-	          encountered)
-	        ) {
-	          case "script":
-	            break;
-	          default:
-	            (encountered =
-	              getValueDescriptorExpectingEnumForWarning(encountered)),
-	              console.error(
-	                'ReactDOM.preinitModule(): Currently the only supported "as" type for this function is "script" but received "%s" instead. This warning was generated for `href` "%s". In the future other module types will be supported, aligning with the import-attributes proposal. Learn more here: (https://github.com/tc39/proposal-import-attributes)',
-	                encountered,
-	                href
-	              );
-	        }
-	      if ("string" === typeof href)
-	        if ("object" === typeof options && null !== options) {
-	          if (null == options.as || "script" === options.as)
-	            (encountered = getCrossOriginStringAs(
-	              options.as,
-	              options.crossOrigin
-	            )),
-	              Internals.d.M(href, {
-	                crossOrigin: encountered,
-	                integrity:
-	                  "string" === typeof options.integrity
-	                    ? options.integrity
-	                    : void 0,
-	                nonce:
-	                  "string" === typeof options.nonce ? options.nonce : void 0
-	              });
-	        } else null == options && Internals.d.M(href);
-	    };
-	    reactDom_development.preload = function (href, options) {
-	      var encountered = "";
-	      ("string" === typeof href && href) ||
-	        (encountered +=
-	          " The `href` argument encountered was " +
-	          getValueDescriptorExpectingObjectForWarning(href) +
-	          ".");
-	      null == options || "object" !== typeof options
-	        ? (encountered +=
-	            " The `options` argument encountered was " +
-	            getValueDescriptorExpectingObjectForWarning(options) +
-	            ".")
-	        : ("string" === typeof options.as && options.as) ||
-	          (encountered +=
-	            " The `as` option encountered was " +
-	            getValueDescriptorExpectingObjectForWarning(options.as) +
-	            ".");
-	      encountered &&
-	        console.error(
-	          'ReactDOM.preload(): Expected two arguments, a non-empty `href` string and an `options` object with an `as` property valid for a `<link rel="preload" as="..." />` tag.%s',
-	          encountered
-	        );
-	      if (
-	        "string" === typeof href &&
-	        "object" === typeof options &&
-	        null !== options &&
-	        "string" === typeof options.as
-	      ) {
-	        encountered = options.as;
-	        var crossOrigin = getCrossOriginStringAs(
-	          encountered,
-	          options.crossOrigin
-	        );
-	        Internals.d.L(href, encountered, {
-	          crossOrigin: crossOrigin,
-	          integrity:
-	            "string" === typeof options.integrity ? options.integrity : void 0,
-	          nonce: "string" === typeof options.nonce ? options.nonce : void 0,
-	          type: "string" === typeof options.type ? options.type : void 0,
-	          fetchPriority:
-	            "string" === typeof options.fetchPriority
-	              ? options.fetchPriority
-	              : void 0,
-	          referrerPolicy:
-	            "string" === typeof options.referrerPolicy
-	              ? options.referrerPolicy
-	              : void 0,
-	          imageSrcSet:
-	            "string" === typeof options.imageSrcSet
-	              ? options.imageSrcSet
-	              : void 0,
-	          imageSizes:
-	            "string" === typeof options.imageSizes
-	              ? options.imageSizes
-	              : void 0,
-	          media: "string" === typeof options.media ? options.media : void 0
-	        });
-	      }
-	    };
-	    reactDom_development.preloadModule = function (href, options) {
-	      var encountered = "";
-	      ("string" === typeof href && href) ||
-	        (encountered +=
-	          " The `href` argument encountered was " +
-	          getValueDescriptorExpectingObjectForWarning(href) +
-	          ".");
-	      void 0 !== options && "object" !== typeof options
-	        ? (encountered +=
-	            " The `options` argument encountered was " +
-	            getValueDescriptorExpectingObjectForWarning(options) +
-	            ".")
-	        : options &&
-	          "as" in options &&
-	          "string" !== typeof options.as &&
-	          (encountered +=
-	            " The `as` option encountered was " +
-	            getValueDescriptorExpectingObjectForWarning(options.as) +
-	            ".");
-	      encountered &&
-	        console.error(
-	          'ReactDOM.preloadModule(): Expected two arguments, a non-empty `href` string and, optionally, an `options` object with an `as` property valid for a `<link rel="modulepreload" as="..." />` tag.%s',
-	          encountered
-	        );
-	      "string" === typeof href &&
-	        (options
-	          ? ((encountered = getCrossOriginStringAs(
-	              options.as,
-	              options.crossOrigin
-	            )),
-	            Internals.d.m(href, {
-	              as:
-	                "string" === typeof options.as && "script" !== options.as
-	                  ? options.as
-	                  : void 0,
-	              crossOrigin: encountered,
-	              integrity:
-	                "string" === typeof options.integrity
-	                  ? options.integrity
-	                  : void 0
-	            }))
-	          : Internals.d.m(href));
-	    };
-	    reactDom_development.requestFormReset = function (form) {
-	      Internals.d.r(form);
-	    };
-	    reactDom_development.unstable_batchedUpdates = function (fn, a) {
-	      return fn(a);
-	    };
-	    reactDom_development.useFormState = function (action, initialState, permalink) {
-	      return resolveDispatcher().useFormState(action, initialState, permalink);
-	    };
-	    reactDom_development.useFormStatus = function () {
-	      return resolveDispatcher().useHostTransitionStatus();
-	    };
-	    reactDom_development.version = "19.2.1";
-	    "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ &&
-	      "function" ===
-	        typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop &&
-	      __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
-	  })();
-	return reactDom_development;
-}
-
-(function (module) {
-
-	function checkDCE() {
-	  /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
-	  if (
-	    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined' ||
-	    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== 'function'
-	  ) {
-	    return;
-	  }
-	  if (process.env.NODE_ENV !== 'production') {
-	    // This branch is unreachable because this function is only called
-	    // in production, but the condition is true only in development.
-	    // Therefore if the branch is still here, dead code elimination wasn't
-	    // properly applied.
-	    // Don't change the message. React DevTools relies on it. Also make sure
-	    // this message doesn't occur elsewhere in this function, or it will cause
-	    // a false positive.
-	    throw new Error('^_^');
-	  }
-	  try {
-	    // Verify that the code above has been dead code eliminated (DCE'd).
-	    __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
-	  } catch (err) {
-	    // DevTools shouldn't crash React, no matter what.
-	    // We should still report in case we break this code.
-	    console.error(err);
-	  }
-	}
-
-	if (process.env.NODE_ENV === 'production') {
-	  // DCE check should happen before ReactDOM bundle executes so that
-	  // DevTools can report bad minification during injection.
-	  checkDCE();
-	  module.exports = requireReactDom_production();
-	} else {
-	  module.exports = requireReactDom_development();
-	}
-} (reactDom));
-
-var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDom.exports);
 
 /**
  * Loading spinner/indicator
@@ -968,17 +235,6 @@ const LoadingSpinner = () => {
 };
 
 /**
- * Wait for a certain number of ms
- * @author Gabe Abrams
- * @param ms number of ms to wait
- */
-const waitMs = (ms = 0) => __awaiter(void 0, void 0, void 0, function* () {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-});
-
-/**
  * Modal sizes
  * @author Gabe Abrams
  */
@@ -996,18 +252,6 @@ var ModalSize$1 = ModalSize;
  * @author Gabe Abrams
  */
 const NUM_MODAL_PORTALS = 50;
-
-/**
- * An error with a code
- * @author Gabe Abrams
- */
-class ErrorWithCode extends Error {
-    constructor(message, code) {
-        super(message);
-        this.name = 'ErrorWithCode';
-        this.code = code;
-    }
-}
 
 /*----------------------------------------*/
 /* ---- Static Variables and Getters ---- */
@@ -1039,7 +283,7 @@ const getSendRequest = () => __awaiter(void 0, void 0, void 0, function* () {
     (() => __awaiter(void 0, void 0, void 0, function* () {
         yield waitMs(5000);
         if (!successful) {
-            showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', ReactKitErrorCode$1.NoCACCLSendRequestFunction));
+            showFatalError(new ErrorWithCode('Could not send a request because the request needed to be sent before dce-reactkit was properly initialized. Perhaps dce-reactkit was not initialized with initClient.', CommonKitErrorCode.NoCACCLSendRequestFunction));
         }
     }))();
     // Wait for initialization
@@ -1510,30 +754,6 @@ const Modal = (props) => {
     return ReactDOM.createPortal(contentToRender, document.getElementById(`modal-portal-${portalNumber}`));
 };
 
-/**
- * Path that all routes start with
- * @author Gabe Abrams
- */
-const ROUTE_PATH_PREFIX = '/dce-reactkit';
-
-/**
- * Path of the route for storing client-side logs
- * @author Gabe Abrams
- */
-const LOG_ROUTE_PATH = `${ROUTE_PATH_PREFIX}/log`;
-
-/**
- * Allowed log levels
- * @author Gabe Abrams
- */
-var LogLevel;
-(function (LogLevel) {
-    LogLevel["Warn"] = "Warn";
-    LogLevel["Info"] = "Info";
-    LogLevel["Debug"] = "Debug";
-})(LogLevel || (LogLevel = {}));
-var LogLevel$1 = LogLevel;
-
 /*------------------------------------------------------------------------*/
 /*                               Stub Logic                               */
 /*------------------------------------------------------------------------*/
@@ -1554,7 +774,7 @@ const _setStubResponse = (opts) => {
     const { path, body, } = opts;
     const method = ((_a = opts.method) !== null && _a !== void 0 ? _a : 'GET').toUpperCase();
     const errorMessage = ((_b = opts.errorMessage) !== null && _b !== void 0 ? _b : 'An unknown error has occurred.');
-    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : ReactKitErrorCode$1.NoCode);
+    const errorCode = ((_c = opts.errorCode) !== null && _c !== void 0 ? _c : CommonKitErrorCode.NoCode);
     // Store to stub responses
     if (!stubResponses[method]) {
         stubResponses[method] = {};
@@ -1632,11 +852,11 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
     });
     // Check for failure
     if (!response || !response.body) {
-        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', ReactKitErrorCode$1.NoResponse);
+        throw new ErrorWithCode('We didn\'t get a response from the server. Please check your internet connection.', CommonKitErrorCode.NoResponse);
     }
     if (!response.body.success) {
         // Session expired
-        if (response.body.code === ReactKitErrorCode$1.SessionExpired) {
+        if (response.body.code === CommonKitErrorCode.SessionExpired) {
             showSessionExpiredMessage();
             // Never return (don't continue execution)
             yield new Promise(() => {
@@ -1646,7 +866,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
         // Other errors
         throw new ErrorWithCode((response.body.message
             || 'An unknown error occurred. Please contact an admin.'), (response.body.code
-            || ReactKitErrorCode$1.NoCode));
+            || CommonKitErrorCode.NoCode));
     }
     // Success! Extract the body
     const { body } = response.body;
@@ -1699,7 +919,7 @@ const logClientEvent = (opts) => __awaiter(void 0, void 0, void 0, function* () 
                 ? opts.context
                 : ((_c = ((_b = opts.context) !== null && _b !== void 0 ? _b : {})._) !== null && _c !== void 0 ? _c : LogBuiltInMetadata.Context.Uncategorized)),
             subcontext: ((_d = opts.subcontext) !== null && _d !== void 0 ? _d : LogBuiltInMetadata.Context.Uncategorized),
-            level: ((_e = opts.level) !== null && _e !== void 0 ? _e : LogLevel$1.Info),
+            level: ((_e = opts.level) !== null && _e !== void 0 ? _e : LogLevel.Info),
             tags: JSON.stringify((_f = opts.tags) !== null && _f !== void 0 ? _f : []),
             metadata: JSON.stringify(metadata),
             errorMessage: (opts.error
@@ -1995,8 +1215,8 @@ const showFatalError = (error, errorTitle = 'An Error Occurred') => __awaiter(vo
         ? error.trim()
         : String((_c = error.message) !== null && _c !== void 0 ? _c : 'An unknown error occurred.'));
     const code = (typeof error === 'string'
-        ? ReactKitErrorCode$1.NoCode
-        : String((_d = error.code) !== null && _d !== void 0 ? _d : ReactKitErrorCode$1.NoCode));
+        ? CommonKitErrorCode.NoCode
+        : String((_d = error.code) !== null && _d !== void 0 ? _d : CommonKitErrorCode.NoCode));
     // Call all fatal error listeners
     try {
         fatalErrorHandlers.forEach((handler) => {
@@ -2227,8 +1447,8 @@ const AppWrapper = (props) => {
         && (fatalErrorMessage || fatalErrorCode || sessionHasExpired)) {
         // Re-encapsulate in an error
         const error = (sessionHasExpired
-            ? new ErrorWithCode(getSessionExpiredMessage(), ReactKitErrorCode$1.SessionExpired)
-            : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : ReactKitErrorCode$1.NoCode)));
+            ? new ErrorWithCode(getSessionExpiredMessage(), CommonKitErrorCode.SessionExpired)
+            : new ErrorWithCode((fatalErrorMessage !== null && fatalErrorMessage !== void 0 ? fatalErrorMessage : 'An unknown error has occurred. Please contact support.'), (fatalErrorCode !== null && fatalErrorCode !== void 0 ? fatalErrorCode : CommonKitErrorCode.NoCode)));
         // Choose error box variant
         let errorBoxVariant = Variant$1.Danger;
         if (sessionHasExpired) {
@@ -2525,111 +1745,6 @@ const ButtonInputGroup = (props) => {
                 : children))));
 };
 
-// Constants
-const ORDINALS = ['th', 'st', 'nd', 'rd'];
-/**
- * Get a number's ordinal
- * @author Gabe Abrams
- * @param num the number being analyzed
- * @returns ordinal
- */
-const getOrdinal = (num) => {
-    var _a, _b;
-    return ((_b = (_a = ORDINALS[(num - 20) % 10]) !== null && _a !== void 0 ? _a : ORDINALS[num]) !== null && _b !== void 0 ? _b : ORDINALS[0]);
-};
-
-const monthNames = [
-    { short: 'Jan', full: 'January' },
-    { short: 'Feb', full: 'February' },
-    { short: 'Mar', full: 'March' },
-    { short: 'Apr', full: 'April' },
-    { short: 'May', full: 'May' },
-    { short: 'Jun', full: 'June' },
-    { short: 'Jul', full: 'July' },
-    { short: 'Aug', full: 'August' },
-    { short: 'Sep', full: 'September' },
-    { short: 'Oct', full: 'October' },
-    { short: 'Nov', full: 'November' },
-    { short: 'Dec', full: 'December' },
-];
-/**
- * Get the name of a month given the month number (1 = January, etc.)
- *   If an invalid number is provided, we will treat it like January
- * @author Gabe Abrams
- * @param month the number of the month
- * @returns object containing multiple month name formats:
- *   { short, full } where short will look like "Jan" and full will look like
- *   "January"
- */
-const getMonthName = (month) => {
-    var _a;
-    return ((_a = monthNames[month - 1]) !== null && _a !== void 0 ? _a : monthNames[0]);
-};
-
-/**
- * Get current time info in US Boston Eastern Time, independent of machine
- *   timezone
- * @author Gabe Abrams
- * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
- * @returns object with timestamp (ms since epoch) and numbers
- *   corresponding to ET time values for year, month, day, hour, hour12, minute, second, isPM
- *   where hour is in 24hr time and hour12 is in 12hr time.
- */
-const getTimeInfoInET = (dateOrTimestamp) => {
-    // Create a time string
-    let d;
-    if (!dateOrTimestamp) {
-        // Use now
-        d = new Date();
-    }
-    else if (typeof dateOrTimestamp === 'number') {
-        // Convert to date
-        d = new Date(dateOrTimestamp);
-    }
-    else {
-        // Already a date
-        d = dateOrTimestamp;
-    }
-    const str = d.toLocaleString('en-US', // Using US encoding (it's the only one installed on containers)
-    { timeZone: 'America/New_York' });
-    // Parse the string for the date/time info
-    const [dateStr, timeStr] = str.split(', '); // Format: MM/DD/YYYY, HH:MM:SS AM
-    const [monthStr, dayStr, yearStr] = dateStr.split('/'); // Format: MM/DD/YYYY
-    const [hourStr, minStr, ending] = timeStr.split(':'); // Format: HH:MM:SS AM
-    // Create all time numbers
-    const timestamp = d.getTime();
-    const year = Number.parseInt(yearStr, 10);
-    const month = Number.parseInt(monthStr, 10);
-    const day = Number.parseInt(dayStr, 10);
-    const minute = Number.parseInt(minStr, 10);
-    const second = (ending.split(' ')[0]
-        ? Number.parseInt(ending.split(' ')[0], 10)
-        : 0);
-    const hour12 = Number.parseInt(hourStr, 10);
-    // Convert from am/pm to 24hr
-    const isAM = ending.toLowerCase().includes('am');
-    const isPM = !isAM;
-    let hour = hour12;
-    if (isPM && hour12 !== 12) {
-        hour += 12;
-    }
-    else if (isAM && hour12 === 12) {
-        hour = 0;
-    }
-    // Return
-    return {
-        timestamp,
-        year,
-        month,
-        day,
-        hour,
-        hour12,
-        isPM,
-        minute,
-        second,
-    };
-};
-
 /**
  * A very simple, lightweight date chooser
  * @author Gabe Abrams
@@ -2693,11 +1808,11 @@ const getChoices = (opts) => {
     let startMonth = today.month;
     // Don't allow past or future dates
     if (dontAllowPast && dontAllowFuture) {
-        throw new ErrorWithCode('No past or future dates allowed', ReactKitErrorCode$1.SimpleDateChooserInvalidDateRange);
+        throw new ErrorWithCode('No past or future dates allowed', CommonKitErrorCode.SimpleDateChooserInvalidDateRange);
     }
     // Require numMonthsToShow to be positive
     if (numMonthsToShow <= 0) {
-        throw new ErrorWithCode('numMonthsToShow must be positive', ReactKitErrorCode$1.SimpleDateChooserInvalidNumMonths);
+        throw new ErrorWithCode('numMonthsToShow must be positive', CommonKitErrorCode.SimpleDateChooserInvalidNumMonths);
     }
     // Recalculate startMonth and startYear when allowing past dates
     if (!dontAllowPast) {
@@ -2897,24 +2012,6 @@ const SimpleDateChooser = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default.createElement("span", { className: "SimpleDateChooser-outer-container" }, body));
-};
-
-/**
- * Pad a number with zeros on the left (e.g. 5 becomes 05 with 2 digit padding)
- * @author Gabe Abrams
- * @param num the number to pad
- * @param numDigits the minimum number of digits before the decimal
- * @returns padded number
- */
-const padZerosLeft = (num, numDigits) => {
-    // Convert to string
-    let out = String(num);
-    // Add zeros
-    while (out.split('.')[0].length < numDigits) {
-        out = `0${out}`;
-    }
-    // Return
-    return out;
 };
 
 /**
@@ -3749,211 +2846,6 @@ const ItemPicker = (props) => {
             React__default.createElement(NestableItemList, { items: items, onChanged: onChanged }))));
 };
 
-// Import shared helpers
-/**
- * Get a human-readable description of a date (all in ET)
- * @author Gabe Abrams
- * @param [dateOrTimestamp=today] the date or timestamp for the date to describe
- * @returns human-readable description of the date
- */
-const getHumanReadableDate = (dateOrTimestamp) => {
-    // Get the date info
-    const { month, day, year, } = getTimeInfoInET(dateOrTimestamp);
-    const currYear = getTimeInfoInET().year;
-    // Get the short month description
-    const monthName = getMonthName(month).short;
-    // Create start of description
-    let description = `${monthName} ${day}${getOrdinal(day)}`;
-    // Add on year if it's different
-    if (year !== currYear) {
-        description += ` ${year}`;
-    }
-    // Return description
-    return description;
-};
-
-/**
- * Path of the route for getting logs for log review
- * @author Gabe Abrams
- */
-const LOG_REVIEW_GET_LOGS_ROUTE = `/admin${ROUTE_PATH_PREFIX}/logs`;
-
-/**
- * Source of a log event
- * @author Gabe Abrams
- */
-var LogSource;
-(function (LogSource) {
-    // Client
-    LogSource["Client"] = "client";
-    // Server
-    LogSource["Server"] = "server";
-})(LogSource || (LogSource = {}));
-var LogSource$1 = LogSource;
-
-/**
- * Type of a log event
- * @author Gabe Abrams
- */
-var LogType;
-(function (LogType) {
-    // User action
-    LogType["Action"] = "action";
-    // Error
-    LogType["Error"] = "error";
-})(LogType || (LogType = {}));
-var LogType$1 = LogType;
-
-/**
- * Types of actions
- * @author Gabe Abrams
- */
-var LogAction;
-(function (LogAction) {
-    // Target was opened by the user (it was not on screen, but now it is)
-    LogAction["Open"] = "Open";
-    // Target was closed by the user (it was on screen, but now it is not)
-    LogAction["Close"] = "Close";
-    // Target was cancelled by the user (it was on closed without saving)
-    LogAction["Cancel"] = "Cancel";
-    // Target was expanded by the user (it always remains on screen, but size was changed)
-    LogAction["Expand"] = "Expand";
-    // Target was collapsed by the user (it always remains on screen, but size was changed)
-    LogAction["Collapse"] = "Collapse";
-    // Target was viewed by the user (only for items that are not opened or closed, those must use Open/Close actions)
-    LogAction["View"] = "View";
-    // Target interrupted the user (popup, dialog, validation message, etc. appeared without user prompting)
-    LogAction["Interrupt"] = "Interrupt";
-    // Target was created by the user (it did not exist before)
-    LogAction["Create"] = "Create";
-    // Target was modified by the user (it existed and was changed)
-    LogAction["Modify"] = "Modify";
-    // Target was deleted by the user (it existed and now it doesn't)
-    LogAction["Delete"] = "Delete";
-    // Target was added by the user (it already existed and was added to another place)
-    LogAction["Add"] = "Add";
-    // Target was removed by the user (it was removed from something but still exists)
-    LogAction["Remove"] = "Remove";
-    // Target was activated by the user (click, check, tap, keypress, etc.)
-    LogAction["Activate"] = "Activate";
-    // Target was deactivated by the user (click away, uncheck, tap outside of, tab away, etc.)
-    LogAction["Deactivate"] = "Deactivate";
-    // User showed interest in a target (hover, peek, etc.)
-    LogAction["Peek"] = "Peek";
-    // Halt a process (pause, etc.)
-    LogAction["Halt"] = "Halt";
-    // Resume a process (resume a halted process)
-    LogAction["Resume"] = "Resume";
-    // Jump to/seek to/reveal/go to/navigate to a target
-    LogAction["Jump"] = "Jump";
-    // Post a submission/message/etc. into the target
-    LogAction["Post"] = "Post";
-    // Like something
-    LogAction["Like"] = "Like";
-    // Dislike something
-    LogAction["Dislike"] = "Dislike";
-    // Unknown action
-    LogAction["Unknown"] = "Unknown";
-})(LogAction || (LogAction = {}));
-var LogAction$1 = LogAction;
-
-/**
- * Server-side API param types
- * @author Gabe Abrams
- */
-var ParamType;
-(function (ParamType) {
-    ParamType["Boolean"] = "Boolean";
-    ParamType["BooleanOptional"] = "BooleanOptional";
-    ParamType["Float"] = "Float";
-    ParamType["FloatOptional"] = "FloatOptional";
-    ParamType["Int"] = "Int";
-    ParamType["IntOptional"] = "IntOptional";
-    ParamType["JSON"] = "JSON";
-    ParamType["JSONOptional"] = "JSONOptional";
-    ParamType["String"] = "String";
-    ParamType["StringOptional"] = "StringOptional";
-})(ParamType || (ParamType = {}));
-var ParamType$1 = ParamType;
-
-/**
- * Round a number to a certain number of decimals
- * @author Gabe Abrams
- * @param num the number to round
- * @param numDecimals the number of decimals to round to
- * @returns rounded number
- */
-const roundToNumDecimals = (num, numDecimals) => {
-    const rounder = 10 ** numDecimals;
-    return (Math.round(num * rounder) / rounder);
-};
-
-/**
- * Escape a CSV cell if needed
- * @author Gabe Abrams
- * @param text the cell contents
- * @returns escaped cell text
- */
-const escapeCellText = (text) => {
-    if (!String(text).includes(',')
-        && !String(text).includes('"')) {
-        // No need to escape
-        return String(text);
-    }
-    // Perform escape
-    return `"${String(text).replace(/"/g, '""')}"`;
-};
-/**
- * Generate a CSV file
- * @author Gabe Abrams
- * @param data list of row data in the form of json objects
- * @param columns list of columns to include in the csv where each column is an object with:
- * - title: the column title
- * - param: the key in the data object to use for this column
- * - textIfUndefined: optional text to use if the value is undefined (defaults to empty string)
- * @returns multiline csv string
- */
-const genCSV = (data, columns) => {
-    let csv = '';
-    // Add header
-    csv += (columns
-        .map((column) => {
-        return escapeCellText(column.title);
-    })
-        .join(','));
-    // Add each row
-    data.forEach((datum) => {
-        csv += '\n';
-        csv += (columns
-            .map((column) => {
-            var _a;
-            let contents;
-            const cell = datum[column.param];
-            if (typeof cell === 'string'
-                || typeof cell === 'number'
-                || typeof cell === 'boolean') {
-                contents = String(cell);
-            }
-            else if (cell === null) {
-                contents = '';
-            }
-            else if (typeof cell === 'undefined') {
-                contents = ((_a = column.textIfUndefined) !== null && _a !== void 0 ? _a : '');
-            }
-            else if (typeof cell === 'object') {
-                contents = JSON.stringify(cell);
-            }
-            else {
-                contents = '';
-            }
-            return escapeCellText(contents);
-        })
-            .join(','));
-    });
-    // Return
-    return csv;
-};
-
 /**
  * Button for downloading a csv file
  * @author Gabe Abrams
@@ -4228,7 +3120,7 @@ const IntelliTable = (props) => {
             }
             // Sort differently based on the data type
             // > Boolean
-            if (paramType === ParamType$1.Boolean) {
+            if (paramType === ParamType.Boolean) {
                 if (aVal && !bVal) {
                     return (descending ? -1 : 1);
                 }
@@ -4238,14 +3130,14 @@ const IntelliTable = (props) => {
                 return tiebreaker;
             }
             // > Number
-            if (paramType === ParamType$1.Int
-                || paramType === ParamType$1.Float) {
+            if (paramType === ParamType.Int
+                || paramType === ParamType.Float) {
                 return (descending
                     ? (bVal - aVal)
                     : (aVal - bVal));
             }
             // > String
-            if (paramType === ParamType$1.String) {
+            if (paramType === ParamType.String) {
                 if (aVal < bVal) {
                     return (descending ? 1 : -1);
                 }
@@ -4255,7 +3147,7 @@ const IntelliTable = (props) => {
                 return tiebreaker;
             }
             // > JSON
-            if (paramType === ParamType$1.JSON) {
+            if (paramType === ParamType.JSON) {
                 const aSize = (Array.isArray(aVal)
                     ? aVal.length
                     : Object.keys(aVal).length);
@@ -4287,7 +3179,7 @@ const IntelliTable = (props) => {
             let fullValue;
             let visibleValue;
             let colTitle = '';
-            if (column.type === ParamType$1.Boolean) {
+            if (column.type === ParamType.Boolean) {
                 fullValue = !!(value);
                 const noValue = (value === undefined
                     || value === null);
@@ -4299,7 +3191,7 @@ const IntelliTable = (props) => {
                     colTitle = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$1.Int) {
+            else if (column.type === ParamType.Int) {
                 fullValue = Number.parseInt(value, 10);
                 const noValue = Number.isNaN(fullValue);
                 visibleValue = (noValue
@@ -4310,7 +3202,7 @@ const IntelliTable = (props) => {
                     colTitle = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$1.Float) {
+            else if (column.type === ParamType.Float) {
                 fullValue = Number.parseFloat(value);
                 const noValue = Number.isNaN(fullValue);
                 visibleValue = (noValue
@@ -4321,7 +3213,7 @@ const IntelliTable = (props) => {
                     colTitle = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$1.String) {
+            else if (column.type === ParamType.String) {
                 fullValue = String(value).trim();
                 const noValue = (value === undefined
                     || value === null
@@ -4334,7 +3226,7 @@ const IntelliTable = (props) => {
                     colTitle = 'Empty Cell';
                 }
             }
-            else if (column.type === ParamType$1.JSON) {
+            else if (column.type === ParamType.JSON) {
                 fullValue = JSON.stringify(value);
                 const noValue = (Array.isArray(value)
                     ? (!value || value.length === 0)
@@ -4450,14 +3342,6 @@ const Pagination = (props) => {
 };
 
 /**
- * Deeply clones an object
- * @author Yuen Ler Chow
- * @param obj the object to clone
- * @returns a deep clone of the object
- */
-const cloneDeep = clone;
-
-/**
  * Log reviewer panel that allows users (must be approved admins) to
  *   review logs written by dce-reactkit
  * @author Gabe Abrams
@@ -4564,185 +3448,185 @@ const columns = [
     {
         title: 'First Name',
         param: 'userFirstName',
-        type: ParamType$1.String,
+        type: ParamType.String,
     },
     {
         title: 'Last Name',
         param: 'userLastName',
-        type: ParamType$1.String,
+        type: ParamType.String,
     },
     {
         title: 'Email',
         param: 'userEmail',
-        type: ParamType$1.String,
+        type: ParamType.String,
     },
     {
         title: 'Canvas Id',
         param: 'userId',
-        type: ParamType$1.Int,
+        type: ParamType.Int,
     },
     {
         title: 'Student?',
         param: 'isLearner',
-        type: ParamType$1.Boolean,
+        type: ParamType.Boolean,
     },
     {
         title: 'Teaching Staff?',
         param: 'isTTM',
-        type: ParamType$1.Boolean,
+        type: ParamType.Boolean,
         startsHidden: true,
     },
     {
         title: 'Admin?',
         param: 'isAdmin',
-        type: ParamType$1.Boolean,
+        type: ParamType.Boolean,
         startsHidden: true,
     },
     {
         title: 'Course Canvas Id',
         param: 'courseId',
-        type: ParamType$1.Int,
+        type: ParamType.Int,
         startsHidden: true,
     },
     {
         title: 'Course Name',
         param: 'courseName',
-        type: ParamType$1.String,
+        type: ParamType.String,
     },
     {
         title: 'Browser Name',
         param: 'browser.name',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Browser Version',
         param: 'browser.version',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'OS',
         param: 'device.os',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Mobile?',
         param: 'device.isMobile',
-        type: ParamType$1.Boolean,
+        type: ParamType.Boolean,
         startsHidden: true,
     },
     {
         title: 'Year',
         param: 'year',
-        type: ParamType$1.Int,
+        type: ParamType.Int,
     },
     {
         title: 'Month',
         param: 'month',
-        type: ParamType$1.Int,
+        type: ParamType.Int,
     },
     {
         title: 'Day',
         param: 'day',
-        type: ParamType$1.Int,
+        type: ParamType.Int,
     },
     {
         title: 'Hour',
         param: 'hour',
-        type: ParamType$1.Int,
+        type: ParamType.Int,
     },
     {
         title: 'Minute',
         param: 'minute',
-        type: ParamType$1.Int,
+        type: ParamType.Int,
         startsHidden: true,
     },
     {
         title: 'Timestamp',
         param: 'timestamp',
-        type: ParamType$1.Int,
+        type: ParamType.Int,
         startsHidden: true,
     },
     {
         title: 'Context',
         param: 'context',
-        type: ParamType$1.String,
+        type: ParamType.String,
     },
     {
         title: 'Subcontext',
         param: 'subcontext',
-        type: ParamType$1.String,
+        type: ParamType.String,
     },
     {
         title: 'Tags',
         param: 'tags',
-        type: ParamType$1.JSON,
+        type: ParamType.JSON,
         startsHidden: true,
     },
     {
         title: 'Log Level',
         param: 'level',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Metadata',
         param: 'metadata',
-        type: ParamType$1.JSON,
+        type: ParamType.JSON,
         startsHidden: true,
     },
     {
         title: 'Source',
         param: 'source',
-        type: ParamType$1.String,
+        type: ParamType.String,
     },
     {
         title: 'Server Route Path',
         param: 'routePath',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Server Route Template',
         param: 'routeTemplate',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Type',
         param: 'type',
-        type: ParamType$1.String,
+        type: ParamType.String,
     },
     {
         title: 'Error Message',
         param: 'errorMessage',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Error Code',
         param: 'errorCode',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Error Stack',
         param: 'errorStack',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Action Target',
         param: 'target',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
     {
         title: 'Action Type',
         param: 'action',
-        type: ParamType$1.String,
+        type: ParamType.String,
         startsHidden: true,
     },
 ];
@@ -5002,7 +3886,7 @@ const LogReviewer = (props) => {
     Object.values(targetMap).forEach((target) => {
         initActionErrorFilterState.target[target] = true;
     });
-    Object.values(LogAction$1).forEach((action) => {
+    Object.values(LogAction).forEach((action) => {
         initActionErrorFilterState.action[action] = true;
     });
     // Initial state
@@ -5399,22 +4283,22 @@ const LogReviewer = (props) => {
                             });
                         }, ariaLabel: "show logs of all types", selected: pendingActionErrorFilterState.type === undefined, unselectedVariant: Variant$1.Light }),
                     React__default.createElement(RadioButton, { id: "LogReviewer-type-action-only", text: "Action Logs Only", onSelected: () => {
-                            const newActionErrorFilterState = Object.assign(Object.assign({}, pendingActionErrorFilterState), { type: LogType$1.Action });
+                            const newActionErrorFilterState = Object.assign(Object.assign({}, pendingActionErrorFilterState), { type: LogType.Action });
                             dispatch({
                                 type: ActionType$6.UpdateActionErrorFilterState,
                                 actionErrorFilterState: newActionErrorFilterState,
                             });
-                        }, ariaLabel: "only show action logs", selected: pendingActionErrorFilterState.type === LogType$1.Action, unselectedVariant: Variant$1.Light }),
+                        }, ariaLabel: "only show action logs", selected: pendingActionErrorFilterState.type === LogType.Action, unselectedVariant: Variant$1.Light }),
                     React__default.createElement(RadioButton, { id: "LogReviewer-type-error-only", text: "Action Error Only", onSelected: () => {
-                            const newActionErrorFilterState = Object.assign(Object.assign({}, pendingActionErrorFilterState), { type: LogType$1.Error });
+                            const newActionErrorFilterState = Object.assign(Object.assign({}, pendingActionErrorFilterState), { type: LogType.Error });
                             dispatch({
                                 type: ActionType$6.UpdateActionErrorFilterState,
                                 actionErrorFilterState: newActionErrorFilterState,
                             });
-                        }, ariaLabel: "only show error logs", selected: pendingActionErrorFilterState.type === LogType$1.Error, noMarginOnRight: true, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light })),
+                        }, ariaLabel: "only show error logs", selected: pendingActionErrorFilterState.type === LogType.Error, noMarginOnRight: true, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light })),
                 (pendingActionErrorFilterState.type === undefined
-                    || pendingActionErrorFilterState.type === LogType$1.Action) && (React__default.createElement(TabBox, { title: "Action Log Details" },
-                    React__default.createElement(ButtonInputGroup, { label: "Action", className: "mb-2", wrapButtonsAndAddGaps: true }, Object.keys(LogAction$1)
+                    || pendingActionErrorFilterState.type === LogType.Action) && (React__default.createElement(TabBox, { title: "Action Log Details" },
+                    React__default.createElement(ButtonInputGroup, { label: "Action", className: "mb-2", wrapButtonsAndAddGaps: true }, Object.keys(LogAction)
                         .map((action) => {
                         const description = genHumanReadableName(action);
                         return (React__default.createElement(CheckboxButton, { key: action, id: `LogReviewer-action-${action}-checkbox`, text: description, ariaLabel: `include logs with action type "${description}" in results`, noMarginOnRight: true, checked: pendingActionErrorFilterState.action[action], onChanged: (checked) => {
@@ -5437,7 +4321,7 @@ const LogReviewer = (props) => {
                             }, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }));
                     })))),
                 (pendingActionErrorFilterState.type === undefined
-                    || pendingActionErrorFilterState.type === LogType$1.Error) && (React__default.createElement(TabBox, { title: "Error Log Details" },
+                    || pendingActionErrorFilterState.type === LogType.Error) && (React__default.createElement(TabBox, { title: "Error Log Details" },
                     React__default.createElement("div", { className: "input-group mb-2" },
                         React__default.createElement("span", { className: "input-group-text" }, "Error Message"),
                         React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for error message", value: pendingActionErrorFilterState.errorMessage, placeholder: "e.g. undefined is not a function", onChange: (e) => {
@@ -5583,21 +4467,21 @@ const LogReviewer = (props) => {
                                     advancedFilterState: newAdvancedFilterState,
                                 });
                             }, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light }),
-                        React__default.createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: pendingAdvancedFilterState.source === LogSource$1.Client, onSelected: () => {
-                                const newAdvancedFilterState = Object.assign(Object.assign({}, pendingAdvancedFilterState), { source: LogSource$1.Client });
+                        React__default.createElement(RadioButton, { text: "Client Only", ariaLabel: "show logs from client source", selected: pendingAdvancedFilterState.source === LogSource.Client, onSelected: () => {
+                                const newAdvancedFilterState = Object.assign(Object.assign({}, pendingAdvancedFilterState), { source: LogSource.Client });
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
                                     advancedFilterState: newAdvancedFilterState,
                                 });
                             }, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light }),
-                        React__default.createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: pendingAdvancedFilterState.source === LogSource$1.Server, onSelected: () => {
-                                const newAdvancedFilterState = Object.assign(Object.assign({}, pendingAdvancedFilterState), { source: LogSource$1.Server });
+                        React__default.createElement(RadioButton, { text: "Server Only", ariaLabel: "show logs from server source", selected: pendingAdvancedFilterState.source === LogSource.Server, onSelected: () => {
+                                const newAdvancedFilterState = Object.assign(Object.assign({}, pendingAdvancedFilterState), { source: LogSource.Server });
                                 dispatch({
                                     type: ActionType$6.UpdateAdvancedFilterState,
                                     advancedFilterState: newAdvancedFilterState,
                                 });
                             }, noMarginOnRight: true, selectedVariant: Variant$1.Light, unselectedVariant: Variant$1.Light })),
-                    pendingAdvancedFilterState.source !== LogSource$1.Client && (React__default.createElement("div", { className: "mt-2" },
+                    pendingAdvancedFilterState.source !== LogSource.Client && (React__default.createElement("div", { className: "mt-2" },
                         React__default.createElement("div", { className: "input-group mb-2" },
                             React__default.createElement("span", { className: "input-group-text" }, "Server Route Path"),
                             React__default.createElement("input", { type: "text", className: "form-control", "aria-label": "query for server route path", value: pendingAdvancedFilterState.routePath, placeholder: "e.g. /api/ttm/courses/12345", onChange: (e) => {
@@ -10192,7 +9076,7 @@ var MenuPortal = function MenuPortal(props) {
   }), innerProps), children);
   return jsx(PortalPlacementContext.Provider, {
     value: portalPlacementContext
-  }, appendTo ? /*#__PURE__*/reactDom.exports.createPortal(menuWrapper, appendTo) : menuWrapper);
+  }, appendTo ? /*#__PURE__*/createPortal(menuWrapper, appendTo) : menuWrapper);
 };
 
 // ==============================
@@ -14295,11 +13179,11 @@ const AddOrEditDBEntry = (props) => {
  * @param [adminsOnly] true if the endpoint is for admins only
  * @returns the endpoint path
  */
-const generateEndpointPath = (collectionName, adminsOnly) => {
+const generateEndpointPath = (collectionName, adminsOnly = true) => {
     // Determine prefix based on whether the endpoint is for admins only
     const userPath = adminsOnly ? 'admin' : 'ttm';
     // Return the endpoint path
-    return `/api/${userPath}/dce-reactkit/dbeditor/${collectionName}`;
+    return `/api/${userPath}/dce-commonkit/dbeditor/${collectionName}`;
 };
 
 /**
@@ -14626,27 +13510,6 @@ const ToggleSwitch = (props) => {
                 transform: `translateX(${isOn ? '' : '-'}0.7rem)`,
                 transition: '0.3s transform ease-in-out',
             } })));
-};
-
-/**
- * Convert a string to hyphenated lowercase format with no space or
- *   non-alphanumeric characters
- * @author Gabe Abrams
- * @param str the string to convert
- * @returns the idified string
- */
-const idify = (str) => {
-    return (str
-        // Trim whitespace
-        .trim()
-        // Convert to lowercase
-        .toLowerCase()
-        // Replace non-alphanumeric characters with hyphens
-        .replace(/[^a-z0-9]+/g, '-')
-        // Change multiple hyphens in a row for a single hyphen
-        .replace(/-+/g, '-')
-        // Remove hyphens at the beginning and end of the string
-        .replace(/^-+|-+$/g, ''));
 };
 
 /**
@@ -15522,45 +14385,8 @@ const ProgressBar = (props) => {
                 "\u00A0"))));
 };
 
-/**
- * One minute in ms
- * @author Gabe Abrams
- */
-const MINUTE_IN_MS = 60000;
-
-/**
- * One hour in ms
- * @author Gabe Abrams
- */
-const HOUR_IN_MS = 3600000;
-
-/**
- * One day in ms
- * @author Gabe Abrams
- */
-const DAY_IN_MS = 86400000;
-
-/**
- * Path of the route for storing client-side logs
- * @author Gabe Abrams
- */
-const LOG_REVIEW_ROUTE_PATH_PREFIX = `/admin${ROUTE_PATH_PREFIX}/logs`;
-
-/**
- * Route for checking the status of the current user's
- *   access to log review
- * @author Gabe Abrams
- */
-const LOG_REVIEW_STATUS_ROUTE = `${ROUTE_PATH_PREFIX}/logs/access_allowed`;
-
-/**
- * Route for checking if the current user is a select admin
- * @author Gabe Abrams
- */
-const SELECT_ADMIN_CHECK_ROUTE = '/api/admin/select/is-select-admin';
-
 // True if user is on mobile or tablet
-let cachedResult = undefined;
+let cachedResult;
 /**
  * Check if the user is on a mobile device or tablet
  * from https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
@@ -15573,6 +14399,7 @@ const isMobileOrTablet = () => {
     }
     try {
         let check = false;
+        // eslint-disable-next-line max-len, no-useless-escape
         ((a) => { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4)))
             check = true; })((navigator !== null && navigator !== void 0 ? navigator : {}).userAgent || (navigator !== null && navigator !== void 0 ? navigator : {}).vendor || ((_a = window) !== null && _a !== void 0 ? _a : {}).opera);
         cachedResult = check;
@@ -15614,119 +14441,6 @@ const DynamicWord = {
 };
 
 /**
- * Shorten text so it fits into a certain number of chars
- * @author Gabe Abrams
- * @param text the text to abbreviate
- * @param maxChars the maximum number of chars to include
- * @returns abbreviated text with length no greater than maxChars
- *   (including ellipses if applicable)
- */
-const abbreviate = (text, maxChars) => {
-    // Check if already short enough
-    if (text.trim().length < maxChars) {
-        return text.trim();
-    }
-    // Abbreviate
-    const shortenedText = (text
-        .trim()
-        .substring(0, maxChars - 3)
-        .trim());
-    return `${shortenedText}...`;
-};
-
-/**
- * Sum the numbers in an array
- * @author Gabe Abrams
- * @param nums the numbers to sum
- * @returns the sum of the numbers
- */
-const sum = (nums) => {
-    return nums.reduce((a, b) => {
-        return (a + b);
-    }, 0);
-};
-
-/**
- * Get the average of a set of numbers
- * @author Gabe Abrams
- * @param nums the numbers to average
- * @returns average value or 0 if no numbers
- */
-const avg = (nums) => {
-    // Handle empty array case
-    if (nums.length === 0) {
-        return 0;
-    }
-    // Get the total value
-    const total = sum(nums);
-    // Get average
-    return (total / nums.length);
-};
-
-/**
- * Round a number (ceiling) to a certain number of decimals
- * @author Gabe Abrams
- * @param num the number to round
- * @param numDecimals the number of decimals to round to
- * @returns rounded number
- */
-const ceilToNumDecimals = (num, numDecimals) => {
-    const rounder = 10 ** numDecimals;
-    return (Math.ceil(num * rounder) / rounder);
-};
-
-/**
- * Round a number (floor) to a certain number of decimals
- * @author Gabe Abrams
- * @param num the number to round
- * @param numDecimals the number of decimals to round to
- * @returns rounded number
- */
-const floorToNumDecimals = (num, numDecimals) => {
-    const rounder = 10 ** numDecimals;
-    return (Math.floor(num * rounder) / rounder);
-};
-
-/**
- * Force a number to stay within specific bounds
- * @author Gabe Abrams
- * @param num the number to move into the bounds
- * @param min the minimum number in the bound
- * @param max the maximum number in the bound
- * @returns bounded number
- */
-const forceNumIntoBounds = (num, min, max) => {
-    return Math.max(min, Math.min(max, num));
-};
-
-/**
- * Pad a number's decimal with zeros on the right
- *   (e.g. 5.2 becomes 5.20 with 2 digit padding)
- * @author Gabe Abrams
- * @param num the number to pad
- * @param numDigits the minimum number of digits after the decimal
- * @returns padded number
- */
-const padDecimalZeros = (num, numDigits) => {
-    // Skip if nothing to do
-    if (numDigits < 1) {
-        return String(num);
-    }
-    // Convert to string
-    let out = String(num);
-    // Add a decimal point if there isn't one
-    if (!out.includes('.')) {
-        out += '.';
-    }
-    // Add zeros
-    while (out.split('.')[1].length < numDigits) {
-        out = `${out}0`;
-    }
-    // Return
-    return out;
-};
-
-/**
  * Stub a server endpoint response
  * @author Gabe Abrams
  * @param opts object containing all arguments
@@ -15737,146 +14451,6 @@ const padDecimalZeros = (num, numDigits) => {
  * @param [opts.errorCode] error code if stubbing a failed response
  */
 const stubServerEndpoint = _setStubResponse;
-
-/**
- * Start a dynamic wait, call the function once the operation has completed and
- *   the dynamic wait will continue waiting for the rest of the minimum time
- * @author Gabe Abrams
- * @param minWaitMs the minimum number of ms to wait
- * @returns async function to call to finish the wait
- */
-const startMinWait = (minWaitMs) => {
-    const startTimestamp = Date.now();
-    /**
-     * Finish the remaining time to wait
-     * @author Gabe Abrams
-     */
-    return () => __awaiter(void 0, void 0, void 0, function* () {
-        const endTimestamp = Date.now();
-        // Calculate remaining time to wait
-        const elapsedTimeMs = (endTimestamp - startTimestamp);
-        const remainingTimeToWaitMs = minWaitMs - elapsedTimeMs;
-        if (remainingTimeToWaitMs <= 0) {
-            return;
-        }
-        // Perform wait
-        yield waitMs(remainingTimeToWaitMs);
-    });
-};
-
-/**
- * Get the current part of day (morning, evening, etc.)
- * @author Gabe Abrams
- * @returns the part of day (morning, evening, etc.)
- */
-const getPartOfDay = () => {
-    // Setup the post-it time of day
-    let partOfDay = 'day';
-    const hours = new Date().getHours();
-    if (hours < 12) {
-        partOfDay = 'morning';
-    }
-    else if (hours >= 12 && hours <= 16) {
-        partOfDay = 'afternoon';
-    }
-    else if (hours > 16 && hours <= 24) {
-        partOfDay = 'evening';
-    }
-    return partOfDay;
-};
-
-/**
- * Create a human readable list from an array of strings.
- *   For example, ['apple', 'orange'] becomes "apple and orange"
- *   and ['apple', 'orange', 'mango'] becomes "apple, orange, and mango"
- * @author Gabe Abrams
- * @param items list of items in the list
- * @returns human-readable list
- */
-const stringsToHumanReadableList = (items) => {
-    // Handle 0-item case
-    if (items.length === 0) {
-        return '';
-    }
-    // Handle 1-item case
-    if (items.length === 1) {
-        return items[0];
-    }
-    // Handle 2-item case
-    if (items.length === 2) {
-        return `${items[0]} and ${items[1]}`;
-    }
-    // Handle 3+ item case
-    let list = '';
-    items.forEach((item, i) => {
-        if (i === items.length - 1) {
-            // Last item
-            list += `, and ${item}`;
-        }
-        // Previous items
-        list += `, ${item}`;
-    });
-    return list;
-};
-
-/**
- * Given a string, only keep the letters inside it
- * @author Gabe Abrams
- * @param str the string to parse
- * @returns only the letters inside of the string
- */
-const onlyKeepLetters = (str) => {
-    return str.replace(/[^a-zA-Z]+/g, '');
-};
-
-/**
- * Run tasks in parallel with a limit on how many tasks can execute at once.
- *   No guarantees are made about the order of task execution
- * @author Gabe Abrams
- * @param taskFunctions functions that start asynchronous tasks and optionally
- *   resolve with values
- * @param [limit=no limit] maximum number of asynchronous tasks to permit to run at
- *   once
- * @returns array of resolved values in the same order as the task functions
- */
-const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0, function* () {
-    const results = [];
-    // Wait until finished with all tasks
-    yield new Promise((resolve) => {
-        /* ------------- Helpers ------------ */
-        let nextTaskIndex = 0;
-        let numFinishedTasks = 0;
-        /**
-         * Start the next task
-         * @author Gabe Abrams
-         */
-        const startTask = () => __awaiter(void 0, void 0, void 0, function* () {
-            const taskIndex = nextTaskIndex++;
-            // Get the task
-            const taskFunction = taskFunctions[taskIndex];
-            if (!taskFunction) {
-                return;
-            }
-            // Execute task
-            const result = yield taskFunction();
-            // Add results
-            results[taskIndex] = result;
-            // Tally and finish
-            if (++numFinishedTasks === taskFunctions.length) {
-                return resolve();
-            }
-            // Not finished! Start another task
-            startTask();
-        });
-        /* ----------- Start Tasks ---------- */
-        // If no limit, start all tasks. At least start 1 task
-        const numTasks = Math.max((limit || taskFunctions.length), 1);
-        for (let i = 0; i < numTasks; i++) {
-            startTask();
-        }
-    });
-    return results;
-});
 
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Cache ------------------------------- */
@@ -15908,355 +14482,6 @@ const canReviewLogs = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     return canReview;
 });
-
-/**
- * For every element in an array, extract the value of a prop
- *   (e.g. for all user objects, extract their ages and put that into a new
- *   ages array)
- * @author Gabe Abrams
- * @param arr the array of objects to operate on
- * @param prop the property to extract from each object
- * @returns new array containing the corresponding values, in order, of each
- *   object in the original array
- */
-const extractProp = (arr, prop) => {
-    return arr.map((item) => {
-        return item[prop];
-    });
-};
-
-/**
- * Compare two arrays of objects by only comparing the values in a specific
- *  property (e.g. compare user arrays by comparing their user.id values)
- * @author Gabe Abrams
- * @param a the first array
- * @param b the second array
- * @param prop the property to compare with, or an array of props to compare
- *   with (if array, all values associated with those props must match)
- * @returns true if the arrays contain the same objects as determined by
- *   the values associated with each object's prop
- */
-const compareArraysByProp = (a, b, prop) => {
-    // Immediately return if size of arrays is different
-    if (a.length !== b.length) {
-        return false;
-    }
-    // Get all props
-    const props = (Array.isArray(prop) ? prop : [prop]);
-    // Clone second array so we can work on it
-    const bCloned = [...b];
-    // Remove elements from b as we find them in a
-    for (let i = 0; i < a.length; i++) {
-        // Find matching element in b
-        const matchingIndex = bCloned.findIndex((bItem) => {
-            // Compare based on all props
-            return props.every((propToCompareBy) => {
-                var _a;
-                const aVal = ((_a = a[i]) !== null && _a !== void 0 ? _a : {})[propToCompareBy];
-                const bVal = (bItem !== null && bItem !== void 0 ? bItem : {})[propToCompareBy];
-                return aVal === bVal;
-            });
-        });
-        // Check if no match
-        const noMatch = (matchingIndex < 0);
-        // If no match, there's no corresponding element in b
-        if (noMatch) {
-            return false;
-        }
-        // Remove the matching element
-        bCloned.splice(matchingIndex, 1);
-    }
-    // If we made it here, all elements in a have a corresponding element in b
-    return true;
-};
-
-/**
- * Get current time info in local time
- * @author Gabe Abrams
- * @param [dateOrTimestamp=now] the date to get info on or a ms since epoch timestamp
- * @returns object with timestamp (ms since epoch) and numbers
- *   corresponding to time values for year, month, day, hour, hour12, minute, isPM
- *   where hour is in 24hr time and hour12 is in 12hr time.
- */
-const getLocalTimeInfo = (dateOrTimestamp) => {
-    // Create a time string
-    let d;
-    if (!dateOrTimestamp) {
-        // Use now
-        d = new Date();
-    }
-    else if (typeof dateOrTimestamp === 'number') {
-        // Convert to date
-        d = new Date(dateOrTimestamp);
-    }
-    else {
-        // Already a date
-        d = dateOrTimestamp;
-    }
-    // Create all time numbers
-    const timestamp = d.getTime();
-    const year = d.getFullYear();
-    const month = d.getMonth() + 1;
-    const day = d.getDate();
-    const hour = d.getHours();
-    const isPM = hour >= 12;
-    let hour12 = hour % 12;
-    if (hour12 === 0) {
-        hour12 = 12;
-    }
-    const minute = d.getMinutes();
-    // Return
-    return {
-        timestamp,
-        year,
-        month,
-        day,
-        hour,
-        hour12,
-        isPM,
-        minute,
-    };
-};
-
-/**
- * Given an array of strings, create a single comma-separated string that includes
- * 'and' as well as an oxford comma.
- *   Ex: ['apples'] => 'apples'
- *   Ex: ['apples', 'bananas'] => 'apples and bananas'
- *   Ex: ['apples', 'bananas', 'grapes'] => 'apples, bananas, and grapes'
- * @author Austen Money
- * @param list an array of elements to be made into a single comma-separated string.
- * @returns a comma-separated string.
- */
-const genCommaList = (list) => {
-    const { length } = list;
-    return (length < 2
-        ? list.join('')
-        : `${list.slice(0, length - 1).join(', ')}${length < 3 ? ' and ' : ', and '}${list[length - 1]}`);
-};
-
-/*------------------------------------------------------------------------*/
-/* ------------------------------ Constants ----------------------------- */
-/*------------------------------------------------------------------------*/
-const INVALID_REGEX_ERROR = 'input does not follow the requested format';
-const INVALID_EMAIL_ERROR = 'Please provide a valid email address.';
-const INVALID_PHONE_ERROR = 'Please provide a valid phone number.';
-const INVALID_STRING_ERRORS = {
-    MIN_LEN: (minLen) => {
-        return `input must not be under ${minLen} character(s)`;
-    },
-    MAX_LEN: (maxLen) => {
-        return `input must not be over ${maxLen} character(s)`;
-    },
-    LETTERS_ONLY: 'input must only contain letters',
-    NUMBERS_ONLY: 'input must only contain numbers',
-    MESSAGE_INTRO: 'The following error(s) occurred: ',
-};
-
-// Import constants
-/**
- * Determines whether a given input string is considered valid based on
- *   the provided regex.
- * @author Austen Money
- * @param opts object containing all args
- * @param opts.input user-provided input to validate
- * @param opts.regex regular expression to check against input
- * @param [opts.regexDescription] description of what regexString is checking
- *   for, used to customize error message
- * @returns the unchanged input if valid, or a customized error message if
- *   invalid
- */
-const validateRegex = (opts) => {
-    // customize error message in case of invalid input
-    const errorMessage = `${INVALID_REGEX_ERROR}${opts.regexDescription
-        ? ': '
-        : ''}${opts.regexDescription}`;
-    // return error message if test is invalid, or input string if valid
-    return (opts.regex.test(opts.input)
-        ? {
-            isValid: true,
-            cleanedValue: opts.input,
-        }
-        : {
-            isValid: false,
-            errorMessage,
-        });
-};
-
-// Import helpers
-/**
- * Determines whether a given email address is valid.
- * @author Austen Money
- * @param email email address to validate
- * @returns whether email fulfills proper formatting requirements, includes a
- *   cleaned version of the address without leading or trailing
- *   whitespace if valid or an error message if invalid.
- */
-const validateEmail = (email) => {
-    // validation regex, sourced from HTML living standard: http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#e-mail-state-(type=email)
-    // eslint-disable-next-line max-len
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    // remove leading and trailing whitespace
-    const cleanedValue = email.replace(/^\s+|\s+$/g, '');
-    // validate email with regex, and return error if not valid
-    return (validateRegex({
-        input: cleanedValue,
-        regex: emailRegex,
-    }).isValid
-        ? {
-            isValid: true,
-            cleanedValue,
-        }
-        : {
-            isValid: false,
-            errorMessage: INVALID_EMAIL_ERROR,
-        });
-};
-
-// Import helpers
-/**
- * Determines whether a given phone number is valid.
- * @author Austen Money
- * @param phoneNumber phone number to validate
- * @returns whether phone number is considered valid - if valid, also returns
- *   a cleaned version of the number without any formatting. If invalid,
- *   returns an error message.
- */
-const validatePhoneNumber = (phoneNumber) => {
-    // regex to validate phone number
-    const validationRegex = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
-    // validate phone number with regex
-    const validationResponse = validateRegex({
-        input: phoneNumber,
-        regex: validationRegex,
-    });
-    // remove all non-digits from number
-    const cleanedValue = phoneNumber.replace(/\D/g, '');
-    // return cleaned value if valid, or error message if invalid
-    return (validationResponse.isValid
-        ? {
-            isValid: true,
-            cleanedValue,
-        }
-        : {
-            isValid: false,
-            errorMessage: INVALID_PHONE_ERROR,
-        });
-};
-
-// Import helpers
-/*------------------------------------------------------------------------*/
-/* ------------------------------ Constants ----------------------------- */
-/*------------------------------------------------------------------------*/
-// define minimum and maximum range for lowercase ASCII chars
-const LOWERCASE_MIN = 65;
-const LOWERCASE_MAX = 90;
-// define minimum and maximum range for uppercase ASCII chars
-const UPPERCASE_MIN = 97;
-const UPPERCASE_MAX = 122;
-// define minimum and maximum range for ASCII digits
-const DIGIT_MIN = 48;
-const DIGIT_MAX = 57;
-/*------------------------------------------------------------------------*/
-/* ---------------------------- Main Function --------------------------- */
-/*------------------------------------------------------------------------*/
-/**
- * Determines whether a given input string is considered valid based on
- *   the provided requirements.
- * @author Austen Money
- * @param input input string
- * @param opts options for validation
- * @returns whether input is considered valid according to reqs - if
- *   valid, returns a cleaned version of input; if invalid, returns
- *   a string containing error messages describing which requirements
- *   were not met.
- */
-const validateString = (input, opts) => {
-    // stores all invalid input errors
-    const errorMessages = [];
-    // contains version of input that will be returned
-    let cleanedValue = input;
-    // remove whitespace if required
-    if (opts.ignoreWhitespace) {
-        cleanedValue = input.replace(/\s+/g, '');
-    }
-    // apply max char requirement
-    if (opts.minLen) {
-        if (cleanedValue.length < opts.minLen) {
-            errorMessages.push(INVALID_STRING_ERRORS.MIN_LEN(opts.minLen));
-        }
-    }
-    // apply max char requirement
-    if (opts.maxLen) {
-        if (cleanedValue.length > opts.maxLen) {
-            errorMessages.push(INVALID_STRING_ERRORS.MAX_LEN(opts.maxLen));
-        }
-    }
-    // apply alphabetical requirement
-    if (opts.lettersOnly) {
-        // remove diacritics
-        cleanedValue = cleanedValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const containsNonLetters = (cleanedValue
-            // split into characters
-            .split('')
-            // convert into character codes
-            .map((curr) => {
-            return curr.charCodeAt(0);
-        })
-            // check for non-letters
-            .some((currCode) => {
-            return (!(currCode >= LOWERCASE_MIN && currCode <= LOWERCASE_MAX)
-                && !(currCode >= UPPERCASE_MIN && currCode <= UPPERCASE_MAX));
-        }));
-        if (containsNonLetters) {
-            errorMessages.push(INVALID_STRING_ERRORS.LETTERS_ONLY);
-        }
-    }
-    // apply numerical requirement
-    if (opts.numbersOnly) {
-        const containsNonNumbers = (cleanedValue
-            // split into characters
-            .split('')
-            // convert into character codes
-            .map((curr) => {
-            return curr.charCodeAt(0);
-        })
-            // check for non-numbers
-            .some((currCode) => {
-            return (!(currCode >= DIGIT_MIN && currCode <= DIGIT_MAX));
-        }));
-        if (containsNonNumbers) {
-            errorMessages.push(INVALID_STRING_ERRORS.NUMBERS_ONLY);
-        }
-    }
-    // apply regex requirement
-    if (opts.regexTest) {
-        const regex = opts.regexTest;
-        // validate and create customized error message if description is provided
-        const result = validateRegex({
-            input: cleanedValue,
-            regex,
-            regexDescription: opts.regexDescription,
-        });
-        // if string did not pass regex validation, add error message
-        if (result.isValid === false) {
-            errorMessages.push(result.errorMessage);
-        }
-    }
-    // combine all error messages into one string to return
-    const errorMessage = `${INVALID_STRING_ERRORS.MESSAGE_INTRO}${genCommaList(errorMessages)}.`;
-    return (
-    // if no error messages, string is valid; if not, it is invalid
-    errorMessages.length === 0
-        ? {
-            isValid: true,
-            cleanedValue,
-        }
-        : {
-            isValid: false,
-            errorMessage,
-        });
-};
 
 // Import React
 // Regular express that matches urls
@@ -16317,30 +14542,6 @@ const makeLinksClickable = (text, opts) => {
     return elements;
 };
 
-// Constants
-const VOWELS = ['a', 'e', 'i', 'o', 'u'];
-/**
- * Prefix a word or name with "a" or "an" depending on whether it starts with a
- *   vowel or not
- * @author Gabe Abrams
- * @param text the text to prefix
- * @param capitalize whether to capitalize the "A" or "An"
- * @returns the text prefixed with "a" or "an"
- */
-const prefixWithAOrAn = (text, capitalize = false) => {
-    // Get the first letter
-    const firstLetter = text.charAt(0).toLowerCase();
-    // Check if starts with vowel
-    const startsWithVowel = VOWELS.includes(firstLetter);
-    // Determine prefix
-    let prefix = startsWithVowel ? 'an' : 'a';
-    if (capitalize) {
-        prefix = prefix.charAt(0).toUpperCase() + prefix.substring(1);
-    }
-    // Return the text prefixed with "a" or "an"
-    return `${prefix} ${text}`;
-};
-
 /* -------- State Definition -------- */
 /* ------------- Reducer ------------ */
 /**
@@ -16373,336 +14574,6 @@ const useForceRender = (useReducer) => {
     return () => {
         dispatch();
     };
-};
-
-/**
- * Run the operator function on each item in the array, returning true if
- *   the operator function returns true for every item in the array
- * @author Gabe Abrams
- * @param operatorFunction the operator function to apply. If it returns true
- *   for every item, this function will return true
- * @returns true if the operator function returns true for every item in the array
- */
-const everyAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
-    // Create break logic
-    let done = false;
-    /**
-     * Break the loop (checking stops here)
-     * @author Gabe Abrams
-     */
-    const breakNow = () => {
-        done = true;
-    };
-    // Loop through each item, checking
-    for (let i = 0; i < array.length && !done; i++) {
-        const passed = yield operatorFunction(array[i], i, {
-            breakNow,
-            array,
-        });
-        // Check if this one failed or if loop was broken
-        if (!passed || done) {
-            return false;
-        }
-    }
-    // Return true because none returned false
-    return true;
-});
-
-/**
- * Run the operator function on each item in the array, returning a new array
- *   that only contains the items that pass the filter
- * @author Gabe Abrams
- * @param operatorFunction the operator function to apply. If it returns true
- *   for an item, the item will be included in the returned array
- * @returns the filtered array
- */
-const filterAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
-    // Create break logic
-    let done = false;
-    /**
-     * Break the loop (filtering stops here)
-     * @author Gabe Abrams
-     */
-    const breakNow = () => {
-        done = true;
-    };
-    // Loop through each item, filtering
-    const output = [];
-    for (let i = 0; i < array.length && !done; i++) {
-        const included = yield operatorFunction(array[i], i, {
-            breakNow,
-            array,
-        });
-        if (included && !done) {
-            output.push(array[i]);
-        }
-    }
-    // Return results
-    return output;
-});
-
-/**
- * Run the operator function on each item in the array
- * @author Gabe Abrams
- * @param operatorFunction the operator function to apply
- */
-const forEachAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
-    // Create break logic
-    let done = false;
-    /**
-     * Break the loop
-     * @author Gabe Abrams
-     */
-    const breakNow = () => {
-        done = true;
-    };
-    // Loop through each item
-    for (let i = 0; i < array.length && !done; i++) {
-        yield operatorFunction(array[i], i, {
-            breakNow,
-            array,
-        });
-    }
-});
-
-/**
- * Run the operator function on each item in the array, collecting all results
- * @author Gabe Abrams
- * @param operatorFunction the operator function to apply
- * @returns the array of results
- */
-const mapAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
-    // Create break logic
-    let done = false;
-    /**
-     * Break the loop
-     * @author Gabe Abrams
-     */
-    const breakNow = () => {
-        done = true;
-    };
-    // Loop through each item, collecting results
-    const results = [];
-    for (let i = 0; i < array.length && !done; i++) {
-        const result = yield operatorFunction(array[i], i, {
-            breakNow,
-            array,
-        });
-        results.push(result);
-    }
-    // Return results
-    return results;
-});
-
-/**
- * Run the operator function on each item in the array, returning true if
- *   the operator function returns true for any item in the array
- * @author Gabe Abrams
- * @param operatorFunction the operator function to apply. If it returns true
- *   for any item, this function will return true
- * @returns true if the operator function returns true for any item in the array
- */
-const someAsync = (array, operatorFunction) => __awaiter(void 0, void 0, void 0, function* () {
-    // Create break logic
-    let done = false;
-    /**
-     * Break the loop (checking stops here)
-     * @author Gabe Abrams
-     */
-    const breakNow = () => {
-        done = true;
-    };
-    // Loop through each item, checking
-    for (let i = 0; i < array.length && !done; i++) {
-        const passed = yield operatorFunction(array[i], i, {
-            breakNow,
-            array,
-        });
-        if (passed && !done) {
-            return true;
-        }
-    }
-    // Return false because none returned true
-    return false;
-});
-
-/**
- * Capitalize every word in a string (just the first letter)
- * @param str string to capitalize
- * @returns string with every word capitalized
- */
-const capitalize = (str) => {
-    return (str
-        // Split into words
-        .split(' ')
-        // Capitalize first letter of each word
-        .map((word) => {
-        return word.charAt(0).toUpperCase() + word.substring(1);
-    })
-        // Join back together
-        .join(' '));
-};
-
-/**
- * Shuffle a given array
- * @author Austen Money
- * @param arr the array to shuffle
- * @returns the shuffled array
- */
-const shuffleArray = (arr) => {
-    const newArr = [...arr];
-    // Shuffle using Durstenfeld algorithm
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-    }
-    return newArr;
-};
-
-const punctuationRegex = /[!@#$%^&*(),.?\/;:'"\-\[\]]/g;
-/**
- * Get number of words in string
- * @author Gardenia Liu
- * @author Allison Zhang
- * @author Gabe Abrams
- * @param text the string to check
- * @returns number of words in the string
- */
-const getWordCount = (text) => {
-    const trimmedTextWithoutPunctuation = (text
-        // Remove leading and trailing whitespace
-        .trim()
-        // Remove punctuation
-        .replace(punctuationRegex, ''));
-    if (trimmedTextWithoutPunctuation.length === 0) {
-        return 0;
-    }
-    return trimmedTextWithoutPunctuation.split(/\s+/g).length;
-};
-
-// Import shared types
-/*----------------------------------------*/
-/* --------------- Helpers -------------- */
-/*----------------------------------------*/
-/**
- * Check if a timestamp is valid
- * @author Gabe Abrams
- * @author Gardenia Liu
- * @param opts object containing all arguments
- * @param opts.timestamp Timestamp in milliseconds since epoch
- * @param opts.expectedYear Expected year
- * @param opts.expectedMonth Expected month
- * @param opts.expectedDay Expected day
- * @param opts.expectedHour Expected hour
- * @param opts.expectedMinute Expected minute
- * @returns 1 if the timestamp needs to be increased, -1 if it needs to be decreased, 0 if it is valid
- */
-const checkTimestamp = (opts) => {
-    const { timestamp, expectedYear, expectedMonth, expectedDay, expectedHour, expectedMinute, } = opts;
-    const timeInfoInET = getTimeInfoInET(timestamp);
-    if (timeInfoInET.year < expectedYear) {
-        return 1;
-    }
-    if (timeInfoInET.year > expectedYear) {
-        return -1;
-    }
-    if (timeInfoInET.month < expectedMonth) {
-        return 1;
-    }
-    if (timeInfoInET.month > expectedMonth) {
-        return -1;
-    }
-    if (timeInfoInET.day < expectedDay) {
-        return 1;
-    }
-    if (timeInfoInET.day > expectedDay) {
-        return -1;
-    }
-    if (timeInfoInET.hour < expectedHour) {
-        return 1;
-    }
-    if (timeInfoInET.hour > expectedHour) {
-        return -1;
-    }
-    if (timeInfoInET.minute < expectedMinute) {
-        return 1;
-    }
-    if (timeInfoInET.minute > expectedMinute) {
-        return -1;
-    }
-    return 0;
-};
-/*----------------------------------------*/
-/* ---------------- Main ---------------- */
-/*----------------------------------------*/
-/**
- * Get a timestamp (ms since epoch) from time info (year, month, day, hour, minute, etc.) in Eastern Time (ET)
- * @author Gardenia Liu
- * @author Gabe Abrams
- * @param opts object containing all arguments
- * @param opts.year Year (e.g. 2023)
- * @param opts.month Month (1-12)
- * @param opts.day Day of the month (1-31)
- * @param opts.hour Hour (0-23)
- * @param opts.minute Minute (0-59)
- * @returns Timestamp in milliseconds since epoch
- */
-const getTimestampFromTimeInfoInET = (opts) => {
-    // Destructure opts
-    const { year, month, day, hour, minute, } = opts;
-    // Determine if the date is in DST in Eastern Time
-    const tempDate = new Date(year, month - 1, day);
-    const janOffset = new Date(year, 0, 1).getTimezoneOffset();
-    const isDST = tempDate.getTimezoneOffset() < janOffset;
-    const etOffset = isDST ? '-04:00' : '-05:00';
-    // Format with leading zeroes
-    const mm = padZerosLeft(month, 2);
-    const dd = padZerosLeft(day, 2);
-    const hh = padZerosLeft(hour, 2);
-    const min = padZerosLeft(minute, 2);
-    // Build ET ISO string and convert to UTC timestamp
-    const etISOString = `${year}-${mm}-${dd}T${hh}:${min}:00${etOffset}`;
-    const baseTimestamp = (new Date(etISOString)).getTime();
-    let timestamp = baseTimestamp;
-    // Heat seek to get the right timestamp
-    const maxOffset = 24 * 60; // 24 hours in minutes
-    let currentOffset = 0; // minutes
-    const offsetIncrement = 15; // minutes
-    const offsetDirection = checkTimestamp({
-        timestamp,
-        expectedYear: year,
-        expectedMonth: month,
-        expectedDay: day,
-        expectedHour: hour,
-        expectedMinute: minute,
-    });
-    if (offsetDirection === 0) {
-        // Valid! Return the timestamp
-        return timestamp;
-    }
-    // Heat seek
-    while (Math.abs(currentOffset) < maxOffset) {
-        // Update offset
-        currentOffset += (offsetDirection * offsetIncrement);
-        // Update timestamp
-        const offsetMs = currentOffset * 60 * 1000;
-        timestamp = baseTimestamp + offsetMs;
-        // Check timestamp again
-        const newDirection = checkTimestamp({
-            timestamp,
-            expectedYear: year,
-            expectedMonth: month,
-            expectedDay: day,
-            expectedHour: hour,
-            expectedMinute: minute,
-        });
-        if (newDirection === 0) {
-            // Valid! Return the timestamp
-            return timestamp;
-        }
-        // Invalid. Keep looping.
-    }
-    throw new ErrorWithCode(`Timestamp mismatch: expected ${year}-${mm}-${dd} ${hh}:${min}, seeked to offset ${currentOffset} minutes but could not find a valid timestamp.`, ReactKitErrorCode$1.ETTimestampInvalid);
 };
 
 /*------------------------------------------------------------------------*/
@@ -16741,21 +14612,5 @@ const isSelectAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
-/**
- * Days of the week
- * @author Gabe Abrams
- */
-var DayOfWeek;
-(function (DayOfWeek) {
-    DayOfWeek["Monday"] = "m";
-    DayOfWeek["Tuesday"] = "t";
-    DayOfWeek["Wednesday"] = "w";
-    DayOfWeek["Thursday"] = "r";
-    DayOfWeek["Friday"] = "f";
-    DayOfWeek["Saturday"] = "s";
-    DayOfWeek["Sunday"] = "u";
-})(DayOfWeek || (DayOfWeek = {}));
-var DayOfWeek$1 = DayOfWeek;
-
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DAY_IN_MS, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, DayOfWeek$1 as DayOfWeek, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, ErrorWithCode, HOUR_IN_MS, IntelliTable, ItemPicker, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LoadingSpinner, LogAction$1 as LogAction, LogBuiltInMetadata, LogLevel$1 as LogLevel, LogReviewer, LogSource$1 as LogSource, LogType$1 as LogType, MINUTE_IN_MS, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, ParamType$1 as ParamType, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize$1 as ProgressBarSize, RadioButton, ReactKitErrorCode$1 as ReactKitErrorCode, SELECT_ADMIN_CHECK_ROUTE, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, abbreviate, addFatalErrorHandler, alert, avg, canReviewLogs, capitalize, ceilToNumDecimals, cloneDeep, combineClassNames, compareArraysByProp, confirm, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, prompt, roundToNumDecimals, setClientEventMetadataPopulator, showFatalError, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, stubServerEndpoint, sum, useForceRender, validateEmail, validatePhoneNumber, validateString, visitServerEndpoint, waitMs };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, IntelliTable, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize$1 as ProgressBarSize, RadioButton, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
 //# sourceMappingURL=index.js.map

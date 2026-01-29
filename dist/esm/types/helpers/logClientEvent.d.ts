@@ -1,4 +1,4 @@
-import LogFunction from '../types/LogFunction';
+import { LogFunction } from 'dce-commonkit';
 type MetadataPopulator = () => {
     [k: string]: any;
 } | Promise<{

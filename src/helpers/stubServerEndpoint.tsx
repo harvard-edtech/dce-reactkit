@@ -1,4 +1,4 @@
-import { _setStubResponse } from './visitServerEndpoint'
+import { _setStubResponse } from './visitServerEndpoint';
 
 /**
  * Stub a server endpoint response
