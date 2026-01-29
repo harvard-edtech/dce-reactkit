@@ -166,8 +166,8 @@ const ProgressBar: React.FC<Props> = (props) => {
 
   // Size styles
   switch (size) {
-    case ProgressBarSize.Small:
-      // Small size
+    case ProgressBarSize.Medium:
+      // Medium size
       style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
           font-size: 1em;
@@ -190,8 +190,8 @@ const ProgressBar: React.FC<Props> = (props) => {
         }
       `;
       break;
-    case ProgressBarSize.Medium:
-      // Medium size
+    case ProgressBarSize.Large:
+      // Large size
       style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
           font-size: 1.5em;
@@ -214,30 +214,6 @@ const ProgressBar: React.FC<Props> = (props) => {
         }
       `;
       break;
-    case ProgressBarSize.Large:
-      // Large size
-      style += `
-        .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
-          font-size: 2em;
-        }
-        .ProgressBar-container .ProgressBar-background {
-          height: 3em;
-          border-radius: 1em;
-        }
-        .ProgressBar-container .ProgressBar-bar {
-          height: 3em;
-          border-radius: 1em;
-        }
-        .ProgressBar-percent {
-          min-width:  ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width:  ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
-      `;
-      break;
     default:
       break;
   }
@@ -245,9 +221,8 @@ const ProgressBar: React.FC<Props> = (props) => {
   // Get the width of the outline based on size
   const outlineWidth = (() => {
     switch (size) {
-      case ProgressBarSize.Small: return '0.05em';
-      case ProgressBarSize.Medium: return '0.08em';
-      case ProgressBarSize.Large: return '0.1em';
+      case ProgressBarSize.Medium: return '0.05em';
+      case ProgressBarSize.Large: return '0.08em';
       default: return '0.05em';
     }
   })();
