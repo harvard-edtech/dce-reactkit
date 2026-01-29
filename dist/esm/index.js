@@ -1939,7 +1939,7 @@ const SimpleDateChooser = (props) => {
      */
     const askToEditInvalidDate = () => __awaiter(void 0, void 0, void 0, function* () {
         // Ask the user if they want to edit the date
-        const confirmed = yield confirm('Are you sure?', 'The current date is outside the normal range. If you edit it, you\'ll need to choose a new date in the normal range.', {
+        const confirmed = yield confirm('Are you sure?', `The current date is outside the ${numMonthsToShow} month range. If you edit it, you'll need to choose a new date in the normal range.`, {
             confirmButtonText: 'Edit Date',
         });
         // Check if user confirmed
