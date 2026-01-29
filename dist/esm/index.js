@@ -15305,11 +15305,37 @@ const Dropdown = (props) => {
  */
 var ProgressBarSize;
 (function (ProgressBarSize) {
-    ProgressBarSize["Small"] = "Small";
     ProgressBarSize["Medium"] = "Medium";
     ProgressBarSize["Large"] = "Large";
 })(ProgressBarSize || (ProgressBarSize = {}));
 var ProgressBarSize$1 = ProgressBarSize;
+
+/**
+ * Pad a number's decimal with zeros on the right
+ *   (e.g. 5.2 becomes 5.20 with 2 digit padding)
+ * @author Gabe Abrams
+ * @param num the number to pad
+ * @param numDigits the minimum number of digits after the decimal
+ * @returns padded number
+ */
+const padDecimalZeros = (num, numDigits) => {
+    // Skip if nothing to do
+    if (numDigits < 1) {
+        return String(num);
+    }
+    // Convert to string
+    let out = String(num);
+    // Add a decimal point if there isn't one
+    if (!out.includes('.')) {
+        out += '.';
+    }
+    // Add zeros
+    while (out.split('.')[1].length < numDigits) {
+        out = `${out}0`;
+    }
+    // Return
+    return out;
+};
 
 /**
  * Customizable Progress Bar component using Bootstrap styles
@@ -15321,7 +15347,7 @@ var ProgressBarSize$1 = ProgressBarSize;
 // Multiplier for calculating width of number of items
 const ITEM_WIDTH_MULTIPLIER = 1.3;
 // Constant for percent width
-const PERCENT_WIDTH = 3;
+const PERCENT_WIDTH = 2.7;
 // Constant for item width
 const ITEM_WIDTH = 2;
 /*------------------------------------------------------------------------*/
@@ -15331,11 +15357,9 @@ const ITEM_WIDTH = 2;
 let style = `
   .ProgressBar-number-of,
   .ProgressBar-percent {
-    flex: 0 0 auto;
     white-space: nowrap;
-    padding-right: 0.5em;
-    padding-left: 0.25em;
-    text-align: right;
+    padding-right: 0.3em;
+    text-align: left;
     transition: width .25s ease;
   }
 
@@ -15355,7 +15379,7 @@ const ProgressBar = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    var _a, _b, _c, _d;
     /* -------------- Props ------------- */
     // Destructure props
     const { striped, variant = Variant$1.Warning, bgVariant = Variant$1.Secondary, showOutline, size = ProgressBarSize$1.Medium, } = props;
@@ -15387,10 +15411,19 @@ const ProgressBar = (props) => {
     /*----------------------------------------*/
     /* ---------------- Sizes --------------- */
     /*----------------------------------------*/
+    // Add dynamic general style
+    style += `
+    .ProgressBar-percent {
+      min-width: ${(status.usePercent ? (_a = status.numDecimalPlaces) !== null && _a !== void 0 ? _a : 0 : 0) + PERCENT_WIDTH}em;
+    }
+    .ProgressBar-number-of {
+      min-width: ${((!status.usePercent ? String((_b = status.total) !== null && _b !== void 0 ? _b : 0).length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+    }
+  `;
     // Size styles
     switch (size) {
-        case ProgressBarSize$1.Small:
-            // Small size
+        case ProgressBarSize$1.Medium:
+            // Medium size
             style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
           font-size: 1em;
@@ -15403,18 +15436,10 @@ const ProgressBar = (props) => {
           height: 1.5em;
           border-radius: 0.5em;
         }
-        .ProgressBar-percent {
-          min-width: ${((status.usePercent ? (_a = status.numDecimalPlaces) !== null && _a !== void 0 ? _a : 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width: ${((status.usePercent ? (_b = status.numDecimalPlaces) !== null && _b !== void 0 ? _b : 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? ((_c = status.total) === null || _c === void 0 ? void 0 : _c.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? ((_d = status.total) === null || _d === void 0 ? void 0 : _d.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
       `;
             break;
-        case ProgressBarSize$1.Medium:
-            // Medium size
+        case ProgressBarSize$1.Large:
+            // Large size
             style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
           font-size: 1.5em;
@@ -15427,47 +15452,14 @@ const ProgressBar = (props) => {
           height: 2em;
           border-radius: 0.7em;
         }
-        .ProgressBar-percent {
-          min-width: ${((status.usePercent ? (_e = status.numDecimalPlaces) !== null && _e !== void 0 ? _e : 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width: ${((status.usePercent ? (_f = status.numDecimalPlaces) !== null && _f !== void 0 ? _f : 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? ((_g = status.total) === null || _g === void 0 ? void 0 : _g.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? ((_h = status.total) === null || _h === void 0 ? void 0 : _h.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
-      `;
-            break;
-        case ProgressBarSize$1.Large:
-            // Large size
-            style += `
-        .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
-          font-size: 2em;
-        }
-        .ProgressBar-container .ProgressBar-background {
-          height: 3em;
-          border-radius: 1em;
-        }
-        .ProgressBar-container .ProgressBar-bar {
-          height: 3em;
-          border-radius: 1em;
-        }
-        .ProgressBar-percent {
-          min-width:  ${((status.usePercent ? (_j = status.numDecimalPlaces) !== null && _j !== void 0 ? _j : 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width:  ${((status.usePercent ? (_k = status.numDecimalPlaces) !== null && _k !== void 0 ? _k : 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? ((_l = status.total) === null || _l === void 0 ? void 0 : _l.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? ((_m = status.total) === null || _m === void 0 ? void 0 : _m.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
       `;
             break;
     }
     // Get the width of the outline based on size
     const outlineWidth = (() => {
         switch (size) {
-            case ProgressBarSize$1.Small: return '0.05em';
-            case ProgressBarSize$1.Medium: return '0.08em';
-            case ProgressBarSize$1.Large: return '0.1em';
+            case ProgressBarSize$1.Medium: return '0.05em';
+            case ProgressBarSize$1.Large: return '0.08em';
             default: return '0.05em';
         }
     })();
@@ -15492,33 +15484,46 @@ const ProgressBar = (props) => {
     }
   `;
     // Stripes for striped effect
-    const stripes = (React__default.createElement("div", null,
-        React__default.createElement("style", null, stripesStyle),
-        React__default.createElement("div", { className: "ProgressBar-stripes position-absolute ", style: {
-                width: '200%',
-                height: '100%',
-            } }, "\u00A0")));
+    let stripes = null;
+    if (striped) {
+        stripes = (React__default.createElement("div", null,
+            React__default.createElement("style", null, stripesStyle),
+            React__default.createElement("div", { className: "ProgressBar-stripes position-absolute", style: {
+                    width: '200%',
+                    height: '100%',
+                } }, "\u00A0")));
+    }
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
+    // Calculate the width of the progress bar
+    let progressBarWidthPercent = 0;
+    if (status.usePercent) {
+        // Use percent progress directly
+        progressBarWidthPercent = status.percentProgress;
+    }
+    else if (status.total > 0) {
+        // Calculate percent progress from items
+        progressBarWidthPercent = (status.numComplete / status.total) * 100;
+    }
     // Render the progress bar
     return (React__default.createElement("div", { className: "ProgressBar-container d-flex align-items-center" },
         React__default.createElement("style", null, style),
-        !status.usePercent && status.numComplete && (React__default.createElement("span", { className: "ProgressBar-number-of pe-2 align-self-center" },
+        !status.usePercent && status.numComplete && (React__default.createElement("span", { className: "ProgressBar-number-of" },
             status.numComplete,
             "\u00A0of\u00A0",
             status.total)),
-        status.usePercent && status.percentProgress && (React__default.createElement("span", { className: "ProgressBar-percent pe-2 align-self-center" },
-            status.percentProgress.toFixed((_o = status === null || status === void 0 ? void 0 : status.numDecimalPlaces) !== null && _o !== void 0 ? _o : 0),
+        status.usePercent && status.percentProgress && (React__default.createElement("span", { className: "ProgressBar-percent" },
+            padDecimalZeros(roundToNumDecimals(status.percentProgress, (_c = status === null || status === void 0 ? void 0 : status.numDecimalPlaces) !== null && _c !== void 0 ? _c : 0), (_d = status === null || status === void 0 ? void 0 : status.numDecimalPlaces) !== null && _d !== void 0 ? _d : 0),
             "%")),
-        React__default.createElement("div", { className: `ProgressBar-background bg-${bgVariant} w-100`, style: {
+        React__default.createElement("div", { className: `ProgressBar-background bg-${bgVariant} flex-grow-1`, style: {
                 boxShadow: `0 0 0 ${outlineWidth} ${showOutline ? '#000' : '#DEE2E6'}`,
             }, "aria-valuenow": status.usePercent ? status.percentProgress : status.numComplete, "aria-valuemin": 0, "aria-valuemax": status.usePercent ? 100 : status.total },
             React__default.createElement("div", { className: `ProgressBar-bar bg-${variant} text-start position-relative`, style: {
-                    width: `${(status.usePercent ? status.percentProgress : (status.numComplete / status.total) * 100)}%`,
+                    width: `${progressBarWidthPercent}%`,
                     overflow: 'hidden',
                 } },
-                striped && stripes,
+                stripes,
                 "\u00A0"))));
 };
 
@@ -15700,33 +15705,6 @@ const forceNumIntoBounds = (num, min, max) => {
 };
 
 /**
- * Pad a number's decimal with zeros on the right
- *   (e.g. 5.2 becomes 5.20 with 2 digit padding)
- * @author Gabe Abrams
- * @param num the number to pad
- * @param numDigits the minimum number of digits after the decimal
- * @returns padded number
- */
-const padDecimalZeros = (num, numDigits) => {
-    // Skip if nothing to do
-    if (numDigits < 1) {
-        return String(num);
-    }
-    // Convert to string
-    let out = String(num);
-    // Add a decimal point if there isn't one
-    if (!out.includes('.')) {
-        out += '.';
-    }
-    // Add zeros
-    while (out.split('.')[1].length < numDigits) {
-        out = `${out}0`;
-    }
-    // Return
-    return out;
-};
-
-/**
  * Stub a server endpoint response
  * @author Gabe Abrams
  * @param opts object containing all arguments
@@ -15841,8 +15819,9 @@ const onlyKeepLetters = (str) => {
  */
 const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0, function* () {
     const results = [];
+    let exited = false;
     // Wait until finished with all tasks
-    yield new Promise((resolve) => {
+    yield new Promise((resolve, reject) => {
         /* ------------- Helpers ------------ */
         let nextTaskIndex = 0;
         let numFinishedTasks = 0;
@@ -15857,16 +15836,28 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
             if (!taskFunction) {
                 return;
             }
-            // Execute task
-            const result = yield taskFunction();
-            // Add results
-            results[taskIndex] = result;
-            // Tally and finish
-            if (++numFinishedTasks === taskFunctions.length) {
-                return resolve();
+            try {
+                // Execute task
+                const result = yield taskFunction();
+                // Add results
+                results[taskIndex] = result;
+                // Tally and finish
+                if (++numFinishedTasks === taskFunctions.length) {
+                    exited = true;
+                    return resolve();
+                }
+                if (!exited) {
+                    // Not finished! Start another task
+                    startTask();
+                }
             }
-            // Not finished! Start another task
-            startTask();
+            catch (err) {
+                // Reject only once
+                if (!exited) {
+                    exited = true;
+                    return reject(err);
+                }
+            }
         });
         /* ----------- Start Tasks ---------- */
         // If no limit, start all tasks. At least start 1 task

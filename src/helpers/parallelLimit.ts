@@ -14,8 +14,10 @@ const parallelLimit = async (
 ): Promise<any[]> => {
   const results: any[] = [];
 
+  let exited = false;
+
   // Wait until finished with all tasks
-  await new Promise<void>((resolve) => {
+  await new Promise<void>((resolve, reject) => {
     /* ------------- Helpers ------------ */
 
     let nextTaskIndex = 0;
@@ -33,23 +35,34 @@ const parallelLimit = async (
         return;
       }
 
-      // Execute task
-      const result = await taskFunction();
+      try {
+        // Execute task
+        const result = await taskFunction();
 
-      // Add results
-      results[taskIndex] = result;
+        // Add results
+        results[taskIndex] = result;
 
-      // Tally and finish
-      if (++numFinishedTasks === taskFunctions.length) {
-        return resolve();
+        // Tally and finish
+        if (++numFinishedTasks === taskFunctions.length) {
+          exited = true;
+          return resolve();
+        }
+
+        if (!exited) {
+          // Not finished! Start another task
+          startTask();
+        }
+      } catch (err) {
+        // Reject only once
+        if (!exited) {
+          exited = true;
+          return reject(err);
+        }
       }
-
-      // Not finished! Start another task
-      startTask();
     };
 
     /* ----------- Start Tasks ---------- */
-    
+
     // If no limit, start all tasks. At least start 1 task
     const numTasks = Math.max((limit || taskFunctions.length), 1);
     for (let i = 0; i < numTasks; i++) {
