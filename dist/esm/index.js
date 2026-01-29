@@ -15819,8 +15819,9 @@ const onlyKeepLetters = (str) => {
  */
 const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0, function* () {
     const results = [];
+    let exited = false;
     // Wait until finished with all tasks
-    yield new Promise((resolve) => {
+    yield new Promise((resolve, reject) => {
         /* ------------- Helpers ------------ */
         let nextTaskIndex = 0;
         let numFinishedTasks = 0;
@@ -15835,16 +15836,28 @@ const parallelLimit = (taskFunctions, limit) => __awaiter(void 0, void 0, void 0
             if (!taskFunction) {
                 return;
             }
-            // Execute task
-            const result = yield taskFunction();
-            // Add results
-            results[taskIndex] = result;
-            // Tally and finish
-            if (++numFinishedTasks === taskFunctions.length) {
-                return resolve();
+            try {
+                // Execute task
+                const result = yield taskFunction();
+                // Add results
+                results[taskIndex] = result;
+                // Tally and finish
+                if (++numFinishedTasks === taskFunctions.length) {
+                    exited = true;
+                    return resolve();
+                }
+                if (!exited) {
+                    // Not finished! Start another task
+                    startTask();
+                }
             }
-            // Not finished! Start another task
-            startTask();
+            catch (err) {
+                // Reject only once
+                if (!exited) {
+                    exited = true;
+                    return reject(err);
+                }
+            }
         });
         /* ----------- Start Tasks ---------- */
         // If no limit, start all tasks. At least start 1 task
