@@ -290,11 +290,11 @@ const ProgressBar: React.FC<Props> = (props) => {
         </span>
       )}
       {/* Use percentage */}
-      {status.usePercent && status.percentProgress && (
+      {status.usePercent && (
         <span className="ProgressBar-percent">
           {
             padDecimalZeros(
-              roundToNumDecimals(status.percentProgress, status?.numDecimalPlaces ?? 0),
+              roundToNumDecimals(status.percentProgress ?? 0, status?.numDecimalPlaces ?? 0),
               status?.numDecimalPlaces ?? 0,
             )
           }
