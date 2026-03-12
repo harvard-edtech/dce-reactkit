@@ -1,4 +1,4 @@
-import { CommonKitErrorCode, waitMs, ErrorWithCode, LOG_ROUTE_PATH, LogBuiltInMetadata, LogLevel, getOrdinal, getMonthName, getTimeInfoInET, padZerosLeft, ParamType, roundToNumDecimals, genCSV, LogAction, cloneDeep, LogType, LogSource, getHumanReadableDate, LOG_REVIEW_GET_LOGS_ROUTE, idify, LOG_REVIEW_STATUS_ROUTE, SELECT_ADMIN_CHECK_ROUTE } from 'dce-commonkit';
+import { CommonKitErrorCode, waitMs, ErrorWithCode, LOG_ROUTE_PATH, LogBuiltInMetadata, LogLevel, getOrdinal, getMonthName, getTimeInfoInET, padZerosLeft, ParamType, roundToNumDecimals, genCSV, LogAction, cloneDeep, LogType, LogSource, getHumanReadableDate, LOG_REVIEW_GET_LOGS_ROUTE, idify, padDecimalZeros, LOG_REVIEW_STATUS_ROUTE, SELECT_ADMIN_CHECK_ROUTE } from 'dce-commonkit';
 export { CommonKitErrorCode, DAY_IN_MS, DayOfWeek, ErrorWithCode, HOUR_IN_MS, LOG_REVIEW_GET_LOGS_ROUTE, LOG_REVIEW_ROUTE_PATH_PREFIX, LOG_REVIEW_STATUS_ROUTE, LOG_ROUTE_PATH, LogAction, LogBuiltInMetadata, LogLevel, LogSource, LogType, MINUTE_IN_MS, ParamType, SELECT_ADMIN_CHECK_ROUTE, abbreviate, avg, capitalize, ceilToNumDecimals, cloneDeep, compareArraysByProp, everyAsync, extractProp, filterAsync, floorToNumDecimals, forEachAsync, forceNumIntoBounds, genCSV, genCommaList, getHumanReadableDate, getLocalTimeInfo, getMonthName, getOrdinal, getPartOfDay, getTimeInfoInET, getTimestampFromTimeInfoInET, getWordCount, idify, mapAsync, onlyKeepLetters, padDecimalZeros, padZerosLeft, parallelLimit, prefixWithAOrAn, roundToNumDecimals, shuffleArray, someAsync, startMinWait, stringsToHumanReadableList, sum, validateEmail, validatePhoneNumber, validateString, waitMs } from 'dce-commonkit';
 import * as React from 'react';
 import React__default, { useState, useRef, useEffect, useReducer, forwardRef, useContext, useLayoutEffect, createContext, useMemo, useCallback, Component, Fragment } from 'react';
@@ -14168,7 +14168,6 @@ const Dropdown = (props) => {
  */
 var ProgressBarSize;
 (function (ProgressBarSize) {
-    ProgressBarSize["Small"] = "Small";
     ProgressBarSize["Medium"] = "Medium";
     ProgressBarSize["Large"] = "Large";
 })(ProgressBarSize || (ProgressBarSize = {}));
@@ -14184,7 +14183,7 @@ var ProgressBarSize$1 = ProgressBarSize;
 // Multiplier for calculating width of number of items
 const ITEM_WIDTH_MULTIPLIER = 1.3;
 // Constant for percent width
-const PERCENT_WIDTH = 3;
+const PERCENT_WIDTH = 2.7;
 // Constant for item width
 const ITEM_WIDTH = 2;
 /*------------------------------------------------------------------------*/
@@ -14194,11 +14193,9 @@ const ITEM_WIDTH = 2;
 let style = `
   .ProgressBar-number-of,
   .ProgressBar-percent {
-    flex: 0 0 auto;
     white-space: nowrap;
-    padding-right: 0.5em;
-    padding-left: 0.25em;
-    text-align: right;
+    padding-right: 0.3em;
+    text-align: left;
     transition: width .25s ease;
   }
 
@@ -14218,7 +14215,7 @@ const ProgressBar = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    var _a, _b, _c, _d, _e;
     /* -------------- Props ------------- */
     // Destructure props
     const { striped, variant = Variant$1.Warning, bgVariant = Variant$1.Secondary, showOutline, size = ProgressBarSize$1.Medium, } = props;
@@ -14250,10 +14247,19 @@ const ProgressBar = (props) => {
     /*----------------------------------------*/
     /* ---------------- Sizes --------------- */
     /*----------------------------------------*/
+    // Add dynamic general style
+    style += `
+    .ProgressBar-percent {
+      min-width: ${(status.usePercent ? (_a = status.numDecimalPlaces) !== null && _a !== void 0 ? _a : 0 : 0) + PERCENT_WIDTH}em;
+    }
+    .ProgressBar-number-of {
+      min-width: ${((!status.usePercent ? String((_b = status.total) !== null && _b !== void 0 ? _b : 0).length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+    }
+  `;
     // Size styles
     switch (size) {
-        case ProgressBarSize$1.Small:
-            // Small size
+        case ProgressBarSize$1.Medium:
+            // Medium size
             style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
           font-size: 1em;
@@ -14266,18 +14272,10 @@ const ProgressBar = (props) => {
           height: 1.5em;
           border-radius: 0.5em;
         }
-        .ProgressBar-percent {
-          min-width: ${((status.usePercent ? (_a = status.numDecimalPlaces) !== null && _a !== void 0 ? _a : 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width: ${((status.usePercent ? (_b = status.numDecimalPlaces) !== null && _b !== void 0 ? _b : 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? ((_c = status.total) === null || _c === void 0 ? void 0 : _c.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? ((_d = status.total) === null || _d === void 0 ? void 0 : _d.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
       `;
             break;
-        case ProgressBarSize$1.Medium:
-            // Medium size
+        case ProgressBarSize$1.Large:
+            // Large size
             style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
           font-size: 1.5em;
@@ -14290,47 +14288,14 @@ const ProgressBar = (props) => {
           height: 2em;
           border-radius: 0.7em;
         }
-        .ProgressBar-percent {
-          min-width: ${((status.usePercent ? (_e = status.numDecimalPlaces) !== null && _e !== void 0 ? _e : 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width: ${((status.usePercent ? (_f = status.numDecimalPlaces) !== null && _f !== void 0 ? _f : 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? ((_g = status.total) === null || _g === void 0 ? void 0 : _g.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? ((_h = status.total) === null || _h === void 0 ? void 0 : _h.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
-      `;
-            break;
-        case ProgressBarSize$1.Large:
-            // Large size
-            style += `
-        .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
-          font-size: 2em;
-        }
-        .ProgressBar-container .ProgressBar-background {
-          height: 3em;
-          border-radius: 1em;
-        }
-        .ProgressBar-container .ProgressBar-bar {
-          height: 3em;
-          border-radius: 1em;
-        }
-        .ProgressBar-percent {
-          min-width:  ${((status.usePercent ? (_j = status.numDecimalPlaces) !== null && _j !== void 0 ? _j : 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width:  ${((status.usePercent ? (_k = status.numDecimalPlaces) !== null && _k !== void 0 ? _k : 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? ((_l = status.total) === null || _l === void 0 ? void 0 : _l.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? ((_m = status.total) === null || _m === void 0 ? void 0 : _m.toString().length) || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
       `;
             break;
     }
     // Get the width of the outline based on size
     const outlineWidth = (() => {
         switch (size) {
-            case ProgressBarSize$1.Small: return '0.05em';
-            case ProgressBarSize$1.Medium: return '0.08em';
-            case ProgressBarSize$1.Large: return '0.1em';
+            case ProgressBarSize$1.Medium: return '0.05em';
+            case ProgressBarSize$1.Large: return '0.08em';
             default: return '0.05em';
         }
     })();
@@ -14355,33 +14320,46 @@ const ProgressBar = (props) => {
     }
   `;
     // Stripes for striped effect
-    const stripes = (React__default.createElement("div", null,
-        React__default.createElement("style", null, stripesStyle),
-        React__default.createElement("div", { className: "ProgressBar-stripes position-absolute ", style: {
-                width: '200%',
-                height: '100%',
-            } }, "\u00A0")));
+    let stripes = null;
+    if (striped) {
+        stripes = (React__default.createElement("div", null,
+            React__default.createElement("style", null, stripesStyle),
+            React__default.createElement("div", { className: "ProgressBar-stripes position-absolute", style: {
+                    width: '200%',
+                    height: '100%',
+                } }, "\u00A0")));
+    }
     /*----------------------------------------*/
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
+    // Calculate the width of the progress bar
+    let progressBarWidthPercent = 0;
+    if (status.usePercent) {
+        // Use percent progress directly
+        progressBarWidthPercent = status.percentProgress;
+    }
+    else if (status.total > 0) {
+        // Calculate percent progress from items
+        progressBarWidthPercent = (status.numComplete / status.total) * 100;
+    }
     // Render the progress bar
     return (React__default.createElement("div", { className: "ProgressBar-container d-flex align-items-center" },
         React__default.createElement("style", null, style),
-        !status.usePercent && status.numComplete && (React__default.createElement("span", { className: "ProgressBar-number-of pe-2 align-self-center" },
+        !status.usePercent && status.numComplete && (React__default.createElement("span", { className: "ProgressBar-number-of" },
             status.numComplete,
             "\u00A0of\u00A0",
             status.total)),
-        status.usePercent && status.percentProgress && (React__default.createElement("span", { className: "ProgressBar-percent pe-2 align-self-center" },
-            status.percentProgress.toFixed((_o = status === null || status === void 0 ? void 0 : status.numDecimalPlaces) !== null && _o !== void 0 ? _o : 0),
+        status.usePercent && (React__default.createElement("span", { className: "ProgressBar-percent" },
+            padDecimalZeros(roundToNumDecimals((_c = status.percentProgress) !== null && _c !== void 0 ? _c : 0, (_d = status === null || status === void 0 ? void 0 : status.numDecimalPlaces) !== null && _d !== void 0 ? _d : 0), (_e = status === null || status === void 0 ? void 0 : status.numDecimalPlaces) !== null && _e !== void 0 ? _e : 0),
             "%")),
-        React__default.createElement("div", { className: `ProgressBar-background bg-${bgVariant} w-100`, style: {
+        React__default.createElement("div", { className: `ProgressBar-background bg-${bgVariant} flex-grow-1`, style: {
                 boxShadow: `0 0 0 ${outlineWidth} ${showOutline ? '#000' : '#DEE2E6'}`,
             }, "aria-valuenow": status.usePercent ? status.percentProgress : status.numComplete, "aria-valuemin": 0, "aria-valuemax": status.usePercent ? 100 : status.total },
             React__default.createElement("div", { className: `ProgressBar-bar bg-${variant} text-start position-relative`, style: {
-                    width: `${(status.usePercent ? status.percentProgress : (status.numComplete / status.total) * 100)}%`,
+                    width: `${progressBarWidthPercent}%`,
                     overflow: 'hidden',
                 } },
-                striped && stripes,
+                stripes,
                 "\u00A0"))));
 };
 

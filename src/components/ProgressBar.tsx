@@ -10,6 +10,12 @@ import React from 'react';
 import Variant from '../types/Variant';
 import ProgressBarSize from '../types/ProgressBarSize';
 
+// Import helpers
+import {
+  roundToNumDecimals,
+  padDecimalZeros,
+} from 'dce-commonkit';
+
 /*------------------------------------------------------------------------*/
 /* -------------------------------- Types ------------------------------- */
 /*------------------------------------------------------------------------*/
@@ -75,7 +81,7 @@ type ProgressStatus = (
 const ITEM_WIDTH_MULTIPLIER = 1.3;
 
 // Constant for percent width
-const PERCENT_WIDTH = 3;
+const PERCENT_WIDTH = 2.7;
 
 // Constant for item width
 const ITEM_WIDTH = 2;
@@ -88,11 +94,9 @@ const ITEM_WIDTH = 2;
 let style = `
   .ProgressBar-number-of,
   .ProgressBar-percent {
-    flex: 0 0 auto;
     white-space: nowrap;
-    padding-right: 0.5em;
-    padding-left: 0.25em;
-    text-align: right;
+    padding-right: 0.3em;
+    text-align: left;
     transition: width .25s ease;
   }
 
@@ -164,10 +168,20 @@ const ProgressBar: React.FC<Props> = (props) => {
   /* ---------------- Sizes --------------- */
   /*----------------------------------------*/
 
+  // Add dynamic general style
+  style += `
+    .ProgressBar-percent {
+      min-width: ${(status.usePercent ? status.numDecimalPlaces ?? 0 : 0) + PERCENT_WIDTH}em;
+    }
+    .ProgressBar-number-of {
+      min-width: ${((!status.usePercent ? String(status.total ?? 0).length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
+    }
+  `;
+
   // Size styles
   switch (size) {
-    case ProgressBarSize.Small:
-      // Small size
+    case ProgressBarSize.Medium:
+      // Medium size
       style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
           font-size: 1em;
@@ -180,18 +194,10 @@ const ProgressBar: React.FC<Props> = (props) => {
           height: 1.5em;
           border-radius: 0.5em;
         }
-        .ProgressBar-percent {
-          min-width: ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width: ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
       `;
       break;
-    case ProgressBarSize.Medium:
-      // Medium size
+    case ProgressBarSize.Large:
+      // Large size
       style += `
         .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
           font-size: 1.5em;
@@ -204,38 +210,6 @@ const ProgressBar: React.FC<Props> = (props) => {
           height: 2em;
           border-radius: 0.7em;
         }
-        .ProgressBar-percent {
-          min-width: ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width: ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
-      `;
-      break;
-    case ProgressBarSize.Large:
-      // Large size
-      style += `
-        .ProgressBar-container .ProgressBar-number-of, .ProgressBar-container .ProgressBar-percent {
-          font-size: 2em;
-        }
-        .ProgressBar-container .ProgressBar-background {
-          height: 3em;
-          border-radius: 1em;
-        }
-        .ProgressBar-container .ProgressBar-bar {
-          height: 3em;
-          border-radius: 1em;
-        }
-        .ProgressBar-percent {
-          min-width:  ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
-          max-width:  ${((status.usePercent ? status.numDecimalPlaces ?? 0 : 0) * 1) + PERCENT_WIDTH}em;
-        }
-        .ProgressBar-number-of {
-          min-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-          max-width: ${((!status.usePercent ? status.total?.toString().length || 1 : 0) * ITEM_WIDTH_MULTIPLIER) + ITEM_WIDTH}em;
-        }
       `;
       break;
     default:
@@ -245,9 +219,8 @@ const ProgressBar: React.FC<Props> = (props) => {
   // Get the width of the outline based on size
   const outlineWidth = (() => {
     switch (size) {
-      case ProgressBarSize.Small: return '0.05em';
-      case ProgressBarSize.Medium: return '0.08em';
-      case ProgressBarSize.Large: return '0.1em';
+      case ProgressBarSize.Medium: return '0.05em';
+      case ProgressBarSize.Large: return '0.08em';
       default: return '0.05em';
     }
   })();
@@ -275,24 +248,37 @@ const ProgressBar: React.FC<Props> = (props) => {
   `;
 
   // Stripes for striped effect
-  const stripes: React.ReactNode = (
-    <div>
-      <style>{stripesStyle}</style>
-      <div
-        className="ProgressBar-stripes position-absolute "
-        style={{
-          width: '200%',
-          height: '100%',
-        }}
-      >
-        &nbsp;
+  let stripes: React.ReactNode = null;
+  if (striped) {
+    stripes = (
+      <div>
+        <style>{stripesStyle}</style>
+        <div
+          className="ProgressBar-stripes position-absolute"
+          style={{
+            width: '200%',
+            height: '100%',
+          }}
+        >
+          &nbsp;
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   /*----------------------------------------*/
   /* --------------- Main UI -------------- */
   /*----------------------------------------*/
+
+  // Calculate the width of the progress bar
+  let progressBarWidthPercent = 0;
+  if (status.usePercent) {
+    // Use percent progress directly
+    progressBarWidthPercent = status.percentProgress;
+  } else if (status.total > 0) {
+    // Calculate percent progress from items
+    progressBarWidthPercent = (status.numComplete / status.total) * 100;
+  }
 
   // Render the progress bar
   return (
@@ -301,25 +287,27 @@ const ProgressBar: React.FC<Props> = (props) => {
       <style>{style}</style>
       {/* Use items */}
       {!status.usePercent && status.numComplete && (
-        <span
-          className="ProgressBar-number-of pe-2 align-self-center"
-        >
+        <span className="ProgressBar-number-of">
           {status.numComplete}
           &nbsp;of&nbsp;
           {status.total}
         </span>
       )}
       {/* Use percentage */}
-      {status.usePercent && status.percentProgress && (
-        <span
-          className="ProgressBar-percent pe-2 align-self-center"
-        >
-          {status.percentProgress.toFixed(status?.numDecimalPlaces ?? 0)}
+      {status.usePercent && (
+        <span className="ProgressBar-percent">
+          {
+            padDecimalZeros(
+              roundToNumDecimals(status.percentProgress ?? 0, status?.numDecimalPlaces ?? 0),
+              status?.numDecimalPlaces ?? 0,
+            )
+          }
           %
         </span>
       )}
+      {/* Progress Bar Filled Area */}
       <div
-        className={`ProgressBar-background bg-${bgVariant} w-100`}
+        className={`ProgressBar-background bg-${bgVariant} flex-grow-1`}
         style={{
           boxShadow: `0 0 0 ${outlineWidth} ${showOutline ? '#000' : '#DEE2E6'}`,
         }}
@@ -332,11 +320,13 @@ const ProgressBar: React.FC<Props> = (props) => {
             `ProgressBar-bar bg-${variant} text-start position-relative`
           }
           style={{
-            width: `${(status.usePercent ? status.percentProgress : (status.numComplete / status.total) * 100)}%`,
+            width: `${progressBarWidthPercent}%`,
             overflow: 'hidden',
           }}
         >
-          {striped && stripes}
+          {/* Show Strips (if they exist) */}
+          {stripes}
+          {/* Space so the bar has some content */}
           &nbsp;
         </div>
       </div>

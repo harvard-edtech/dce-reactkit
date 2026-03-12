@@ -3,7 +3,6 @@
  * @author Allison Zhang
  */
 enum ProgressBarSize {
-  Small = 'Small',
   Medium = 'Medium',
   Large = 'Large',
 }
