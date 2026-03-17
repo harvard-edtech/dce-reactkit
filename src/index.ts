@@ -103,6 +103,7 @@ import AutoscrollToBottomContainer from './components/AutoscrollToBottomContaine
 import MultiSwitch from './components/MultiSwitch';
 import Dropdown from './components/Dropdown';
 import ProgressBar from './components/ProgressBar';
+import FakeProgressBar from './components/FakeProgressBar';
 
 // Import dynamic constants
 import DynamicWord from './dynamicConstants/DynamicWord';
@@ -118,7 +119,6 @@ import makeLinksClickable from './helpers/makeLinksClickable';
 import combineClassNames from './helpers/combineClassNames';
 import useForceRender from './helpers/useForceRender';
 import isSelectAdmin from './helpers/isSelectAdmin';
-import FakeProgressBar from './components/FakeProgressBar';
 
 // Import types
 import ModalButtonType from './types/ModalButtonType';
