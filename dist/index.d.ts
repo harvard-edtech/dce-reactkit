@@ -25,7 +25,7 @@ declare enum Variant {
  * @author Gabe Abrams
  */
 
-type Props$o = {
+type Props$p = {
     children: React$1.ReactNode;
 };
 /**
@@ -108,7 +108,7 @@ declare const showFatalError: (error: any, errorTitle?: string) => Promise<void>
  * @author Gabe Abrams
  */
 declare const addFatalErrorHandler: (handler: () => void) => void;
-declare const AppWrapper: React$1.FC<Props$o>;
+declare const AppWrapper: React$1.FC<Props$p>;
 
 /**
  * Loading spinner/indicator
@@ -122,14 +122,14 @@ declare const LoadingSpinner: () => React$1.JSX.Element;
  * @author Gabe Abrams
  */
 
-type Props$n = {
+type Props$o = {
     error: any;
     title?: string;
     onClose?: () => void;
     variant?: Variant;
     icon?: IconProp;
 };
-declare const ErrorBox: React$1.FC<Props$n>;
+declare const ErrorBox: React$1.FC<Props$o>;
 
 /**
  * Types of buttons in the modal
@@ -228,7 +228,7 @@ declare const Modal: React$1.FC<ModalProps>;
  * @author Gabe Abrams
  */
 
-type Props$m = {
+type Props$n = {
     title: React$1.ReactNode;
     children: React$1.ReactNode;
     topRightChildren?: React$1.ReactNode;
@@ -236,14 +236,14 @@ type Props$m = {
     noBottomPadding?: boolean;
     minTitleWidth?: string;
 };
-declare const TabBox: React$1.FC<Props$m>;
+declare const TabBox: React$1.FC<Props$n>;
 
 /**
  * A radio selection button
  * @author Gabe Abrams
  */
 
-type Props$l = {
+type Props$m = {
     text: React$1.ReactNode;
     onSelected: () => void;
     ariaLabel: string;
@@ -257,14 +257,14 @@ type Props$l = {
     small?: boolean;
     useComplexFormatting?: boolean;
 };
-declare const RadioButton: React$1.FC<Props$l>;
+declare const RadioButton: React$1.FC<Props$m>;
 
 /**
  * A checkbox button
  * @author Gabe Abrams
  */
 
-type Props$k = {
+type Props$l = {
     text: React$1.ReactNode;
     onChanged: (checked: boolean) => void;
     ariaLabel: string;
@@ -279,14 +279,14 @@ type Props$k = {
     dashed?: boolean;
     useComplexFormatting?: boolean;
 };
-declare const CheckboxButton: React$1.FC<Props$k>;
+declare const CheckboxButton: React$1.FC<Props$l>;
 
 /**
  * Input group with a title and space for buttons
  * @author Gabe Abrams
  */
 
-type Props$j = {
+type Props$k = {
     label: React$1.ReactNode;
     minLabelWidth?: string;
     children: React$1.ReactNode;
@@ -295,7 +295,7 @@ type Props$j = {
     isAdminFeature?: boolean;
     noMarginOnBottom?: boolean;
 };
-declare const ButtonInputGroup: React$1.FC<Props$j>;
+declare const ButtonInputGroup: React$1.FC<Props$k>;
 
 /**
  * A very simple, lightweight date chooser
@@ -303,7 +303,7 @@ declare const ButtonInputGroup: React$1.FC<Props$j>;
  * @author Gardenia Liu
  */
 
-type Props$i = {
+type Props$j = {
     ariaLabel: string;
     name: string;
     month: number;
@@ -322,7 +322,30 @@ type Props$i = {
     isDisabled?: boolean;
     hideDay?: boolean;
 };
-declare const SimpleDateChooser: React$1.FC<Props$i>;
+declare const SimpleDateChooser: React$1.FC<Props$j>;
+
+/**
+ * A very simple, lightweight month chooser
+ * @author Gabe Abrams
+ */
+
+type Props$i = {
+    ariaLabel: string;
+    name: string;
+    month: number;
+    year: number;
+    /**
+     * Handler for when month changes
+     * @param month new 1-indexed month number
+     * @param year new full year number
+     */
+    onChange: (month: number, year: number) => void;
+    numMonthsToShow?: number;
+    dontAllowPast?: boolean;
+    dontAllowFuture?: boolean;
+    isDisabled?: boolean;
+};
+declare const SimpleMonthChooser: React$1.FC<Props$i>;
 
 /**
  * A very simple, lightweight time chooser
@@ -942,4 +965,4 @@ declare const useForceRender: (useReducer: any) => () => void;
  */
 declare const isSelectAdmin: () => Promise<boolean>;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, FakeProgressBar, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, FakeProgressBar, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleMonthChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };

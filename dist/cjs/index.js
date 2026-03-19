@@ -2042,6 +2042,30 @@ const SimpleDateChooser = (props) => {
 };
 
 /**
+ * A very simple, lightweight month chooser
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const SimpleMonthChooser = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    const { ariaLabel, name, dontAllowPast, dontAllowFuture, numMonthsToShow, onChange, month, year, isDisabled, } = props;
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    return (React__default["default"].createElement(SimpleDateChooser, { ariaLabel: ariaLabel, name: name, month: month, day: 1, year: year, numMonthsToShow: numMonthsToShow, dontAllowPast: dontAllowPast, dontAllowFuture: dontAllowFuture, isDisabled: isDisabled, hideDay: true, onChange: (newMonth, newDay, newYear) => {
+            onChange(newMonth, newYear);
+        } }));
+};
+
+/**
  * A very simple, lightweight time chooser
  * @author Gardenia Liu
  */
@@ -15015,6 +15039,7 @@ exports.ProgressBar = ProgressBar;
 exports.ProgressBarSize = ProgressBarSize$1;
 exports.RadioButton = RadioButton;
 exports.SimpleDateChooser = SimpleDateChooser;
+exports.SimpleMonthChooser = SimpleMonthChooser;
 exports.SimpleTimeChooser = SimpleTimeChooser;
 exports.TabBox = TabBox;
 exports.ToggleSwitch = ToggleSwitch;

@@ -2016,6 +2016,30 @@ const SimpleDateChooser = (props) => {
 };
 
 /**
+ * A very simple, lightweight month chooser
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const SimpleMonthChooser = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    const { ariaLabel, name, dontAllowPast, dontAllowFuture, numMonthsToShow, onChange, month, year, isDisabled, } = props;
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    return (React__default.createElement(SimpleDateChooser, { ariaLabel: ariaLabel, name: name, month: month, day: 1, year: year, numMonthsToShow: numMonthsToShow, dontAllowPast: dontAllowPast, dontAllowFuture: dontAllowFuture, isDisabled: isDisabled, hideDay: true, onChange: (newMonth, newDay, newYear) => {
+            onChange(newMonth, newYear);
+        } }));
+};
+
+/**
  * A very simple, lightweight time chooser
  * @author Gardenia Liu
  */
@@ -14735,5 +14759,5 @@ const isSelectAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, FakeProgressBar, IntelliTable, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize$1 as ProgressBarSize, RadioButton, SimpleDateChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
+export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntryFieldType$1 as DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType$1 as DropdownItemType, DynamicWord, ErrorBox, FakeProgressBar, IntelliTable, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType$1 as ModalButtonType, ModalSize$1 as ModalSize, ModalType$1 as ModalType, MultiSwitch, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize$1 as ProgressBarSize, RadioButton, SimpleDateChooser, SimpleMonthChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant$1 as Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
 //# sourceMappingURL=index.js.map
