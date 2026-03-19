@@ -51,6 +51,8 @@ type Props = {
   dontAllowFuture?: boolean,
   // If true, the chooser is disabled
   isDisabled?: boolean,
+  // If true, hide the "day" dropdown and just show the month and year
+  hideDay?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -292,6 +294,7 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
     day,
     year,
     isDisabled = false,
+    hideDay,
   } = props;
 
   // Get choices
@@ -442,24 +445,26 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
         </select>
 
         {/* Day Chooser */}
-        <select
-          aria-label={`day for ${ariaLabel}`}
-          className="custom-select form-select d-inline-block"
-          style={{ width: 'auto' }}
-          id={`SimpleDateChooser-${name}-day`}
-          value={day}
-          onChange={(e) => {
-            // Only change the day
-            onChange(
-              month,
-              Number.parseInt(e.target.value, 10),
-              year,
-            );
-          }}
-          disabled={isDisabled}
-        >
-          {dayOptions}
-        </select>
+        {!hideDay && (
+          <select
+            aria-label={`day for ${ariaLabel}`}
+            className="custom-select form-select d-inline-block"
+            style={{ width: 'auto' }}
+            id={`SimpleDateChooser-${name}-day`}
+            value={day}
+            onChange={(e) => {
+              // Only change the day
+              onChange(
+                month,
+                Number.parseInt(e.target.value, 10),
+                year,
+              );
+            }}
+            disabled={isDisabled}
+          >
+            {dayOptions}
+          </select>
+        )}
       </div>
     );
   }
@@ -476,10 +481,14 @@ const SimpleDateChooser: React.FC<Props> = (props) => {
           aria-label={`edit date for ${ariaLabel}`}
         >
           {getMonthName(month).full}
-          {' '}
-          {day}
-          {getOrdinal(day)}
-          ,
+          {!hideDay && (
+            <>
+              {' '}
+              {day}
+              {getOrdinal(day)}
+              ,
+            </>
+          )}
           {' '}
           {year}
         </button>

@@ -1904,7 +1904,7 @@ const SimpleDateChooser = (props) => {
     /* -------------------------------- Setup ------------------------------- */
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
-    const { ariaLabel, name, dontAllowPast, dontAllowFuture, numMonthsToShow, onChange, month, day, year, isDisabled = false, } = props;
+    const { ariaLabel, name, dontAllowPast, dontAllowFuture, numMonthsToShow, onChange, month, day, year, isDisabled = false, hideDay, } = props;
     // Get choices
     const choices = getChoices({
         numMonthsToShow,
@@ -1990,20 +1990,21 @@ const SimpleDateChooser = (props) => {
                     // Change day, month, and year
                     onChange(choice.month, choice.days[0], choice.year);
                 }, disabled: isDisabled }, monthOptions),
-            React__default.createElement("select", { "aria-label": `day for ${ariaLabel}`, className: "custom-select form-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
+            !hideDay && (React__default.createElement("select", { "aria-label": `day for ${ariaLabel}`, className: "custom-select form-select d-inline-block", style: { width: 'auto' }, id: `SimpleDateChooser-${name}-day`, value: day, onChange: (e) => {
                     // Only change the day
                     onChange(month, Number.parseInt(e.target.value, 10), year);
-                }, disabled: isDisabled }, dayOptions)));
+                }, disabled: isDisabled }, dayOptions))));
     }
     /* --------- DateOutOfRange --------- */
     if (view === View.InvalidDate) {
         body = (React__default.createElement("div", { className: "SimpleDateChooser-inner-container d-inline-block" },
             React__default.createElement("button", { type: "button", className: "btn btn-light", onClick: askToEditInvalidDate, "aria-label": `edit date for ${ariaLabel}` },
                 getMonthName(month).full,
-                ' ',
-                day,
-                getOrdinal(day),
-                ",",
+                !hideDay && (React__default.createElement(React__default.Fragment, null,
+                    ' ',
+                    day,
+                    getOrdinal(day),
+                    ",")),
                 ' ',
                 year),
             React__default.createElement("button", { type: "button", className: "btn btn-secondary", onClick: askToEditInvalidDate, "aria-label": `edit date for ${ariaLabel}` }, "Edit")));

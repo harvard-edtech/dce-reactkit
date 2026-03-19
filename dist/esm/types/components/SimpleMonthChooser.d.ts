@@ -1,27 +1,23 @@
 /**
- * A very simple, lightweight date chooser
+ * A very simple, lightweight month chooser
  * @author Gabe Abrams
- * @author Gardenia Liu
  */
 import React from 'react';
 type Props = {
     ariaLabel: string;
     name: string;
     month: number;
-    day: number;
     year: number;
     /**
-     * Handler for when date changes
+     * Handler for when month changes
      * @param month new 1-indexed month number
-     * @param day new 1-indexed day number
      * @param year new full year number
      */
-    onChange: (month: number, day: number, year: number) => void;
+    onChange: (month: number, year: number) => void;
     numMonthsToShow?: number;
     dontAllowPast?: boolean;
     dontAllowFuture?: boolean;
     isDisabled?: boolean;
-    hideDay?: boolean;
 };
-declare const SimpleDateChooser: React.FC<Props>;
-export default SimpleDateChooser;
+declare const SimpleMonthChooser: React.FC<Props>;
+export default SimpleMonthChooser;

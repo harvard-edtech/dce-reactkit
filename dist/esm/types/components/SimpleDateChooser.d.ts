@@ -21,6 +21,7 @@ type Props = {
     dontAllowPast?: boolean;
     dontAllowFuture?: boolean;
     isDisabled?: boolean;
+    hideDay?: boolean;
 };
 declare const SimpleDateChooser: React.FC<Props>;
 export default SimpleDateChooser;

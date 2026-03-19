@@ -320,6 +320,7 @@ type Props$h = {
     dontAllowPast?: boolean;
     dontAllowFuture?: boolean;
     isDisabled?: boolean;
+    hideDay?: boolean;
 };
 declare const SimpleDateChooser: React$1.FC<Props$h>;
 
