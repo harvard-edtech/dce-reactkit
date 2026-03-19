@@ -103,6 +103,7 @@ import AutoscrollToBottomContainer from './components/AutoscrollToBottomContaine
 import MultiSwitch from './components/MultiSwitch';
 import Dropdown from './components/Dropdown';
 import ProgressBar from './components/ProgressBar';
+import FakeProgressBar from './components/FakeProgressBar';
 
 // Import dynamic constants
 import DynamicWord from './dynamicConstants/DynamicWord';
@@ -163,6 +164,7 @@ export {
   MultiSwitch,
   Dropdown,
   ProgressBar,
+  FakeProgressBar,
   // Global functions
   alert,
   prompt,
