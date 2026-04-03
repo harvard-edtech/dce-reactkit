@@ -51,6 +51,7 @@ import {
   getWordCount,
   cloneDeep,
   getTimestampFromTimeInfoInET,
+  spaceAtCapitals,
   // Types
   ParamType,
   DayOfWeek,
@@ -255,6 +256,7 @@ export {
   getWordCount,
   cloneDeep,
   getTimestampFromTimeInfoInET,
+  spaceAtCapitals,
   // Types
   ParamType,
   DayOfWeek,

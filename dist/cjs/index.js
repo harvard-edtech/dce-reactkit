@@ -14981,6 +14981,10 @@ Object.defineProperty(exports, 'someAsync', {
     enumerable: true,
     get: function () { return dceCommonkit.someAsync; }
 });
+Object.defineProperty(exports, 'spaceAtCapitals', {
+    enumerable: true,
+    get: function () { return dceCommonkit.spaceAtCapitals; }
+});
 Object.defineProperty(exports, 'startMinWait', {
     enumerable: true,
     get: function () { return dceCommonkit.startMinWait; }
