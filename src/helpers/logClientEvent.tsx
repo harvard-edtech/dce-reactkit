@@ -66,59 +66,62 @@ const logClientEvent: LogFunction = async (opts) => {
     }
   }
 
-  // Send to server
-  return visitServerEndpoint({
-    path: LOG_ROUTE_PATH,
-    method: 'POST',
-    params: {
-      context: (
-        typeof opts.context === 'string'
-          ? opts.context
-          : (
-            ((opts.context as any) ?? {})._
-            ?? LogBuiltInMetadata.Context.Uncategorized
-          )
-      ),
-      subcontext: (
-        opts.subcontext
-        ?? LogBuiltInMetadata.Context.Uncategorized
-      ),
-      level: (
-        opts.level
-        ?? LogLevel.Info
-      ),
-      tags: JSON.stringify(opts.tags ?? []),
-      metadata: JSON.stringify(metadata),
-      errorMessage: (
-        (opts as any).error
-          ? (opts as any).error.message
-          : undefined
-      ),
-      errorCode: (
-        (opts as any).error
-          ? (opts as any).error.code
-          : undefined
-      ),
-      errorStack: (
-        (opts as any).error
-          ? (opts as any).error.stack
-          : undefined
-      ),
-      target: (
-        (opts as any).action
-          ? (
-            (opts as any).target
-            ?? LogBuiltInMetadata.Target.NoTarget
-          )
-          : undefined
-      ),
-      action: (
-        (opts as any).action
-          ? (opts as any).action
-          : undefined
-      ),
-    },
-  });
+  try {
+    return await visitServerEndpoint({
+      path: LOG_ROUTE_PATH,
+      method: 'POST',
+      params: {
+        context: (
+          typeof opts.context === 'string'
+            ? opts.context
+            : (
+              ((opts.context as any) ?? {})._
+              ?? LogBuiltInMetadata.Context.Uncategorized
+            )
+        ),
+        subcontext: (
+          opts.subcontext
+          ?? LogBuiltInMetadata.Context.Uncategorized
+        ),
+        level: (
+          opts.level
+          ?? LogLevel.Info
+        ),
+        tags: JSON.stringify(opts.tags ?? []),
+        metadata: JSON.stringify(metadata),
+        errorMessage: (
+          (opts as any).error
+            ? (opts as any).error.message
+            : undefined
+        ),
+        errorCode: (
+          (opts as any).error
+            ? (opts as any).error.code
+            : undefined
+        ),
+        errorStack: (
+          (opts as any).error
+            ? (opts as any).error.stack
+            : undefined
+        ),
+        target: (
+          (opts as any).action
+            ? (
+              (opts as any).target
+              ?? LogBuiltInMetadata.Target.NoTarget
+            )
+            : undefined
+        ),
+        action: (
+          (opts as any).action
+            ? (opts as any).action
+            : undefined
+        ),
+      },
+    });
+  } catch (err) {
+    return undefined as any;
+  }
 };
 
 export default logClientEvent;
