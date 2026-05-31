@@ -120,7 +120,9 @@ const logClientEvent: LogFunction = async (opts) => {
       },
     });
   } catch (err) {
-    return undefined;
+    // Logging is best-effort. Keep the signal without breaking the user flow.
+    // eslint-disable-next-line no-console
+    console.warn('Failed to log client event', err);
   }
 };
 
