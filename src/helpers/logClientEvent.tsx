@@ -120,7 +120,7 @@ const logClientEvent: LogFunction = async (opts) => {
       },
     });
   } catch (err) {
-    return undefined as any;
+    return undefined;
   }
 };
 
