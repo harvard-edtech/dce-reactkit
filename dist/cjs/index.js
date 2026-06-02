@@ -1702,7 +1702,7 @@ const CheckboxButton = (props) => {
         ? Variant$1.Light
         : Variant$1.Secondary), uncheckedVariant = (isDarkModeOn()
         ? Variant$1.Secondary
-        : Variant$1.Light), small, dashed, useComplexFormatting, } = props;
+        : Variant$1.Light), small, dashed, useComplexFormatting, minSizeToShowLabel, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
@@ -1724,14 +1724,14 @@ const CheckboxButton = (props) => {
             onChanged(!checked);
         } },
         React__default["default"].createElement("div", { className: "d-flex align-items-center" },
-            React__default["default"].createElement("div", { className: "me-1" },
+            React__default["default"].createElement("div", null,
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: icon })),
-            useComplexFormatting
-                ? (React__default["default"].createElement("pre", { className: "ps-1 text-start text-break m-0", style: {
+            React__default["default"].createElement("div", { className: `text-start flex-grow-1 ms-1 ${minSizeToShowLabel ? `d-none d-${minSizeToShowLabel}-block` : ''}` }, useComplexFormatting
+                ? (React__default["default"].createElement("pre", { className: "ps-1 text-break m-0", style: {
                         whiteSpace: 'pre-wrap',
                         tabSize: 2,
                     } }, text))
-                : (React__default["default"].createElement("div", { className: "flex-grow-1 text-start text-break" }, text)))));
+                : (React__default["default"].createElement("div", { className: "text-break" }, text))))));
 };
 
 /**

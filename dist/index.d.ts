@@ -278,6 +278,7 @@ type Props$l = {
     small?: boolean;
     dashed?: boolean;
     useComplexFormatting?: boolean;
+    minSizeToShowLabel?: 'sm' | 'md' | 'lg' | 'xl';
 };
 declare const CheckboxButton: React$1.FC<Props$l>;
 

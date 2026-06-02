@@ -48,6 +48,8 @@ type Props = {
   dashed?: boolean,
   // If true, use complex formatting (tabs, newlines) in the text
   useComplexFormatting?: boolean,
+  // Min bootstrap size to show the label
+  minSizeToShowLabel?: 'sm' | 'md' | 'lg' | 'xl',
 };
 
 /*------------------------------------------------------------------------*/
@@ -83,6 +85,7 @@ const CheckboxButton: React.FC<Props> = (props) => {
     small,
     dashed,
     useComplexFormatting,
+    minSizeToShowLabel,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -118,30 +121,32 @@ const CheckboxButton: React.FC<Props> = (props) => {
       }}
     >
       <div className="d-flex align-items-center">
-        <div className="me-1">
+        <div>
           <FontAwesomeIcon
             icon={icon}
           />
         </div>
-        {
-          useComplexFormatting
-            ? (
-              <pre
-                className="ps-1 text-start text-break m-0"
-                style={{
-                  whiteSpace: 'pre-wrap',
-                  tabSize: 2,
-                }}
-              >
-                {text}
-              </pre>
-            )
-            : (
-              <div className="flex-grow-1 text-start text-break">
-                {text}
-              </div>
-            )
-        }
+        <div className={`text-start flex-grow-1 ms-1 ${minSizeToShowLabel ? `d-none d-${minSizeToShowLabel}-block` : ''}`}>
+          {
+            useComplexFormatting
+              ? (
+                <pre
+                  className="ps-1 text-break m-0"
+                  style={{
+                    whiteSpace: 'pre-wrap',
+                    tabSize: 2,
+                  }}
+                >
+                  {text}
+                </pre>
+              )
+              : (
+                <div className="text-break">
+                  {text}
+                </div>
+              )
+          }
+        </div>
       </div>
     </button>
   );
