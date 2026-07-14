@@ -35,6 +35,8 @@ type Props = {
   noBottomMargin?: boolean,
   // If true, hide select all or none buttons
   hideSelectAllOrNoneButtons?: boolean,
+  // If true, groups start expanded instead of collapsed
+  startWithGroupsExpanded?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -55,6 +57,7 @@ const ItemPicker: React.FC<Props> = (props) => {
     onChanged,
     noBottomMargin,
     hideSelectAllOrNoneButtons,
+    startWithGroupsExpanded,
   } = props;
 
   /*------------------------------------------------------------------------*/
@@ -171,6 +174,7 @@ const ItemPicker: React.FC<Props> = (props) => {
         <NestableItemList
           items={items}
           onChanged={onChanged}
+          startWithGroupsExpanded={startWithGroupsExpanded}
         />
       </div>
     </TabBox>
