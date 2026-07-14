@@ -2669,6 +2669,65 @@ const CopiableBox = (props) => {
 };
 
 /**
+ * Simple tooltip component
+ * @author Gabe Abrams
+ */
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Component ----------------------------- */
+/*------------------------------------------------------------------------*/
+const Tooltip = (props) => {
+    /*------------------------------------------------------------------------*/
+    /* -------------------------------- Setup ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /* -------------- Props ------------- */
+    // Destructure all props
+    const { text, children, } = props;
+    /* -------------- Refs -------------- */
+    // Child ref
+    const childRef = React.useRef(undefined);
+    /*------------------------------------------------------------------------*/
+    /* ------------------------- Lifecycle Functions ------------------------ */
+    /*------------------------------------------------------------------------*/
+    /**
+     * Update (also called on mount)
+     * @author Gabe Abrams
+     */
+    React.useEffect(() => {
+        // Skip if no child
+        if (!childRef.current) {
+            return;
+        }
+        // Store copy of tooltip
+        let t;
+        // Initialize tooltip
+        (() => __awaiter(void 0, void 0, void 0, function* () {
+            // Import bootstrap tooltip
+            const BSTooltip = (yield Promise.resolve().then(function () { return /*#__PURE__*/_interopNamespace(require('bootstrap')); })).Tooltip;
+            // Initialize
+            t = new BSTooltip(childRef.current, {
+                title: text,
+                placement: 'top',
+                trigger: 'hover',
+            });
+        }))();
+        // Clean up tooltip
+        return () => {
+            if (t) {
+                t.dispose();
+            }
+        };
+    }, [text]);
+    /*------------------------------------------------------------------------*/
+    /* ------------------------------- Render ------------------------------- */
+    /*------------------------------------------------------------------------*/
+    /*----------------------------------------*/
+    /* --------------- Main UI -------------- */
+    /*----------------------------------------*/
+    // Clone child and add ref
+    return React__default["default"].cloneElement(children, { ref: childRef });
+};
+
+/**
  * Reusable nested item picker
  * @author Yuen Ler Chow
  * @author Gabe Abrams
@@ -2705,12 +2764,12 @@ const NestableItemList = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { items, onChanged, } = props;
+    const { items, onChanged, startWithGroupsExpanded, } = props;
     /* -------------- State ------------- */
     // Create initial map of child expanded booleans
     const initChildExpanded = {};
     items.forEach((item) => {
-        initChildExpanded[String(item.id)] = false;
+        initChildExpanded[String(item.id)] = !!startWithGroupsExpanded;
     });
     // Initial state
     const initialState = {
@@ -2799,6 +2858,14 @@ const NestableItemList = (props) => {
     /* ------------------------------- Render ------------------------------- */
     /*------------------------------------------------------------------------*/
     return (React__default["default"].createElement("div", null, items.map((item) => {
+        var _a;
+        // Human-readable label for accessibility. Prefer the explicit
+        // ariaLabel, then fall back to the name if it is a plain string
+        const accessibleName = ((_a = item.ariaLabel) !== null && _a !== void 0 ? _a : (typeof item.name === 'string' ? item.name : ''));
+        // Checkbox and Text
+        const checkbox = (React__default["default"].createElement(CheckboxButton, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
+                onChanged(changeChecked(item.id, checked, items));
+            }, ariaLabel: `Select ${accessibleName}`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }));
         return (React__default["default"].createElement("div", { key: item.id },
             React__default["default"].createElement("span", { className: "NestableItemList-dropdown-button-container d-inline-block", style: {
                     minWidth: '2rem',
@@ -2810,17 +2877,18 @@ const NestableItemList = (props) => {
                         type: ActionType$9.ToggleChild,
                         id: item.id,
                     });
-                }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}` },
+                }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${accessibleName}` },
                 React__default["default"].createElement(reactFontawesome.FontAwesomeIcon, { icon: childExpanded[item.id] ? freeSolidSvgIcons.faChevronDown : freeSolidSvgIcons.faChevronRight })))),
-            React__default["default"].createElement(CheckboxButton, { className: `NestableItemList-CheckboxButton-${item.id}`, text: item.name, checked: item.isGroup ? allChecked(item.children) : item.checked, dashed: item.isGroup ? !noneChecked(item.children) : false, onChanged: (checked) => {
-                    onChanged(changeChecked(item.id, checked, items));
-                }, ariaLabel: `Select ${item.name}`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }),
+            item.tooltip
+                ? (React__default["default"].createElement(Tooltip, { text: item.tooltip },
+                    React__default["default"].createElement("span", { className: "d-inline-block" }, checkbox)))
+                : checkbox,
             (item.isGroup && childExpanded[item.id]) && (React__default["default"].createElement("div", { className: "NestableItemList-children-container", style: {
                     paddingLeft: '2.2rem',
                 } },
                 React__default["default"].createElement(NestableItemList, { items: item.children, onChanged: (updatedItems) => {
                         onChanged(changeItems(item.id, updatedItems));
-                    } })))));
+                    }, startWithGroupsExpanded: startWithGroupsExpanded })))));
     })));
 };
 
@@ -2837,7 +2905,7 @@ const ItemPicker = (props) => {
     /*------------------------------------------------------------------------*/
     /* -------------- Props ------------- */
     // Destructure all props
-    const { title, items, onChanged, noBottomMargin, hideSelectAllOrNoneButtons, } = props;
+    const { title, items, onChanged, noBottomMargin, hideSelectAllOrNoneButtons, startWithGroupsExpanded, } = props;
     /*------------------------------------------------------------------------*/
     /* ------------------------- Component Functions ------------------------ */
     /*------------------------------------------------------------------------*/
@@ -2894,7 +2962,7 @@ const ItemPicker = (props) => {
     // Main UI
     return (React__default["default"].createElement(TabBox, { title: title, noBottomMargin: noBottomMargin, topRightChildren: selectAllOrNone },
         React__default["default"].createElement("div", { style: { overflowX: 'auto' } },
-            React__default["default"].createElement(NestableItemList, { items: items, onChanged: onChanged }))));
+            React__default["default"].createElement(NestableItemList, { items: items, onChanged: onChanged, startWithGroupsExpanded: startWithGroupsExpanded }))));
 };
 
 /**
@@ -13469,65 +13537,6 @@ const DBEntryManagerPanel = (props) => {
     /* --------------- Main UI -------------- */
     /*----------------------------------------*/
     return (React__default["default"].createElement("div", null, body));
-};
-
-/**
- * Simple tooltip component
- * @author Gabe Abrams
- */
-/*------------------------------------------------------------------------*/
-/* ------------------------------ Component ----------------------------- */
-/*------------------------------------------------------------------------*/
-const Tooltip = (props) => {
-    /*------------------------------------------------------------------------*/
-    /* -------------------------------- Setup ------------------------------- */
-    /*------------------------------------------------------------------------*/
-    /* -------------- Props ------------- */
-    // Destructure all props
-    const { text, children, } = props;
-    /* -------------- Refs -------------- */
-    // Child ref
-    const childRef = React.useRef(undefined);
-    /*------------------------------------------------------------------------*/
-    /* ------------------------- Lifecycle Functions ------------------------ */
-    /*------------------------------------------------------------------------*/
-    /**
-     * Update (also called on mount)
-     * @author Gabe Abrams
-     */
-    React.useEffect(() => {
-        // Skip if no child
-        if (!childRef.current) {
-            return;
-        }
-        // Store copy of tooltip
-        let t;
-        // Initialize tooltip
-        (() => __awaiter(void 0, void 0, void 0, function* () {
-            // Import bootstrap tooltip
-            const BSTooltip = (yield Promise.resolve().then(function () { return /*#__PURE__*/_interopNamespace(require('bootstrap')); })).Tooltip;
-            // Initialize
-            t = new BSTooltip(childRef.current, {
-                title: text,
-                placement: 'top',
-                trigger: 'hover',
-            });
-        }))();
-        // Clean up tooltip
-        return () => {
-            if (t) {
-                t.dispose();
-            }
-        };
-    }, [text]);
-    /*------------------------------------------------------------------------*/
-    /* ------------------------------- Render ------------------------------- */
-    /*------------------------------------------------------------------------*/
-    /*----------------------------------------*/
-    /* --------------- Main UI -------------- */
-    /*----------------------------------------*/
-    // Clone child and add ref
-    return React__default["default"].cloneElement(children, { ref: childRef });
 };
 
 /**

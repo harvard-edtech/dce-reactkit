@@ -13,6 +13,7 @@ type Props = {
      *   values updated
      */
     onChanged: (updatedItems: PickableItem[]) => void;
+    startWithGroupsExpanded?: boolean;
 };
 declare const NestableItemList: React.FC<Props>;
 export default NestableItemList;

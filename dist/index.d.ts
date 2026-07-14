@@ -442,8 +442,10 @@ declare const CopiableBox: React$1.FC<Props$c>;
  */
 type PickableItem = ({
     id: number | string;
-    name: string;
+    name: React.ReactNode;
+    ariaLabel?: string;
     link?: string;
+    tooltip?: string;
 } & ({
     isGroup: false;
     checked: boolean;
@@ -468,6 +470,7 @@ type Props$b = {
     onChanged: (updatedItems: PickableItem[]) => void;
     noBottomMargin?: boolean;
     hideSelectAllOrNoneButtons?: boolean;
+    startWithGroupsExpanded?: boolean;
 };
 declare const ItemPicker: React$1.FC<Props$b>;
 
