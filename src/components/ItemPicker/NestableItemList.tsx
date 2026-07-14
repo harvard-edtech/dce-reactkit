@@ -16,6 +16,7 @@ import {
 
 // Import shared components
 import CheckboxButton from '../CheckboxButton';
+import Tooltip from '../Tooltip';
 import Variant from '../../types/Variant';
 
 // Import types
@@ -35,6 +36,8 @@ type Props = {
    *   values updated
    */
   onChanged: (updatedItems: PickableItem[]) => void,
+  // If true, groups start expanded instead of collapsed
+  startWithGroupsExpanded?: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -106,6 +109,7 @@ const NestableItemList: React.FC<Props> = (props) => {
   const {
     items,
     onChanged,
+    startWithGroupsExpanded,
   } = props;
 
   /* -------------- State ------------- */
@@ -113,7 +117,7 @@ const NestableItemList: React.FC<Props> = (props) => {
   // Create initial map of child expanded booleans
   const initChildExpanded: { [k: string]: boolean } = {};
   items.forEach((item) => {
-    initChildExpanded[String(item.id)] = false;
+    initChildExpanded[String(item.id)] = !!startWithGroupsExpanded;
   });
 
   // Initial state
@@ -229,6 +233,29 @@ const NestableItemList: React.FC<Props> = (props) => {
     <div>
       {
         items.map((item) => {
+          // Human-readable label for accessibility. Prefer the explicit
+          // ariaLabel, then fall back to the name if it is a plain string
+          const accessibleName = (
+            item.ariaLabel
+            ?? (typeof item.name === 'string' ? item.name : '')
+          );
+
+          // Checkbox and Text
+          const checkbox = (
+            <CheckboxButton
+              className={`NestableItemList-CheckboxButton-${item.id}`}
+              text={item.name}
+              checked={item.isGroup ? allChecked(item.children) : item.checked}
+              dashed={item.isGroup ? !noneChecked(item.children) : false}
+              onChanged={(checked) => {
+                onChanged(changeChecked(item.id, checked, items));
+              }}
+              ariaLabel={`Select ${accessibleName}`}
+              checkedVariant={Variant.Light}
+              uncheckedVariant={Variant.Light}
+            />
+          );
+
           return (
             <div key={item.id}>
               {/* Dropdown Button */}
@@ -252,7 +279,7 @@ const NestableItemList: React.FC<Props> = (props) => {
                         id: item.id,
                       });
                     }}
-                    aria-label={`${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${item.name}`}
+                    aria-label={`${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${accessibleName}`}
                   >
                     <FontAwesomeIcon
                       icon={childExpanded[item.id] ? faChevronDown : faChevronRight}
@@ -261,19 +288,18 @@ const NestableItemList: React.FC<Props> = (props) => {
                 )}
               </span>
 
-              {/* Checkbox and Text */}
-              <CheckboxButton
-                className={`NestableItemList-CheckboxButton-${item.id}`}
-                text={item.name}
-                checked={item.isGroup ? allChecked(item.children) : item.checked}
-                dashed={item.isGroup ? !noneChecked(item.children) : false}
-                onChanged={(checked) => {
-                  onChanged(changeChecked(item.id, checked, items));
-                }}
-                ariaLabel={`Select ${item.name}`}
-                checkedVariant={Variant.Light}
-                uncheckedVariant={Variant.Light}
-              />
+              {/* Checkbox and Text (optionally wrapped in a tooltip) */}
+              {
+                item.tooltip
+                  ? (
+                    <Tooltip text={item.tooltip}>
+                      <span className="d-inline-block">
+                        {checkbox}
+                      </span>
+                    </Tooltip>
+                  )
+                  : checkbox
+              }
 
               {/* Children */}
               {(item.isGroup && childExpanded[item.id]) && (
@@ -288,6 +314,7 @@ const NestableItemList: React.FC<Props> = (props) => {
                     onChanged={(updatedItems) => {
                       onChanged(changeItems(item.id, updatedItems));
                     }}
+                    startWithGroupsExpanded={startWithGroupsExpanded}
                   />
                 </div>
               )}
