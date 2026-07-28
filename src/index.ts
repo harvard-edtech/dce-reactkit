@@ -121,6 +121,7 @@ import isMobileOrTablet from './helpers/isMobileOrTablet';
 import makeLinksClickable from './helpers/makeLinksClickable';
 import combineClassNames from './helpers/combineClassNames';
 import useForceRender from './helpers/useForceRender';
+import useBrowserBackButton from './helpers/useBrowserBackButton';
 import isSelectAdmin from './helpers/isSelectAdmin';
 
 // Import types
@@ -190,6 +191,7 @@ export {
   leaveToURL,
   combineClassNames,
   useForceRender,
+  useBrowserBackButton,
   setClientEventMetadataPopulator,
   // Types
   ModalButtonType,
