@@ -63,6 +63,14 @@ const Tooltip: React.FC<Props> = (props) => {
         // Import bootstrap tooltip
         const BSTooltip = (await import('bootstrap')).Tooltip;
 
+        // The child may have unmounted while the dynamic import above was
+        // resolving (React nulls the ref on unmount). Constructing a
+        // Bootstrap tooltip with a null element causes an error,
+        // so bail out instead
+        if (!childRef.current) {
+          return;
+        }
+
         // Initialize
         t = new BSTooltip(
           childRef.current,
@@ -78,6 +86,15 @@ const Tooltip: React.FC<Props> = (props) => {
       return () => {
         if (t) {
           t.dispose();
+          // Bootstrap's hide() queues a transition-end callback that can
+          // fire AFTER dispose and touch the (now null) trigger map and
+          // element (twbs/bootstrap issue #37474). Point those private
+          // fields at harmless stand-ins so the late callback is a no-op
+          // instead of a crash.
+          /* eslint-disable no-underscore-dangle */
+          t._activeTrigger = {};
+          t._element = document.createElement('noscript');
+          /* eslint-enable no-underscore-dangle */
         }
       };
     },

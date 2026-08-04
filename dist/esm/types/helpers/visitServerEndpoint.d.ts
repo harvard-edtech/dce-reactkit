@@ -22,6 +22,8 @@ export declare const _setStubResponse: (opts: {
  * @param opts.path - the path of the server endpoint
  * @param [opts.method=GET] - the method of the endpoint
  * @param [opts.params] - query/body parameters to include
+ * @param [opts.headers] - custom headers to include; values must already be
+ *    string to avoid issue with header serialization
  * @returns response from server
  */
 declare const visitServerEndpoint: (opts: {
@@ -29,6 +31,9 @@ declare const visitServerEndpoint: (opts: {
     method?: "GET" | "POST" | "DELETE" | "PUT" | undefined;
     params?: {
         [x: string]: any;
+    } | undefined;
+    headers?: {
+        [x: string]: string;
     } | undefined;
 }) => Promise<any>;
 export default visitServerEndpoint;
