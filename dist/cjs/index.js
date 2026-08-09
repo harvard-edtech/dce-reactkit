@@ -14758,91 +14758,235 @@ const useForceRender = (useReducer) => {
     };
 };
 
-// Import React
-// Marker stored on history entries owned by this hook
-const HISTORY_STATE_MARKER = { dceReactkitBackGuard: true };
 /**
- * Hook for intercepting the browser's back button (and mapping an in-app back
- *   button to it) without a router. Mirrors app "depth" into the browser
- *   history so that a native back navigation runs through a single guard
- *   handler that can allow the navigation or block it (stay in place, e.g. to
- *   show a confirmation prompt first).
- *
- * Because the browser's "popstate" event cannot be canceled, blocking is
- *   implemented by immediately pushing a replacement history entry to undo the
- *   pop. All of that bookkeeping is handled internally. Intended to be used
- *   once, near the root of an app.
+ * State of the current subpanel, determining what happens when the user tries
+ *   to go back to the home screen
  * @author Yuen Ler Chow
- * @param onBackAttempt handler called when the user attempts to navigate back
- *   (via the browser back button or requestBack): inspect current app state,
- *   perform any state updates needed to navigate, and return true to allow the
- *   back navigation or false to block it and stay in place (e.g. because a
- *   confirmation prompt is now showing)
- * @returns helpers for mirroring navigation into browser history: enterNewScreen
- *   (call when navigating one level deeper so a subsequent back is
- *   intercepted), requestBack (guarded back, the same path as the browser back
- *   button), and goBack (programmatically navigate back without triggering the
- *   guard, e.g. after the user confirms leaving)
  */
-const useBrowserBackButton = (onBackAttempt) => {
-    /* -------------- Refs -------------- */
-    // Keep the latest handler in a ref so the once-registered popstate listener
-    // always calls the current version (never a stale closure)
-    const onBackAttemptRef = React.useRef(onBackAttempt);
-    onBackAttemptRef.current = onBackAttempt;
-    // When true, the next back navigation is programmatic (from goBack) and must
-    // pass through without invoking the guard handler
-    const bypassRef = React.useRef(false);
-    /* ------------- Helpers ------------ */
-    // Enter a new screen (navigate one level deeper), mirroring it in browser
-    // history so a subsequent back navigation is intercepted by the guard. Call
-    // this alongside the state update that shows the new screen.
-    const enterNewScreen = React.useCallback(() => {
+var BackState;
+(function (BackState) {
+    // The user can go back immediately, no confirmation required
+    BackState["Normal"] = "normal";
+    // The user must confirm before going back because progress will be lost
+    BackState["UnsavedChanges"] = "unsaved-changes";
+    // The user cannot go back right now because work is in progress
+    BackState["Blocked"] = "blocked";
+})(BackState || (BackState = {}));
+var BackState$1 = BackState;
+
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Constants ----------------------------- */
+/*------------------------------------------------------------------------*/
+// Marker stored on history entries owned by this hook
+const HISTORY_STATE_MARKER = { dceReactkitBackButton: true };
+// Default message shown when the user tries to go back while blocked
+const BLOCKED_TITLE = 'Cannot Go Back';
+const BLOCKED_MESSAGE = 'We are currently working. Please try again in a moment.';
+// Default message shown when the user tries to go back with unsaved changes
+const UNSAVED_CHANGES_TITLE = 'Abandon Changes?';
+const UNSAVED_CHANGES_MESSAGE = 'Your current progress will be lost.';
+/*------------------------------------------------------------------------*/
+/* --------------------------- Static State ----------------------------- */
+/*------------------------------------------------------------------------*/
+// Handler that performs the app state changes required to return home
+let handleGoHome;
+// State of the subpanel the user is currently in
+let currentSubpanelState = BackState$1.Normal;
+// Custom messages for the current subpanel (cleared upon returning home)
+let customUnsavedChangesMessage;
+let customBlockedMessage;
+// True if the user is currently in a subpanel (one level deep from home)
+let inSubpanel = false;
+// True if the next back navigation was triggered by us and must pass through
+// without being intercepted
+let bypassNextPop = false;
+// True while a confirmation/alert is on screen, so repeated back presses don't
+// stack up duplicate prompts
+let promptVisible = false;
+/*------------------------------------------------------------------------*/
+/* ------------------------- Helper Functions --------------------------- */
+/*------------------------------------------------------------------------*/
+/**
+ * Throw if the hook hasn't been set up yet
+ * @author Yuen Ler Chow
+ */
+const requireSetup = () => {
+    if (!handleGoHome) {
+        throw new Error('The back button is not set up yet: call useBackButton in your top-level app before using backButtonController.');
+    }
+};
+/**
+ * Return to the home screen: reset all subpanel state and run the app's
+ *   go-home handler
+ * @author Yuen Ler Chow
+ * @param consumeHistoryEntry if true, also step back over the history entry
+ *   that was added when the subpanel was entered. Pass false when the entry has
+ *   already been consumed (e.g. the user pressed the browser back button)
+ */
+const returnHome = (consumeHistoryEntry) => {
+    const hadHistoryEntry = inSubpanel;
+    // Reset subpanel state
+    inSubpanel = false;
+    currentSubpanelState = BackState$1.Normal;
+    customUnsavedChangesMessage = undefined;
+    customBlockedMessage = undefined;
+    // Update the app
+    handleGoHome === null || handleGoHome === void 0 ? void 0 : handleGoHome();
+    // Consume the mirrored history entry
+    if (consumeHistoryEntry && hadHistoryEntry) {
+        bypassNextPop = true;
+        window.history.back();
+    }
+};
+/**
+ * Undo a back navigation that we don't want to allow, keeping the user in
+ *   place. The browser's popstate event cannot be canceled, so we immediately
+ *   push a replacement entry instead. Must be called synchronously while
+ *   handling the pop.
+ * @author Yuen Ler Chow
+ */
+const undoPop = () => {
+    window.history.pushState(HISTORY_STATE_MARKER, '');
+};
+/**
+ * Tell the user they cannot go back right now
+ * @author Yuen Ler Chow
+ */
+const showBlockedMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+    promptVisible = true;
+    yield alert(BLOCKED_TITLE, customBlockedMessage !== null && customBlockedMessage !== void 0 ? customBlockedMessage : BLOCKED_MESSAGE);
+    promptVisible = false;
+});
+/**
+ * Ask the user whether they want to leave despite unsaved changes
+ * @author Yuen Ler Chow
+ * @returns true if the user wants to leave
+ */
+const askToAbandonChanges = () => __awaiter(void 0, void 0, void 0, function* () {
+    promptVisible = true;
+    const confirmed = yield confirm(UNSAVED_CHANGES_TITLE, customUnsavedChangesMessage !== null && customUnsavedChangesMessage !== void 0 ? customUnsavedChangesMessage : UNSAVED_CHANGES_MESSAGE, {
+        confirmButtonText: 'Abandon Changes',
+        cancelButtonText: 'Stay Here',
+    });
+    promptVisible = false;
+    return confirmed;
+});
+/**
+ * Handle a browser back navigation
+ * @author Yuen Ler Chow
+ */
+const handlePopState = () => {
+    // Back navigation that we triggered ourselves: let it through
+    if (bypassNextPop) {
+        bypassNextPop = false;
+        return;
+    }
+    // Not in a subpanel: nothing for us to intercept
+    if (!inSubpanel) {
+        return;
+    }
+    // A prompt is already on screen: stay put and don't stack another one
+    if (promptVisible) {
+        undoPop();
+        return;
+    }
+    // Blocked: stay put and explain why
+    if (currentSubpanelState === BackState$1.Blocked) {
+        undoPop();
+        showBlockedMessage();
+        return;
+    }
+    // Unsaved changes: stay put until the user confirms. Note that the pop must
+    // be undone synchronously, before awaiting the confirmation
+    if (currentSubpanelState === BackState$1.UnsavedChanges) {
+        undoPop();
+        (() => __awaiter(void 0, void 0, void 0, function* () {
+            if (yield askToAbandonChanges()) {
+                returnHome(true);
+            }
+        }))();
+        return;
+    }
+    // Normal: allow it. The history entry was already consumed by this pop
+    returnHome(false);
+};
+/*------------------------------------------------------------------------*/
+/* ------------------------------ Controller ---------------------------- */
+/*------------------------------------------------------------------------*/
+/**
+ * Controller for driving back navigation from anywhere in the app. Requires
+ *   useBackButton to have been called in the top-level app.
+ * @author Yuen Ler Chow
+ */
+const backButtonController = {
+    onSubpanelEntered: () => {
+        requireSetup();
+        inSubpanel = true;
+        currentSubpanelState = BackState$1.Normal;
         window.history.pushState(HISTORY_STATE_MARKER, '');
-    }, []);
-    // Request a back navigation that runs through the guard handler (same path as
-    // the browser back button). Use this for your own in-app back buttons so they
-    // share a single code path with the browser back button.
-    const requestBack = React.useCallback(() => {
-        window.history.back();
-    }, []);
-    // Programmatically navigate back without triggering the guard handler. Use
-    // this once the app has already decided to leave (e.g. after the user
-    // confirms abandoning changes) so the mirrored history entry is consumed.
-    const goBack = React.useCallback(() => {
-        bypassRef.current = true;
-        window.history.back();
-    }, []);
-    /* ------------- Listener ------------ */
-    React.useEffect(() => {
-        // Mark the current entry as this hook's base entry
-        window.history.replaceState(HISTORY_STATE_MARKER, '');
-        // Handle a browser back navigation
-        const handlePopState = () => {
-            // Programmatic back (from goBack): swallow it, the app already updated
-            // its own state
-            if (bypassRef.current) {
-                bypassRef.current = false;
+    },
+    goHome: (force) => __awaiter(void 0, void 0, void 0, function* () {
+        requireSetup();
+        // Check whether the user is allowed to leave right now
+        if (!force) {
+            if (promptVisible) {
                 return;
             }
-            // Ask the app what to do; default to allowing the navigation
-            const allowBack = onBackAttemptRef.current();
-            // Block by re-pushing an entry to undo the pop (popstate can't be
-            // canceled), keeping the user in place
-            if (!allowBack) {
-                window.history.pushState(HISTORY_STATE_MARKER, '');
+            if (currentSubpanelState === BackState$1.Blocked) {
+                yield showBlockedMessage();
+                return;
             }
-        };
+            if (currentSubpanelState === BackState$1.UnsavedChanges) {
+                if (!(yield askToAbandonChanges())) {
+                    return;
+                }
+            }
+        }
+        returnHome(true);
+    }),
+    setSubpanelState: (newSubpanelState) => {
+        currentSubpanelState = newSubpanelState;
+    },
+    setCustomUnsavedChangesMessage: (message) => {
+        customUnsavedChangesMessage = message;
+    },
+    setCustomBlockedMessage: (message) => {
+        customBlockedMessage = message;
+    },
+};
+/*------------------------------------------------------------------------*/
+/* --------------------------------- Hook ------------------------------- */
+/*------------------------------------------------------------------------*/
+/**
+ * Hook that makes the browser's back button navigate within the app instead of
+ *   leaving it. Call this once in your top-level app, then use
+ *   backButtonController to enter subpanels and describe their state.
+ *
+ * Assumes a single level of navigation: one home screen plus subpanels that the
+ *   user returns home from.
+ * @author Yuen Ler Chow
+ * @param handleGoHomeFunc handler that performs the app state changes required
+ *   to return to the home screen
+ */
+const useBackButton = (handleGoHomeFunc) => {
+    // Keep the handler up to date so the listener never calls a stale version
+    handleGoHome = handleGoHomeFunc;
+    React.useEffect(() => {
+        // Mark the current entry as the home entry
+        window.history.replaceState(HISTORY_STATE_MARKER, '');
         window.addEventListener('popstate', handlePopState);
         return () => {
             window.removeEventListener('popstate', handlePopState);
+            // Reset static state so a remount starts clean
+            handleGoHome = undefined;
+            currentSubpanelState = BackState$1.Normal;
+            customUnsavedChangesMessage = undefined;
+            customBlockedMessage = undefined;
+            inSubpanel = false;
+            bypassNextPop = false;
+            promptVisible = false;
         };
     }, []);
-    return {
-        enterNewScreen,
-        requestBack,
-        goBack,
-    };
 };
 
 /*------------------------------------------------------------------------*/
@@ -15115,6 +15259,7 @@ Object.defineProperty(exports, 'waitMs', {
 });
 exports.AppWrapper = AppWrapper;
 exports.AutoscrollToBottomContainer = AutoscrollToBottomContainer;
+exports.BackState = BackState$1;
 exports.ButtonInputGroup = ButtonInputGroup;
 exports.CSVDownloadButton = CSVDownloadButton;
 exports.CheckboxButton = CheckboxButton;
@@ -15151,6 +15296,7 @@ exports.Tooltip = Tooltip;
 exports.Variant = Variant$1;
 exports.addFatalErrorHandler = addFatalErrorHandler;
 exports.alert = alert;
+exports.backButtonController = backButtonController;
 exports.canReviewLogs = canReviewLogs;
 exports.combineClassNames = combineClassNames;
 exports.confirm = confirm;
@@ -15164,7 +15310,7 @@ exports.prompt = prompt;
 exports.setClientEventMetadataPopulator = setClientEventMetadataPopulator;
 exports.showFatalError = showFatalError;
 exports.stubServerEndpoint = stubServerEndpoint;
-exports.useBrowserBackButton = useBrowserBackButton;
+exports.useBackButton = useBackButton;
 exports.useForceRender = useForceRender;
 exports.visitServerEndpoint = visitServerEndpoint;
 //# sourceMappingURL=index.js.map

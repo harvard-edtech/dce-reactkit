@@ -963,33 +963,73 @@ declare const combineClassNames: (classNames: (string | undefined | null | false
 declare const useForceRender: (useReducer: any) => () => void;
 
 /**
- * Hook for intercepting the browser's back button (and mapping an in-app back
- *   button to it) without a router. Mirrors app "depth" into the browser
- *   history so that a native back navigation runs through a single guard
- *   handler that can allow the navigation or block it (stay in place, e.g. to
- *   show a confirmation prompt first).
- *
- * Because the browser's "popstate" event cannot be canceled, blocking is
- *   implemented by immediately pushing a replacement history entry to undo the
- *   pop. All of that bookkeeping is handled internally. Intended to be used
- *   once, near the root of an app.
+ * State of the current subpanel, determining what happens when the user tries
+ *   to go back to the home screen
  * @author Yuen Ler Chow
- * @param onBackAttempt handler called when the user attempts to navigate back
- *   (via the browser back button or requestBack): inspect current app state,
- *   perform any state updates needed to navigate, and return true to allow the
- *   back navigation or false to block it and stay in place (e.g. because a
- *   confirmation prompt is now showing)
- * @returns helpers for mirroring navigation into browser history: enterNewScreen
- *   (call when navigating one level deeper so a subsequent back is
- *   intercepted), requestBack (guarded back, the same path as the browser back
- *   button), and goBack (programmatically navigate back without triggering the
- *   guard, e.g. after the user confirms leaving)
  */
-declare const useBrowserBackButton: (onBackAttempt: () => boolean) => {
-    enterNewScreen: () => void;
-    requestBack: () => void;
-    goBack: () => void;
+declare enum BackState {
+    Normal = "normal",
+    UnsavedChanges = "unsaved-changes",
+    Blocked = "blocked"
+}
+
+/**
+ * Controller for the back button, used to drive back navigation from anywhere
+ *   in the app. Pass this to subpanels so they can describe their state and
+ *   send the user home.
+ * @author Yuen Ler Chow
+ */
+type BackButtonController = {
+    /**
+     * Call this when the user navigates to a child of the home screen (something
+     *   they can come back from)
+     */
+    onSubpanelEntered: () => void;
+    /**
+     * Send the user back to the home screen
+     * @param [force] if true, go home immediately without checking the subpanel
+     *   state (no confirmation, not blocked). If falsy, nothing happens when
+     *   blocked and confirmation is required when there are unsaved changes
+     */
+    goHome: (force?: boolean) => Promise<void>;
+    /**
+     * Set the state of the current subpanel, which determines what happens when
+     *   the user tries to go back
+     * @param newSubpanelState the new state of the subpanel
+     */
+    setSubpanelState: (newSubpanelState: BackState) => void;
+    /**
+     * Set the confirmation message shown if the user tries to go back while there
+     *   are unsaved changes (cleared upon returning to the home screen)
+     * @param message the message to show
+     */
+    setCustomUnsavedChangesMessage: (message: string) => void;
+    /**
+     * Set the message shown if the user tries to go back while blocked (cleared
+     *   upon returning to the home screen)
+     * @param message the message to show
+     */
+    setCustomBlockedMessage: (message: string) => void;
 };
+
+/**
+ * Controller for driving back navigation from anywhere in the app. Requires
+ *   useBackButton to have been called in the top-level app.
+ * @author Yuen Ler Chow
+ */
+declare const backButtonController: BackButtonController;
+/**
+ * Hook that makes the browser's back button navigate within the app instead of
+ *   leaving it. Call this once in your top-level app, then use
+ *   backButtonController to enter subpanels and describe their state.
+ *
+ * Assumes a single level of navigation: one home screen plus subpanels that the
+ *   user returns home from.
+ * @author Yuen Ler Chow
+ * @param handleGoHomeFunc handler that performs the app state changes required
+ *   to return to the home screen
+ */
+declare const useBackButton: (handleGoHomeFunc: () => void) => void;
 
 /**
  * Checks if the current user is a select admin
@@ -998,4 +1038,4 @@ declare const useBrowserBackButton: (onBackAttempt: () => boolean) => {
  */
 declare const isSelectAdmin: () => Promise<boolean>;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, FakeProgressBar, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleMonthChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useBrowserBackButton, useForceRender, visitServerEndpoint };
+export { AppWrapper, AutoscrollToBottomContainer, BackButtonController, BackState, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, FakeProgressBar, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleMonthChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, backButtonController, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useBackButton, useForceRender, visitServerEndpoint };
