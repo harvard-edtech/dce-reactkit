@@ -258,10 +258,6 @@ const NestableItemList: React.FC<Props> = (props) => {
 
           return (
             <div key={item.id}>
-              {/* Item row. This is a flex row so that a name which wraps onto
-                  multiple lines doesn't leave a gap above the item: with inline
-                  layout, the line box's strut adds space that the item's own
-                  height doesn't account for */}
               <div className="NestableItemList-item d-flex align-items-center">
                 {/* Dropdown Button */}
                 <span
