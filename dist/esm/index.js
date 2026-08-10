@@ -2841,22 +2841,23 @@ const NestableItemList = (props) => {
                 onChanged(changeChecked(item.id, checked, items));
             }, ariaLabel: `Select ${accessibleName}`, checkedVariant: Variant$1.Light, uncheckedVariant: Variant$1.Light }));
         return (React__default.createElement("div", { key: item.id },
-            React__default.createElement("span", { className: "NestableItemList-dropdown-button-container d-inline-block", style: {
-                    minWidth: '2rem',
-                } }, item.isGroup && (React__default.createElement("button", { className: `NestableItemList-dropdown-button NestableItemList-dropdown-button-${item.id}`, style: {
-                    border: 0,
-                    backgroundColor: 'transparent',
-                }, type: "button", onClick: () => {
-                    dispatch({
-                        type: ActionType$9.ToggleChild,
-                        id: item.id,
-                    });
-                }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${accessibleName}` },
-                React__default.createElement(FontAwesomeIcon, { icon: childExpanded[item.id] ? faChevronDown : faChevronRight })))),
-            item.tooltip
-                ? (React__default.createElement(Tooltip, { text: item.tooltip },
-                    React__default.createElement("span", { className: "d-inline-block" }, checkbox)))
-                : checkbox,
+            React__default.createElement("div", { className: "NestableItemList-item d-flex align-items-center" },
+                React__default.createElement("span", { className: "NestableItemList-dropdown-button-container", style: {
+                        minWidth: '2rem',
+                    } }, item.isGroup && (React__default.createElement("button", { className: `NestableItemList-dropdown-button NestableItemList-dropdown-button-${item.id}`, style: {
+                        border: 0,
+                        backgroundColor: 'transparent',
+                    }, type: "button", onClick: () => {
+                        dispatch({
+                            type: ActionType$9.ToggleChild,
+                            id: item.id,
+                        });
+                    }, "aria-label": `${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${accessibleName}` },
+                    React__default.createElement(FontAwesomeIcon, { icon: childExpanded[item.id] ? faChevronDown : faChevronRight })))),
+                item.tooltip
+                    ? (React__default.createElement(Tooltip, { text: item.tooltip },
+                        React__default.createElement("span", { className: "d-inline-block" }, checkbox)))
+                    : checkbox),
             (item.isGroup && childExpanded[item.id]) && (React__default.createElement("div", { className: "NestableItemList-children-container", style: {
                     paddingLeft: '2.2rem',
                 } },

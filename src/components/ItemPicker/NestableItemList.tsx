@@ -258,48 +258,54 @@ const NestableItemList: React.FC<Props> = (props) => {
 
           return (
             <div key={item.id}>
-              {/* Dropdown Button */}
-              <span
-                className="NestableItemList-dropdown-button-container d-inline-block"
-                style={{
-                  minWidth: '2rem',
-                }}
-              >
-                {item.isGroup && (
-                  <button
-                    className={`NestableItemList-dropdown-button NestableItemList-dropdown-button-${item.id}`}
-                    style={{
-                      border: 0,
-                      backgroundColor: 'transparent',
-                    }}
-                    type="button"
-                    onClick={() => {
-                      dispatch({
-                        type: ActionType.ToggleChild,
-                        id: item.id,
-                      });
-                    }}
-                    aria-label={`${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${accessibleName}`}
-                  >
-                    <FontAwesomeIcon
-                      icon={childExpanded[item.id] ? faChevronDown : faChevronRight}
-                    />
-                  </button>
-                )}
-              </span>
+              {/* Item row. This is a flex row so that a name which wraps onto
+                  multiple lines doesn't leave a gap above the item: with inline
+                  layout, the line box's strut adds space that the item's own
+                  height doesn't account for */}
+              <div className="NestableItemList-item d-flex align-items-center">
+                {/* Dropdown Button */}
+                <span
+                  className="NestableItemList-dropdown-button-container"
+                  style={{
+                    minWidth: '2rem',
+                  }}
+                >
+                  {item.isGroup && (
+                    <button
+                      className={`NestableItemList-dropdown-button NestableItemList-dropdown-button-${item.id}`}
+                      style={{
+                        border: 0,
+                        backgroundColor: 'transparent',
+                      }}
+                      type="button"
+                      onClick={() => {
+                        dispatch({
+                          type: ActionType.ToggleChild,
+                          id: item.id,
+                        });
+                      }}
+                      aria-label={`${childExpanded[item.id] ? 'Hide' : 'Show'} items in ${accessibleName}`}
+                    >
+                      <FontAwesomeIcon
+                        icon={childExpanded[item.id] ? faChevronDown : faChevronRight}
+                      />
+                    </button>
+                  )}
+                </span>
 
-              {/* Checkbox and Text (optionally wrapped in a tooltip) */}
-              {
-                item.tooltip
-                  ? (
-                    <Tooltip text={item.tooltip}>
-                      <span className="d-inline-block">
-                        {checkbox}
-                      </span>
-                    </Tooltip>
-                  )
-                  : checkbox
-              }
+                {/* Checkbox and Text (optionally wrapped in a tooltip) */}
+                {
+                  item.tooltip
+                    ? (
+                      <Tooltip text={item.tooltip}>
+                        <span className="d-inline-block">
+                          {checkbox}
+                        </span>
+                      </Tooltip>
+                    )
+                    : checkbox
+                }
+              </div>
 
               {/* Children */}
               {(item.isGroup && childExpanded[item.id]) && (
