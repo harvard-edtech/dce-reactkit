@@ -968,9 +968,9 @@ declare const useForceRender: (useReducer: any) => () => void;
  * @author Yuen Ler Chow
  */
 declare enum BackState {
-    Normal = "normal",
-    UnsavedChanges = "unsaved-changes",
-    Blocked = "blocked"
+    Normal = "Normal",
+    UnsavedChanges = "UnsavedChanges",
+    Blocked = "Blocked"
 }
 
 /**
@@ -1014,7 +1014,7 @@ type BackButtonController = {
 
 /**
  * Controller for driving back navigation from anywhere in the app. Requires
- *   useBackButton to have been called in the top-level app.
+ *   useBackButton to have been called in the top-level app
  * @author Yuen Ler Chow
  */
 declare const backButtonController: BackButtonController;
