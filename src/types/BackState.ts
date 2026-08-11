@@ -5,11 +5,11 @@
  */
 enum BackState {
   // The user can go back immediately, no confirmation required
-  Normal = 'normal',
+  Normal = 'Normal',
   // The user must confirm before going back because progress will be lost
-  UnsavedChanges = 'unsaved-changes',
+  UnsavedChanges = 'UnsavedChanges',
   // The user cannot go back right now because work is in progress
-  Blocked = 'blocked',
+  Blocked = 'Blocked',
 }
 
 export default BackState;

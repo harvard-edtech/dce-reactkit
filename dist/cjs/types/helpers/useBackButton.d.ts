@@ -1,7 +1,7 @@
 import BackButtonController from '../types/BackButtonController';
 /**
  * Controller for driving back navigation from anywhere in the app. Requires
- *   useBackButton to have been called in the top-level app.
+ *   useBackButton to have been called in the top-level app
  * @author Yuen Ler Chow
  */
 export declare const backButtonController: BackButtonController;

@@ -14767,11 +14767,11 @@ const useForceRender = (useReducer) => {
 var BackState;
 (function (BackState) {
     // The user can go back immediately, no confirmation required
-    BackState["Normal"] = "normal";
+    BackState["Normal"] = "Normal";
     // The user must confirm before going back because progress will be lost
-    BackState["UnsavedChanges"] = "unsaved-changes";
+    BackState["UnsavedChanges"] = "UnsavedChanges";
     // The user cannot go back right now because work is in progress
-    BackState["Blocked"] = "blocked";
+    BackState["Blocked"] = "Blocked";
 })(BackState || (BackState = {}));
 var BackState$1 = BackState;
 
@@ -14779,127 +14779,125 @@ var BackState$1 = BackState;
 /* ------------------------------ Constants ----------------------------- */
 /*------------------------------------------------------------------------*/
 // Marker stored on history entries owned by this hook
-const HISTORY_STATE_MARKER = { dceReactkitBackButton: true };
+const HISTORY_STATE_MARKER = { dceReactKitBackButton: true };
 // Default message shown when the user tries to go back while blocked
 const BLOCKED_TITLE = 'Cannot Go Back';
-const BLOCKED_MESSAGE = 'We are currently working. Please try again in a moment.';
+const BLOCKED_MESSAGE = 'A task is currently in progress. Please try again once it finishes.';
 // Default message shown when the user tries to go back with unsaved changes
 const UNSAVED_CHANGES_TITLE = 'Abandon Changes?';
-const UNSAVED_CHANGES_MESSAGE = 'Your current progress will be lost.';
+const UNSAVED_CHANGES_MESSAGE = 'Any unsaved changes may be lost.';
 /*------------------------------------------------------------------------*/
 /* --------------------------- Static State ----------------------------- */
 /*------------------------------------------------------------------------*/
-// Handler that performs the app state changes required to return home
-let handleGoHome;
-// State of the subpanel the user is currently in
-let currentSubpanelState = BackState$1.Normal;
-// Custom messages for the current subpanel (cleared upon returning home)
-let customUnsavedChangesMessage;
-let customBlockedMessage;
-// True if the user is currently in a subpanel (one level deep from home)
-let inSubpanel = false;
-// True if the next back navigation was triggered by us and must pass through
-// without being intercepted
-let bypassNextPop = false;
-// True while a confirmation/alert is on screen, so repeated back presses don't
-// stack up duplicate prompts
-let promptVisible = false;
+// Current state, stored statically so that any subpanel can drive the back
+// button without prop drilling or context
+let state = {
+    promptVisible: false,
+    bypassNextPop: false,
+};
 /*------------------------------------------------------------------------*/
 /* ------------------------- Helper Functions --------------------------- */
 /*------------------------------------------------------------------------*/
 /**
- * Throw if the hook hasn't been set up yet
+ * Get the app's go-home handler, throwing if the hook has not been set up yet
  * @author Yuen Ler Chow
+ * @returns handler that returns the app to its home screen
  */
-const requireSetup = () => {
-    if (!handleGoHome) {
-        throw new Error('The back button is not set up yet: call useBackButton in your top-level app before using backButtonController.');
+const getHandleGoHome = () => {
+    if (!state.handleGoHome) {
+        throw new Error('Cannot use the back button: call useBackButton in your top-level app before using backButtonController.');
     }
+    return state.handleGoHome;
 };
 /**
- * Return to the home screen: reset all subpanel state and run the app's
+ * Return to the home screen: clear the current subpanel and run the app's
  *   go-home handler
  * @author Yuen Ler Chow
  * @param consumeHistoryEntry if true, also step back over the history entry
- *   that was added when the subpanel was entered. Pass false when the entry has
- *   already been consumed (e.g. the user pressed the browser back button)
+ *   that was added when the subpanel was entered
  */
 const returnHome = (consumeHistoryEntry) => {
-    const hadHistoryEntry = inSubpanel;
-    // Reset subpanel state
-    inSubpanel = false;
-    currentSubpanelState = BackState$1.Normal;
-    customUnsavedChangesMessage = undefined;
-    customBlockedMessage = undefined;
+    const handleGoHome = getHandleGoHome();
+    const wasInSubpanel = !!state.subpanel;
+    // Dropping the subpanel clears its back state and custom messages at once
+    state.subpanel = undefined;
     // Update the app
-    handleGoHome === null || handleGoHome === void 0 ? void 0 : handleGoHome();
-    // Consume the mirrored history entry
-    if (consumeHistoryEntry && hadHistoryEntry) {
-        bypassNextPop = true;
+    handleGoHome();
+    // Entering a subpanel added a history entry. When the user leaves via an
+    // in-app control, that entry is still on the stack, so we step over it to keep
+    // the browser history in sync with the app. When the browser's back button is
+    // what brought us here, that entry has already been consumed by the browser,
+    // and stepping back again would take the user out of the app entirely
+    if (consumeHistoryEntry && wasInSubpanel) {
+        state.bypassNextPop = true;
         window.history.back();
     }
 };
 /**
- * Undo a back navigation that we don't want to allow, keeping the user in
- *   place. The browser's popstate event cannot be canceled, so we immediately
- *   push a replacement entry instead. Must be called synchronously while
- *   handling the pop.
+ * Keep the user in place after a back navigation that should not be allowed.
+ *   The browser's popstate event is not cancelable, so the only way to stay put
+ *   is to immediately push a new entry to replace the one that was just popped.
+ *   This has to happen synchronously while handling the pop, before awaiting
+ *   anything, otherwise the navigation has already taken effect
  * @author Yuen Ler Chow
  */
 const undoPop = () => {
     window.history.pushState(HISTORY_STATE_MARKER, '');
 };
 /**
- * Tell the user they cannot go back right now
+ * Tell the user that they cannot go back right now
  * @author Yuen Ler Chow
  */
 const showBlockedMessage = () => __awaiter(void 0, void 0, void 0, function* () {
-    promptVisible = true;
-    yield alert(BLOCKED_TITLE, customBlockedMessage !== null && customBlockedMessage !== void 0 ? customBlockedMessage : BLOCKED_MESSAGE);
-    promptVisible = false;
+    var _a, _b;
+    state.promptVisible = true;
+    yield alert(BLOCKED_TITLE, (_b = (_a = state.subpanel) === null || _a === void 0 ? void 0 : _a.customBlockedMessage) !== null && _b !== void 0 ? _b : BLOCKED_MESSAGE);
+    state.promptVisible = false;
 });
 /**
- * Ask the user whether they want to leave despite unsaved changes
+ * Ask the user whether they want to leave despite having unsaved changes
  * @author Yuen Ler Chow
  * @returns true if the user wants to leave
  */
 const askToAbandonChanges = () => __awaiter(void 0, void 0, void 0, function* () {
-    promptVisible = true;
-    const confirmed = yield confirm(UNSAVED_CHANGES_TITLE, customUnsavedChangesMessage !== null && customUnsavedChangesMessage !== void 0 ? customUnsavedChangesMessage : UNSAVED_CHANGES_MESSAGE, {
+    var _c, _d;
+    state.promptVisible = true;
+    const confirmed = yield confirm(UNSAVED_CHANGES_TITLE, (_d = (_c = state.subpanel) === null || _c === void 0 ? void 0 : _c.customUnsavedChangesMessage) !== null && _d !== void 0 ? _d : UNSAVED_CHANGES_MESSAGE, {
         confirmButtonText: 'Abandon Changes',
         cancelButtonText: 'Stay Here',
     });
-    promptVisible = false;
+    state.promptVisible = false;
     return confirmed;
 });
 /**
- * Handle a browser back navigation
+ * Handle a back navigation performed by the browser
  * @author Yuen Ler Chow
  */
 const handlePopState = () => {
     // Back navigation that we triggered ourselves: let it through
-    if (bypassNextPop) {
-        bypassNextPop = false;
+    if (state.bypassNextPop) {
+        state.bypassNextPop = false;
         return;
     }
-    // Not in a subpanel: nothing for us to intercept
-    if (!inSubpanel) {
+    // Already on the home screen: nothing for us to intercept
+    if (!state.subpanel) {
         return;
     }
-    // A prompt is already on screen: stay put and don't stack another one
-    if (promptVisible) {
+    // A prompt is already on screen: stay put instead of stacking another one
+    if (state.promptVisible) {
         undoPop();
         return;
     }
     // Blocked: stay put and explain why
-    if (currentSubpanelState === BackState$1.Blocked) {
+    if (state.subpanel.backState === BackState$1.Blocked) {
         undoPop();
         showBlockedMessage();
         return;
     }
-    // Unsaved changes: stay put until the user confirms. Note that the pop must
-    // be undone synchronously, before awaiting the confirmation
-    if (currentSubpanelState === BackState$1.UnsavedChanges) {
+    // Unsaved changes: stay put until the user confirms. The pop is undone
+    // synchronously here, before awaiting the confirmation, so that the user
+    // remains in the subpanel while they decide
+    if (state.subpanel.backState === BackState$1.UnsavedChanges) {
         undoPop();
         (() => __awaiter(void 0, void 0, void 0, function* () {
             if (yield askToAbandonChanges()) {
@@ -14908,7 +14906,8 @@ const handlePopState = () => {
         }))();
         return;
     }
-    // Normal: allow it. The history entry was already consumed by this pop
+    // Normal: allow it. The browser already consumed the history entry, so there
+    // is nothing left for us to step over
     returnHome(false);
 };
 /*------------------------------------------------------------------------*/
@@ -14916,43 +14915,91 @@ const handlePopState = () => {
 /*------------------------------------------------------------------------*/
 /**
  * Controller for driving back navigation from anywhere in the app. Requires
- *   useBackButton to have been called in the top-level app.
+ *   useBackButton to have been called in the top-level app
  * @author Yuen Ler Chow
  */
 const backButtonController = {
+    /**
+     * Call this when the user navigates to a child of the home screen (something
+     *   they can come back from)
+     * @author Yuen Ler Chow
+     */
     onSubpanelEntered: () => {
-        requireSetup();
-        inSubpanel = true;
-        currentSubpanelState = BackState$1.Normal;
+        getHandleGoHome();
+        state.subpanel = {
+            backState: BackState$1.Normal,
+        };
+        // Add a history entry to come back to, so that the next back navigation is
+        // intercepted instead of leaving the app
         window.history.pushState(HISTORY_STATE_MARKER, '');
     },
+    /**
+     * Send the user back to the home screen
+     * @author Yuen Ler Chow
+     * @param [force] if true, go home immediately without checking the subpanel
+     *   state. If falsy, nothing happens while blocked and confirmation is
+     *   required when there are unsaved changes
+     */
     goHome: (force) => __awaiter(void 0, void 0, void 0, function* () {
-        requireSetup();
-        // Check whether the user is allowed to leave right now
+        var _e, _f;
+        getHandleGoHome();
+        // Unless the caller is forcing the navigation, the subpanel's state decides
+        // whether the user may leave: a blocked subpanel refuses and explains why,
+        // and one with unsaved changes leaves only if the user confirms
         if (!force) {
-            if (promptVisible) {
+            // A prompt is already asking the user this same question
+            if (state.promptVisible) {
                 return;
             }
-            if (currentSubpanelState === BackState$1.Blocked) {
+            if (((_e = state.subpanel) === null || _e === void 0 ? void 0 : _e.backState) === BackState$1.Blocked) {
                 yield showBlockedMessage();
                 return;
             }
-            if (currentSubpanelState === BackState$1.UnsavedChanges) {
-                if (!(yield askToAbandonChanges())) {
+            if (((_f = state.subpanel) === null || _f === void 0 ? void 0 : _f.backState) === BackState$1.UnsavedChanges) {
+                const confirmed = yield askToAbandonChanges();
+                if (!confirmed) {
                     return;
                 }
             }
         }
         returnHome(true);
     }),
+    /**
+     * Set the state of the current subpanel, which determines what happens when
+     *   the user tries to go back. Ignored while on the home screen, where there
+     *   is no back navigation to describe
+     * @author Yuen Ler Chow
+     * @param newSubpanelState the new state of the subpanel
+     */
     setSubpanelState: (newSubpanelState) => {
-        currentSubpanelState = newSubpanelState;
+        if (!state.subpanel) {
+            return;
+        }
+        state.subpanel.backState = newSubpanelState;
     },
+    /**
+     * Set the confirmation message shown if the user tries to go back while there
+     *   are unsaved changes. Cleared upon returning to the home screen
+     * @author Yuen Ler Chow
+     * @param message the message to show
+     */
     setCustomUnsavedChangesMessage: (message) => {
-        customUnsavedChangesMessage = message;
+        if (!state.subpanel) {
+            return;
+        }
+        state.subpanel.customUnsavedChangesMessage = message;
     },
+    /**
+     * Set the message shown if the user tries to go back while blocked. Cleared
+     *   upon returning to the home screen
+     * @author Yuen Ler Chow
+     * @param message the message to show
+     */
     setCustomBlockedMessage: (message) => {
-        customBlockedMessage = message;
+        if (!state.subpanel) {
+            return;
+        }
+        state.subpanel.customBlockedMessage = message;
     },
 };
 /*------------------------------------------------------------------------*/
@@ -14970,22 +15017,24 @@ const backButtonController = {
  *   to return to the home screen
  */
 const useBackButton = (handleGoHomeFunc) => {
-    // Keep the handler up to date so the listener never calls a stale version
-    handleGoHome = handleGoHomeFunc;
+    // Store the handler on every render so that the listener below, which is only
+    // registered once, always calls the app's current version of it
+    state.handleGoHome = handleGoHomeFunc;
+    // The popstate listener has to be attached to the window, which is outside of
+    // React, so an effect is used to add it when the app mounts and remove it if
+    // the app ever unmounts. The empty dependency array keeps this to a single
+    // listener for the lifetime of the app instead of one per render
     React.useEffect(() => {
         // Mark the current entry as the home entry
         window.history.replaceState(HISTORY_STATE_MARKER, '');
         window.addEventListener('popstate', handlePopState);
         return () => {
             window.removeEventListener('popstate', handlePopState);
-            // Reset static state so a remount starts clean
-            handleGoHome = undefined;
-            currentSubpanelState = BackState$1.Normal;
-            customUnsavedChangesMessage = undefined;
-            customBlockedMessage = undefined;
-            inSubpanel = false;
-            bypassNextPop = false;
-            promptVisible = false;
+            // Clear the static state so that a remount starts from scratch
+            state = {
+                promptVisible: false,
+                bypassNextPop: false,
+            };
         };
     }, []);
 };

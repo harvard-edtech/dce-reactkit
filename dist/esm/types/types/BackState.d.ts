@@ -4,8 +4,8 @@
  * @author Yuen Ler Chow
  */
 declare enum BackState {
-    Normal = "normal",
-    UnsavedChanges = "unsaved-changes",
-    Blocked = "blocked"
+    Normal = "Normal",
+    UnsavedChanges = "UnsavedChanges",
+    Blocked = "Blocked"
 }
 export default BackState;
