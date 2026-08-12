@@ -826,6 +826,8 @@ const _setStubResponse = (opts) => {
  * @param opts.path - the path of the server endpoint
  * @param [opts.method=GET] - the method of the endpoint
  * @param [opts.params] - query/body parameters to include
+ * @param [opts.headers] - custom headers to include; values must already be
+ *    string to avoid issue with header serialization
  * @returns response from server
  */
 const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function* () {
@@ -875,6 +877,7 @@ const visitServerEndpoint = (opts) => __awaiter(void 0, void 0, void 0, function
         path: opts.path,
         method: (_c = opts.method) !== null && _c !== void 0 ? _c : 'GET',
         params,
+        headers: opts.headers,
     });
     // Check for failure
     if (!response || !response.body) {
@@ -2703,6 +2706,13 @@ const Tooltip = (props) => {
         (() => __awaiter(void 0, void 0, void 0, function* () {
             // Import bootstrap tooltip
             const BSTooltip = (yield Promise.resolve().then(function () { return /*#__PURE__*/_interopNamespace(require('bootstrap')); })).Tooltip;
+            // The child may have unmounted while the dynamic import above was
+            // resolving (React nulls the ref on unmount). Constructing a
+            // Bootstrap tooltip with a null element causes an error,
+            // so bail out instead
+            if (!childRef.current) {
+                return;
+            }
             // Initialize
             t = new BSTooltip(childRef.current, {
                 title: text,
@@ -2714,6 +2724,15 @@ const Tooltip = (props) => {
         return () => {
             if (t) {
                 t.dispose();
+                // Bootstrap's hide() queues a transition-end callback that can
+                // fire AFTER dispose and touch the (now null) trigger map and
+                // element (twbs/bootstrap issue #37474). Point those private
+                // fields at harmless stand-ins so the late callback is a no-op
+                // instead of a crash.
+                /* eslint-disable no-underscore-dangle */
+                t._activeTrigger = {};
+                t._element = document.createElement('noscript');
+                /* eslint-enable no-underscore-dangle */
             }
         };
     }, [text]);

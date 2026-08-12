@@ -96,6 +96,8 @@ export const _setStubResponse = (
  * @param opts.path - the path of the server endpoint
  * @param [opts.method=GET] - the method of the endpoint
  * @param [opts.params] - query/body parameters to include
+ * @param [opts.headers] - custom headers to include; values must already be
+ *    string to avoid issue with header serialization
  * @returns response from server
  */
 const visitServerEndpoint = async (
@@ -103,6 +105,8 @@ const visitServerEndpoint = async (
     path: string,
     method?: ('GET' | 'POST' | 'DELETE' | 'PUT'),
     params?: { [key in string]: any },
+    // Headers have no serialization layer, so use string
+    headers?: { [key in string]: string },
   },
 ): Promise<any> => {
   // Set default method
@@ -159,6 +163,7 @@ const visitServerEndpoint = async (
     path: opts.path,
     method: opts.method ?? 'GET',
     params,
+    headers: opts.headers,
   });
 
   // Check for failure
