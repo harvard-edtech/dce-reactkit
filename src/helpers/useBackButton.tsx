@@ -76,7 +76,7 @@ let state: BackButtonState = {
  * @author Yuen Ler Chow
  * @returns handler that returns the app to its home screen
  */
-const getHandleGoHome = (): () => void => {
+const getHandleGoHome = () => {
   if (!state.handleGoHome) {
     throw new Error('Cannot use the back button: call useBackButton in your top-level app before using backButtonController.');
   }
@@ -185,7 +185,7 @@ const handlePopState = () => {
   }
 
   // Unsaved changes: stay put until the user confirms. The pop is undone
-  // synchronously here, before awaiting the confirmation, so that the user
+  // asynchronously here, before awaiting the confirmation, so that the user
   // remains in the subpanel while they decide
   if (state.subpanel.backState === BackState.UnsavedChanges) {
     undoPop();
