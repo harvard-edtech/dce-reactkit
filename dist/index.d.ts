@@ -968,10 +968,79 @@ declare const combineClassNames: (classNames: (string | undefined | null | false
 declare const useForceRender: (useReducer: any) => () => void;
 
 /**
+ * State of the current subpanel, determining what happens when the user tries
+ *   to go back to the home screen
+ * @author Yuen Ler Chow
+ */
+declare enum BackState {
+    Normal = "Normal",
+    UnsavedChanges = "UnsavedChanges",
+    Blocked = "Blocked"
+}
+
+/**
+ * Controller for the back button, used to drive back navigation from anywhere
+ *   in the app. Pass this to subpanels so they can describe their state and
+ *   send the user home.
+ * @author Yuen Ler Chow
+ */
+type BackButtonController = {
+    /**
+     * Call this when the user navigates to a child of the home screen (something
+     *   they can come back from)
+     */
+    onSubpanelEntered: () => void;
+    /**
+     * Send the user back to the home screen
+     * @param [force] if true, go home immediately without checking the subpanel
+     *   state (no confirmation, not blocked). If falsy, nothing happens when
+     *   blocked and confirmation is required when there are unsaved changes
+     */
+    goHome: (force?: boolean) => Promise<void>;
+    /**
+     * Set the state of the current subpanel, which determines what happens when
+     *   the user tries to go back
+     * @param newSubpanelState the new state of the subpanel
+     */
+    setSubpanelState: (newSubpanelState: BackState) => void;
+    /**
+     * Set the confirmation message shown if the user tries to go back while there
+     *   are unsaved changes (cleared upon returning to the home screen)
+     * @param message the message to show
+     */
+    setCustomUnsavedChangesMessage: (message: string) => void;
+    /**
+     * Set the message shown if the user tries to go back while blocked (cleared
+     *   upon returning to the home screen)
+     * @param message the message to show
+     */
+    setCustomBlockedMessage: (message: string) => void;
+};
+
+/**
+ * Controller for driving back navigation from anywhere in the app. Requires
+ *   useBackButton to have been called in the top-level app
+ * @author Yuen Ler Chow
+ */
+declare const backButtonController: BackButtonController;
+/**
+ * Hook that makes the browser's back button navigate within the app instead of
+ *   leaving it. Call this once in your top-level app, then use
+ *   backButtonController to enter subpanels and describe their state.
+ *
+ * Assumes a single level of navigation: one home screen plus subpanels that the
+ *   user returns home from.
+ * @author Yuen Ler Chow
+ * @param handleGoHomeFunc handler that performs the app state changes required
+ *   to return to the home screen
+ */
+declare const useBackButton: (handleGoHomeFunc: () => void) => void;
+
+/**
  * Checks if the current user is a select admin
  * @author Gardenia Liu
  * @returns true if the user is a select admin, false otherwise
  */
 declare const isSelectAdmin: () => Promise<boolean>;
 
-export { AppWrapper, AutoscrollToBottomContainer, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, FakeProgressBar, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleMonthChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useForceRender, visitServerEndpoint };
+export { AppWrapper, AutoscrollToBottomContainer, BackButtonController, BackState, ButtonInputGroup, CSVDownloadButton, CheckboxButton, CopiableBox, DBEntry, DBEntryField, DBEntryFieldType, DBEntryManagerPanel, Drawer, Dropdown, DropdownItemType, DynamicWord, ErrorBox, FakeProgressBar, IntelliTable, IntelliTableColumn, ItemPicker, LoadingSpinner, LogReviewer, Modal, ModalButtonType, ModalSize, ModalType, MultiSwitch, PickableItem, PopFailureMark, PopPendingMark, PopSuccessMark, ProgressBar, ProgressBarSize, RadioButton, SimpleDateChooser, SimpleMonthChooser, SimpleTimeChooser, TabBox, ToggleSwitch, Tooltip, Variant, addFatalErrorHandler, alert, backButtonController, canReviewLogs, combineClassNames, confirm, initClient, isMobileOrTablet, isSelectAdmin, leaveToURL, logClientEvent, makeLinksClickable, prompt, setClientEventMetadataPopulator, showFatalError, stubServerEndpoint, useBackButton, useForceRender, visitServerEndpoint };

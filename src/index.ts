@@ -121,6 +121,7 @@ import isMobileOrTablet from './helpers/isMobileOrTablet';
 import makeLinksClickable from './helpers/makeLinksClickable';
 import combineClassNames from './helpers/combineClassNames';
 import useForceRender from './helpers/useForceRender';
+import useBackButton, { backButtonController } from './helpers/useBackButton';
 import isSelectAdmin from './helpers/isSelectAdmin';
 
 // Import types
@@ -131,6 +132,8 @@ import Variant from './types/Variant';
 import IntelliTableColumn from './types/IntelliTableColumn';
 import DropdownItemType from './types/DropdownItemType';
 import ProgressBarSize from './types/ProgressBarSize';
+import BackState from './types/BackState';
+import BackButtonController from './types/BackButtonController';
 
 // Component-specific-types
 import PickableItem from './components/ItemPicker/types/PickableItem';
@@ -190,6 +193,8 @@ export {
   leaveToURL,
   combineClassNames,
   useForceRender,
+  useBackButton,
+  backButtonController,
   setClientEventMetadataPopulator,
   // Types
   ModalButtonType,
@@ -200,6 +205,8 @@ export {
   DropdownItemType,
   LogReviewerFilterState,
   ProgressBarSize,
+  BackState,
+  BackButtonController,
   // Component-specific-types
   PickableItem,
   DBEntry,
