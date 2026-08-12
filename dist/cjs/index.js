@@ -14914,7 +14914,7 @@ const handlePopState = () => {
         return;
     }
     // Unsaved changes: stay put until the user confirms. The pop is undone
-    // synchronously here, before awaiting the confirmation, so that the user
+    // asynchronously here, before awaiting the confirmation, so that the user
     // remains in the subpanel while they decide
     if (state.subpanel.backState === BackState$1.UnsavedChanges) {
         undoPop();
