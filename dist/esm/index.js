@@ -14787,6 +14787,7 @@ const UNSAVED_CHANGES_MESSAGE = 'Any unsaved changes may be lost.';
 let state = {
     promptVisible: false,
     bypassNextPop: false,
+    fatalErrorShown: false,
 };
 /*------------------------------------------------------------------------*/
 /* ------------------------- Helper Functions --------------------------- */
@@ -14870,6 +14871,11 @@ const handlePopState = () => {
     // Back navigation that we triggered ourselves: let it through
     if (state.bypassNextPop) {
         state.bypassNextPop = false;
+        return;
+    }
+    // A fatal error replaced the app: there is nothing left to go back to within
+    // it, so let the browser leave instead of trapping the user on the error
+    if (state.fatalErrorShown) {
         return;
     }
     // Already on the home screen: nothing for us to intercept
@@ -15020,6 +15026,13 @@ const useBackButton = (handleGoHomeFunc) => {
     useEffect(() => {
         // Mark the current entry as the home entry
         window.history.replaceState(HISTORY_STATE_MARKER, '');
+        // A fatal error (or an expired session) ends the app: drop the subpanel
+        // so no task is left looking like it's still in progress, and stop
+        // intercepting back navigation altogether
+        addFatalErrorHandler(() => {
+            state.subpanel = undefined;
+            state.fatalErrorShown = true;
+        });
         window.addEventListener('popstate', handlePopState);
         return () => {
             window.removeEventListener('popstate', handlePopState);
@@ -15027,6 +15040,7 @@ const useBackButton = (handleGoHomeFunc) => {
             state = {
                 promptVisible: false,
                 bypassNextPop: false,
+                fatalErrorShown: false,
             };
         };
     }, []);
