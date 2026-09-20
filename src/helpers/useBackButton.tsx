@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 
 // Import components
-import { alert, confirm } from '../components/AppWrapper';
+import { alert, confirm, addFatalErrorHandler } from '../components/AppWrapper';
 
 // Import types
 import BackState from '../types/BackState';
@@ -54,6 +54,9 @@ type BackButtonState = {
   // True if the next back navigation was triggered by us and must pass through
   // without being intercepted
   bypassNextPop: boolean,
+  // True once a fatal error has replaced the app. Back navigation is never
+  // intercepted after this: there is no app left to keep the user inside of
+  fatalErrorShown: boolean,
 };
 
 /*------------------------------------------------------------------------*/
@@ -65,6 +68,7 @@ type BackButtonState = {
 let state: BackButtonState = {
   promptVisible: false,
   bypassNextPop: false,
+  fatalErrorShown: false,
 };
 
 /*------------------------------------------------------------------------*/
@@ -163,6 +167,12 @@ const handlePopState = () => {
   // Back navigation that we triggered ourselves: let it through
   if (state.bypassNextPop) {
     state.bypassNextPop = false;
+    return;
+  }
+
+  // A fatal error replaced the app: there is nothing left to go back to within
+  // it, so let the browser leave instead of trapping the user on the error
+  if (state.fatalErrorShown) {
     return;
   }
 
@@ -334,6 +344,14 @@ const useBackButton = (handleGoHomeFunc: () => void) => {
       // Mark the current entry as the home entry
       window.history.replaceState(HISTORY_STATE_MARKER, '');
 
+      // A fatal error (or an expired session) ends the app: drop the subpanel
+      // so no task is left looking like it's still in progress, and stop
+      // intercepting back navigation altogether
+      addFatalErrorHandler(() => {
+        state.subpanel = undefined;
+        state.fatalErrorShown = true;
+      });
+
       window.addEventListener('popstate', handlePopState);
       return () => {
         window.removeEventListener('popstate', handlePopState);
@@ -342,6 +360,7 @@ const useBackButton = (handleGoHomeFunc: () => void) => {
         state = {
           promptVisible: false,
           bypassNextPop: false,
+          fatalErrorShown: false,
         };
       };
     },
