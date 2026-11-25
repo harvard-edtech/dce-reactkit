@@ -141,7 +141,7 @@ const ItemPicker: React.FC<Props> = (props) => {
               <button
                 type="button"
                 style={{ borderRight: '0.1rem solid white' }}
-                aria-label="Select all contexts"
+                aria-label={`Select all ${title}`}
                 className="btn btn-secondary py-0"
                 onClick={handleSelectAll}
               >
@@ -150,7 +150,7 @@ const ItemPicker: React.FC<Props> = (props) => {
               {/* None */}
               <button
                 type="button"
-                aria-label="Deselect all contexts"
+                aria-label={`Deselect all ${title}`}
                 className="btn btn-secondary py-0"
                 onClick={handleDeselectAll}
               >
