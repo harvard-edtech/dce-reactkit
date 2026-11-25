@@ -5,7 +5,7 @@
  */
 
 // Import React
-import React, { useReducer } from 'react';
+import React, { useReducer, useRef } from 'react';
 
 // Import FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -133,6 +133,10 @@ const NestableItemList: React.FC<Props> = (props) => {
     childExpanded,
   } = state;
 
+  // Index of the item the user last clicked, so a shift-click can change
+  // every item between it and the one clicked next
+  const lastClickedIndex = useRef<number | undefined>(undefined);
+
   /*------------------------------------------------------------------------*/
   /* ------------------------- Component Functions ------------------------ */
   /*------------------------------------------------------------------------*/
@@ -232,7 +236,7 @@ const NestableItemList: React.FC<Props> = (props) => {
   return (
     <div>
       {
-        items.map((item) => {
+        items.map((item, index) => {
           // Human-readable label for accessibility. Prefer the explicit
           // ariaLabel, then fall back to the name if it is a plain string
           const accessibleName = (
@@ -247,7 +251,29 @@ const NestableItemList: React.FC<Props> = (props) => {
               text={item.name}
               checked={item.isGroup ? allChecked(item.children) : item.checked}
               dashed={item.isGroup ? !noneChecked(item.children) : false}
-              onChanged={(checked) => {
+              onChanged={(checked, event) => {
+                const anchorIndex = lastClickedIndex.current;
+                lastClickedIndex.current = index;
+
+                // Shift-click: give every item between the last one clicked
+                // and this one the same state
+                if (
+                  event.shiftKey
+                  && anchorIndex !== undefined
+                  && anchorIndex !== index
+                  && anchorIndex < items.length
+                ) {
+                  const start = Math.min(anchorIndex, index);
+                  const end = Math.max(anchorIndex, index);
+                  onChanged(items.map((candidate, candidateIndex) => {
+                    if (candidateIndex < start || candidateIndex > end) {
+                      return candidate;
+                    }
+                    return changeChecked(true, checked, [candidate])[0];
+                  }));
+                  return;
+                }
+
                 onChanged(changeChecked(item.id, checked, items));
               }}
               ariaLabel={`Select ${accessibleName}`}
@@ -258,7 +284,15 @@ const NestableItemList: React.FC<Props> = (props) => {
 
           return (
             <div key={item.id}>
-              <div className="NestableItemList-item d-flex align-items-center">
+              <div
+                className="NestableItemList-item d-flex align-items-center"
+                onMouseDown={(event) => {
+                  // Don't select the text between the items on a shift-click
+                  if (event.shiftKey) {
+                    event.preventDefault();
+                  }
+                }}
+              >
                 {/* Dropdown Button */}
                 <span
                   className="NestableItemList-dropdown-button-container"

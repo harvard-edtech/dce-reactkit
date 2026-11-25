@@ -24,8 +24,12 @@ import { isDarkModeOn } from '../helpers/initClient';
 type Props = {
   // Text of the button
   text: React.ReactNode,
-  // Handler for when this item is toggled
-  onChanged: (checked: boolean) => void,
+  /**
+   * Handler for when this item is toggled
+   * @param checked true if the item is now checked
+   * @param event the click that toggled it (e.g. to check for modifier keys)
+   */
+  onChanged: (checked: boolean, event: React.MouseEvent<HTMLButtonElement>) => void,
   // Aria label
   ariaLabel: string,
   // Button title
@@ -116,8 +120,8 @@ const CheckboxButton: React.FC<Props> = (props) => {
       title={title}
       className={`CheckboxButton-status-${checked ? 'checked' : 'unchecked'} ${dashed ? 'CheckboxButton-dashed ' : ''}btn btn-${checked ? checkedVariant : uncheckedVariant}${checked ? ' selected' : ''}${small ? ' btn-sm' : ''} m-0${noMarginOnRight ? '' : ' me-1'} ${className ?? ''}`}
       aria-label={`${ariaLabel}${checked ? ': currently checked' : ''}`}
-      onClick={() => {
-        onChanged(!checked);
+      onClick={(event) => {
+        onChanged(!checked, event);
       }}
     >
       <div className="d-flex align-items-center">
